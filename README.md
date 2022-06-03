@@ -4,7 +4,7 @@ Alfheim is an addon to the [Botania](http://botaniamod.net/) mod written for [Mi
 
 Alfheim is licensed under the [Botania License](http://botaniamod.net/license.php) 
 
-Join official [Discord Alfheim server](https://discord.gg/dqQXZHq).
+Join official [Discord server](https://discord.gg/dqQXZHq).
 
 If you want to get in-dev version for whatever reason you just need to download "**Development**" branch (from *Downloads* in the left sidebar), extract archive wherever you want and launch **setup.bat**, entering **4** when asked (or just enter *gradlew build* in command line). .jar file will be placed in */build/libs/*
 Don't forget to install latest versions of JDK**8**. 

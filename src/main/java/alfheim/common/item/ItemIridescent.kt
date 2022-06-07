@@ -45,7 +45,7 @@ open class ItemIridescent(name: String): Item() {
 			}
 		}
 		
-		fun dirtStack(meta: Int): ItemStack? {
+		fun dirtStack(meta: Int): ItemStack {
 			val block = when (meta) {
 				in 0..15 -> AlfheimBlocks.irisDirt
 				16       -> AlfheimBlocks.rainbowDirt

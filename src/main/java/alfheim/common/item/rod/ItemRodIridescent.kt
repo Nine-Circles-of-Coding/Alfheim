@@ -2,10 +2,12 @@ package alfheim.common.item.rod
 
 import alexsocol.asjlib.*
 import alfheim.api.ModInfo
+import alfheim.api.event.PlayerInteractAdequateEvent
 import alfheim.api.lib.LibResourceLocations
 import alfheim.common.block.AlfheimBlocks
 import alfheim.common.item.ItemIridescent
 import alfheim.common.item.equipment.bauble.ItemPriestEmblem
+import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import net.minecraft.block.Block
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.*
@@ -29,25 +31,25 @@ class ItemRodIridescent(name: String = "rodColorfulSkyDirt"): ItemIridescent(nam
 		
 		fun place(
 			stack: ItemStack, player: EntityPlayer, world: World,
-			par4: Int, par5: Int, par6: Int, par7: Int, par8: Float, par9: Float,
-			par10: Float, toPlace: ItemStack?, cost: Int, r: Float, g: Float, b: Float,
+			x: Int, y: Int, z: Int, side: Int, hitX: Float, hitY: Float, hitZ: Float,
+			toPlace: ItemStack?, cost: Int, r: Float, g: Float, b: Float,
 		): Boolean {
 			
 			if (ManaItemHandler.requestManaExactForTool(stack, player, cost, false)) {
-				val dir = ForgeDirection.getOrientation(par7)
+				val dir = ForgeDirection.getOrientation(side)
 				
-				val aabb = AxisAlignedBB.getBoundingBox((par4 + dir.offsetX).D,
-														(par5 + dir.offsetY).D, (par6 + dir.offsetZ).D,
-														(par4 + dir.offsetX + 1).D, (par5 + dir.offsetY + 1).D, (par6 + dir.offsetZ + 1).D)
+				val aabb = AxisAlignedBB.getBoundingBox((x + dir.offsetX).D,
+				                                        (y + dir.offsetY).D, (z + dir.offsetZ).D,
+				                                        (x + dir.offsetX + 1).D, (y + dir.offsetY + 1).D, (z + dir.offsetZ + 1).D)
 				val entities = world.getEntitiesWithinAABB(EntityLivingBase::class.java, aabb).size
 				
 				if (entities == 0) {
-					toPlace!!.tryPlaceItemIntoWorld(player, world, par4, par5, par6, par7, par8, par9, par10)
+					toPlace!!.tryPlaceItemIntoWorld(player, world, x, y, z, side, hitX, hitY, hitZ)
 					
 					if (toPlace.stackSize == 0) {
 						ManaItemHandler.requestManaExactForTool(stack, player, cost, true)
 						for (i in 0..6)
-							Botania.proxy.sparkleFX(world, par4 + dir.offsetX + Math.random(), par5 + dir.offsetY + Math.random(), par6 + dir.offsetZ + Math.random(), r, g, b, 1F, 5)
+							Botania.proxy.sparkleFX(world, x + dir.offsetX + Math.random(), y + dir.offsetY + Math.random(), z + dir.offsetZ + Math.random(), r, g, b, 1F, 5)
 					}
 				}
 			}
@@ -58,10 +60,33 @@ class ItemRodIridescent(name: String = "rodColorfulSkyDirt"): ItemIridescent(nam
 	
 	init {
 		maxStackSize = 1
+		eventForge()
 	}
 	
-	override fun onItemUse(stack: ItemStack, player: EntityPlayer, world: World, par4: Int, par5: Int, par6: Int, par7: Int, par8: Float, par9: Float, par10: Float) =
-		place(stack, player, world, par4, par5, par6, par7, par8, par9, par10, dirtStack(stack.meta), COST, 0.35F, 0.2F, 0.05F)
+	override fun onItemUse(stack: ItemStack, player: EntityPlayer, world: World, x: Int, y: Int, z: Int, side: Int, hitX: Float, hitY: Float, hitZ: Float) =
+		place(stack, player, world, x, y, z, side, hitX, hitY, hitZ, dirtStack(stack.meta), COST, 0.35F, 0.2F, 0.05F)
+	
+	@SubscribeEvent
+	fun onItemLeftClick(e: PlayerInteractAdequateEvent.LeftClick) {
+		if (e.action !== PlayerInteractAdequateEvent.LeftClick.Action.LEFT_CLICK_AIR) return
+		
+		val player = e.player
+		val world = player.worldObj
+		val stack = player.heldItem ?: return
+		
+		if (!player.isSneaking) return
+		
+		var damage = stack.meta
+		if (!world.isRemote) {
+			if (stack.meta <= 0) stack.meta = 17 else stack.meta--
+			damage = stack.meta
+		} else if (damage <= 0) damage = 17 else damage--
+		
+		player.playSoundAtEntity("botania:ding", 0.1F, 1F)
+		val blockstack = dirtStack(damage)
+		blockstack.setStackDisplayName(StatCollector.translateToLocal("misc.${ModInfo.MODID}.color.$damage"))
+		ItemsRemainingRenderHandler.set(blockstack, -2)
+	}
 	
 	override fun onItemRightClick(stack: ItemStack, world: World, player: EntityPlayer): ItemStack {
 		var blockstack = dirtStack(stack.meta)
@@ -78,7 +103,7 @@ class ItemRodIridescent(name: String = "rodColorfulSkyDirt"): ItemIridescent(nam
 			} else if (damage >= 17) damage = 0 else damage++
 			player.playSoundAtEntity("botania:ding", 0.1F, 1F)
 			blockstack = dirtStack(damage)
-			blockstack!!.setStackDisplayName(StatCollector.translateToLocal("misc.${ModInfo.MODID}.color.$damage"))
+			blockstack.setStackDisplayName(StatCollector.translateToLocal("misc.${ModInfo.MODID}.color.$damage"))
 			ItemsRemainingRenderHandler.set(blockstack, -2)
 		} else if (!world.isRemote && ManaItemHandler.requestManaExactForTool(stack, player, COST * 2, false)) {
 			
@@ -106,7 +131,7 @@ class ItemRodIridescent(name: String = "rodColorfulSkyDirt"): ItemIridescent(nam
 																					(y + 1).D, (z + 1).D)).size
 			
 			if (entities == 0) {
-				blockstack!!.tryPlaceItemIntoWorld(player, world, x, y, z, 0, 0F, 0F, 0F)
+				blockstack.tryPlaceItemIntoWorld(player, world, x, y, z, 0, 0F, 0F, 0F)
 				
 				if (blockstack.stackSize == 0) {
 					ManaItemHandler.requestManaExactForTool(stack, player, COST * 2, true)

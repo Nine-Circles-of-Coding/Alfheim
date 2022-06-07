@@ -1,3 +1,5 @@
 Innovations:
  --
-Fixes: --
+
+Fixes:
+ Rod of the Vibrant Plains Sneak-Leftclick to cycle through colors in reverse order

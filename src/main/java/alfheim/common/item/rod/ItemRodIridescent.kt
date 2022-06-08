@@ -177,11 +177,11 @@ class ItemRodIridescent(name: String = "rodColorfulSkyDirt"): ItemIridescent(nam
 			for (i in 0..6)
 				Botania.proxy.sparkleFX(world, x + xl + Math.random(), y + Math.random(), z + zl + Math.random(),
 										r, g, b, 1F, 5)
-			if (stack.meta == TYPES)
-				world.playAuxSFX(2001, x + xl, y, z + zl, AlfheimBlocks.rainbowDirt.id)
-			else
-				world.playAuxSFX(2001, x + xl, y, z + zl, AlfheimBlocks.irisDirt.id + (stack.meta shl 12))
-			
+			when (stack.meta) {
+				17    -> world.playAuxSFX(2001, x + xl, y, z + zl, AlfheimBlocks.auroraDirt.id)
+				TYPES -> world.playAuxSFX(2001, x + xl, y, z + zl, AlfheimBlocks.rainbowDirt.id)
+				else  -> world.playAuxSFX(2001, x + xl, y, z + zl, AlfheimBlocks.irisDirt.id + (stack.meta shl 12))
+			}
 		}
 	}
 	
@@ -192,13 +192,13 @@ class ItemRodIridescent(name: String = "rodColorfulSkyDirt"): ItemIridescent(nam
 	override fun usesMana(stack: ItemStack) = true
 	
 	override fun provideBlock(player: EntityPlayer, requestor: ItemStack, stack: ItemStack, block: Block, meta: Int, doit: Boolean): Boolean {
-		if (block == AlfheimBlocks.irisDirt || block == AlfheimBlocks.rainbowDirt)
+		if (block === AlfheimBlocks.irisDirt || block === AlfheimBlocks.rainbowDirt || block === AlfheimBlocks.auroraDirt)
 			return !doit || ManaItemHandler.requestManaExactForTool(requestor, player, COST, true)
 		return false
 	}
 	
 	override fun getBlockCount(player: EntityPlayer, requestor: ItemStack, stack: ItemStack, block: Block, meta: Int): Int {
-		if (block == AlfheimBlocks.irisDirt || block == AlfheimBlocks.rainbowDirt)
+		if (block === AlfheimBlocks.irisDirt || block === AlfheimBlocks.rainbowDirt || block === AlfheimBlocks.auroraDirt)
 			return -1
 		return 0
 	}

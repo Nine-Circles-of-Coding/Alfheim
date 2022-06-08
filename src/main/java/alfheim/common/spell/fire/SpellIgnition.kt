@@ -28,7 +28,7 @@ object SpellIgnition: SpellBase("ignition", EnumRace.SALAMANDER, 2000, 100, 5) {
 			val tgt = tg.target ?: break
 			
 			if (tg.isParty) return SpellCastResult.WRONGTGT
-			if (!InteractionSecurity.canDoSomethingWithEntity(caster, tgt)) return SpellCastResult.NOTALLOW
+			if (!InteractionSecurity.canHurtEntity(caster, tgt)) return SpellCastResult.NOTALLOW
 			if (ASJUtilities.isNotInFieldOfVision(tgt, caster)) return SpellCastResult.NOTSEEING
 			
 			val result = SpellDispel.checkCastOver(caster)

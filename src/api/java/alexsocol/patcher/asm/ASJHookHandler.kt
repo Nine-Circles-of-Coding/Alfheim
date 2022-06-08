@@ -35,11 +35,11 @@ import net.minecraft.item.*
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.potion.*
 import net.minecraft.tileentity.TileEntityFurnace
-import net.minecraft.util.ResourceLocation
+import net.minecraft.util.*
 import net.minecraft.world.*
 import net.minecraft.world.biome.BiomeGenBase
 import net.minecraftforge.client.event.EntityViewRenderEvent
-import net.minecraftforge.common.MinecraftForge
+import net.minecraftforge.common.*
 import net.minecraftforge.common.util.ForgeDirection
 import org.lwjgl.opengl.*
 import org.objectweb.asm.Opcodes
@@ -47,56 +47,29 @@ import java.nio.FloatBuffer
 import java.util.*
 import kotlin.math.*
 
-@Suppress("UNUSED_PARAMETER")
+@Suppress("UNUSED_PARAMETER", "unused", "FunctionName", "UNCHECKED_CAST")
 object ASJHookHandler {
 	
+	// summon ligtning bolt in /summon command
 	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ALWAYS, targetMethod = "<init>", createMethod = true, superClass = "net/minecraft/entity/effect/EntityWeatherEffect.${Opcodes.ALOAD}.1.(Lnet/minecraft/world/World;)V")
 	fun EntityLightningBolt(thiz: EntityLightningBolt, world: World) {
 		thiz.lightningState = 2
 		thiz.boltVertex = (Math.random() * Long.MAX_VALUE).toLong()
 		thiz.boltLivingTime = ASJUtilities.randInBounds(1, 3)
-		
-//		if (!world.isRemote && world.getGameRules().getGameRuleBooleanValue("doFireTick") && (world.difficultySetting == EnumDifficulty.NORMAL || world.difficultySetting == EnumDifficulty.HARD) && world.doChunksNearChunkExist(MathHelper.floor_double(p_i1703_2_), MathHelper.floor_double(p_i1703_4_), MathHelper.floor_double(p_i1703_6_), 10)) {
-//			var i = MathHelper.floor_double(p_i1703_2_)
-//			var j = MathHelper.floor_double(p_i1703_4_)
-//			var k = MathHelper.floor_double(p_i1703_6_)
-//			if (world.getBlock(i, j, k).getMaterial() === Material.air && Blocks.fire.canPlaceBlockAt(world, i, j, k)) {
-//				world.setBlock(i, j, k, Blocks.fire)
-//			}
-//			i = 0
-//			while (i < 4) {
-//				j = MathHelper.floor_double(p_i1703_2_) + thiz.rand.nextInt(3) - 1
-//				k = MathHelper.floor_double(p_i1703_4_) + thiz.rand.nextInt(3) - 1
-//				val l: Int = MathHelper.floor_double(p_i1703_6_) + thiz.rand.nextInt(3) - 1
-//				if (world.getBlock(j, k, l).getMaterial() === Material.air && Blocks.fire.canPlaceBlockAt(world, j, k, l)) {
-//					world.setBlock(j, k, l, Blocks.fire)
-//				}
-//				++i
-//			}
-//		}
 	}
 	
-	@JvmStatic // AIOOBE 257+ crash fix
+	// AIOOBE 257+ crash fix
+	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ALWAYS, targetMethod = "<clinit>")
 	fun EntityEnderman(thiz: EntityEnderman?) {
-		EntityEnderman.attackingSpeedBoostModifierUUID = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0")
-		EntityEnderman.attackingSpeedBoostModifier = AttributeModifier(EntityEnderman.attackingSpeedBoostModifierUUID, "Attacking speed boost", 6.199999809265137, 0).setSaved(false)
+		val uuid = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0")
+		ASJReflectionHelper.setStaticFinalValue(EntityEnderman::class.java, uuid, "attackingSpeedBoostModifierUUID", "field_110192_bp")
+		ASJReflectionHelper.setStaticFinalValue(EntityEnderman::class.java, AttributeModifier(uuid, "Attacking speed boost", 6.199999809265137, 0).setSaved(false), "attackingSpeedBoostModifier", "field_110193_bq")
 		
-		EntityEnderman.setCarriable(Blocks.grass, true)
-		EntityEnderman.setCarriable(Blocks.dirt, true)
-		EntityEnderman.setCarriable(Blocks.sand, true)
-		EntityEnderman.setCarriable(Blocks.gravel, true)
-		EntityEnderman.setCarriable(Blocks.yellow_flower, true)
-		EntityEnderman.setCarriable(Blocks.red_flower, true)
-		EntityEnderman.setCarriable(Blocks.brown_mushroom, true)
-		EntityEnderman.setCarriable(Blocks.red_mushroom, true)
-		EntityEnderman.setCarriable(Blocks.tnt, true)
-		EntityEnderman.setCarriable(Blocks.cactus, true)
-		EntityEnderman.setCarriable(Blocks.clay, true)
-		EntityEnderman.setCarriable(Blocks.pumpkin, true)
-		EntityEnderman.setCarriable(Blocks.melon_block, true)
-		EntityEnderman.setCarriable(Blocks.mycelium, true)
+		arrayOf(Blocks.grass, Blocks.dirt, Blocks.sand, Blocks.gravel, Blocks.yellow_flower, Blocks.red_flower, Blocks.brown_mushroom, Blocks.red_mushroom, Blocks.tnt, Blocks.cactus, Blocks.clay, Blocks.pumpkin, Blocks.melon_block, Blocks.mycelium).forEach {
+			EntityEnderman.setCarriable(it, true)
+		}
 	}
 	
 	@JvmStatic
@@ -109,6 +82,7 @@ object ASJHookHandler {
 		return false
 	}
 	
+	// damageMobArmor config prop impl
 	@JvmStatic
 	@Hook
 	fun damageArmor(entity: EntityLivingBase, damage: Float) {
@@ -118,6 +92,7 @@ object ASJHookHandler {
 		for (i in 1..4) entity.getEquipmentInSlot(i)?.damageItem(dmg, entity)
 	}
 	
+	// Adding eggs
 	@JvmStatic
 	@Hook(targetMethod = "<clinit>", injectOnExit = true)
 	fun `EntityList$clinit`(e: EntityList?) {
@@ -137,6 +112,7 @@ object ASJHookHandler {
 		EntityList.entityEggs[id] = EntityEggInfo(id, i, j)
 	}
 	
+	// gm alias for /gamemode
 	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ALWAYS, createMethod = true)
 	fun getCommandAliases(c: CommandGameMode): List<String> {
@@ -149,12 +125,14 @@ object ASJHookHandler {
 		return null
 	}
 	
+	// summon usage
 	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ALWAYS, createMethod = true)
 	fun getCommandUsage(c: CommandSummon, sender: ICommandSender?): String {
 		return "commands.summon.usage.new"
 	}
 	
+	// entity batches in /summon command
 	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ON_TRUE)
 	fun processCommand(c: CommandSummon, sender: ICommandSender?, args: Array<String?>): Boolean {
@@ -217,12 +195,14 @@ object ASJHookHandler {
 		}
 	}
 	
+	// clear skeleton (and other) arrows in creative
 	@JvmStatic
 	@Hook
 	fun onCollideWithPlayer(arrow: EntityArrow, player: EntityPlayer) {
 		if (arrow.canBePickedUp == 0 && player.capabilities.isCreativeMode) arrow.canBePickedUp = 2
 	}
 	
+	// biome dup id fix
 	@JvmStatic
 	@Hook(targetMethod = "<init>")
 	fun BiomeGenBase(thiz: BiomeGenBase, id: Int, register: Boolean) {
@@ -230,15 +210,15 @@ object ASJHookHandler {
 			throw IllegalArgumentException("Biome with id $id is already registered!")
 	}
 	
+	// potion dup id fix
 	@JvmStatic
 	@Hook(targetMethod = "<init>")
-	fun Potion(id: Int, bad: Boolean, color: Int) {
+	fun Potion(thiz: Potion, id: Int, bad: Boolean, color: Int) {
 		if (PatcherConfigHandler.potionDuplication && Potion.potionTypes[id] != null)
 			throw IllegalArgumentException("Potion with id $id is already registered!")
 	}
 	
 	// stack attributes fix
-	
 	@JvmStatic
 	@Hook(isMandatory = true, returnCondition = ReturnCondition.ALWAYS)
 	fun getAttributeModifiers(stack: ItemStack): Multimap<Any, Any> {
@@ -261,7 +241,6 @@ object ASJHookHandler {
 	}
 	
 	// stack NBT fix
-	
 	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ON_NOT_NULL)
 	fun writeToNBT(stack: ItemStack, nbt: NBTTagCompound): NBTTagCompound? {
@@ -314,6 +293,15 @@ object ASJHookHandler {
 		stack.writeToNBT(nbt)
 	}
 	
+	// armor can't block damage that is set to bypass armor
+	@JvmStatic
+	@Hook(returnCondition = ReturnCondition.ON_TRUE, returnType = "float", returnAnotherMethod = "armorNotApplied")
+	fun ApplyArmor(targetClass: ISpecialArmor?, entity: EntityLivingBase?, inventory: Array<ItemStack?>?, source: DamageSource, damage: Double): Boolean {
+		return source.isUnblockable
+	}
+	
+	fun armorNotApplied(targetClass: ISpecialArmor?, entity: EntityLivingBase?, inventory: Array<ItemStack?>?, source: DamageSource?, damage: Double) = damage.F
+	
 //	@JvmStatic
 //	@Hook(returnCondition = ReturnCondition.ON_TRUE)
 //	fun writeItemStackToBuffer(buf: PacketBuffer, stack: ItemStack?): Boolean {
@@ -357,8 +345,7 @@ object ASJHookHandler {
 //		return stack
 //	}
 	
-	// Events
-	
+	// events
 	@JvmStatic
 	@Hook(injectOnExit = true)
 	fun wakeAllPlayers(world: WorldServer) {
@@ -383,6 +370,17 @@ object ASJHookHandler {
 		MinecraftForge.EVENT_BUS.post(LivingPotionEvent.Remove.Post(e, pe))
 	}
 	
+	@SideOnly(Side.CLIENT)
+	@JvmStatic
+	@Hook(isMandatory = true, returnCondition = ReturnCondition.ON_TRUE)
+	fun doRenderShadowAndFire(render: Render, entity: Entity, x: Double, y: Double, z: Double, yaw: Float, ticks: Float): Boolean {
+		return MinecraftForge.EVENT_BUS.post(RenderEntityPostEvent(entity, x, y, z, yaw))
+	}
+	
+	@JvmStatic
+	@Hook(returnCondition = ReturnCondition.ON_TRUE, targetMethod = "func_150000_e", isMandatory = true)
+	fun tryToCreatePortal(portal: BlockPortal, world: World, x: Int, y: Int, z: Int) = MinecraftForge.EVENT_BUS.post(NetherPortalActivationEvent(world, x, y, z))
+	
 	// Portal closes GUI fix
 	
 	var portalHook = false
@@ -403,13 +401,12 @@ object ASJHookHandler {
 		} else false
 	}
 	
-	// #### BlockFence connection fix ####
-	
+	// BlockFence connection fix
 	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ON_TRUE)
 	fun canConnectFenceTo(fence: BlockFence, world: IBlockAccess, x: Int, y: Int, z: Int) = world.getBlock(x, y, z) is BlockFence
 	
-	// #### BlockWall fix ####
+	// BlockWall fix
 	
 	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ALWAYS, createMethod = true)
@@ -462,8 +459,7 @@ object ASJHookHandler {
 		return true
 	}
 	
-	// #### BlockWall fix end ####
-	
+	// potion fixes
 	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ALWAYS, isMandatory = true)
 	fun updatePotionEffects(e: EntityLivingBase) {
@@ -536,7 +532,7 @@ object ASJHookHandler {
 			ASJUtilities.log("Well, that was expected. Ignore.")
 			ex.printStackTrace()
 		} catch (e: Exception) {
-			ASJReflectionHelper.setValue(message_f, e, ASJReflectionHelper.getValue<String>(message_f, e) + " Stop harassing me for your potion id conflicts! Go install Dragon API or smth! This hook has nothing to do with your problem! F*ck off!", true)
+			ASJReflectionHelper.setValue(message_f, e, ASJReflectionHelper.getValue<String>(message_f, e) + "\nIt is possible that you got potion ID conflict. Try installing 'Extended Potions' or make sure you have all IDs BELOW 128!", true)
 			val stackTrace = e.stackTrace.filter { "alexsocol" !in it.className }.toTypedArray()
 			ASJReflectionHelper.setValue(stackTrace_f, e, stackTrace)
 			throw e
@@ -546,10 +542,7 @@ object ASJHookHandler {
 	private val message_f = ASJReflectionHelper.getField(java.lang.Throwable::class.java, "detailMessage")
 	private val stackTrace_f = ASJReflectionHelper.getField(java.lang.Throwable::class.java, "stackTrace")
 	
-	@JvmStatic
-	@Hook(returnCondition = ReturnCondition.ON_TRUE, targetMethod = "func_150000_e", isMandatory = true)
-	fun tryToCreatePortal(portal: BlockPortal, world: World, x: Int, y: Int, z: Int) = MinecraftForge.EVENT_BUS.post(NetherPortalActivationEvent(world, x, y, z))
-	
+	// modded fire breaking in creative fix
 	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ALWAYS, isMandatory = true)
 	fun extinguishFire(world: World, player: EntityPlayer?, x: Int, y: Int, z: Int, side: Int): Boolean {
@@ -574,6 +567,7 @@ object ASJHookHandler {
 		return false
 	}
 	
+	// nightvision twinkling fix
 	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ALWAYS)
 	fun getNightVisionBrightness(render: EntityRenderer, player: EntityPlayer, partialTicks: Float) = if ((player.getActivePotionEffect(Potion.nightVision.id)?.duration ?: 0) > 0) 1f else 0f
@@ -620,6 +614,7 @@ object ASJHookHandler {
 		return itemstack
 	}
 	
+	// clear entity name
 	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ON_TRUE)
 	fun itemInteractionForEntity(item: ItemNameTag, stack: ItemStack, player: EntityPlayer?, target: EntityLivingBase?): Boolean {
@@ -631,10 +626,12 @@ object ASJHookHandler {
 		return false
 	}
 	
+	// can't shear dead animals (dupe fix)
 	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ON_NOT_NULL)
 	fun onSheared(entity: EntityMooshroom, item: ItemStack?, world: IBlockAccess?, x: Int, y: Int, z: Int, fortune: Int) = if (entity.isDead) ArrayList<Any?>() else null
 	
+	// invisible blocks to tabs
 	@SideOnly(Side.CLIENT)
 	@JvmStatic
 	@Hook
@@ -661,13 +658,7 @@ object ASJHookHandler {
 		return (furnace.furnaceBurnTime.D / furnace.currentItemBurnTime * mod).I
 	}
 	
-	@SideOnly(Side.CLIENT)
-	@JvmStatic
-	@Hook(isMandatory = true, returnCondition = ReturnCondition.ON_TRUE)
-	fun doRenderShadowAndFire(render: Render, entity: Entity, x: Double, y: Double, z: Double, yaw: Float, ticks: Float): Boolean {
-		return MinecraftForge.EVENT_BUS.post(RenderEntityPostEvent(entity, x, y, z, yaw))
-	}
-	
+	// fog fixes
 	@SideOnly(Side.CLIENT)
 	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ALWAYS)
@@ -790,14 +781,16 @@ object ASJHookHandler {
 		}
 	}
 	
+	// fixing some occasional OptiFine crashes
 	@SideOnly(Side.CLIENT)
 	@Synchronized
-	@JvmStatic // fixing some occasional OptiFine crashes
+	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ALWAYS)
 	fun deleteDisplayLists(gla: GLAllocation?, id: Int) {
 		if (GLAllocation.mapDisplayLists.contains(id)) GL11.glDeleteLists(id, GLAllocation.mapDisplayLists.remove(id) as Int)
 	}
 	
+	// file:// scheme for chat
 	@SideOnly(Side.CLIENT)
 	@JvmStatic
 	@Hook(targetMethod = "<clinit>", injectOnExit = true)
@@ -805,6 +798,7 @@ object ASJHookHandler {
 		GuiChat.field_152175_f.add("file")
 	}
 	
+	// ???
 	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ON_TRUE)
 	fun trackBrokenTexture(handler: FMLClientHandler, resourceLocation: ResourceLocation, error: String?): Boolean {
@@ -816,7 +810,6 @@ object ASJHookHandler {
 		return false
 	}
 	
-	@SideOnly(Side.CLIENT)
 	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ALWAYS, injectOnExit = true)
 	fun getArmSwingAnimationEnd(e: EntityLivingBase, @Hook.ReturnValue result: Int) = if (e is ICustomArmSwingEndEntity) e.getArmSwingAnimationEnd() else result

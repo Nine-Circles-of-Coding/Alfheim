@@ -36,7 +36,7 @@ class ItemRodElemental(name: String, private val barrier: () -> Block): ItemMod(
 	}
 	
 	override fun getIconIndex(par1ItemStack: ItemStack): IIcon? {
-		val name = par1ItemStack.displayName.toLowerCase().trim { it <= ' ' }
+		val name = par1ItemStack.displayName.lowercase().trim()
 		return if (name == "magical ruby" && this === AlfheimItems.rodMuspelheim) rubyIcon else if (name == "magical sapphire" && this === AlfheimItems.rodNiflheim) sapphireIcon else super.getIconIndex(par1ItemStack)
 	}
 	

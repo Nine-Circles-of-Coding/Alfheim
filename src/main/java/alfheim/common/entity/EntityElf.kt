@@ -247,11 +247,9 @@ class EntityElf @JvmOverloads constructor(world: World, priestType: Int = -1): E
 	}
 	
 	override fun getTotalArmorValue(): Int {
-		return getHackyEquip().sumBy {
-			if (it?.item is ItemArmor)
-				(it.item as ItemArmor).damageReduceAmount
-			else
-				0
+		return getHackyEquip().sumOf {
+			if (it?.item is ItemArmor) (it.item as ItemArmor).damageReduceAmount
+			else 0
 		}
 	}
 	

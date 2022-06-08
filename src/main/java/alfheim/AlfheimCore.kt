@@ -1,5 +1,6 @@
 package alfheim
 
+import alexsocol.patcher.KotlinAdapter
 import alfheim.api.ModInfo.MODID
 import alfheim.common.core.asm.AlfheimModularLoader
 import alfheim.common.core.command.*
@@ -24,54 +25,51 @@ import vazkii.botania.common.Botania
 import java.util.*
 
 @Suppress("UNUSED_PARAMETER")
-@Mod(modid = MODID, version = "BETA", dependencies = "required-after:Botania", useMetadata = true, guiFactory = "$MODID.client.gui.GUIFactory")
-class AlfheimCore {
+@Mod(modid = MODID, version = "BETA", dependencies = "required-after:Botania", useMetadata = true, guiFactory = "$MODID.client.gui.GUIFactory", modLanguageAdapter = KotlinAdapter.className)
+object AlfheimCore {
 	
-	companion object {
+	const val ENABLE_RAGNAROK = false
+	
+	@Instance(MODID)
+	lateinit var instance: AlfheimCore
+	
+	@field:SidedProxy(clientSide = "$MODID.client.core.proxy.ClientProxy", serverSide = "$MODID.common.core.proxy.CommonProxy")
+	lateinit var proxy: CommonProxy
+	
+	@Metadata(MODID)
+	lateinit var meta: ModMetadata
+	
+	lateinit var network: SimpleNetworkWrapper
+	var nextPacketID = 0
+	
+	var save = ""
+	
+	var MineTweakerLoaded = false
+	var NEILoaded = false
+	var stupidMode = false
+	var TiCLoaded = false
+	var TravellersGearLoaded = false
+	
+	val jingleTheBells: Boolean
+	
+	// do not reassign this unless you know what you are doing
+	var winter: Boolean
+	
+	/** Today's month */
+	val month: Int
+	
+	/** Today's day of month */
+	val date: Int
+	
+	init {
+		AlfheimTab
 		
-		const val ENABLE_RAGNAROK = false
+		val calendar = Calendar.getInstance()
+		month = calendar[2] + 1
+		date = calendar[5]
 		
-		@Instance(MODID)
-		lateinit var instance: AlfheimCore
-		
-		@field:SidedProxy(clientSide = "$MODID.client.core.proxy.ClientProxy", serverSide = "$MODID.common.core.proxy.CommonProxy")
-		lateinit var proxy: CommonProxy
-		
-		@Metadata(MODID)
-		lateinit var meta: ModMetadata
-		
-		lateinit var network: SimpleNetworkWrapper
-		var nextPacketID = 0
-		
-		var save = ""
-		
-		var MineTweakerLoaded = false
-		var NEILoaded = false
-		var stupidMode = false
-		var TiCLoaded = false
-		var TravellersGearLoaded = false
-		
-		val jingleTheBells: Boolean
-		
-		// do not reassign this unless you know what you are doing
-		var winter: Boolean
-		
-		/** Today's month */
-		val month: Int
-		
-		/** Today's day of month */
-		val date: Int
-		
-		init {
-			AlfheimTab
-			
-			val calendar = Calendar.getInstance()
-			month = calendar[2] + 1
-			date = calendar[5]
-			
-			jingleTheBells = (month == 12 && date >= 16 || month == 1 && date <= 8)
-			winter = month in arrayOf(1, 2, 12)
-		}
+		jingleTheBells = (month == 12 && date >= 16 || month == 1 && date <= 8)
+		winter = month in arrayOf(1, 2, 12)
 	}
 	
 	@EventHandler

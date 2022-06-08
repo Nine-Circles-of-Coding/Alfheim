@@ -79,7 +79,7 @@ class ItemMoonlightBow: ItemBow(), IRelic {
 			var g = 0.85f
 			var b = if (moon) g else 0.1f
 			
-			if (!moon && stack.displayName.toLowerCase().trim { it <= ' ' } == "i'm a banana") {
+			if (!moon && stack.displayName.lowercase().trim() == "i'm a banana") {
 				r = 0.95f
 				g = 0.95f
 				b = 0.1f
@@ -123,7 +123,7 @@ class ItemMoonlightBow: ItemBow(), IRelic {
 			arrow.damage = dmg
 			arrow.rotationYaw = player.rotationYaw
 			arrow.rotation = MathHelper.wrapAngleTo180_float(-player.rotationYaw + 180)
-			arrow.banana = dmg != -1f && stack.displayName.toLowerCase().trim { it <= ' ' } == "i'm a banana"
+			arrow.banana = dmg != -1f && stack.displayName.lowercase().trim() == "i'm a banana"
 			
 			if (dmg != -1f) {
 				val j = EnchantmentHelper.getEnchantmentLevel(Enchantment.power.effectId, stack)
@@ -185,7 +185,7 @@ class ItemMoonlightBow: ItemBow(), IRelic {
 			}
 		}
 		
-		return if (!moon && stack.displayName.toLowerCase().trim { it <= ' ' } == "i'm a banana")
+		return if (!moon && stack.displayName.lowercase().trim() == "i'm a banana")
 			bownana
 		else if (usingItem == null) {
 			iconD

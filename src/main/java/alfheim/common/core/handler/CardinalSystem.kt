@@ -916,7 +916,7 @@ object CardinalSystem {
 			
 			for (tsa in tsAreas[e.dimension]!!) {
 				if (Vector3.vecEntityDistance(tsa.pos, e) < SpellTimeStop.radius) {
-					if (MinecraftServer.getServer().configurationManager.playerEntityList.firstOrNull { it as EntityPlayerMP; it.uniqueID == tsa.uuid }?.let { !InteractionSecurity.canDoSomethingWithEntity(it as EntityPlayerMP, e) } != false) return false
+					if (MinecraftServer.getServer().configurationManager.playerEntityList.firstOrNull { it as EntityPlayerMP; it.uniqueID == tsa.uuid }?.let { !InteractionSecurity.canInteractWithEntity(it as EntityPlayerMP, e) } != false) return false
 					
 					if (e is ITimeStopSpecific && (e as ITimeStopSpecific).affectedBy(tsa.uuid)) return true
 					

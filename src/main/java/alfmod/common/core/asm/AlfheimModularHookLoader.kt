@@ -11,7 +11,7 @@ class AlfheimModularHookLoader: HookLoader() {
 	override fun getASMTransformerClass() = arrayOf(AlfheimModularClassTransformer::class.java.name)
 	
 	override fun registerHooks() {
-		FMLRelaunchLog.info("[${AlfheimModularCore.MODID.toUpperCase()}] Loaded coremod. Registering hooks...")
+		FMLRelaunchLog.info("[${AlfheimModularCore.MODID.uppercase()}] Loaded coremod. Registering hooks...")
 		
 		registerHookContainer("alfmod.common.core.asm.AlfheimModularHookHandler")
 	}

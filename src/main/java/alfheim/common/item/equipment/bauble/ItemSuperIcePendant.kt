@@ -1,6 +1,6 @@
 package alfheim.common.item.equipment.bauble
 
-import alexsocol.asjlib.ASJUtilities
+import alexsocol.asjlib.*
 import alexsocol.asjlib.security.InteractionSecurity
 import alfheim.common.core.util.DamageSourceSpell
 import net.minecraft.entity.EntityLivingBase
@@ -13,7 +13,7 @@ import vazkii.botania.common.item.equipment.bauble.ItemIcePendant
 class ItemSuperIcePendant: ItemIcePendant() {
 	
 	override fun setUnlocalizedName(name: String): Item {
-		return super.setUnlocalizedName("Super${name.capitalize()}")
+		return super.setUnlocalizedName("Super${name.capitalized()}")
 	}
 	
 	override fun onWornTick(stack: ItemStack?, entity: EntityLivingBase?) {

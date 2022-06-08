@@ -158,7 +158,7 @@ object RenderTileAlfheimPylons: TileEntitySpecialRenderer() {
 			glDisable(GL_ALPHA_TEST)
 		}
 		
-		override fun drawMesh() {
+		override fun drawMesh(vararg data: Any?) {
 			model.renderCrystal()
 		}
 		

@@ -43,7 +43,7 @@ class EntityGleipnir: Entity {
 		val targets = worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, boundingBox) as MutableList<EntityLivingBase>
 		targets.remove(thrower)
 		
-		targets.removeAll { !InteractionSecurity.canDoSomethingWithEntity(thrower, it) }
+		targets.removeAll { !InteractionSecurity.canHurtEntity(thrower, it) }
 		
 		if (AlfheimConfigHandler.enableMMO) {
 			val pt = CardinalSystem.PartySystem.getParty(thrower)

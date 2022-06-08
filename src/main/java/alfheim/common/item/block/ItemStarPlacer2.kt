@@ -65,7 +65,7 @@ class ItemStarPlacer2: ItemMod("starPlacer2") {
 		if (color in defaultColors)
 			list.add(StatCollector.translateToLocal("misc.${ModInfo.MODID}.color.${defaultColors.indexOf(color)}"))
 		else
-			list.add("#${Integer.toHexString(color).toUpperCase()}")
+			list.add("#${Integer.toHexString(color).uppercase()}")
 		if (getSize(stack) != 0.05f)
 			list.add(StatCollector.translateToLocalFormatted("misc.${ModInfo.MODID}.customSize", getSize(stack) / 0.1f))
 	}

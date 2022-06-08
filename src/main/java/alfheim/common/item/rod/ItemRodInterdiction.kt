@@ -79,7 +79,7 @@ open class ItemRodInterdiction(name: String = "rodInterdiction"): ItemMod(name),
 	fun pushEntities(x: Double, y: Double, z: Double, range: Int, velocity: Double, player: EntityPlayer?, entities: List<Entity>): Boolean {
 		var flag = false
 		for (entity in entities) {
-			if (player != null && !InteractionSecurity.canDoSomethingWithEntity(player, entity)) continue
+			if (player != null && !InteractionSecurity.canInteractWithEntity(player, entity)) continue
 			
 			val xDif = entity.posX - x
 			val yDif = entity.posY - (y + 1)

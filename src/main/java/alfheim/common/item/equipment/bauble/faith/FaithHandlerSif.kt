@@ -74,8 +74,7 @@ object FaithHandlerSif: IFaithHandler {
 							grow.add(ChunkCoordinates(player.posX.mfloor() + x, player.posY.mfloor() + y, player.posZ.mfloor() + z) to block)
 					}
 		
-		if (grow.isEmpty()) return
-		val pair = grow.random()
+		val pair = grow.random() ?: return
 		val (x, y, z) = pair.first
 		bonemeal(world, pair.second, x, y, z, player, stack, 10)
 		

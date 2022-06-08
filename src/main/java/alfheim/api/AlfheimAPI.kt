@@ -128,7 +128,7 @@ object AlfheimAPI {
 			checkGet(spell.race).add(spell)
 			LibResourceLocations.add(spell.name)
 		} else
-			FMLRelaunchLog.log(ModInfo.MODID.toUpperCase(), Level.WARN, "Trying to register spell " + spell.name + " twice. Skipping.")
+			ASJUtilities.warn("Trying to register spell ${spell.name} twice. Skipping.")
 		
 	}
 	
@@ -171,7 +171,7 @@ object AlfheimAPI {
 		try {
 			anomalyInstances[name] = subtile.newInstance()
 		} catch (e: Throwable) {
-			FMLRelaunchLog.log(Loader.instance().activeModContainer().modId.toUpperCase(), Level.ERROR, e, "Cannot instantiate anomaly subtile for ${subtile.canonicalName}")
+			ASJUtilities.error("Cannot instantiate anomaly subtile for ${subtile.canonicalName}", e)
 			throw IllegalArgumentException("Uninstantiatable anomaly subtile $subtile")
 		}
 	}

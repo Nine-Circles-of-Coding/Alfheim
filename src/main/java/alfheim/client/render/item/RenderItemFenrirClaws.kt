@@ -20,7 +20,6 @@ object RenderItemFenrirClaws: IItemRenderer {
 		setTwoside()
 		setBlend()
 		
-		@Suppress("NON_EXHAUSTIVE_WHEN")
 		when (type) {
 			EQUIPPED_FIRST_PERSON -> {
 				glTranslatef(0f, 0.5f, -0.75f)
@@ -50,7 +49,7 @@ object RenderItemFenrirClaws: IItemRenderer {
 				glTranslatef(-9.25f, -10.25f, 0f)
 			}
 			
-			ENTITY                -> {
+			else                -> {
 				glTranslated(-0.25, -0.25, -0.5)
 			}
 		}

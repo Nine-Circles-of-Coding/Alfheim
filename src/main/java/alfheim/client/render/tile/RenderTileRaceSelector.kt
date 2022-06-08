@@ -1,9 +1,9 @@
 package alfheim.client.render.tile
 
 import alexsocol.asjlib.*
+import alexsocol.asjlib.render.ModelBipedNew
 import alfheim.api.entity.EnumRace
 import alfheim.api.lib.LibResourceLocations
-import alfheim.client.model.entity.ModelBipedNew
 import alfheim.client.render.entity.RenderWings
 import alfheim.common.block.tile.TileRaceSelector
 import net.minecraft.client.renderer.*
@@ -29,7 +29,7 @@ object RenderTileRaceSelector: TileEntitySpecialRenderer() {
 			glRotatef(180f, 1f, 0f, 0f)
 			
 			glScalef(1f / 8 / 16)
-			val text = StatCollector.translateToLocal("elvenstory.select${if (meta == 0) "gender" else if (meta == 1) "race" else ""}")
+			val text = StatCollector.translateToLocal("elvenstory.select${if (meta == 0) "gender" else "race"}")
 			font.drawString(text, font.getStringWidth(text) / -2, 0, 0)
 			glPopMatrix()
 		}

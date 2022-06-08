@@ -41,7 +41,7 @@ object RenderContributors {
 			glShadeModel(GL_SMOOTH)
 		}
 		
-		override fun drawMesh() {
+		override fun drawMesh(vararg data: Any?) {
 			val tes = Tessellator.instance
 			tes.startDrawingQuads()
 			tes.addVertexWithUV(-1.0, 0.0, -1.0, 0.0, 0.0)

@@ -214,32 +214,26 @@ object ASJUtilities {
 	 * @see [TAG_ASJIGNORENBT]
 	 * @see [TAG_ASJONLYNBT]
 	 */
-	// WHAT THE HELL IS WRONG WITH THE COMPILER?!
 	@JvmStatic
 	fun isItemStackEqualCrafting(ingredient: ItemStack, input: ItemStack): Boolean {
-		if (!ingredient.isItemEqual(input))
-			return false
-		
-		if (ItemNBTHelper.getBoolean(ingredient, TAG_ASJIGNORENBT, false))
-			return true
-		
-		if (ItemNBTHelper.getBoolean(ingredient, TAG_ASJONLYNBT, false)) {
-			val tags = input.tagCompound ?: return false
-			val itags = ingredient.tagCompound.copy() as NBTTagCompound
-			itags.removeTag(TAG_ASJONLYNBT)
-			
-			for (key in itags.func_150296_c()) {
-				if (!tags.hasKey(key as String))
-					return false
+		when {
+			!ingredient.isItemEqual(input)                                -> return false
+			ItemNBTHelper.getBoolean(ingredient, TAG_ASJIGNORENBT, false) -> return true
+			ItemNBTHelper.getBoolean(ingredient, TAG_ASJONLYNBT, false)   -> {
+				val tags = input.tagCompound ?: return false
+				val itags = ingredient.tagCompound.copy() as NBTTagCompound
+				itags.removeTag(TAG_ASJONLYNBT)
 				
-				if (itags.getTag(key) != tags.getTag(key))
-					return false
+				for (key in itags.func_150296_c()) {
+					if (!tags.hasKey(key as String)) return false
+					
+					if (itags.getTag(key) != tags.getTag(key)) return false
+				}
+				
+				return true
 			}
-			
-			return true
+			else                                                          -> return ingredient.areItemStackTagsEqual(input)
 		}
-		
-		return ingredient.areItemStackTagsEqual(input)
 	}
 	
 	/**
@@ -609,30 +603,12 @@ object ASJUtilities {
 	}
 	
 	/**
-	 * Registers new entity with egg
-	 * @param entityClass Entity's class file
-	 * @param name The name of this entity
-	 * @param backColor Background egg color
-	 * @param frontColor The color of dots
-	 */
-	@Deprecated("Use local registrations instead", ReplaceWith("registerEntity(entityClass, name, instance, id)"), DeprecationLevel.ERROR)
-	@JvmStatic
-	fun registerEntityEgg(entityClass: Class<out Entity>, name: String, backColor: Int, frontColor: Int, instance: Any) {
-		val id = EntityRegistry.findGlobalUniqueEntityId()
-//		val modid = FMLCommonHandler.instance().findContainerFor(instance).modId
-		EntityRegistry.registerGlobalEntityID(entityClass, name, id)
-		EntityRegistry.registerModEntity(entityClass, name, id, instance, 128, 1, true)
-		EntityList.entityEggs[id] = EntityList.EntityEggInfo(id, backColor, frontColor)
-	}
-	
-	/**
 	 * Changes the biome at given coordinates, currently really buggy
 	 * @param world This World
 	 * @param x -Coordinate
 	 * @param z -Coordinate
 	 * @param biome The biome to set at this location
 	 */
-	@Deprecated("")
 	@JvmStatic
 	fun setBiomeAt(world: World, x: Int, z: Int, biome: BiomeGenBase) {
 		val chunk = world.getChunkFromBlockCoords(x, z)
@@ -698,7 +674,7 @@ object ASJUtilities {
 		for (t in coll) {
 			++id
 			
-			if (t?.let { key.compareTo(it) } ?: continue == 0) return id
+			if ((t?.let { key.compareTo(it) } ?: continue) == 0) return id
 		}
 		return id
 	}
@@ -708,8 +684,8 @@ object ASJUtilities {
 	 * @param keepLoaded Keep spawn chunks loaded
 	 */
 	@JvmStatic
-	fun registerDimension(id: Int, w: Class<out WorldProvider>, keepLoaded: Boolean) {
-		require(DimensionManager.registerProviderType(id, w, keepLoaded)) { String.format("Failed to register provider for id %d, One is already registered", id) }
+	fun registerDimension(id: Int, provider: Class<out WorldProvider>, keepLoaded: Boolean) {
+		require(DimensionManager.registerProviderType(id, provider, keepLoaded)) { String.format("Failed to register provider for id %d, One is already registered", id) }
 		DimensionManager.registerDimension(id, id)
 	}
 	
@@ -811,33 +787,42 @@ object ASJUtilities {
 	fun worldInfoForLog(world: World?) = "${time(world)} ${if (world?.isRemote == true) "[C]" else "[S]"}"
 	
 	@JvmStatic
+	fun trace(message: String) {
+		moddedLog(Level.TRACE, message)
+	}
+	
+	@JvmStatic
 	fun log(message: String) {
-		FMLRelaunchLog.log(Loader.instance().activeModContainer().modId.toUpperCase(), Level.INFO, message)
+		moddedLog(Level.INFO, message)
 	}
 	
 	@JvmStatic
 	fun debug(message: String) {
-		FMLRelaunchLog.log(Loader.instance().activeModContainer().modId.toUpperCase(), Level.DEBUG, message)
+		moddedLog(Level.DEBUG, message)
 	}
 	
 	@JvmStatic
 	fun warn(message: String) {
-		FMLRelaunchLog.log(Loader.instance().activeModContainer().modId.toUpperCase(), Level.WARN, message)
+		moddedLog(Level.WARN, message)
 	}
 	
 	@JvmStatic
-	fun error(message: String) {
-		FMLRelaunchLog.log(Loader.instance().activeModContainer().modId.toUpperCase(), Level.ERROR, message)
+	fun error(message: String, e: Throwable? = null) {
+		moddedLog(Level.ERROR, message, e)
 	}
 	
 	@JvmStatic
-	fun fatal(message: String) {
-		FMLRelaunchLog.log(Loader.instance().activeModContainer().modId.toUpperCase(), Level.FATAL, message)
+	fun fatal(message: String, e: Throwable? = null) {
+		moddedLog(Level.FATAL, message, e)
 	}
 	
-	@JvmStatic
-	fun trace(message: String) {
-		FMLRelaunchLog.log(Loader.instance().activeModContainer().modId.toUpperCase(), Level.TRACE, message)
+	private fun moddedLog(level: Level, message: String, e: Throwable? = null) {
+		val modid = Loader.instance().activeModContainer().modId.uppercase()
+		
+		if (e == null)
+			FMLRelaunchLog.log(modid, level, message)
+		else
+			FMLRelaunchLog.log(modid, level, e, message)
 	}
 	
 	@JvmStatic
@@ -864,7 +849,6 @@ object ASJUtilities {
 	}
 	
 	@JvmStatic
-	@Deprecated("Untested")
 	fun sayToAllOPs(message: String) {
 		val ops = MinecraftServer.getServer().configurationManager.func_152606_n()
 		MinecraftServer.getServer().configurationManager.playerEntityList.forEach { if ((it as EntityPlayer).commandSenderName in ops)  say(it, message) }
@@ -907,36 +891,4 @@ object ASJUtilities {
 		sb.append("]")
 		return "$sb"
 	}
-	
-	// backward compatibility
-	/**
-	 * Registers new entity
-	 * @param entityClass Entity's class file
-	 * @param name The name of this entity
-	 * @param instance Mod instance
-	 * @param id Mod-specific entity id
-	 */
-	@JvmStatic
-	fun registerEntity(entityClass: Class<out Entity>, name: String, instance: Any, id: Int) {
-		//val modid = FMLCommonHandler.instance().findContainerFor(instance).modId
-		EntityRegistry.registerModEntity(entityClass, name, id, instance, 128, 1, true)
-	}
-	
-	/**
-	 * Sends entity to dimension without portal frames
-	 * @param player player to send
-	 * @param dimTo ID of the dimension the entity should be sent to
-	 */
-	@JvmStatic
-	fun sendToDimensionWithoutPortal(player: EntityPlayer, dimTo: Int, x: Double, y: Double, z: Double) = sendToDimensionWithoutPortal(player as Entity, dimTo, x, y, z)
-	
-	/**
-	 * Checks whether [target] is NOT in FOV of [observer]
-	 * @author a_dizzle (minecraftforum.net)
-	 */
-	@JvmStatic
-	fun isNotInFieldOfVision(target: EntityLivingBase, observer: EntityLivingBase) = isNotInFieldOfVision(target as Entity, observer)
-	
-	@JvmStatic
-	fun sayToAllOnline(message: String) = sayToAllOnline(message, *emptyArray())
 }

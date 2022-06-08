@@ -15,6 +15,7 @@ import net.minecraftforge.common.util.ForgeDirection
 import vazkii.botania.api.corporea.*
 import vazkii.botania.common.block.tile.corporea.TileCorporeaFunnel
 import vazkii.botania.common.core.helper.InventoryHelper
+import kotlin.collections.sumOf
 
 class TileCorporeaAutocrafter: ASJTile(), ICorporeaInterceptor, IInventory {
 	
@@ -91,7 +92,7 @@ class TileCorporeaAutocrafter: ASJTile(), ICorporeaInterceptor, IInventory {
 		if (spark == null || spark.master == null) return
 		
 		val stacks = CorporeaHelper.requestItem(request, -1, spark, request is ItemStack, false)
-		val count = stacks.sumBy { it.stackSize }
+		val count = stacks.sumOf { it.stackSize }
 		
 		if (count >= requestMissing) {
 			fulfillRequest()
@@ -118,7 +119,7 @@ class TileCorporeaAutocrafter: ASJTile(), ICorporeaInterceptor, IInventory {
 			if (buffer[i] != null) continue
 			
 			val got = CorporeaHelper.requestItem(pattern, pattern.stackSize, spark, true, true)
-			val gotSize = got.sumBy { it.stackSize }
+			val gotSize = got.sumOf { it.stackSize }
 			
 			// not enough
 			if (gotSize < pattern.stackSize) {

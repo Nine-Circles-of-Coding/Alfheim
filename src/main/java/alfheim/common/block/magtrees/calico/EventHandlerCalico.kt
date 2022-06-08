@@ -6,16 +6,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.world.ExplosionEvent
 
-class EventHandlerCalico {
-	
-	companion object {
-		
-		val instance = EventHandlerCalico()
-		
-		fun register() {
-			MinecraftForge.EVENT_BUS.register(instance)
-		}
-	}
+object EventHandlerCalico {
 	
 	val MAXRANGE = 8
 	

@@ -84,7 +84,7 @@ object ItemNBTHelper {
 	
 	// GETTERS ///////////////////////////////////////////////////////////////////
 	fun verifyExistance(stack: ItemStack?, tag: String): Boolean {
-		return stack != null && stack.tagCompound?.hasKey(tag) == true
+		return stack?.tagCompound?.hasKey(tag) == true
 	}
 	
 	fun getBoolean(stack: ItemStack?, tag: String, defaultExpected: Boolean): Boolean {

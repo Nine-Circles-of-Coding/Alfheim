@@ -19,7 +19,7 @@ object TravellerBaubleTooltipHandler {
 				addStringToTooltip(tooltip, "alfheimmisc.tgtooltip", key)
 		} else {
 			val type = bauble.getBaubleType(stack)
-			addStringToTooltip(tooltip, "botania.baubletype.${type.name.toLowerCase()}")
+			addStringToTooltip(tooltip, "botania.baubletype.${type.name.lowercase()}")
 			val key = RenderHelper.getKeyDisplayString("Baubles Inventory")
 			if (key != null)
 				addStringToTooltip(tooltip, StatCollector.translateToLocal("botania.baubletooltip").replace("%key%".toRegex(), key))

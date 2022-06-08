@@ -15,6 +15,7 @@ object NEINoBossHook {
 	@Hook(injectOnExit = true)
 	fun load(spawner: ItemInfo?, world: World) {
 		if (AlfheimConfigHandler.blacklistWither) // oh just shut the fuck up, I'm tired of making that shit public every time gradle decides to redownload the whole mod
-			ASJReflectionHelper.getStaticValue<ItemMobSpawner, MutableMap<Int, String>>(ItemMobSpawner::class.java, "IDtoNameMap").remove(EntityList.classToIDMapping[EntityWither::class.java])
+			ASJReflectionHelper.getStaticValue<ItemMobSpawner, MutableMap<Int, String>>(ItemMobSpawner::class.java, "IDtoNameMap")
+				?.remove(EntityList.classToIDMapping[EntityWither::class.java])
 	}
 }

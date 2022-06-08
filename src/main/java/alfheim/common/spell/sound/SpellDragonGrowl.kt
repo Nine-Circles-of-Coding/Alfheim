@@ -30,7 +30,7 @@ object SpellDragonGrowl: SpellBase("dragongrowl", EnumRace.POOKA, 12000, 2400, 2
 		
 		for (living in list) {
 			if (PartySystem.mobsSameParty(caster, living) || Vector3.entityDistance(living, caster) > radius * 2) continue
-			if (!InteractionSecurity.canDoSomethingWithEntity(caster, living)) continue
+			if (!InteractionSecurity.canHurtEntity(caster, living)) continue
 			
 			living.addPotionEffect(PotionEffect(Potion.blindness.id, duration, 0, true))
 			AlfheimCore.network.sendToAll(MessageEffect(living.entityId, Potion.blindness.id, duration, 0))

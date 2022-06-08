@@ -83,7 +83,7 @@ class ItemAttributionBauble: ItemBauble("attributionBauble"), ICosmeticBauble {
 	
 	override fun onEquipped(stack: ItemStack, player: EntityLivingBase) {
 		super.onEquipped(stack, player)
-		if (stack.meta != 1 && stack.displayName.toLowerCase().trim() == "vazkii is bae") {
+		if (stack.meta != 1 && stack.displayName.lowercase().trim() == "vazkii is bae") {
 			stack.meta = 1
 			stack.tagCompound.removeTag("display")
 		}

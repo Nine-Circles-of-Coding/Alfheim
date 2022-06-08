@@ -19,7 +19,7 @@ class LensPush: Lens() {
 		val homeID = entity.entityData.getInteger(TAG_HOME_ID)
 		
 		if (!entity.worldObj.isRemote && entity.thrower != null)
-			entities.removeAll { !InteractionSecurity.canDoSomethingWithEntity(entity.thrower, it) }
+			entities.removeAll { !InteractionSecurity.canInteractWithEntity(entity.thrower, it) }
 		
 		for (living in entities) {
 			entity.entityData.setInteger(TAG_HOME_ID, living.entityId)

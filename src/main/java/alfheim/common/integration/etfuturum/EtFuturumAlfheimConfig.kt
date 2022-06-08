@@ -38,6 +38,6 @@ object EFHandlerBanners {
 	fun addPattern(clazz: Class<Enum<*>>, name: String, id: String, craftingItem: ItemStack) {
 		val changedname = "${ModInfo.MODID}_$name"
 		val changedid = "${ModInfo.MODID.substring(0, 3)}_$id"
-		EnumHelper.addEnum(clazz, changedname.toUpperCase(), arrayOf(String::class.java, String::class.java, ItemStack::class.java), arrayOf(changedname, changedid, craftingItem))
+		EnumHelper.addEnum(clazz, changedname.uppercase(), arrayOf(String::class.java, String::class.java, ItemStack::class.java), arrayOf(changedname, changedid, craftingItem))
 	}
 }

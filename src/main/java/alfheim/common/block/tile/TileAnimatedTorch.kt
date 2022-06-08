@@ -97,7 +97,7 @@ class TileAnimatedTorch: ASJTile() {
 		glEnable(GL_RESCALE_NORMAL)
 		RenderItem.getInstance().renderItemAndEffectIntoGUI(mc.fontRenderer, mc.renderEngine, ItemStack(AlfheimBlocks.animatedTorch), x, y)
 		
-		mc.fontRenderer.drawStringWithShadow(StatCollector.translateToLocal("tile.AnimatedTorch.desc." + torchMode.name.toLowerCase()), x + 18, y + 6, 0xFF4444)
+		mc.fontRenderer.drawStringWithShadow(StatCollector.translateToLocal("tile.AnimatedTorch.desc." + torchMode.name.lowercase()), x + 18, y + 6, 0xFF4444)
 	}
 	
 	override fun updateEntity() {

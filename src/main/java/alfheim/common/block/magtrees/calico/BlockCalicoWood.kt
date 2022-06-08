@@ -1,5 +1,6 @@
 package alfheim.common.block.magtrees.calico
 
+import alexsocol.asjlib.eventForge
 import alfheim.common.block.base.BlockModRotatedPillar
 import alfheim.common.item.block.ItemBlockLeavesMod
 import alfheim.common.lexicon.AlfheimLexiconData
@@ -16,7 +17,7 @@ class BlockCalicoWood: BlockModRotatedPillar(Material.wood), IExplosionDampener 
 	init {
 		setBlockName("calicoWood")
 		blockHardness = 2f
-		EventHandlerCalico.register()
+		EventHandlerCalico.eventForge()
 	}
 	
 	override fun canSustainLeaves(world: IBlockAccess, x: Int, y: Int, z: Int) = true

@@ -62,13 +62,13 @@ object CommandAlfheim: CommandBase() {
 		if (on) {
 			AlfheimConfigHandler.initWorldCoordsForElvenStory(AlfheimCore.save)
 			ESMHandler.checkAddAttrs()
-			AchievementPage.getAchievementPage(ModInfo.MODID.capitalize()).achievements.add(AlfheimAchievements.newChance)
+			AchievementPage.getAchievementPage(ModInfo.MODID.capitalized()).achievements.add(AlfheimAchievements.newChance)
 			if (Botania.thaumcraftLoaded) ThaumcraftAlfheimModule.addESMRecipes()
 		} else {
 			if (Botania.thaumcraftLoaded) ThaumcraftAlfheimModule.removeESMRecipes()
 			AlfheimConfigHandler.enableMMO = false
 			toggleMMO(AlfheimConfigHandler.enableMMO)
-			AchievementPage.getAchievementPage(ModInfo.MODID.capitalize()).achievements.remove(AlfheimAchievements.newChance)
+			AchievementPage.getAchievementPage(ModInfo.MODID.capitalized()).achievements.remove(AlfheimAchievements.newChance)
 		}
 	}
 	

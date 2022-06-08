@@ -67,7 +67,7 @@ class ItemSifRing: ItemRelicBauble("SifRing") {
 		val list = player.worldObj.getEntitiesWithinAABB(EntityAgeable::class.java, player.boundingBox(8)) as MutableList<EntityAgeable>
 		
 		for (e in list) {
-			if (!InteractionSecurity.canDoSomethingWithEntity(player, e))
+			if (!InteractionSecurity.canInteractWithEntity(player, e))
 				return
 			
 			if (!ManaItemHandler.requestManaExact(stack, player, 1, true))

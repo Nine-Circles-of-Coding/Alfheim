@@ -27,7 +27,7 @@ object WorkInProgressItemsHandler {
 	
 	@SubscribeEvent
 	fun onTooltip(e: ItemTooltipEvent) {
-		if (e.itemStack.item inn wipList)
+		if (e.itemStack.item inl wipList)
 			e.toolTip.add("${EnumChatFormatting.DARK_RED}[WIP]")
 	}
 }

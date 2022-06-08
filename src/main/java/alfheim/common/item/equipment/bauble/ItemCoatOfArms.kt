@@ -54,7 +54,7 @@ class ItemCoatOfArms: ItemBauble("coatOfArms"), ICosmeticBauble, IPriestColorOve
 	
 	override fun onEquipped(stack: ItemStack, player: EntityLivingBase) {
 		super.onEquipped(stack, player)
-		if (stack.meta == 1 && "paris".toRegex().find(stack.displayName.toLowerCase()) != null) {
+		if (stack.meta == 1 && "paris".toRegex().find(stack.displayName.lowercase()) != null) {
 			stack.meta = TYPES - 1
 			stack.tagCompound.removeTag("display")
 		}

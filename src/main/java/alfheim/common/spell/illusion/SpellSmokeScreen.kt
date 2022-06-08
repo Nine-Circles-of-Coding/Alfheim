@@ -27,7 +27,7 @@ object SpellSmokeScreen: SpellBase("smokescreen", EnumRace.SPRIGGAN, 5000, 600, 
 		val list = caster.worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, caster.boundingBox.expand(radius)) as List<EntityLivingBase>
 		for (living in list) {
 			if (PartySystem.mobsSameParty(caster, living) || Vector3.entityDistance(living, caster) > radius) continue
-			if (!InteractionSecurity.canDoSomethingWithEntity(caster, living)) continue
+			if (!InteractionSecurity.canHurtEntity(caster, living)) continue
 			
 			living.addPotionEffect(PotionEffect(Potion.blindness.id, duration, 0, true))
 			AlfheimCore.network.sendToAll(MessageEffect(living.entityId, Potion.blindness.id, duration, 0))

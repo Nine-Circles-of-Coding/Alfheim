@@ -176,14 +176,14 @@ object AlfheimHookHandler {
 	@JvmStatic
 	fun getBaublesDiscountForTools(player: EntityPlayer): Float {
 		val baubles = PlayerHandler.getPlayerBaubles(player)
-		return (0 until baubles.sizeInventory).sumByDouble { i -> (baubles[i]?.let { (it.item as? IManaDiscountBauble)?.getDiscount(it, i, player) } ?: 0f).D }.F
+		return (0 until baubles.sizeInventory).sumOf { i -> (baubles[i]?.let { (it.item as? IManaDiscountBauble)?.getDiscount(it, i, player) } ?: 0f) }
 	}
 	
 	@JvmStatic
 	fun getTravellersDiscountForTools(player: EntityPlayer): Float {
 		if (!AlfheimCore.TravellersGearLoaded) return 0f
 		val gear = TravellersGearAPI.getExtendedInventory(player)
-		return gear.indices.sumByDouble { i -> (gear[i]?.let { (it.item as? IManaDiscountBauble)?.getDiscount(it, i, player) } ?: 0f).D }.F
+		return gear.indices.sumOf { i -> (gear[i]?.let { (it.item as? IManaDiscountBauble)?.getDiscount(it, i, player) } ?: 0f) }
 	}
 	
 	var stoneHook = false
@@ -360,7 +360,7 @@ object AlfheimHookHandler {
 					} && !entity.worldObj.isRemote && pos.entityHit?.isSneaking == false
 		
 		if (!allow) return false
-		if (entity.thrower != null && !InteractionSecurity.canDoSomethingWithEntity(entity.thrower, pos.entityHit)) return false
+		if (entity.thrower != null && !InteractionSecurity.canInteractWithEntity(entity.thrower, pos.entityHit)) return false
 		
 		val fireworkStack = lens.generateFirework(burst.color)
 		val rocket = EntityFireworkRocket(entity.worldObj, entity.posX, entity.posY, entity.posZ, fireworkStack)

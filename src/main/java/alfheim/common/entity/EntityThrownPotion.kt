@@ -77,7 +77,11 @@ class EntityThrownPotion: EntityThrowable {
 							d1 = 1.0
 						}
 						
-						if (!InteractionSecurity.canDoSomethingWithEntity(thrower ?: continue, living)) continue
+						if (effects.any { Potion.potionTypes[it.potionID].isBadEffect }) {
+							if (!InteractionSecurity.canHurtEntity(thrower ?: continue, living)) continue
+						} else {
+							if (!InteractionSecurity.canInteractWithEntity(thrower ?: continue, living)) continue
+						}
 						
 						for (e: PotionEffect in effects) {
 							

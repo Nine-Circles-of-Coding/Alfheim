@@ -2,7 +2,7 @@ package alfheim.client.model.entity
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
-import alexsocol.asjlib.render.ASJRenderHelper
+import alexsocol.asjlib.render.*
 import alfheim.AlfheimCore
 import alfheim.api.ModInfo
 import alfheim.api.lib.LibResourceLocations

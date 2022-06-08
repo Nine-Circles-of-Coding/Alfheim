@@ -46,7 +46,7 @@ open class ItemFenrirArmor(slot: Int, name: String): ItemManasteelArmor(slot, na
 	}
 	
 	open fun getArmorTextureAfterInk(stack: ItemStack?, slot: Int, type: String?): String {
-		val t = type?.capitalize() ?: ""
+		val t = type?.capitalized() ?: ""
 		if (t == "Overlay")
 			ASJRenderHelper.setGlow()
 		

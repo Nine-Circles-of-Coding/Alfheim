@@ -103,7 +103,7 @@ class ItemNaturalBucket: ItemMod("NaturalBucket") {
 	
 	companion object {
 		
-		val materialNames = TinkersConstructAlfheimModule.naturalFluids.map { it.name.replace(".molten", "").capitalize() }
+		val materialNames = TinkersConstructAlfheimModule.naturalFluids.map { it.name.replace(".molten", "").capitalized() }
 		
 		init {
 			MinecraftForge.EVENT_BUS.register(this)

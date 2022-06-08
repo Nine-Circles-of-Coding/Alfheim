@@ -105,7 +105,7 @@ class ItemTankMask: ItemRelicBauble("TankMask"), IBaubleRender, IManaUsingItem {
 	override fun canUnequip(stack: ItemStack?, player: EntityLivingBase?) = getInt(stack, TAG_POSSESSION, 0) < 1800
 	
 	override fun addInformation(stack: ItemStack, player: EntityPlayer?, list: MutableList<Any?>, adv: Boolean) {
-		if (stack.displayName.toLowerCase().trim() == "kono dio da") list.also {
+		if (stack.displayName.lowercase().trim() == "kono dio da") list.also {
 			it.add("${EnumChatFormatting.DARK_RED}${EnumChatFormatting.BOLD}${EnumChatFormatting.UNDERLINE}SONO CHI NO SADAME")
 			it.add("")
 		}
@@ -122,7 +122,7 @@ class ItemTankMask: ItemRelicBauble("TankMask"), IBaubleRender, IManaUsingItem {
 	override fun onPlayerBaubleRender(stack: ItemStack, e: RenderPlayerEvent, type: IBaubleRender.RenderType) {
 		if (type != IBaubleRender.RenderType.HEAD) return
 		mc.renderEngine.bindTexture(TextureMap.locationItemsTexture)
-		val stone = stack.displayName.toLowerCase().trim() == "kono dio da"
+		val stone = stack.displayName.lowercase().trim() == "kono dio da"
 		val icon = if (stone) jojocon else itemIcon
 		glPushMatrix()
 		
@@ -146,7 +146,7 @@ class ItemTankMask: ItemRelicBauble("TankMask"), IBaubleRender, IManaUsingItem {
 	}
 	
 	override fun getIconIndex(stack: ItemStack) =
-		if (stack.displayName.toLowerCase().trim() == "kono dio da") jojocon else super.getIconIndex(stack)!!
+		if (stack.displayName.lowercase().trim() == "kono dio da") jojocon else super.getIconIndex(stack)!!
 	
 	override fun getIcon(stack: ItemStack, pass: Int) = getIconIndex(stack)
 	

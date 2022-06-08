@@ -13,7 +13,7 @@ class ASJClassTransformer: IClassTransformer {
 		
 		var returnClass = basicClass
 		
-		try {
+		if (transformedName != "alexsocol.patcher.asm.ASJClassTransformer\$ClassVisitorPotionMethodPublicizer") try {
 			val cr = ClassReader(returnClass)
 			val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
 			val cv = ClassVisitorPotionMethodPublicizer(cw, "$name ($transformedName)")
@@ -57,6 +57,15 @@ class ASJClassTransformer: IClassTransformer {
 				val cr = ClassReader(returnClass)
 				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
 				val ct = `EffectRenderer$ClassVisitor`(cw)
+				cr.accept(ct, ClassReader.EXPAND_FRAMES)
+				cw.toByteArray()
+			}
+			
+			"net.minecraft.command.server.CommandSummon"               -> {
+				println("Transforming $transformedName")
+				val cr = ClassReader(returnClass)
+				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
+				val ct = `CommandSummon$ClassVisitor`(cw)
 				cr.accept(ct, ClassReader.EXPAND_FRAMES)
 				cw.toByteArray()
 			}
@@ -127,6 +136,7 @@ class ASJClassTransformer: IClassTransformer {
 	}
 	
 	// fixes crash when adding eggs
+	// also calls ASJPatches#patchNeiNoWither
 	internal class `ItemInfo$ClassVisitor`(cv: ClassVisitor): ClassVisitor(ASM5, cv) {
 		
 		override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor {
@@ -140,8 +150,10 @@ class ASJClassTransformer: IClassTransformer {
 		internal class `ItemInfo$load$MethodVisitor`(mv: MethodVisitor): MethodVisitor(ASM5, mv) {
 			
 			override fun visitMethodInsn(opcode: Int, owner: String, name: String, desc: String?, itf: Boolean) {
-				if (opcode != INVOKESTATIC || owner != "codechicken/nei/api/ItemInfo" || name != "addSpawnEggs")
-					super.visitMethodInsn(opcode, owner, name, desc, itf)
+				if (opcode == INVOKESTATIC && owner == "codechicken/nei/api/ItemInfo" && name == "addSpawnEggs")
+					return super.visitMethodInsn(opcode, "alexsocol/patcher/asm/ASJPatches", "patchNeiNoWither", desc, itf)
+				
+				super.visitMethodInsn(opcode, owner, name, desc, itf)
 			}
 		}
 	}
@@ -211,6 +223,23 @@ class ASJClassTransformer: IClassTransformer {
 						else                                -> super.visitLdcInsn(Integer(PatcherConfigHandler.maxParticles))
 					}
 				} else super.visitIntInsn(opcode, operand)
+			}
+		}
+	}
+	
+	// Summom Usage
+	internal class `CommandSummon$ClassVisitor`(cv: ClassVisitor): ClassVisitor(ASM5, cv) {
+		
+		override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor {
+			println("Visiting CommandSummon#: $name$desc")
+			return `CommandSummon$processCommand$MethodVisitor`(super.visitMethod(access, name, desc, signature, exceptions))
+		}
+		
+		internal class `CommandSummon$processCommand$MethodVisitor`(mv: MethodVisitor): MethodVisitor(ASM5, mv) {
+			
+			override fun visitLdcInsn(cst: Any?) {
+				val ncst = if ("commands.summon.usage" == cst) "commands.summon.usage.new" else cst
+				super.visitLdcInsn(ncst)
 			}
 		}
 	}

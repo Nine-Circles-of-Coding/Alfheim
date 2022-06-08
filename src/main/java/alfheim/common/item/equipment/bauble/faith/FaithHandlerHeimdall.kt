@@ -135,7 +135,7 @@ object FaithHandlerHeimdall: IFaithHandler {
 	}
 	
 	override fun doParticles(stack: ItemStack, player: EntityPlayer) {
-		if (player.worldObj.getBlock(player, y = -1) inn arrayOf(ModBlocks.bifrost, ModBlocks.bifrostPerm)) return
+		if (player.worldObj.getBlock(player, y = -1) inl arrayOf(ModBlocks.bifrost, ModBlocks.bifrostPerm)) return
 		
 		val color = Color(ColorOverrideHelper.getColor(player, ItemIridescent.rainbowColor()))
 		val r = color.red / 255f

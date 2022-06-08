@@ -1,5 +1,6 @@
 package alfheim.common.achievement
 
+import alexsocol.asjlib.capitalized
 import alfheim.AlfheimCore
 import alfheim.api.ModInfo
 import alfheim.common.block.AlfheimBlocks
@@ -89,7 +90,7 @@ object AlfheimAchievements {
 		
 		firework = AlfheimAchievement("firework", -3, 3, Items.fireworks, null).setSpecial()
 		
-		AchievementPage.registerAchievementPage(AchievementPage(ModInfo.MODID.capitalize(), *achievements.toTypedArray()))
+		AchievementPage.registerAchievementPage(AchievementPage(ModInfo.MODID.capitalized(), *achievements.toTypedArray()))
 		
 		AlfheimAchievementHandler
 	}

@@ -69,7 +69,7 @@ class ItemRealitySword: ItemSword(AlfheimAPI.mauftriumToolmaterial), IManaUsingI
 	
 	fun merge(s1: String, s2: String): String {
 		val s = StringBuilder()
-		for (c1 in s1) for (c2 in s2) s.append(((c1.toShort() * c2.toShort()) % 256).toChar())
+		for (c1 in s1) for (c2 in s2) s.append(((c1.code * c2.code) % 256).toChar())
 		return hash("$s")!!
 	}
 	
@@ -98,7 +98,7 @@ class ItemRealitySword: ItemSword(AlfheimAPI.mauftriumToolmaterial), IManaUsingI
 			do {
 				indB = rand.nextInt(l)
 			} while (indB == indA)
-			val c = (chrs[indA].toShort() xor chrs[indB].toShort()).toChar()
+			val c = (chrs[indA].code xor chrs[indB].code).toChar()
 			chrs[indA] = c
 		}
 		

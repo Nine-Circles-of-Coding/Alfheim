@@ -7,7 +7,7 @@ def mainMod = true
 project.logger.lifecycle("\nBuilding " + (mainMod ? "main" : "side") + " mod\n")
 
 buildscript {
-	ext.kotlinVersion = '1.4.30'
+	ext.kotlinVersion = '1.6.21'
 	
 	repositories {
 		mavenCentral()
@@ -16,7 +16,7 @@ buildscript {
 		}
 		maven {
 			name = "forge"
-			url = "https://files.minecraftforge.net/maven"
+			url = "https://maven.minecraftforge.net/"
 		}
 		maven {
 			name = "sonatype"
@@ -33,22 +33,6 @@ buildscript {
 }
 
 repositories {
-	maven {
-		name = "chickenbones"
-		url = "http://chickenbones.net/maven/"
-	}
-	maven {
-		name "Mobius Repo"
-		url "http://mobiusstrip.eu/maven"
-	}
-	ivy {
-		name "MineTweaker3"
-		artifactPattern "http://minetweaker3.powerofbytes.com/download/[module]-([classifier]-)[revision].[ext]"
-	}
-	maven {
-		name "DVS1 Maven FS"
-		url "http://dvs1.progwml6.com/files/maven"
-	}
 	mavenCentral()
 }
 
@@ -73,23 +57,8 @@ configurations {
 }
 
 dependencies {
-	
-	compile "codechicken:CodeChickenLib:1.7.10-1.1.3.140:dev"
-	compile "codechicken:CodeChickenCore:1.7.10-1.0.7.47:dev"
-	compile "codechicken:ForgeMultipart:1.7.10-1.2.0.345:dev"
-	compile "codechicken:NotEnoughItems:1.7.10-1.0.5.120:dev"
-	compile "mcp.mobius.waila:Waila:1.5.10_1.7.10"
-	
-	compile name: "MineTweaker3", group: "minetweaker", version: "1.7.10-3.0.10B", classifier: "Dev-Full"
-	
-	compile "mantle:Mantle:1.7.10-0.3.2.jenkins207:deobf"
-	compile "tconstruct:TConstruct:1.7.10-1.8.8.build1003:deobf"
-	
-	compile fileTree(dir: 'lib', include: ['*.jar'])
-//	if (mainMod)
-//		embed "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-//	else
-		compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+	implementation fileTree(dir: 'lib', include: ['*.jar'])
+	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 }
 
 compileJava {
@@ -101,6 +70,8 @@ sourceCompatibility = targetCompatibility = '1.8'
 compileKotlin.kotlinOptions.jvmTarget = "1.8"
 
 jar {
+	duplicatesStrategy = 'include'
+	
 	from configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
 	
 	manifest {
@@ -142,6 +113,8 @@ jar {
 }
 
 processResources {
+	duplicatesStrategy = 'include'
+	
 	inputs.property "version", project.version
 	inputs.property "mcversion", project.minecraft.version
 

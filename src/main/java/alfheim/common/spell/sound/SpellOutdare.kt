@@ -25,7 +25,7 @@ object SpellOutdare: SpellBase("outdare", EnumRace.POOKA, 6000, 2400, 20) {
 		
 		for (e in l)
 			if (Vector3.entityDistance(caster, e) < radius) {
-				if (!InteractionSecurity.canDoSomethingWithEntity(caster, e))
+				if (!InteractionSecurity.canInteractWithEntity(caster, e))
 					continue
 				
 				if (e is EntityFlugel) {

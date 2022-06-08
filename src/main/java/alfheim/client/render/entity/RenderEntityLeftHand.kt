@@ -86,7 +86,7 @@ object RenderEntityLeftHand {
 		val stack = player.heldItem ?: return
 		val item = stack.item
 		val exc = item === AlfheimItems.excaliber
-		val ell = stack.displayName.toLowerCase().trim() == "the elucidator"
+		val ell = stack.displayName.lowercase().trim() == "the elucidator"
 		
 		if (item is ItemManasteelSword && (exc || ell)) {
 			glPushMatrix()

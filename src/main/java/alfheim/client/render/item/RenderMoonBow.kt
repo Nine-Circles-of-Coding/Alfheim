@@ -27,14 +27,14 @@ object RenderMoonBow: IItemRenderer {
 			}
 			
 			ItemRenderType.EQUIPPED              -> {
-				if (stack.displayName.toLowerCase().trim { it <= ' ' } == "i'm a banana")
+				if (stack.displayName.lowercase().trim() == "i'm a banana")
 					glTranslated(0.25, 0.25, 0.0)
 				
 				render(stack, if (data[1] is EntityPlayer) data[1] as EntityPlayer else null, true)
 			}
 			
 			ItemRenderType.EQUIPPED_FIRST_PERSON -> {
-				if (stack.displayName.toLowerCase().trim { it <= ' ' } == "i'm a banana" && mc.thePlayer.itemInUse !== stack) {
+				if (stack.displayName.lowercase().trim() == "i'm a banana" && mc.thePlayer.itemInUse !== stack) {
 					glTranslated(0.1, 0.1, 0.0)
 				}
 				

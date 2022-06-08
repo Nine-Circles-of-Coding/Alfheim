@@ -45,7 +45,7 @@ object StructureSpawnpoint {
 		val slots = (0 until tile.sizeInventory).shuffled().toMutableSet()
 		
 		while (count > 0) {
-			val pos = itemPoses.removeRandom()
+			val pos = itemPoses.removeRandom() ?: continue
 			val item = items[pos]
 			
 			if (!ASJUtilities.chance(item.chance)) {
@@ -55,7 +55,7 @@ object StructureSpawnpoint {
 			
 			--count
 			val meta = if (item.maxMeta == -1) item.meta else ASJUtilities.randInBounds(item.meta, item.maxMeta, rand)
-			tile.set(slots.removeRandom(), ItemStack(item.item, min(item.item.getItemStackLimit(ItemStack(item.item, 1, meta)), ASJUtilities.randInBounds(item.countMin, item.countMax, rand)), meta))
+			tile[slots.removeRandom() ?: continue] = ItemStack(item.item, min(item.item.getItemStackLimit(ItemStack(item.item, 1, meta)), ASJUtilities.randInBounds(item.countMin, item.countMax, rand)), meta)
 		}
 	}
 	

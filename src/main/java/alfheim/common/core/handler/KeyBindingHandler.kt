@@ -54,7 +54,7 @@ object KeyBindingHandler {
 				MovingObjectType.BLOCK  ->
 					MinecraftForge.EVENT_BUS.post(LeftClick(player, LEFT_CLICK_LIQUID, mopEntity.blockX, mopEntity.blockY, mopEntity.blockZ, mopEntity.sideHit, mopEntity.entityHit))
 				MovingObjectType.ENTITY ->
-					MinecraftForge.EVENT_BUS.post(LeftClick(player, LEFT_CLICK_ENTIY, mopEntity.blockX, mopEntity.blockY, mopEntity.blockZ, mopEntity.sideHit, mopEntity.entityHit))
+					MinecraftForge.EVENT_BUS.post(LeftClick(player, LEFT_CLICK_ENTITY, mopEntity.blockX, mopEntity.blockY, mopEntity.blockZ, mopEntity.sideHit, mopEntity.entityHit))
 				else                    ->
 					MinecraftForge.EVENT_BUS.post(LeftClick(player, LEFT_CLICK_AIR, mopNoEntity?.blockX ?: -1, mopNoEntity?.blockY ?: -1, mopNoEntity?.blockZ ?: -1, mopNoEntity?.sideHit ?: -1, mopNoEntity?.entityHit))
 			}
@@ -71,7 +71,7 @@ object KeyBindingHandler {
 				MovingObjectType.BLOCK  ->
 					MinecraftForge.EVENT_BUS.post(RightClick(player, RIGHT_CLICK_LIQUID, mopEntity.blockX, mopEntity.blockY, mopEntity.blockZ, mopEntity.sideHit, mopEntity.entityHit))
 				MovingObjectType.ENTITY ->
-					MinecraftForge.EVENT_BUS.post(RightClick(player, RIGHT_CLICK_ENTIY, mopEntity.blockX, mopEntity.blockY, mopEntity.blockZ, mopEntity.sideHit, mopEntity.entityHit))
+					MinecraftForge.EVENT_BUS.post(RightClick(player, RIGHT_CLICK_ENTITY, mopEntity.blockX, mopEntity.blockY, mopEntity.blockZ, mopEntity.sideHit, mopEntity.entityHit))
 				else                    ->
 					MinecraftForge.EVENT_BUS.post(RightClick(player, RIGHT_CLICK_AIR, mopNoEntity?.blockX ?: -1, mopNoEntity?.blockY ?: -1, mopNoEntity?.blockZ ?: -1, mopNoEntity?.sideHit ?: -1, mopNoEntity?.entityHit))
 			}

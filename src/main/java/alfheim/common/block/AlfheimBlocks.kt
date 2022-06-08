@@ -1,6 +1,7 @@
 package alfheim.common.block
 
 import alexsocol.asjlib.ASJUtilities.setBurnable
+import alexsocol.asjlib.capitalized
 import alexsocol.asjlib.extendables.block.BlockModMeta
 import alfheim.AlfheimCore
 import alfheim.api.*
@@ -368,7 +369,7 @@ object AlfheimBlocks {
 		val quartzs = arrayOf(ModFluffBlocks.darkQuartz, ModFluffBlocks.manaQuartz, ModFluffBlocks.blazeQuartz, ModFluffBlocks.lavenderQuartz, ModFluffBlocks.redQuartz, ModFluffBlocks.elfQuartz, ModFluffBlocks.sunnyQuartz)
 		
 		vazkii.botania.common.lib.LibOreDict.QUARTZ.forEachIndexed { id, it ->
-			registerOre("block${it.capitalize()}", ItemStack(quartzs[id]))
+			registerOre("block${it.capitalized()}", ItemStack(quartzs[id]))
 		}
 		registerOre(LibOreDict.RAINBOW_QUARTZ_BLOCK, ItemStack(shimmerQuartz))
 		

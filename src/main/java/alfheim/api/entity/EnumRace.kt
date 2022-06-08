@@ -7,6 +7,7 @@ import net.minecraft.entity.ai.attributes.*
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.*
 import net.minecraftforge.common.MinecraftForge
+import java.util.*
 
 enum class EnumRace {
 	
@@ -31,7 +32,7 @@ enum class EnumRace {
 	
 	companion object {
 		
-		private val RACE: IAttribute = RangedAttribute(ModInfo.MODID.toUpperCase() + ":RACE", 0.0, 0.0, values().size.D.minus(1)).setShouldWatch(true)
+		private val RACE: IAttribute = RangedAttribute(ModInfo.MODID.uppercase() + ":RACE", 0.0, 0.0, values().size.D.minus(1)).setShouldWatch(true)
 		
 		fun getRGBColor(id: Double): Int {
 			return when (getByID(id)) {

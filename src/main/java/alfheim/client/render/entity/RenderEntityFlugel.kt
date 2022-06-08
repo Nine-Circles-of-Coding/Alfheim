@@ -43,7 +43,7 @@ object RenderEntityFlugel: RenderLiving(ModelEntityFlugel, 0.25f) {
 			GL11.glColor4f(1f, 1f, 1f, 1f)
 		}
 		
-		override fun drawMesh() {
+		override fun drawMesh(vararg data: Any?) {
 			val tes = Tessellator.instance
 			tes.startDrawingQuads()
 			tes.addVertexWithUV(-0.75, 0.0, -0.75, 0.0, 0.0)

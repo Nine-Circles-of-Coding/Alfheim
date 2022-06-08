@@ -27,7 +27,7 @@ object SpellCall: SpellBase("call", EnumRace.IMP, 10000, 1800, 30) {
 		} else {
 			tgt = tg.target ?: return SpellCastResult.NOTARGET
 			if (ASJUtilities.isNotInFieldOfVision(tgt, caster)) return SpellCastResult.NOTSEEING
-			if (!InteractionSecurity.canDoSomethingWithEntity(caster, tgt)) return SpellCastResult.NOTALLOW
+			if (!InteractionSecurity.canInteractWithEntity(caster, tgt)) return SpellCastResult.NOTALLOW
 		}
 		
 		if (tgt === caster) return SpellCastResult.WRONGTGT

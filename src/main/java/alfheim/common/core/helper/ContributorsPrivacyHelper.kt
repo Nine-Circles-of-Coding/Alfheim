@@ -142,7 +142,7 @@ object HashHelper {
 			do {
 				indB = rand.nextInt(l)
 			} while (indB == indA)
-			val c = (chrs[indA].toShort() xor chrs[indB].toShort()).toChar()
+			val c = (chrs[indA].code xor chrs[indB].code).toChar()
 			chrs[indA] = c
 		}
 		

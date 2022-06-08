@@ -31,11 +31,11 @@ object AlfheimModularLoader {
 		if (!ModInfo.OBF) return
 		
 		if (!AlfheimConfigHandler.modularUpdate && AlfheimConfigHandler.modularUpdateConfirm) {
-			FMLRelaunchLog.info("[${ModInfo.MODID.toUpperCase()}] Alfheim Modular check is disabled. You are evil - you making author sad :(")
+			FMLRelaunchLog.info("[${ModInfo.MODID.uppercase()}] Alfheim Modular check is disabled. You are evil - you making author sad :(")
 			return
 		}
 		
-		FMLRelaunchLog.info("[${ModInfo.MODID.toUpperCase()}] Trying to update Alfheim Modular...")
+		FMLRelaunchLog.info("[${ModInfo.MODID.uppercase()}] Trying to update Alfheim Modular...")
 		
 		if (AlfheimConfigHandler.modularThread)
 			Thread(Runnable { doDownload() }, "Alfheim Modular Download").also { it.isDaemon = true }.start()
@@ -48,7 +48,7 @@ object AlfheimModularLoader {
 	fun doDownload() {
 		var crash = false
 		
-		FMLRelaunchLog.info("[${ModInfo.MODID.toUpperCase()}] Mode: ${(if (ModInfo.DEV) "development" else "master")}")
+		FMLRelaunchLog.info("[${ModInfo.MODID.uppercase()}] Mode: ${(if (ModInfo.DEV) "development" else "master")}")
 		
 		try {
 			val url = checkForUpdate()
@@ -80,20 +80,20 @@ object AlfheimModularLoader {
 					
 					crash = true
 					
-					FMLRelaunchLog.info("[${ModInfo.MODID.toUpperCase()}] Successfully updated Alfheim Modular")
+					FMLRelaunchLog.info("[${ModInfo.MODID.uppercase()}] Successfully updated Alfheim Modular")
 				} catch (e: Throwable) {
-					FMLRelaunchLog.log(Level.ERROR, e, "[${ModInfo.MODID.toUpperCase()}] $err")
+					FMLRelaunchLog.log(Level.ERROR, e, "[${ModInfo.MODID.uppercase()}] $err")
 					e.printStackTrace(System.err)
 				}
 			}
 			
-			FMLRelaunchLog.info("[${ModInfo.MODID.toUpperCase()}] Congrats! Alfheim Modular is up to date")
+			FMLRelaunchLog.info("[${ModInfo.MODID.uppercase()}] Congrats! Alfheim Modular is up to date")
 		} catch (e: Throwable) {
-			FMLRelaunchLog.log(Level.ERROR, e, "[${ModInfo.MODID.toUpperCase()}] Unable to perform Alfheim Modular update. Running with no/possibly outdated one")
+			FMLRelaunchLog.log(Level.ERROR, e, "[${ModInfo.MODID.uppercase()}] Unable to perform Alfheim Modular update. Running with no/possibly outdated one")
 		}
 		
 		if (crash) {
-			FMLRelaunchLog.warning("[${ModInfo.MODID.toUpperCase()}] Exiting JVM to allow Forge reload mod")
+			FMLRelaunchLog.warning("[${ModInfo.MODID.uppercase()}] Exiting JVM to allow Forge reload mod")
 			exitProcess(1)
 		}
 	}
@@ -103,7 +103,7 @@ object AlfheimModularLoader {
 		val url = InfoLoader.getNodeValue(root, "MODULAR")
 		
 		if (url.isEmpty()) {
-			FMLRelaunchLog.info("[${ModInfo.MODID.toUpperCase()}] No Alfheim Modular link specified, canceling update")
+			FMLRelaunchLog.info("[${ModInfo.MODID.uppercase()}] No Alfheim Modular link specified, canceling update")
 			return ""
 		}
 		
@@ -143,7 +143,7 @@ object AlfheimModularLoader {
 							return ""
 						}
 					} catch (e: Throwable) {
-						FMLRelaunchLog.log(Level.WARN, e, "[${ModInfo.MODID.toUpperCase()}] Error opening $mod")
+						FMLRelaunchLog.log(Level.WARN, e, "[${ModInfo.MODID.uppercase()}] Error opening $mod")
 					}
 			}
 		
@@ -208,7 +208,7 @@ object AlfheimModularLoader {
 	fun deleteMod(mod: File): Boolean {
 		val act = "delete previous Alfheim Modular version"
 		if (!mod.delete()) {
-			FMLRelaunchLog.log(Level.WARN, "[${ModInfo.MODID.toUpperCase()}] Could not $act, trying to free resources...")
+			FMLRelaunchLog.warning("[${ModInfo.MODID.uppercase()}] Could not $act, trying to free resources...")
 			
 			try {
 				val classLoader = this::class.java.classLoader
@@ -226,7 +226,7 @@ object AlfheimModularLoader {
 					(loadersF[ucp] as MutableList<*>).remove(loader)
 				}
 			} catch (e: Throwable) {
-				FMLRelaunchLog.log(Level.ERROR, e, "[${ModInfo.MODID.toUpperCase()}] Error occured while trying to $act")
+				FMLRelaunchLog.log(Level.ERROR, e, "[${ModInfo.MODID.uppercase()}] Error occured while trying to $act")
 			}
 			
 			return try {
@@ -235,7 +235,7 @@ object AlfheimModularLoader {
 				
 				false
 			} catch (e: Throwable) {
-				FMLRelaunchLog.log(Level.ERROR, e, "[${ModInfo.MODID.toUpperCase()}] Unable to $act. JVM now will try to delete it on exit. If it fails, please, delete it manually")
+				FMLRelaunchLog.log(Level.ERROR, e, "[${ModInfo.MODID.uppercase()}] Unable to $act. JVM now will try to delete it on exit. If it fails, please, delete it manually")
 				mod.deleteOnExit()
 				
 				true

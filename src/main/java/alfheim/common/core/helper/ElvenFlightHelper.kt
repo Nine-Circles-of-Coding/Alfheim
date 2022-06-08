@@ -15,7 +15,7 @@ object ElvenFlightHelper {
 		FMLCommonHandler.instance().bus().register(this)
 	}
 	
-	private val FLIGHT = RangedAttribute(ModInfo.MODID.toUpperCase() + ":FLIGHT", max, 0.0, max).setShouldWatch(true)
+	private val FLIGHT = RangedAttribute(ModInfo.MODID.uppercase() + ":FLIGHT", max, 0.0, max).setShouldWatch(true)
 	
 	fun register(player: EntityPlayer) {
 		player.getAttributeMap().registerAttribute(FLIGHT)

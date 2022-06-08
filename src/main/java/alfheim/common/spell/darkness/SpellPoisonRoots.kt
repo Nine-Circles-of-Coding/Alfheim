@@ -39,7 +39,7 @@ object SpellPoisonRoots: SpellBase("poisonroots", EnumRace.IMP, 60000, 6000, 30)
 		if (!flagBadEffs) return SpellCastResult.WRONGTGT
 		
 		val l = caster.worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, caster.boundingBox.expand(radius)) as MutableList<EntityLivingBase>
-		l.removeAll { !InteractionSecurity.canDoSomethingWithEntity(caster, it) }
+		l.removeAll { !InteractionSecurity.canHurtEntity(caster, it) }
 		val flagNotParty = l.any { !pt.isMember(it) }
 		
 		if (!flagNotParty) return SpellCastResult.NOTARGET

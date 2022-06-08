@@ -28,7 +28,7 @@ object SpellVisualizations {
 				glCullFace(GL_BACK)
 			}
 			
-			override fun drawMesh() {
+			override fun drawMesh(vararg data: Any?) {
 				val size = (240 / 3.6 / 16 * SpellTimeStop.radius).F
 				renderSphere(Tessellator.instance, size)
 			}

@@ -1,7 +1,7 @@
 package alfheim.common.core.asm
 
-import alexsocol.asjlib.ASJReflectionHelper
 import alexsocol.asjlib.asm.*
+import alexsocol.patcher.asm.ASJHookLoader
 import alfheim.api.ModInfo
 import alfheim.common.core.handler.AlfheimConfigHandler
 import cpw.mods.fml.relauncher.*
@@ -9,11 +9,13 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin.MCVersion
 import gloomyfolken.hooklib.minecraft.HookLoader
 import java.io.File
 
+// -Dfml.coreMods.load=alfheim.common.core.asm.AlfheimHookLoader,alfmod.common.core.asm.AlfheimModularHookLoader
+// -username=AlexSocol
 @MCVersion(value = "1.7.10")
 class AlfheimHookLoader: HookLoader() {
 	
 	init {
-		ModInfo.OBF = !ASJReflectionHelper.getStaticValue<CoreModManager, Boolean>(CoreModManager::class.java, "deobfuscatedEnvironment")
+		ModInfo.OBF = ASJHookLoader.OBF
 		ModInfo.DEV = false
 		
 		AlfheimConfigHandler.loadConfig(File("config/Alfheim/Alfheim.cfg"))
@@ -25,7 +27,7 @@ class AlfheimHookLoader: HookLoader() {
 	}
 	
 	override fun registerHooks() {
-		FMLRelaunchLog.info("[${ModInfo.MODID.toUpperCase()}] Loaded coremod. Registering hooks...")
+		FMLRelaunchLog.info("[${ModInfo.MODID.uppercase()}] Loaded coremod. Registering hooks...")
 		
 		registerHookContainer("alfheim.common.core.asm.hook.fixes.BotaniaGlowingRenderFixes")
 		registerHookContainer("alfheim.client.integration.nei.NEINoBossHook")

@@ -27,7 +27,7 @@ object SpellEcho: SpellBase("echo", EnumRace.POOKA, 4000, 1500, 5) {
 		for (e in list) {
 			if (Vector3.entityDistance(e, caster) > radius * 2) continue
 			
-			if (!InteractionSecurity.canDoSomethingWithEntity(caster, e)) continue
+//			if (!InteractionSecurity.canInteractWithEntity(caster, e)) continue
 			
 			when (e) {
 				is EntityItem       -> VisualEffectHandler.sendPacket(VisualEffects.ECHO_ITEM, e)

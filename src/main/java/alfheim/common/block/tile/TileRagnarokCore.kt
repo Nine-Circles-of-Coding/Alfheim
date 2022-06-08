@@ -127,7 +127,7 @@ class TileRagnarokCore: ASJTile(), ISparkAttachable {
 				destroyablePositions.add(it)
 		}
 		
-		val (x, y, z) = destroyablePositions.random()
+		val (x, y, z) = destroyablePositions.random() ?: return
 		worldObj.setBlockToAir(xCoord + x, yCoord + y, zCoord + z)
 		destroyablePositions.clear()
 	}

@@ -1,8 +1,8 @@
 package alfheim.client.render.tile
 
 import alexsocol.asjlib.D
+import alexsocol.asjlib.render.ModelBipedNew
 import alfheim.api.lib.LibResourceLocations
-import alfheim.client.model.entity.ModelBipedNew
 import net.minecraft.client.renderer.tileentity.TileEntitySkullRenderer
 import net.minecraft.tileentity.*
 import org.lwjgl.opengl.GL11.*

@@ -31,13 +31,13 @@ open class CommonProxy {
 	open fun init() {
 		AlfheimModularRecipes
 		
-		ASJUtilities.registerEntity(EntityDedMoroz::class.java, "DedMoroz", AlfheimModularCore.instance, AlfheimRegistry.id)
-		ASJUtilities.registerEntity(EntitySnowSprite::class.java, "SnowSprite", AlfheimModularCore.instance, AlfheimRegistry.id)
-		ASJUtilities.registerEntity(EntitySniceBall::class.java, "SniceBall", AlfheimModularCore.instance, AlfheimRegistry.id)
+		ASJUtilities.registerEntity(EntityDedMoroz::class.java, "DedMoroz", AlfheimRegistry.id)
+		ASJUtilities.registerEntity(EntitySnowSprite::class.java, "SnowSprite", AlfheimRegistry.id)
+		ASJUtilities.registerEntity(EntitySniceBall::class.java, "SniceBall", AlfheimRegistry.id)
 		
-		ASJUtilities.registerEntity(EntityFireSpirit::class.java, "FireSpirit", AlfheimModularCore.instance, AlfheimRegistry.id)
-		ASJUtilities.registerEntity(EntityMuspellsun::class.java, "Muspellsun", AlfheimModularCore.instance, AlfheimRegistry.id)
-		ASJUtilities.registerEntity(EntityRollingMelon::class.java, "RollingMelon", AlfheimModularCore.instance, AlfheimRegistry.id)
+		ASJUtilities.registerEntity(EntityFireSpirit::class.java, "FireSpirit", AlfheimRegistry.id)
+		ASJUtilities.registerEntity(EntityMuspellsun::class.java, "Muspellsun", AlfheimRegistry.id)
+		ASJUtilities.registerEntity(EntityRollingMelon::class.java, "RollingMelon", AlfheimRegistry.id)
 	}
 	
 	open fun registerHandlers() {

@@ -16,7 +16,7 @@ abstract class PlayerInteractAdequateEvent(val player: EntityPlayer, val x: Int,
 		enum class Action {
 			LEFT_CLICK_AIR,
 			LEFT_CLICK_BLOCK,
-			LEFT_CLICK_ENTIY,
+			LEFT_CLICK_ENTITY,
 			LEFT_CLICK_LIQUID
 		}
 	}
@@ -26,7 +26,7 @@ abstract class PlayerInteractAdequateEvent(val player: EntityPlayer, val x: Int,
 		enum class Action {
 			RIGHT_CLICK_AIR,
 			RIGHT_CLICK_BLOCK,
-			RIGHT_CLICK_ENTIY,
+			RIGHT_CLICK_ENTITY,
 			RIGHT_CLICK_LIQUID
 		}
 	}

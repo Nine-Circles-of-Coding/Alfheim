@@ -1,6 +1,6 @@
 package alfheim.common.integration.tinkersconstruct
 
-import alexsocol.asjlib.ASJUtilities
+import alexsocol.asjlib.*
 import alfheim.AlfheimCore
 import alfheim.common.block.AlfheimBlocks
 import alfheim.common.core.handler.AlfheimConfigHandler
@@ -137,7 +137,7 @@ object TinkersConstructAlfheimModule {
 object ModifiersExtender {
 	
 	val sharpnessOres = arrayOf<String>(LibOreDict.PRISMARINE_SHARD, *LibOreDict.QUARTZ, alfheim.api.lib.LibOreDict.RAINBOW_QUARTZ)
-	val sharpnessOreBlocks = arrayOf(LibOreDict.PRISMARINE_BLOCK, *(LibOreDict.QUARTZ.map { "block${it.capitalize()}" }.toTypedArray()), alfheim.api.lib.LibOreDict.RAINBOW_QUARTZ_BLOCK)
+	val sharpnessOreBlocks = arrayOf(LibOreDict.PRISMARINE_BLOCK, *(LibOreDict.QUARTZ.map { "block${it.capitalized()}" }.toTypedArray()), alfheim.api.lib.LibOreDict.RAINBOW_QUARTZ_BLOCK)
 	
 	init {
 		ModifyBuilder.registerModifier(ModInteger(arrayOf(ItemStack(ModItems.vineBall)), 4, "Moss", 3, "\u00a72", StatCollector.translateToLocal("modifier.tool.moss")))

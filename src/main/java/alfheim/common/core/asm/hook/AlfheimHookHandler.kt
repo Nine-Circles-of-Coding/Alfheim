@@ -63,6 +63,7 @@ import vazkii.botania.client.core.handler.*
 import vazkii.botania.client.core.helper.IconHelper
 import vazkii.botania.client.core.proxy.ClientProxy
 import vazkii.botania.client.fx.FXWisp
+import vazkii.botania.client.integration.nei.recipe.RecipeHandlerPetalApothecary
 import vazkii.botania.client.lib.LibResources
 import vazkii.botania.client.render.tile.RenderTileAltar
 import vazkii.botania.common.Botania
@@ -693,6 +694,12 @@ object AlfheimHookHandler {
 	fun getOutput(recipe: HeadRecipe) {
 		if (recipe.name in specialHeads)
 			recipe.name = ""
+	}
+	
+	@JvmStatic
+	@Hook(returnCondition = ALWAYS)
+	fun getRecipes(rh: RecipeHandlerPetalApothecary): List<RecipePetals> {
+		return BotaniaAPI.petalRecipes.filter { alexsocol.asjlib.ItemNBTHelper.getString(it.output, "SkullOwner", "") !in specialHeads }
 	}
 	
 	@JvmStatic

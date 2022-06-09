@@ -153,14 +153,14 @@ object AlfheimHookHandler {
 	
 	@JvmStatic
 	@Hook(returnCondition = ON_TRUE)
-	fun requestManaExact(handler: ManaItemHandler?, stack: ItemStack, player: EntityPlayer, manaToGet: Int, remove: Boolean) = player.capabilities.isCreativeMode
+	fun requestManaExact(handler: ManaItemHandler?, stack: ItemStack?, player: EntityPlayer, manaToGet: Int, remove: Boolean) = player.capabilities.isCreativeMode
 	
 	@JvmStatic
 	@Hook(returnCondition = ON_TRUE, returnType = "int", returnAnotherMethod = "requestManaChecked")
-	fun requestMana(handler: ManaItemHandler?, stack: ItemStack, player: EntityPlayer, manaToGet: Int, remove: Boolean) = player.capabilities.isCreativeMode
+	fun requestMana(handler: ManaItemHandler?, stack: ItemStack?, player: EntityPlayer, manaToGet: Int, remove: Boolean) = player.capabilities.isCreativeMode
 	
 	@JvmStatic
-	fun requestManaChecked(handler: ManaItemHandler?, stack: ItemStack, player: EntityPlayer, manaToGet: Int, remove: Boolean) = manaToGet
+	fun requestManaChecked(handler: ManaItemHandler?, stack: ItemStack?, player: EntityPlayer, manaToGet: Int, remove: Boolean) = manaToGet
 	
 	@JvmStatic
 	@Hook(injectOnExit = true, returnCondition = ALWAYS)

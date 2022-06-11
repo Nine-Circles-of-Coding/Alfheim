@@ -15,7 +15,6 @@ import vazkii.botania.common.item.lens.Lens
 class LensSmelt: Lens() {
 	
 	override fun collideBurst(burst: IManaBurst, entity: EntityThrowable, pos: MovingObjectPosition?, isManaBlock: Boolean, isDead: Boolean, stack: ItemStack?): Boolean {
-		var dead = isDead
 		val world: World = entity.worldObj
 		
 		if (world.isRemote || pos == null || pos.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) return false
@@ -35,31 +34,27 @@ class LensSmelt: Lens() {
 		val mana = burst.mana
 		val source = burst.burstSourceChunkCoordinates
 		
-		if (source != ChunkCoordinates(x, y, z) && tile !is IManaBlock && neededHarvestLevel <= harvestLevel && hardness != -1f && hardness < 50f && (burst.isFake || mana >= 24)) {
-			if (!burst.hasAlreadyCollidedAt(x, y, z)) {
-				if (!burst.isFake) {
-					val itemstack = FurnaceRecipes.smelting().getSmeltingResult(ItemStack(block, 1, meta))?.copy()
-					
-					if (itemstack != null) {
-						if (!entity.worldObj.isRemote) {
-							val xp = FurnaceRecipes.smelting().func_151398_b(itemstack)
-							if (xp >= 1f)
-								entity.worldObj.getBlock(x, y, z).dropXpOnBlockBreak(entity.worldObj, x, y, z, xp.I)
-							
-							entity.worldObj.func_147480_a(x, y, z, false)
-							entity.entityDropItem(itemstack, 0f)
-						} else {
-							if (ConfigHandler.blockBreakParticles) {
-								world.playAuxSFX(2001, x, y, z, block.id + (meta shl 12))
-								for (i in 0..2) entity.worldObj.spawnParticle("flame", x + Math.random() - 0.5f, y + Math.random() - 0.5f, z + Math.random() - 0.5f, 0.0, 0.0, 0.0)
-							}
-						}
-						burst.mana = mana - 40
-					}
-				}
-			}
-			dead = false
+		if (source == ChunkCoordinates(x, y, z) || tile is IManaBlock || neededHarvestLevel > harvestLevel || hardness == -1f || hardness >= 50f || !(burst.isFake || mana >= 24)) return isDead
+		
+		if (burst.hasAlreadyCollidedAt(x, y, z)) return false
+		if (burst.isFake) return false
+		
+		val itemstack = FurnaceRecipes.smelting().getSmeltingResult(ItemStack(block, 1, meta))?.copy() ?: return false
+		
+		if (!entity.worldObj.isRemote) {
+			val xp = FurnaceRecipes.smelting().func_151398_b(itemstack)
+			if (xp >= 1f)
+				entity.worldObj.getBlock(x, y, z).dropXpOnBlockBreak(entity.worldObj, x, y, z, xp.I)
+			
+			entity.worldObj.func_147480_a(x, y, z, false)
+			entity.entityDropItem(itemstack, 0f)
+		} else if (ConfigHandler.blockBreakParticles) {
+			world.playAuxSFX(2001, x, y, z, block.id + (meta shl 12))
+			for (i in 0..2) entity.worldObj.spawnParticle("flame", x + Math.random() - 0.5f, y + Math.random() - 0.5f, z + Math.random() - 0.5f, 0.0, 0.0, 0.0)
 		}
-		return dead
+		
+		burst.mana = mana - 40
+		
+		return false
 	}
 }

@@ -24,12 +24,14 @@ class LensSuperconductor: Lens() {
 	
 	override fun updateBurst(burst: IManaBurst, entity: EntityThrowable, stack: ItemStack) {
 		if (entity.worldObj.isRemote || burst.isFake) return
+		burst as EntityManaBurst
 		
 		val axis = AxisAlignedBB.getBoundingBox(entity.posX, entity.posY, entity.posZ, entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ).expand(1.5)
 		val list = entity.worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, axis) as MutableList<EntityLivingBase>
+		list.remove(burst.thrower)
 		
 		for (e in list)
-			e.attackEntityFrom(SUPERCONDUCTOR((burst as EntityManaBurst).thrower), if (e is EntityPlayer) if (ItemElvoriumArmor.hasSet(e) || !AlfheimConfigHandler.uberBlaster) 12f.also { if (AlfheimConfigHandler.uberBlaster) e.inventory.damageArmor(13f) } else 25f else 8f)
+			e.attackEntityFrom(SUPERCONDUCTOR(burst.thrower), if (e is EntityPlayer) if (ItemElvoriumArmor.hasSet(e) || !AlfheimConfigHandler.uberBlaster) 12f.also { if (AlfheimConfigHandler.uberBlaster) e.inventory.damageArmor(13f) } else 25f else 8f)
 	}
 	
 	fun SUPERCONDUCTOR(e: EntityLivingBase?) = (if (e != null) EntityDamageSource("indirectMagic", e) else DamageSource("magic")).setDamageBypassesArmor().setMagicDamage().setDamageIsAbsolute().setDifficultyScaled()

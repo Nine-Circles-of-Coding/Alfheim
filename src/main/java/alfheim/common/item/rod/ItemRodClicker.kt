@@ -104,7 +104,7 @@ class ItemRodClicker: ItemMod("RodClicker"), IAvatarWieldable {
 		
 		val inv = InventoryHelper.getInventory(world, x, y - 1, z)
 		
-		val unequip = equipPlayer(player, inv, delay)
+		equipPlayer(player, inv, delay)
 		
 		try {
 			// code from Thaumic Tinkerer by Vazkii
@@ -137,40 +137,48 @@ class ItemRodClicker: ItemMod("RodClicker"), IAvatarWieldable {
 			ignore.printStackTrace()
 		}
 		
-		if (unequip) unequipPlayer(player, inv!!)
+		unequipPlayer(player, inv)
 	}
 	
-	fun equipPlayer(player: FakePlayer, inv: IInventory?, ticksSkipped: Int): Boolean {
-		if (inv == null) return false
+	fun equipPlayer(player: FakePlayer, inv: IInventory?, ticksSkipped: Int) {
+		if (inv == null) return
 		
+		val accessibleSlots = (inv as? ISidedInventory)?.getAccessibleSlotsFromSide(1)
 		for (i in 0 until player.inventory.sizeInventory) {
 			if (i >= inv.sizeInventory) break
 			
-			var stack = inv[i]?.copy()
-			if (stack != null && inv is ISidedInventory && !inv.canExtractItem(i, stack, 1))
-				if (stack.stackSize <= 0) stack = null
+			if (inv is ISidedInventory && i !in accessibleSlots!!) continue
+			
+			val stack = inv[i]?.copy() ?: continue
+			if (inv is ISidedInventory && !inv.canExtractItem(i, stack, 1)) continue
 			inv[i] = null
 			
+			if (stack.stackSize <= 0) continue
+			
 			player.inventory[i] = stack
-			stack?.let { for (t in 0 until ticksSkipped) it.item.onUpdate(stack, player.worldObj, player, i, i == 0) }
+			for (t in 0 until ticksSkipped)
+				stack.item.onUpdate(stack, player.worldObj, player, i, i == 0)
 		}
 		
-		return true
+		return
 	}
 	
-	fun unequipPlayer(player: FakePlayer, inv: IInventory) {
+	fun unequipPlayer(player: FakePlayer, inv: IInventory?) {
+		val accessibleSlots = (inv as? ISidedInventory)?.getAccessibleSlotsFromSide(1)
+		
 		for (i in 0 until player.inventory.sizeInventory) {
 			var stack = player.inventory[i]?.copy()
-			if (stack == null || stack.stackSize <= 0) stack = null
-			
 			player.inventory[i] = null
-			if (i >= inv.sizeInventory) {
-				if (stack != null) player.dropPlayerItemWithRandomChoice(stack, true)
+			
+			if (stack != null && stack.stackSize <= 0) stack = null
+			if (stack == null) continue
+			
+			if (inv == null || i >= inv.sizeInventory || (inv is ISidedInventory && (i !in accessibleSlots!! || !inv.canInsertItem(i, stack, 1)))) {
+				player.dropPlayerItemWithRandomChoice(stack, true)
 				continue
 			}
 			
 			inv[i] = stack
-			player.inventory[i] = null
 		}
 	}
 	

@@ -77,29 +77,26 @@ class EntitySubspace: EntityThrowableCopy {
 		
 		if (ticksExisted > liveTicks + delay)
 			setDead()
-		val thrower = thrower
-		if (!worldObj.isRemote && (thrower == null || thrower.isDead)) {
-			setDead()
-			return
-		}
+		
+		val thrower = getThrower()
+		if (!worldObj.isRemote && (thrower == null || thrower.isDead))
+			return setDead()
 		
 		if (!worldObj.isRemote)
 			if (type == 0) {
 				if (ticksExisted % interval == 0 && count < 6 && ticksExisted > delay + 5
 					&& ticksExisted < liveTicks - delay - 10) {
 					if (thrower !is EntityPlayer)
-						setDead()
+						return setDead()
 					
-					val player = getThrower() as EntityPlayer
+					if (thrower.currentEquippedItem?.item === Blocks.red_flower.toItem() && thrower.currentEquippedItem.displayName.trim().equals("rosa", true)) thrower.triggerAchievement(AlfheimAchievements.rosaBomb)
 					
-					if (player.currentEquippedItem?.item === Blocks.red_flower.toItem() && player.currentEquippedItem.displayName.trim().equals("rosa", true)) player.triggerAchievement(AlfheimAchievements.rosaBomb)
-					
-					val burst = (AlfheimItems.subspaceSpear as ItemSpearSubspace).getBurst(player, ItemStack(AlfheimItems.subspaceSpear))
+					val burst = (AlfheimItems.subspaceSpear as ItemSpearSubspace).getBurst(thrower, ItemStack(AlfheimItems.subspaceSpear))
 					
 					if (burst != null) {
 						burst.setPosition(posX, posY, posZ)
 						burst.color = 0XFFAF00
-						player.worldObj.spawnEntityInWorld(burst)
+						thrower.worldObj.spawnEntityInWorld(burst)
 						count++
 					}
 				}

@@ -63,12 +63,9 @@ class EntitySubspaceSpear: EntityThrowableCopy {
 			
 			@Suppress("UNCHECKED_CAST")
 			val entities = worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, axis) as List<EntityLivingBase>
-			for (living in entities) {
-				if (living === thrower)
-					continue
-				
-				attackedFrom(living, thrower, damage * 1.5f)
-			}
+			for (living in entities)
+				if (living !== thrower)
+					attackedFrom(living, thrower, damage * 1.5f)
 		}
 		super.onUpdate()
 		
@@ -102,8 +99,8 @@ class EntitySubspaceSpear: EntityThrowableCopy {
 		const val TAG_LIFE = "life"
 		const val TAG_PITCH = "pitch"
 		
-		fun attackedFrom(target: EntityLivingBase, player: EntityLivingBase, i: Float) {
-			target.attackEntityFrom((if (player is EntityPlayer) DamageSource.causePlayerDamage(player) else DamageSource.causeMobDamage(player)).setDamageBypassesArmor(), i)
+		fun attackedFrom(target: EntityLivingBase, thrower: EntityLivingBase, damage: Float) {
+			target.attackEntityFrom((if (thrower is EntityPlayer) DamageSource.causePlayerDamage(thrower) else DamageSource.causeMobDamage(thrower)).setDamageBypassesArmor(), damage)
 		}
 	}
 }

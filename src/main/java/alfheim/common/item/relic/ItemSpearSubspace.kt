@@ -154,15 +154,9 @@ class ItemSpearSubspace: ItemRelic("SpearSubspace"), IManaUsingItem, ILensEffect
 		val axis = AxisAlignedBB.getBoundingBox(entity.posX - 2.5f, entity.posY - 2.5f, entity.posZ - 2.5f, entity.lastTickPosX + 2.5f, entity.lastTickPosY + 2.5f, entity.lastTickPosZ + 2.5f)
 		
 		val entities = entity.worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, axis) as List<EntityLivingBase>
-		for (living in entities) {
-			if (living === burst.thrower) continue
-			
-			val flag2 = FMLCommonHandler.instance().minecraftServerInstance?.isPVPEnabled == false
-			
-			if (living is EntityPlayer && flag2) continue
-			
-			living.attackEntityFrom(DamageSource.causeIndirectMagicDamage(burst, burst.thrower), 6f)
-		}
+		for (living in entities)
+			if (living !== burst.thrower)
+				living.attackEntityFrom(DamageSource.causeIndirectMagicDamage(burst, burst.thrower), 6f)
 	}
 	
 	val TAG_COOLDOWN = "cooldown"

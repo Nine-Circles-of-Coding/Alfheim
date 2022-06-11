@@ -1,4 +1,4 @@
-package vazkii.botania.common.lexicon.page
+package alfheim.common.lexicon.page
 
 import alexsocol.asjlib.mc
 import alfheim.api.crafting.recipe.RecipeTreeCrafting
@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL11
 import vazkii.botania.api.internal.IGuiLexiconEntry
 import vazkii.botania.client.core.handler.HUDHandler
 import vazkii.botania.common.block.tile.mana.TilePool
+import vazkii.botania.common.lexicon.page.PagePetalRecipe
 
 class PageTreeCrafting: PagePetalRecipe<RecipeTreeCrafting> {
 	

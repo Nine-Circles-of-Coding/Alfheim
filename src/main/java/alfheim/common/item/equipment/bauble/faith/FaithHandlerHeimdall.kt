@@ -39,12 +39,17 @@ object FaithHandlerHeimdall: IFaithHandler {
 	}
 	
 	fun onEmblemWornTick(stack: ItemStack, player: EntityPlayer) {
-		if (!player.worldObj.isRemote && ManaItemHandler.requestManaExact(stack, player, 1, !player.worldObj.isRemote)) {
-			player.addPotionEffect(PotionEffect(Potion.nightVision.id, 10, 0))
-			player.removePotionEffect(Potion.blindness.id)
-		}
-		
 		bifrostPlatform(player, stack)
+		
+		val b = player.isPotionActive(Potion.blindness)
+		val nv = player.isPotionActive(Potion.nightVision)
+		
+		if (!b && nv) return
+		
+		if (!player.worldObj.isRemote && ManaItemHandler.requestManaExact(stack, player, 1, true)) {
+			if (!nv) player.addPotionEffect(PotionEffect(Potion.nightVision.id, 100, 0))
+			if (b) player.removePotionEffect(Potion.blindness.id)
+		}
 	}
 	
 	fun onCloakWornTick(player: EntityPlayer) {
@@ -91,8 +96,9 @@ object FaithHandlerHeimdall: IFaithHandler {
 							continue
 						
 						val block = world.getBlock(x + i, y, z + k)
+						if (block is IFluidBlock) continue
 						
-						if (block.isAir(world, x + i, y, z + k) || block.isReplaceable(world, x + i, y, z + k) || block is IFluidBlock) {
+						if (block.isAir(world, x + i, y, z + k) || block.isReplaceable(world, x + i, y, z + k)) {
 							world.setBlock(x + i, y, z + k, ModBlocks.bifrost)
 							
 							val tileBifrost = world.getTileEntity(x + i, y, z + k) as TileBifrost

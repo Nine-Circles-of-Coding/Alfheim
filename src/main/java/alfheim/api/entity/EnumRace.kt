@@ -87,7 +87,12 @@ enum class EnumRace {
 		}
 		
 		private fun registerRace(player: EntityPlayer) {
-			player.getAttributeMap().registerAttribute(RACE)
+			try {
+				player.getAttributeMap().registerAttribute(RACE)
+			} catch (e: IllegalArgumentException) {
+				if (e.message != "Attribute is already registered!")
+					throw e
+			}
 			setRaceID(player, 0.0)
 		}
 		

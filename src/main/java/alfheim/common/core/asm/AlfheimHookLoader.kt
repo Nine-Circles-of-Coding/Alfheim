@@ -7,6 +7,7 @@ import alfheim.common.core.handler.AlfheimConfigHandler
 import cpw.mods.fml.relauncher.*
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.MCVersion
 import gloomyfolken.hooklib.minecraft.HookLoader
+import org.apache.commons.io.FileUtils
 import java.io.File
 
 // -Dfml.coreMods.load=alfheim.common.core.asm.AlfheimHookLoader,alfmod.common.core.asm.AlfheimModularHookLoader
@@ -17,6 +18,11 @@ class AlfheimHookLoader: HookLoader() {
 	init {
 		ModInfo.OBF = ASJHookLoader.OBF
 		ModInfo.DEV = false
+		
+		if (!ModInfo.OBF) { // FUCK YOU GRADLE, FUCK YOU INTELLIJ, FUCK YOU ALL
+			FMLRelaunchLog.info("[${ModInfo.MODID.uppercase()}] MoViNg FuCkInG rEsOuRcEs BeCaUsE iDeA iS FUCKED UP!!!")
+			FileUtils.copyDirectory(File("../src/main/resources/"), File("../build/classes/kotlin/main/"))
+		}
 		
 		AlfheimConfigHandler.loadConfig(File("config/Alfheim/Alfheim.cfg"))
 		AlfheimModularLoader

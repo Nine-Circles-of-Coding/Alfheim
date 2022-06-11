@@ -50,7 +50,7 @@ import kotlin.math.*
 @Suppress("UNUSED_PARAMETER", "unused", "FunctionName", "UNCHECKED_CAST")
 object ASJHookHandler {
 	
-	// summon ligtning bolt in /summon command
+	// summon lightning bolt in /summon command
 	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ALWAYS, targetMethod = "<init>", createMethod = true, superClass = "net/minecraft/entity/effect/EntityWeatherEffect.${Opcodes.ALOAD}.1.(Lnet/minecraft/world/World;)V")
 	fun EntityLightningBolt(thiz: EntityLightningBolt, world: World) {
@@ -63,7 +63,7 @@ object ASJHookHandler {
 	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ALWAYS, targetMethod = "<clinit>")
 	fun EntityEnderman(thiz: EntityEnderman?) {
-		val uuid = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0")
+		val uuid = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0") // Entries in at.cfg causes gradle error
 		ASJReflectionHelper.setStaticFinalValue(EntityEnderman::class.java, uuid, "attackingSpeedBoostModifierUUID", "field_110192_bp")
 		ASJReflectionHelper.setStaticFinalValue(EntityEnderman::class.java, AttributeModifier(uuid, "Attacking speed boost", 6.199999809265137, 0).setSaved(false), "attackingSpeedBoostModifier", "field_110193_bq")
 		

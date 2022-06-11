@@ -35,6 +35,7 @@ class ItemManaStorage(name: String, maxManaCap: Double): ItemMod(name), IManaIte
 		return 1000 - (mana / getMaxMana(stack) * 1000).I
 	}
 	
+	@Deprecated("This isn't 'display' its normal Damage", ReplaceWith("getDamage(stack)"))
 	override fun getDisplayDamage(stack: ItemStack) = getDamage(stack)
 	
 	override fun getEntityLifespan(itemStack: ItemStack?, world: World?) = Integer.MAX_VALUE

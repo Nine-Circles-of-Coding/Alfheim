@@ -11,7 +11,7 @@ import net.minecraft.util.StatCollector
 open class ItemSubtypedBlockMod(block: Block): ItemBlockWithMetadata(block, block) {
 	
 	override fun getMetadata(meta: Int): Int {
-		if (field_150939_a is BlockLeavesMod) return meta or field_150939_a.decayBit()
+		if (field_150939_a is BlockLeavesMod) return meta or (field_150939_a as BlockLeavesMod).decayBit()
 		return meta
 	}
 	
@@ -31,7 +31,7 @@ open class ItemSubtypedBlockMod(block: Block): ItemBlockWithMetadata(block, bloc
 class ItemUniqueSubtypedBlockMod(block: Block): ItemBlockWithMetadata(block, block) {
 	
 	override fun getMetadata(meta: Int): Int {
-		if (field_150939_a is BlockLeavesMod) return meta or field_150939_a.decayBit()
+		if (field_150939_a is BlockLeavesMod) return meta or (field_150939_a as BlockLeavesMod).decayBit()
 		if (field_150939_a is BlockModRotatedPillar) return meta and 0x3
 		return meta
 	}

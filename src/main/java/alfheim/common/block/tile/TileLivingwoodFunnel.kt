@@ -341,14 +341,14 @@ class TileLivingwoodFunnel: ASJTile(), IHopper {
 	
 	private fun inventoryEmpty(inventory: IInventory, side: Int): Boolean {
 		if (inventory is ISidedInventory && side > -1) {
-			for (l in inventory.getAccessibleSlotsFromSide(side)) {
-				if (inventory[l] != null) {
+			for (slot in inventory.getAccessibleSlotsFromSide(side)) {
+				if (inventory[slot] != null) {
 					return false
 				}
 			}
 		} else {
-			for (k in 0 until inventory.sizeInventory) {
-				if (inventory[k] != null) {
+			for (slot in 0 until inventory.sizeInventory) {
+				if (inventory[slot] != null) {
 					return false
 				}
 			}

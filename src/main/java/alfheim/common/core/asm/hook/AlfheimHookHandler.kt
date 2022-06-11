@@ -488,9 +488,9 @@ object AlfheimHookHandler {
 	@JvmStatic
 	@Hook(injectOnExit = true)
 	fun onBlockActivated(block: BlockSpreader, par1World: World, par2: Int, par3: Int, par4: Int, par5EntityPlayer: EntityPlayer, par6: Int, par7: Float, par8: Float, par9: Float, @ReturnValue res: Boolean): Boolean {
-		if (!res) return res
+		if (!res) return false
 		par1World.getTileEntity(par2, par3, par4)?.markDirty()
-		return res
+		return true
 	}
 	
 	// dupe fix

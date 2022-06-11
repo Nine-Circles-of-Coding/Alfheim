@@ -11,7 +11,7 @@ import net.minecraft.util.StatCollector
 class ItemBlockAurora(block: Block): ItemBlock(block) {
 	
 	override fun getMetadata(meta: Int): Int {
-		if (field_150939_a is BlockLeavesMod) return meta or field_150939_a.decayBit()
+		if (field_150939_a is BlockLeavesMod) return meta or (field_150939_a as BlockLeavesMod).decayBit()
 		return meta
 	}
 	

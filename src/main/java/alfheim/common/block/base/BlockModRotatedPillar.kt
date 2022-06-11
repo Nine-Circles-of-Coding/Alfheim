@@ -9,6 +9,7 @@ import cpw.mods.fml.relauncher.*
 import net.minecraft.block.Block
 import net.minecraft.block.material.Material
 import net.minecraft.client.renderer.texture.IIconRegister
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.util.*
 import net.minecraft.world.World
@@ -84,7 +85,7 @@ abstract class BlockModRotatedPillar(mat: Material): BlockMod(mat), ILexiconable
 		}
 	}
 	
-	override fun getPickBlock(target: MovingObjectPosition?, world: World, x: Int, y: Int, z: Int): ItemStack {
+	override fun getPickBlock(target: MovingObjectPosition?, world: World, x: Int, y: Int, z: Int, player: EntityPlayer): ItemStack {
 		val meta = world.getBlockMetadata(x, y, z)
 		return ItemStack(this, 1, meta and 3)
 	}

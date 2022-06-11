@@ -147,7 +147,7 @@ class ItemWireAxe(val name: String = "axeRevelation", val toolMaterial: ToolMate
 	
 	val godUUID = UUID.fromString("CB3D55D3-645C-4F38-A497-9C13A33DB5CF")!!
 	
-	override fun getItemAttributeModifiers(): Multimap<Any, Any> {
+	override fun getAttributeModifiers(stack: ItemStack): Multimap<Any, Any> {
 		val multimap = HashMultimap.create<Any, Any>()
 		multimap.put(SharedMonsterAttributes.attackDamage.attributeUnlocalizedName, AttributeModifier(Item.field_111210_e, "Weapon modifier", toolMaterial.damageVsEntity.D, 0))
 		multimap.put(godSlayingDamage.attributeUnlocalizedName, AttributeModifier(godUUID, "Weapon modifier", slayerDamage, 0))

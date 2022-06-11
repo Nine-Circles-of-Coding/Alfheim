@@ -7,6 +7,7 @@ import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.relauncher.*
 import net.minecraft.block.*
 import net.minecraft.client.renderer.texture.IIconRegister
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.util.MovingObjectPosition
 import net.minecraft.world.World
@@ -31,7 +32,7 @@ abstract class BlockSlabMod(val full: Boolean, val meta: Int, val source: Block,
 	@SideOnly(Side.CLIENT)
 	override fun getIcon(side: Int, meta: Int) = source.getIcon(side, meta)!!
 	
-	override fun getPickBlock(target: MovingObjectPosition?, world: World, x: Int, y: Int, z: Int) = ItemStack(getSingleBlock(), 1, world.getBlockMetadata(x, y, z))
+	override fun getPickBlock(target: MovingObjectPosition?, world: World, x: Int, y: Int, z: Int, player: EntityPlayer) = ItemStack(getSingleBlock(), 1, world.getBlockMetadata(x, y, z))
 	
 	override fun getItemDropped(meta: Int, random: Random?, fortune: Int) = getSingleBlock().toItem()
 	

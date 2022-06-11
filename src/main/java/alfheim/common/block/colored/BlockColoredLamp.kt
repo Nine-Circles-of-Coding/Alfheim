@@ -107,7 +107,7 @@ class BlockColoredLamp: BlockMod(Material.redstoneLight), ILexiconable {
 	
 	override fun damageDropped(meta: Int) = 0
 	
-	override fun getPickBlock(target: MovingObjectPosition?, world: World, x: Int, y: Int, z: Int) = ItemStack(this, 1, 0)
+	override fun getPickBlock(target: MovingObjectPosition?, world: World, x: Int, y: Int, z: Int, player: EntityPlayer) = ItemStack(this, 1, 0)
 	
 	override fun createStackedBlock(meta: Int) = ItemStack(this, 1, 0)
 	

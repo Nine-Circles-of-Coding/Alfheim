@@ -57,7 +57,7 @@ class BlockNetherPlanks: BlockMod(Material.wood), ILexiconable, IFuelHandler {
 		Blocks.netherrack
 	}
 	
-	override fun getPickBlock(target: MovingObjectPosition?, world: World, x: Int, y: Int, z: Int): ItemStack {
+	override fun getPickBlock(target: MovingObjectPosition?, world: World, x: Int, y: Int, z: Int, player: EntityPlayer): ItemStack {
 		val meta = world.getBlockMetadata(x, y, z)
 		return ItemStack(this, 1, meta)
 	}

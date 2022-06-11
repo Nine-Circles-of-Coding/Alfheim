@@ -9,6 +9,7 @@ import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.relauncher.*
 import net.minecraft.block.*
 import net.minecraft.client.renderer.texture.IIconRegister
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.util.*
 import net.minecraft.world.*
@@ -183,7 +184,7 @@ abstract class BlockLeavesMod: BlockLeaves(), IShearable, ILexiconable {
 		}
 	}
 	
-	override fun getPickBlock(target: MovingObjectPosition?, world: World, x: Int, y: Int, z: Int) =
+	override fun getPickBlock(target: MovingObjectPosition?, world: World, x: Int, y: Int, z: Int, player: EntityPlayer) =
 		ItemStack(this, 1, world.getBlockMetadata(x, y, z) and decayBit().inv())
 	
 	abstract fun decayBit(): Int

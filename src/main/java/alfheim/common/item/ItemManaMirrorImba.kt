@@ -55,6 +55,7 @@ class ItemManaMirrorImba: ItemMod("manaMirrorImba"), IManaItem, ICoordBoundItem,
 		return MathHelper.clamp_int(1000 - (mana / TilePool.MAX_MANA * 1000).I, 0, getMaxDamage(stack))
 	}
 	
+	@Deprecated("This isn't 'display' its normal Damage", ReplaceWith("getDamage(stack)"))
 	override fun getDisplayDamage(stack: ItemStack) = getDamage(stack)
 	
 	override fun onUpdate(stack: ItemStack, world: World, entity: Entity?, slot: Int, inHand: Boolean) {

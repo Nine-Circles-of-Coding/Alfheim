@@ -110,7 +110,7 @@ class ItemTrisDagger(val name: String = "reactionDagger", val toolMaterial: Tool
 		return itemIcon
 	}
 	
-	override fun getItemAttributeModifiers(): Multimap<Any, Any> {
+	override fun getAttributeModifiers(stack: ItemStack): Multimap<Any, Any> {
 		val multimap = HashMultimap.create<Any, Any>()
 		multimap.put(SharedMonsterAttributes.attackDamage.attributeUnlocalizedName, AttributeModifier(Item.field_111210_e, "Weapon modifier", toolMaterial.damageVsEntity.D, 0))
 		return multimap

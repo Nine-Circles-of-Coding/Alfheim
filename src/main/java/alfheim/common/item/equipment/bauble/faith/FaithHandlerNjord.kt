@@ -60,7 +60,7 @@ object FaithHandlerNjord: IFaithHandler {
 		if (getGodPowerLevel(player) < 3) return
 		if (player.isSneaking || !player.isInsideOfMaterial(Material.air)) return
 		
-		if (!InteractionSecurity.canDoSomethingHere(player, e.x, e.y, e.z))
+		if (InteractionSecurity.isInteractionBanned(player, e.x, e.y, e.z))
 			return
 		
 		val state = player.worldObj.getBlock(e.x, e.y, e.z)

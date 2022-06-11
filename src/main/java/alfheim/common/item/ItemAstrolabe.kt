@@ -78,13 +78,16 @@ class ItemAstrolabe: ItemMod("Astrolabe") {
 	private fun placeBlockAndConsume(player: EntityPlayer, requestor: ItemStack, blockToPlace: ItemStack, x: Int, y: Int, z: Int) {
 		if (blockToPlace.item == null) return
 		
-		if (!InteractionSecurity.canDoSomethingHere(player, x, y, z)) return
 		if (!ManaItemHandler.requestManaExact(requestor, player, 320, true)) return
 		
-		val block = blockToPlace.item.toBlock()
+		val world = player.worldObj
+		val block = blockToPlace.item.toBlock() ?: return
 		val meta = blockToPlace.meta
-		player.worldObj.setBlock(x, y, z, block, meta, 3)
-		player.worldObj.playAuxSFX(2001, x, y, z, block?.id ?: 1)
+		
+		if (InteractionSecurity.isPlacementBanned(player, x, y, z, world, block, meta)) return
+		
+		world.setBlock(x, y, z, block, meta, 3)
+		world.playAuxSFX(2001, x, y, z, block.id)
 		
 		if (player.capabilities.isCreativeMode) return
 		

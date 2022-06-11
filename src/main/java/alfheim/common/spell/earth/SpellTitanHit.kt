@@ -65,50 +65,49 @@ object SpellTitanHit: SpellBase("titanhit", EnumRace.GNOME, 1, 1, 1) {
 	fun removeBlockWithDrops(world: World, player: EntityPlayer, x: Int, y: Int, z: Int, remove: Boolean, draw: Boolean, materialsListing: Array<Material>): Int {
 		if (!world.blockExists(x, y, z)) return 0
 		
-		if (!InteractionSecurity.canDoSomethingHere(player, x, y, z)) return 0
-		
 		val block = world.getBlock(x, y, z)
 		val meta = world.getBlockMetadata(x, y, z)
-		var mana = 0
 		
+		if (InteractionSecurity.isBreakingBanned(player, x, y, z, world, block, meta)) return 0
+		
+		var mana = 0
 		val mat = world.getBlock(x, y, z).material
-		if ((!world.isRemote || !remove && draw) && block != null && !block.isAir(world, x, y, z) && (block.getPlayerRelativeBlockHardness(player, world, x, y, z) > 0 || player.capabilities.isCreativeMode)) {
-			if (!player.capabilities.isCreativeMode && (!block.canHarvestBlock(player, meta) || !ToolCommons.isRightMaterial(mat, materialsListing))) return 0
-			
-			var flag = false
-			
-			if (!player.capabilities.isCreativeMode) {
-				val localMeta = world.getBlockMetadata(x, y, z)
-				if (remove) block.onBlockHarvested(world, x, y, z, localMeta, player)
-				if (remove) flag = block.removedByPlayer(world, player, x, y, z, true)
-				if (remove && flag) {
-					block.onBlockDestroyedByPlayer(world, x, y, z, localMeta)
-					
-					block.harvestBlock(world, player, x, y, z, localMeta)
-					
-					mana += (block.getBlockHardness(world, x, y, z) * 10).I
-					tcd += 2
-				}
-				if (!remove) {
-					flag = true
-					mana += (block.getBlockHardness(world, x, y, z) * 10).I
-				}
-			} else {
-				if (remove)
-					world.setBlockToAir(x, y, z)
-				else {
-					flag = x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000 && y >= 0 && y < 256
-				}
+		if (!(!world.isRemote || !remove && draw) || block == null || block.isAir(world, x, y, z) || !(block.getPlayerRelativeBlockHardness(player, world, x, y, z) > 0 || player.capabilities.isCreativeMode)) return mana
+		if (!player.capabilities.isCreativeMode && (!block.canHarvestBlock(player, meta) || !ToolCommons.isRightMaterial(mat, materialsListing))) return 0
+		
+		var flag = false
+		
+		if (!player.capabilities.isCreativeMode) {
+			val localMeta = world.getBlockMetadata(x, y, z)
+			if (remove) block.onBlockHarvested(world, x, y, z, localMeta, player)
+			if (remove) flag = block.removedByPlayer(world, player, x, y, z, true)
+			if (remove && flag) {
+				block.onBlockDestroyedByPlayer(world, x, y, z, localMeta)
+				
+				block.harvestBlock(world, player, x, y, z, localMeta)
+				
+				mana += (block.getBlockHardness(world, x, y, z) * 10).I
+				tcd += 2
 			}
-			
-			if (draw && flag) {
-				Botania.proxy.setWispFXDepthTest(false)
-				Botania.proxy.wispFX(player.worldObj, x + 0.5, y + 0.5, z + 0.5, 1f, 0f, 0f, 0.2f, 0f, 0.075f)
-				Botania.proxy.setWispFXDepthTest(true)
+			if (!remove) {
+				flag = true
+				mana += (block.getBlockHardness(world, x, y, z) * 10).I
 			}
-			
-			if (!world.isRemote && remove && ConfigHandler.blockBreakParticles && ConfigHandler.blockBreakParticlesTool) world.playAuxSFX(2001, x, y, z, block.id + (meta shl 12))
+		} else {
+			if (remove)
+				world.setBlockToAir(x, y, z)
+			else {
+				flag = x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000 && y >= 0 && y < 256
+			}
 		}
+		
+		if (draw && flag) {
+			Botania.proxy.setWispFXDepthTest(false)
+			Botania.proxy.wispFX(player.worldObj, x + 0.5, y + 0.5, z + 0.5, 1f, 0f, 0f, 0.2f, 0f, 0.075f)
+			Botania.proxy.setWispFXDepthTest(true)
+		}
+		
+		if (!world.isRemote && remove && ConfigHandler.blockBreakParticles && ConfigHandler.blockBreakParticlesTool) world.playAuxSFX(2001, x, y, z, block.id + (meta shl 12))
 		
 		return mana
 	}

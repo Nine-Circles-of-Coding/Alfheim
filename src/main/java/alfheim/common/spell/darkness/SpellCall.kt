@@ -35,8 +35,8 @@ object SpellCall: SpellBase("call", EnumRace.IMP, 10000, 1800, 30) {
 		if (tgt !is EntityPlayer && tgt.dimension != caster.dimension) return SpellCastResult.WRONGTGT
 		
 		val (cx, cy, cz) = Vector3.fromEntity(caster)
-		if (!InteractionSecurity.canDoSomethingHere(caster)) return SpellCastResult.NOTALLOW
-		if (!InteractionSecurity.canDoSomethingHere(tgt, cx, cy, cz, caster.worldObj)) return SpellCastResult.NOTALLOW
+		if (InteractionSecurity.isInteractionBanned(caster)) return SpellCastResult.NOTALLOW
+		if (InteractionSecurity.isInteractionBanned(tgt, cx, cy, cz, caster.worldObj)) return SpellCastResult.NOTALLOW
 		
 		val result = checkCast(caster)
 		if (result == SpellCastResult.OK) {

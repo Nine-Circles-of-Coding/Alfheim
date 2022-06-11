@@ -47,35 +47,30 @@ class ItemEnlighter: ItemMod("Enlighter"), IManaUsingItem {
 	override fun onUpdate(stack: ItemStack, world: World, entity: Entity?, slot: Int, inHand: Boolean) {
 		if (!usesMana(stack)) return
 		
-		if (entity is EntityPlayer) {
-			val x = entity.posX.mfloor()
-			val y = entity.posY.mfloor()
-			val z = entity.posZ.mfloor()
-			
-			if (!InteractionSecurity.canDoSomethingHere(entity, x, y, z, world)) return
-			
-			if (world.getLightBrightness(x, y, z) < 0.25F) {
-				val block = world.getBlock(x, y, z)
-				val below = world.getBlock(x, y - 1, z)
-				
-				if (below.isAir(world, x, y, z) || !block.isAir(world, x, y, z)) return
-				if (below is BlockFluidClassic || below is BlockFluidClassic) return
-				if (block.material == Material.water || below.material == Material.water) return
-				if (block.material == Material.lava || below.material == Material.lava) return
-				
-				val toPlace = ItemStack(AlfheimBlocks.rainbowFlame)
-				if (ManaItemHandler.requestManaExactForTool(stack, entity, ItemRodPrismatic.COST, false)) {
-					toPlace.tryPlaceItemIntoWorld(entity, world, x, y, z, 1, 0f, 0f, 0f)
-					if (toPlace.stackSize == 0) {
-						world.playSoundEffect(x.D + 0.5, y.D + 0.5, z.D + 0.5, "fire.ignite", 0.3F, Math.random().F * 0.4F + 0.8F)
-						ManaItemHandler.requestManaExactForTool(stack, entity, ItemRodPrismatic.COST, true)
-						val tile = world.getTileEntity(x, y, z)
-						if (tile is TileRainbowManaFlame)
-							tile.invisible = true
-					}
-				}
-			}
-		}
+		if (entity !is EntityPlayer) return
+		val x = entity.posX.mfloor()
+		val y = entity.posY.mfloor()
+		val z = entity.posZ.mfloor()
+		
+		if (world.getLightBrightness(x, y, z) >= 0.25F) return
+		
+		val block = world.getBlock(x, y, z)
+		val below = world.getBlock(x, y - 1, z)
+		
+		if (below.isAir(world, x, y, z) || !block.isAir(world, x, y, z)) return
+		if (below is BlockFluidClassic || below is BlockFluidClassic) return
+		if (block.material == Material.water || below.material == Material.water) return
+		if (block.material == Material.lava || below.material == Material.lava) return
+		
+		val toPlace = ItemStack(AlfheimBlocks.rainbowFlame)
+		if (!ManaItemHandler.requestManaExactForTool(stack, entity, ItemRodPrismatic.COST, false)) return
+		toPlace.tryPlaceItemIntoWorld(entity, world, x, y, z, 1, 0f, 0f, 0f)
+		if (toPlace.stackSize != 0) return
+		world.playSoundEffect(x.D + 0.5, y.D + 0.5, z.D + 0.5, "fire.ignite", 0.3F, Math.random().F * 0.4F + 0.8F)
+		ManaItemHandler.requestManaExactForTool(stack, entity, ItemRodPrismatic.COST, true)
+		val tile = world.getTileEntity(x, y, z)
+		if (tile is TileRainbowManaFlame)
+			tile.invisible = true
 	}
 	
 	override fun usesMana(stack: ItemStack) = stack.meta == 1

@@ -40,7 +40,7 @@ object SpellThor: SpellBase("thor", EnumRace.SYLPH, 6000, 1200, 30) {
 			}
 		}
 		
-		if (!InteractionSecurity.canDoSomethingHere(caster, x, y, z)) return SpellCastResult.NOTALLOW
+		if (InteractionSecurity.isInteractionBanned(caster, x, y, z)) return SpellCastResult.NOTALLOW
 		
 		if (caster.worldObj.canBlockSeeTheSky(x, y, z) && caster.worldObj.getPrecipitationHeight(x, z) <= y) {
 			result = checkCast(caster)

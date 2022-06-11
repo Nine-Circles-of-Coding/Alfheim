@@ -49,6 +49,8 @@ open class ItemManasteelHoe @JvmOverloads constructor(mat: ToolMaterial = Botani
 	}
 	
 	override fun onItemUse(stack: ItemStack, player: EntityPlayer, world: World, x: Int, y: Int, z: Int, side: Int, hitX: Float, hitY: Float, hitZ: Float): Boolean {
+		if (InteractionSecurity.isInteractionBanned(player, x, y, z, world)) return false
+		
 		val event = UseHoeEvent(player, stack, world, x, y, z)
 		if (MinecraftForge.EVENT_BUS.post(event))
 			return false
@@ -61,21 +63,16 @@ open class ItemManasteelHoe @JvmOverloads constructor(mat: ToolMaterial = Botani
 		val block = world.getBlock(x, y, z)
 		
 		return if (side != 0 && world.isAirBlock(x, y + 1, z) && (block === Blocks.grass || block === Blocks.dirt || block === AlfheimBlocks.snowGrass)) {
-			if (!InteractionSecurity.canDoSomethingHere(player, x, y, z, world)) return false
-			
 			val block1 = Blocks.farmland
 			world.playSoundEffect(x + 0.5, y + 0.5, z + 0.5, block1.stepSound.stepResourcePath, (block1.stepSound.getVolume() + 1) * 0.5f, block1.stepSound.pitch * 0.8f)
 			
-			if (world.isRemote) {
-				true
-			} else {
+			if (world.isRemote) true
+			else {
 				world.setBlock(x, y, z, block1)
 				ToolCommons.damageItem(stack, 1, player, manaPerDamage)
 				true
 			}
-		} else {
-			false
-		}
+		} else false
 	}
 	
 	override fun onUpdate(stack: ItemStack?, world: World, player: Entity?, par4: Int, par5: Boolean) {

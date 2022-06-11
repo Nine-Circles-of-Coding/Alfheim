@@ -81,13 +81,13 @@ class ItemFlugelSoul: ItemRelic("FlugelSoul"), ILensEffect, IImmortalHandledItem
 			val pos = getWarpPoint(stack, segment)
 			if (pos.isValid) {
 				if (!world.isRemote && player is EntityPlayerMP && ManaItemHandler.requestManaExact(stack, player, pos.mana(player), true)) {
-					if (InteractionSecurity.canDoSomethingHere(player, pos.x, pos.y, pos.z, MinecraftServer.getServer().worldServerForDimension(pos.dim))) {
+					if (!InteractionSecurity.isInteractionBanned(player, pos.x, pos.y, pos.z, MinecraftServer.getServer().worldServerForDimension(pos.dim))) {
 						player.playSoundAtEntity("mob.endermen.portal", 1f, 1f)
 						ASJUtilities.sendToDimensionWithoutPortal(player, pos.dim, pos.x, pos.y, pos.z)
 					}
 				}
 			} else {
-				if (InteractionSecurity.canDoSomethingHere(player))
+				if (!InteractionSecurity.isInteractionBanned(player))
 					setWarpPoint(stack, segment, player.posX, player.posY, player.posZ, world.provider.dimensionId)
 			}
 			

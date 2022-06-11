@@ -75,7 +75,7 @@ class ItemRodPortal: ItemMod("rodPortal") {
 		return stack
 	}
 	
-	fun isClearAllTheWayUp(world: World, x: Int, y: Int, z: Int, player: EntityPlayer) = InteractionSecurity.canDoSomethingHere(player, x, y, z) && world.canBlockSeeTheSky(x, y, z) && world.getPrecipitationHeight(x, z) <= y
+	fun isClearAllTheWayUp(world: World, x: Int, y: Int, z: Int, player: EntityPlayer) = !InteractionSecurity.isPlacementBanned(player, x, y, z, world, ModBlocks.bifrost) && world.canBlockSeeTheSky(x, y, z) && world.getPrecipitationHeight(x, z) <= y
 	
 	override fun getMaxItemUseDuration(stack: ItemStack?) = 120
 	

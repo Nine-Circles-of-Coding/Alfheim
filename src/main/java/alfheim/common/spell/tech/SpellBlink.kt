@@ -39,7 +39,7 @@ object SpellBlink: SpellBase("blink", EnumRace.LEPRECHAUN, 10000, 1200, 5) {
 			}
 		}
 		
-		if (!InteractionSecurity.canDoSomethingHere(caster, x, y, z)) return SpellCastResult.NOTALLOW
+		if (InteractionSecurity.isInteractionBanned(caster, x, y, z)) return SpellCastResult.NOTALLOW
 		
 		if (caster.worldObj.isAirBlock(x, y, z)) {
 			if (caster.worldObj.isAirBlock(x, y + 1, z)) {

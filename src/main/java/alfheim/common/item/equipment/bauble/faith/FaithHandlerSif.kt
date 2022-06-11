@@ -91,31 +91,33 @@ object FaithHandlerSif: IFaithHandler {
 		val cooldown = getInt(emblem, TAG_COOLDOWN, 0)
 		if (cooldown != 0 || e.entityPlayer.isSneaking || player.heldItem != null || !ManaItemHandler.requestManaExact(emblem, e.entityPlayer, 50, false)) return
 		
-		if (!InteractionSecurity.canDoSomethingHere(player, e.x, e.y, e.z, e.world))
-			return
+		if (InteractionSecurity.isInteractionBanned(player, e.x, e.y, e.z, e.world)) return
 		
 		val world = e.world
 		val block = world.getBlock(e.x, e.y, e.z)
 		
-		if (block is IGrowable && block !== Blocks.grass && block.func_149851_a(world, e.x, e.y, e.z, world.isRemote) && bonemeal(world, block, e.x, e.y, e.z, player, emblem, 50)) {
-			if (!world.isRemote && !player.capabilities.isCreativeMode) setInt(emblem, TAG_COOLDOWN, COOLDOWN_PLANT)
-		}
+		if (block is IGrowable && block !== Blocks.grass && block.func_149851_a(world, e.x, e.y, e.z, world.isRemote) &&
+			bonemeal(world, block, e.x, e.y, e.z, player, emblem, 50) &&
+			!world.isRemote && !player.capabilities.isCreativeMode)
+				setInt(emblem, TAG_COOLDOWN, COOLDOWN_PLANT)
 		
 		val lvl = getGodPowerLevel(player)
+		if (lvl <= 5) return
 		
-		if (lvl > 5) {
-			if (!world.isRemote && block === Blocks.grass && e.face == 1 && world.getBlock(e.x, e.y + 1, e.z).isAir(world, e.x, e.y + 1, e.z) &&
-				(!world.provider.hasNoSky || e.y < 255) && ModBlocks.flower.canBlockStay(world, e.x, e.y + 1, e.z) && ManaItemHandler.requestManaExact(emblem, e.entityPlayer, 500, true) &&
-				world.setBlock(e.x, e.y + 1, e.z, ModBlocks.flower, world.rand.nextInt(16), 3))
-				
-				if (!player.capabilities.isCreativeMode)
-					setInt(emblem, TAG_COOLDOWN, COOLDOWN_FLOWER)
-		}
+		val newMeta = world.rand.nextInt(16)
+		if (!world.isRemote && block === Blocks.grass && e.face == 1 &&
+			world.getBlock(e.x, e.y + 1, e.z).isAir(world, e.x, e.y + 1, e.z) &&
+			!InteractionSecurity.isPlacementBanned(player, e.x, e.y + 1, e.z, world, ModBlocks.flower, newMeta) &&
+			(!world.provider.hasNoSky || e.y < 255) &&
+			ModBlocks.flower.canBlockStay(world, e.x, e.y + 1, e.z) &&
+			ManaItemHandler.requestManaExact(emblem, e.entityPlayer, 500, true) &&
+			world.setBlock(e.x, e.y + 1, e.z, ModBlocks.flower, newMeta, 3) &&
+			!player.capabilities.isCreativeMode)
+				setInt(emblem, TAG_COOLDOWN, COOLDOWN_FLOWER)
 	}
 	
 	fun bonemeal(world: World, block: IGrowable, x: Int, y: Int, z: Int, player: EntityPlayer, stack: ItemStack, cost: Int): Boolean {
-		if (!InteractionSecurity.canDoSomethingHere(player, x, y, z, world))
-			return false
+		if (InteractionSecurity.isInteractionBanned(player, x, y, z, world)) return false
 		
 		if (world.isRemote) {
 			world.playAuxSFX(2005, x, y, z, 0)

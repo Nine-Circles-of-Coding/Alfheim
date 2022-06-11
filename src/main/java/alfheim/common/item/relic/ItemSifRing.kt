@@ -51,7 +51,7 @@ class ItemSifRing: ItemRelicBauble("SifRing") {
 		
 		val (x, y, z) = list.firstOrNull {
 			val (x, y, z) = it
-			InteractionSecurity.canDoSomethingHere(player, x, y, z)
+			!InteractionSecurity.isPlacementBanned(player, x, y, z, world, Blocks.cactus)
 		} ?: return
 		world.setBlock(player, Blocks.cactus, x, y, z)
 		list.clear()

@@ -35,10 +35,10 @@ object SpellSwap: SpellBase("swap", EnumRace.LEPRECHAUN, 12000, 1200, 20) {
 		if (!tg.isParty && ASJUtilities.isNotInFieldOfVision(tgt, caster)) return SpellCastResult.NOTSEEING
 		
 		if (tg.isParty) {
-			if (!InteractionSecurity.canDoSomethingHere(caster)) return SpellCastResult.NOTALLOW
-			if (!InteractionSecurity.canDoSomethingHere(tgt)) return SpellCastResult.NOTALLOW
-			if (!InteractionSecurity.canDoSomethingHere(caster, tgt.posX, tgt.posY, tgt.posZ, tgt.worldObj)) return SpellCastResult.NOTALLOW
-			if (!InteractionSecurity.canDoSomethingHere(tgt, caster.posX, caster.posY, caster.posZ, caster.worldObj)) return SpellCastResult.NOTALLOW
+			if (InteractionSecurity.isInteractionBanned(caster)) return SpellCastResult.NOTALLOW
+			if (InteractionSecurity.isInteractionBanned(tgt)) return SpellCastResult.NOTALLOW
+			if (InteractionSecurity.isInteractionBanned(caster, tgt.posX, tgt.posY, tgt.posZ, tgt.worldObj)) return SpellCastResult.NOTALLOW
+			if (InteractionSecurity.isInteractionBanned(tgt, caster.posX, caster.posY, caster.posZ, caster.worldObj)) return SpellCastResult.NOTALLOW
 		} else {
 			if (!InteractionSecurity.canHurtEntity(caster, tgt)) return SpellCastResult.NOTALLOW
 		}

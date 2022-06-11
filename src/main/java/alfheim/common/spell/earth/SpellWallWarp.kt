@@ -37,7 +37,7 @@ object SpellWallWarp: SpellBase("wallwarp", EnumRace.GNOME, 4000, 600, 5) {
 		}
 		
 		for (i in 0..radius.I) {
-			if (!InteractionSecurity.canDoSomethingHere(caster, mop.blockX, mop.blockY, mop.blockZ)) return SpellCastResult.NOTALLOW
+			if (InteractionSecurity.isInteractionBanned(caster, mop.blockX, mop.blockY, mop.blockZ)) return SpellCastResult.NOTALLOW
 			
 			if (caster.worldObj.isAirBlock(mop.blockX, mop.blockY, mop.blockZ)) {
 				if (caster.worldObj.isAirBlock(mop.blockX, mop.blockY + 1, mop.blockZ)) {

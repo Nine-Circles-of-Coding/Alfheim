@@ -92,7 +92,7 @@ object FaithHandlerHeimdall: IFaithHandler {
 					for (k in -2..2) {
 						if (abs(i) == 2 && abs(k) == 2) continue
 						
-						if (!InteractionSecurity.canDoSomethingHere(player, x + i, y, z + k))
+						if (InteractionSecurity.isPlacementBanned(player, x + i, y, z + k, world, ModBlocks.bifrost))
 							continue
 						
 						val block = world.getBlock(x + i, y, z + k)

@@ -91,8 +91,6 @@ class ItemTriquetrum: ItemMod("Triquetrum"), IDoubleBoundItem, IRotationDisplay 
 				for ((xOff, i) in (fx..fX).withIndex()) {
 					for ((yOff, j) in (fy..fY).withIndex()) {
 						for ((zOff, k) in (fz..fZ).withIndex()) {
-							if (!InteractionSecurity.canDoSomethingHere(player, i, j, k, world)) continue
-							
 							val survival = !player.capabilities.isCreativeMode
 							
 							val block = world.getBlock(i, j, k) // block to be moved
@@ -101,6 +99,8 @@ class ItemTriquetrum: ItemMod("Triquetrum"), IDoubleBoundItem, IRotationDisplay 
 							if (survival && GameRegistry.findUniqueIdentifierFor(block).toString() in AlfheimConfigHandler.triquetrumBlackList) continue
 							
 							val meta = world.getBlockMetadata(i, j, k)
+							
+							if (InteractionSecurity.isBreakingBanned(player, i, j, k, world, block, meta)) continue
 							
 							val nbt = NBTTagCompound()
 							
@@ -111,29 +111,23 @@ class ItemTriquetrum: ItemMod("Triquetrum"), IDoubleBoundItem, IRotationDisplay 
 							if (survival && !ManaItemHandler.requestManaExactForTool(stack, player, if (nbt.hasNoTags()) 60 else 100, false)) break@outer
 							
 							fun setBlockTile(world: World, x: Int, y: Int, z: Int, block: Block, meta: Int, cmp: NBTTagCompound): Boolean {
-								if (!InteractionSecurity.canDoSomethingHere(player, x, y, z, world)) return false
-								
-								val airOnTarget = world.isAirBlock(x, y, z)
-								if (!airOnTarget) return false // do not replace blocks
-								
-								if (airOnTarget && world.isAirBlock(i, j, k)) return false // no sense in moving air
-								
+								if (!world.isAirBlock(x, y, z)) return false // do not replace blocks
+								if (world.isAirBlock(i, j, k)) return false // no sense in moving air
 								if (!block.canPlaceBlockAt(world, x, y, z)) return false // no more cactus on bedrock
 								
-								if (world.setBlock(x, y, z, block, meta, 3)) {
-									if (block is ITileEntityProvider) {
-										val tile = TileEntity.createAndLoadEntity(cmp) ?: return true
-										
-										tile.xCoord = x
-										tile.yCoord = y
-										tile.zCoord = z
-										world.setTileEntity(x, y, z, tile)
-									}
-									
-									return true
-								}
+								if (InteractionSecurity.isPlacementBanned(player, x, y, z, world, block, meta)) return false
 								
-								return false
+								if (!world.setBlock(x, y, z, block, meta, 3)) return false
+								
+								if (block !is ITileEntityProvider) return true
+								val tile = TileEntity.createAndLoadEntity(cmp) ?: return true
+								
+								tile.xCoord = x
+								tile.yCoord = y
+								tile.zCoord = z
+								world.setTileEntity(x, y, z, tile)
+								
+								return true
 							}
 							
 							val flag = when (rotation) {

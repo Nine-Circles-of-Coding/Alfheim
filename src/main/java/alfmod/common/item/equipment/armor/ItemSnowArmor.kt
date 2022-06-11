@@ -81,12 +81,10 @@ open class ItemSnowArmor(type: Int, name: String): ItemManasteelArmor(type, name
 		
 		if (stack.item === AlfheimModularItems.snowBoots && hasArmorSet(player) && player.isSneaking) {
 			fun checkSet(world: World, player: EntityPlayer, x: Int, y: Int, z: Int) {
-				if (!InteractionSecurity.canDoSomethingHere(player, x, y, z, world)) return
-				
 				val block = world.getBlock(x, y, z)
 				
 				for (pair in replacePairs)
-					if (pair.first === block) {
+					if (pair.first === block && InteractionSecurity.isPlacementBanned(player, x, y, z, world, pair.second)) {
 						world.setBlock(x, y, z, pair.second)
 					}
 			}

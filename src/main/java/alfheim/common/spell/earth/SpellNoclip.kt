@@ -27,12 +27,7 @@ object SpellNoclip: SpellBase("noclip", EnumRace.GNOME, 24000, 2400, 20) {
 		val tgt = tg.target ?: return SpellCastResult.NOTARGET
 		if (tgt !is EntityPlayer || !tgt.capabilities.allowFlying) return SpellCastResult.WRONGTGT
 		if (tgt !== caster && ASJUtilities.isNotInFieldOfVision(tg.target, caster)) return SpellCastResult.NOTSEEING
-		
-		if (tg.isParty) {
-			if (!InteractionSecurity.canDoSomethingHere(tgt)) return SpellCastResult.NOTALLOW
-		} else {
-			if (!InteractionSecurity.canInteractWithEntity(caster, tgt)) return SpellCastResult.NOTALLOW
-		}
+		if (!tg.isParty && !InteractionSecurity.canInteractWithEntity(caster, tgt)) return SpellCastResult.NOTALLOW
 		
 		val result = checkCast(caster)
 		if (result == SpellCastResult.OK) {

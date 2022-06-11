@@ -7,7 +7,7 @@ import alfheim.common.lexicon.AlfheimLexiconData
 import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.relauncher.*
 import net.minecraft.block.*
-import net.minecraft.block.material.Material
+import net.minecraft.block.material.*
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.passive.EntitySheep
 import net.minecraft.entity.player.EntityPlayer
@@ -86,15 +86,13 @@ class BlockColoredDirt: BlockMod(Material.ground), IGrowable, ILexiconable {
 	 */
 	@SideOnly(Side.CLIENT)
 	override fun getRenderColor(meta: Int): Int {
-		if (meta >= EntitySheep.fleeceColorTable.size) return 0xFFFFFF
-		
-		val color = EntitySheep.fleeceColorTable[meta]
+		val color = EntitySheep.fleeceColorTable.getOrNull(meta) ?: FloatArray(3) {1f}
 		return Color(color[0], color[1], color[2]).rgb
 	}
 	
 	@SideOnly(Side.CLIENT)
-	override fun colorMultiplier(world: IBlockAccess?, x: Int, y: Int, z: Int): Int {
-		val meta = world!!.getBlockMetadata(x, y, z)
+	override fun colorMultiplier(world: IBlockAccess, x: Int, y: Int, z: Int): Int {
+		val meta = world.getBlockMetadata(x, y, z)
 		return getRenderColor(meta)
 	}
 	

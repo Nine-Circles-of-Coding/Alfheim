@@ -41,8 +41,6 @@ class ItemHyperBucket: ItemMod("HyperpolatedBucket") {
 			for (j in y.inRange(range).reversed())
 				for (i in x.inRange(range))
 					for (k in z.inRange(range)) {
-						if (!world.canMineBlock(player, i, j, k)) continue
-						
 						val at = world.getBlock(i, j, k)
 						
 						if (block === Blocks.lava && at === Blocks.flowing_lava) ; else
@@ -55,7 +53,7 @@ class ItemHyperBucket: ItemMod("HyperpolatedBucket") {
 						val l = world.getBlockMetadata(i, j, k)
 						
 						if (material.isLiquid && l == 0) {
-							if (!InteractionSecurity.canDoSomethingHere(player, i, j, k, world)) continue
+							if (InteractionSecurity.isBreakingBanned(player, i, j, k, world, at, l)) continue
 							
 							world.setBlockToAir(i, j, k)
 							

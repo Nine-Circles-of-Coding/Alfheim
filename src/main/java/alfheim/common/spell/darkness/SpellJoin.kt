@@ -35,8 +35,8 @@ object SpellJoin: SpellBase("join", EnumRace.IMP, 10000, 1800, 30) {
 		if (tgt !is EntityPlayer && tgt.dimension != caster.dimension) return SpellCastResult.WRONGTGT
 		
 		val (tx, ty, tz) = Vector3.fromEntity(tgt)
-		if (!InteractionSecurity.canDoSomethingHere(caster, tx, ty, tz, tgt.worldObj)) return SpellCastResult.NOTALLOW
-		if (!InteractionSecurity.canDoSomethingHere(tgt)) return SpellCastResult.NOTALLOW
+		if (InteractionSecurity.isInteractionBanned(caster, tx, ty, tz, tgt.worldObj)) return SpellCastResult.NOTALLOW
+		if (InteractionSecurity.isInteractionBanned(tgt)) return SpellCastResult.NOTALLOW
 		
 		val result = checkCast(caster)
 		if (result == SpellCastResult.OK)

@@ -1,6 +1,7 @@
 package alfheim.common.entity
 
 import alexsocol.asjlib.*
+import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.security.InteractionSecurity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
@@ -8,7 +9,6 @@ import net.minecraft.entity.projectile.EntityThrowable
 import net.minecraft.init.Blocks
 import net.minecraft.util.MovingObjectPosition
 import net.minecraft.world.World
-import kotlin.math.roundToLong
 
 class EntityThrowableItem: EntityThrowable {
 	
@@ -34,31 +34,26 @@ class EntityThrowableItem: EntityThrowable {
 				}
 			}
 			
-			var i = posX.mfloor()
-			var j = posY.mfloor()
-			var k = posZ.mfloor()
+			val v = Vector3.fromEntity(this)
+			val (xo, yo, zo) = v.mf()
 			
-			worldObj.playAuxSFX(2002, posX.roundToLong().I, posY.roundToLong().I, posZ.roundToLong().I, 16451) // fire resistance meta
+			worldObj.playAuxSFX(2002, xo, yo, zo, 16451) // fire resistance meta
 			setDead()
 			
-			if (InteractionSecurity.canDoSomethingHere(thrower ?: return, i, j, k, worldObj))
-				
-				if (worldObj.isAirBlock(i, j, k) && Blocks.fire.canPlaceBlockAt(worldObj, i, j, k)) {
-					worldObj.setBlock(i, j, k, Blocks.fire)
-				}
+			tryToSetFire(xo, yo, zo)
 			
 			for (n in 0..36) {
-				i = posX.mfloor() + rand.nextInt(6) - 1
-				j = posY.mfloor() + rand.nextInt(6) - 1
-				k = posZ.mfloor() + rand.nextInt(6) - 1
+				val (x, y, z) = v.rand().mul(6).sub(3).add(this).mf()
 				
-				if (!InteractionSecurity.canDoSomethingHere(thrower ?: continue, i, j, k, worldObj)) continue
-				
-				if (worldObj.isAirBlock(i, j, k) && Blocks.fire.canPlaceBlockAt(worldObj, i, j, k)) {
-					worldObj.setBlock(i, j, k, Blocks.fire)
-				}
+				tryToSetFire(x, y, z)
 			}
 		}
+	}
+	
+	private fun tryToSetFire(x: Int, y: Int, z: Int) {
+		if (InteractionSecurity.isPlacementBanned(thrower ?: return, x, y, z, worldObj, Blocks.fire)) return
+		if (!worldObj.isAirBlock(x, y, z) || !Blocks.fire.canPlaceBlockAt(worldObj, x, y, z)) return
+		worldObj.setBlock(x, y, z, Blocks.fire)
 	}
 	
 	public override fun func_70183_g() = -10f

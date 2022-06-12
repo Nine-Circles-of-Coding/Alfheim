@@ -10,29 +10,26 @@ import alfheim.api.spell.SpellBase
 import alfheim.api.trees.*
 import alfheim.common.block.tile.TileAnomalyHarvester
 import com.google.common.collect.Lists
-import cpw.mods.fml.common.Loader
-import cpw.mods.fml.relauncher.FMLRelaunchLog
 import net.minecraft.block.Block
 import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
 import net.minecraftforge.common.util.EnumHelper
-import org.apache.logging.log4j.Level
 import vazkii.botania.api.recipe.RecipeElvenTrade
 import java.util.*
-import kotlin.collections.HashMap
 
+@Suppress("unused")
 object AlfheimAPI {
 	
-	val ElvoriumArmor = EnumHelper.addArmorMaterial("ELVORIUM", 50, intArrayOf(5, 10, 8, 5), 30)
-	val elvoriumToolMaterial = EnumHelper.addToolMaterial("ELVORIUM", 4, 2400, 9.5f, 3f, 30)
-	val ElementalArmor = EnumHelper.addArmorMaterial("ELEMENTAL", 20, intArrayOf(2, 9, 5, 2), 20)
-	val mauftriumToolmaterial = EnumHelper.addToolMaterial("REALITY", 10, 9000, 3f, 8f, 40)
+	val ElvoriumArmor = EnumHelper.addArmorMaterial("ELVORIUM", 50, intArrayOf(5, 10, 8, 5), 30)!!
+	val elvoriumToolMaterial = EnumHelper.addToolMaterial("ELVORIUM", 4, 2400, 9.5f, 3f, 30)!!
+	val ElementalArmor = EnumHelper.addArmorMaterial("ELEMENTAL", 20, intArrayOf(2, 9, 5, 2), 20)!!
+	val mauftriumToolmaterial = EnumHelper.addToolMaterial("REALITY", 10, 9000, 3f, 8f, 40)!!
 	
 	// relic
-	val EXCALIBER = EnumHelper.addToolMaterial("EXCALIBER", 3, -1, 6.2f, 6f, 40)
-	val FENRIR = EnumHelper.addToolMaterial("FENRIR", 0, 2000, 0f, 3.0f, 14)
-	var RUNEAXE = EnumHelper.addToolMaterial("RUNEAXE", 4, 1561, 8f, 2f, 50)
-	val SOUL = EnumHelper.addToolMaterial("SOUL", -1, -1, -1f, -1f, -1) // ragnarok sword
+	val EXCALIBER = EnumHelper.addToolMaterial("EXCALIBER", 3, -1, 6.2f, 6f, 40)!!
+	val FENRIR = EnumHelper.addToolMaterial("FENRIR", 0, 2000, 0f, 3.0f, 14)!!
+	var RUNEAXE = EnumHelper.addToolMaterial("RUNEAXE", 4, 1561, 8f, 2f, 50)!!
+	val SOUL = EnumHelper.addToolMaterial("SOUL", -1, -1, -1f, -1f, -1)!! // ragnarok sword
 	
 	/** List of [RecipeElvenTrade] outputs banned for re'trading in Alfheim trade portal  */
 	val bannedRetrades = ArrayList<ItemStack>()
@@ -139,7 +136,7 @@ object AlfheimAPI {
 	
 	fun getSpellsFor(affinity: EnumRace): ArrayList<SpellBase> {
 		val l = Lists.newArrayList(checkGet(affinity))
-		l.sortWith(Comparator { s1, s2 -> s1.name.compareTo(s2.name) })
+		l.sortWith { s1, s2 -> s1.name.compareTo(s2.name) }
 		return l
 	}
 	
@@ -219,27 +216,16 @@ object AlfheimAPI {
 	/**
 	 * Adds a tree crafting recipe with the specified parameters to the registry.
 	 *
-	 * @param mana   - The mana cost for the recipe.
-	 * @param out    - The block that is created from the recipe.
-	 * @param core   - The core block in center that will be changed.
-	 * @param inputs - The items used in the infusion.
+	 * @param mana      - The mana cost for the recipe.
+	 * @param out       - The block that is created from the recipe.
+	 * @param outTileId - The id for tile that may be loaded from out nbt
+	 * @param core      - The core block in center that will be changed.
+	 * @param inputs    - The items used in the infusion.
+	 * @param throttle  - The maximum mana that can be absorbed per tick for this recipe.
 	 * @return The recipe that was added to the registry.
 	 */
-	fun addTreeRecipe(mana: Int, out: ItemStack, core: ItemStack, vararg inputs: Any) =
-		addTreeRecipe(RecipeTreeCrafting(mana, out, core, *inputs))
-	
-	/**
-	 * Adds a tree crafting recipe with the specified parameters to the registry.
-	 *
-	 * @param mana     - The mana cost for the recipe.
-	 * @param out      - The block that is created from the recipe.
-	 * @param core     - The core block in center that will be changed.
-	 * @param inputs   - The items used in the infusion.
-	 * @param throttle - The maximum mana that can be absorbed per tick for this recipe.
-	 * @return The recipe that was added to the registry.
-	 */
-	fun addTreeRecipe(mana: Int, out: ItemStack, core: ItemStack, throttle: Int, vararg inputs: Any) =
-		addTreeRecipe(RecipeTreeCrafting(mana, out, core, throttle, *inputs))
+	fun addTreeRecipe(mana: Int, out: ItemStack, outTileId: String?, core: ItemStack, throttle: Int, vararg inputs: Any) =
+		addTreeRecipe(RecipeTreeCrafting(mana, out, outTileId, core, throttle, *inputs))
 	
 	fun removeTreeRecipe(rec: RecipeTreeCrafting?): RecipeTreeCrafting? =
 		if (rec != null && treeRecipes.remove(rec)) rec else null

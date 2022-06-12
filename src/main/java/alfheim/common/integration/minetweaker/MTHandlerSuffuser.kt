@@ -15,10 +15,10 @@ object MTHandlerSuffuser {
 	
 	@ZenMethod
 	@JvmStatic
-	fun addRecipe(output: IItemStack, inner: IItemStack, mana: Int, speed: Int, inputs: Array<IIngredient?>) {
+	fun addRecipe(output: IItemStack, outTileId: String?, inner: IItemStack, mana: Int, speed: Int, inputs: Array<IIngredient?>) {
 		val out = getStack(output)
 		val core = getStack(inner)
-		MineTweakerAPI.apply(Add(RecipeTreeCrafting(mana, out, core, speed, *getObjects(inputs))))
+		MineTweakerAPI.apply(Add(RecipeTreeCrafting(mana, out, outTileId, core, speed, *getObjects(inputs))))
 	}
 	
 	@ZenMethod

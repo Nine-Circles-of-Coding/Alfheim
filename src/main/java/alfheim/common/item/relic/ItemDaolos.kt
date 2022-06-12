@@ -112,6 +112,7 @@ class ItemDaolos: ItemAxe(AlfheimAPI.RUNEAXE), IRelic {
 					if (atATime <= 0) return
 					
 					if (world.getBlock(i, j, k) !== Blocks.fire) continue
+					if (InteractionSecurity.isBreakingBanned(player, i, j ,k, world, Blocks.fire)) continue
 					
 					if (ManaItemHandler.requestManaExact(stack, player, if (world.isRaining) 2 else 8, true)) {
 						world.setBlockToAir(i, j, k)

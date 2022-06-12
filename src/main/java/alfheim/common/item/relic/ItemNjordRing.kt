@@ -66,7 +66,7 @@ class ItemNjordRing: ItemRelicBauble("NjordRing") {
 		if (changeZ) player.motionZ = motionZ
 		
 		if (player.isInsideOfMaterial(Material.water)) {
-			player.addPotionEffect(PotionEffect(Potion.nightVision.id, 20, 0, true))
+			player.addPotionEffect(PotionEffect(Potion.nightVision.id, 100, 0, true))
 		}
 		
 		if (player.air <= 1) {

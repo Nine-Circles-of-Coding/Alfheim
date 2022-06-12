@@ -26,7 +26,7 @@ class LensSmelt: Lens() {
 		val block = world.getBlock(x, y, z)
 		val meta = world.getBlockMetadata(x, y, z)
 		
-		if (entity.thrower != null && !InteractionSecurity.isBreakingBanned(entity.thrower, x, y, z, world, block, meta)) return false
+		if (entity.thrower != null && InteractionSecurity.isBreakingBanned(entity.thrower, x, y, z, world, block, meta)) return false
 		
 		val harvestLevel: Int = ConfigHandler.harvestLevelBore
 		val tile = world.getTileEntity(x, y, z)

@@ -8,25 +8,23 @@ import java.util.*
 /**
  * A recipe for the Dendric Suffuser.
  */
-class RecipeTreeCrafting(val manaUsage: Int, val out: ItemStack, val core: ItemStack, vararg inputs: Any): RecipePetals(out, *inputs) {
+class RecipeTreeCrafting(val manaUsage: Int, out: ItemStack, val outTileId: String?, val core: ItemStack, vararg inputs: Any): RecipePetals(out, *inputs) {
 	
-	private val inputs: List<Any>
 	var throttle = -1
 	
-	constructor(mana: Int, out: ItemStack, core: ItemStack, throttle: Int, vararg inputs: Any): this(mana, out, core, *inputs) {
+	constructor(mana: Int, out: ItemStack, outTileId: String?, core: ItemStack, throttle: Int, vararg inputs: Any): this(mana, out, outTileId, core, *inputs) {
 		this.throttle = throttle
 	}
 	
 	init {
 		if (inputs.size > 8) throw IllegalArgumentException("Maximal suffusion inputs size is 8")
-		
-		this.inputs = ArrayList(listOf(*inputs))
+		if (out.block == null) throw IllegalArgumentException("Can't fetch block from output stack '$out'")
 	}
 	
 	fun matches(items: List<ItemStack>, mid: ItemStack): Boolean {
 		if (!ASJUtilities.isItemStackEqualCrafting(core, mid)) return false
 		
-		val inputsMissing = ArrayList(inputs)
+		val inputsMissing = inputs
 		
 		for (i in items) {
 			for (j in inputsMissing.indices) {
@@ -42,8 +40,6 @@ class RecipeTreeCrafting(val manaUsage: Int, val out: ItemStack, val core: ItemS
 		}
 		return inputsMissing.isEmpty()
 	}
-	
-	override fun getInputs() = this.inputs
 	
 	override fun toString(): String {
 		val s = StringBuilder()

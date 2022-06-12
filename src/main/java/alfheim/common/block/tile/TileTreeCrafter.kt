@@ -23,15 +23,12 @@ import vazkii.botania.client.core.handler.HUDHandler
 import vazkii.botania.client.core.helper.RenderHelper
 import vazkii.botania.common.Botania
 import vazkii.botania.common.block.ModBlocks
-import vazkii.botania.common.core.helper.ItemNBTHelper
 import java.util.*
 import kotlin.math.*
 
 class TileTreeCrafter: ASJTile(), ISparkAttachable {
 	
 	companion object {
-		
-		const val TAG_SUFF_TILE = "SuffusedTile"
 		
 		val ITEMDISPLAY_LOCATIONS = arrayOf(Pos(-3, 1, 3), Pos(-4, 1, 0), Pos(0, 1, 4), Pos(-3, 1, -3), Pos(0, 1, -4), Pos(3, 1, -3), Pos(4, 1, 0), Pos(3, 1, 3))
 		val COLOREDWOOD_LOCATIONS = arrayOf(Pos(2, 0, 2), Pos(2, 0, 1), Pos(2, 0, -1), Pos(2, 0, -2), Pos(1, 0, 2), Pos(1, 0, -2), Pos(-1, 0, 2), Pos(-1, 0, -2), Pos(-2, 0, 2), Pos(-2, 0, 1), Pos(-2, 0, -1), Pos(-2, 0, -2))
@@ -285,7 +282,7 @@ class TileTreeCrafter: ASJTile(), ISparkAttachable {
 			RenderHelper.drawTexturedModalRect(xc + radius + 9, yc - 8, 0f, 0, 8, 22, 15)
 			net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting()
 			RenderItem.getInstance().renderItemIntoGUI(mc.fontRenderer, mc.renderEngine, recipe.core, xc + radius + 16, yc + 8)
-			RenderHelper.renderProgressPie(xc + radius + 32, yc - 8, progress, recipe.out)
+			RenderHelper.renderProgressPie(xc + radius + 32, yc - 8, progress, recipe.output)
 			net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting()
 			mc.fontRenderer.drawStringWithShadow("+", xc + radius + 14, yc + 12, 0xFFFFFF)
 		}
@@ -347,20 +344,9 @@ class TileTreeCrafter: ASJTile(), ISparkAttachable {
 		stage = 0
 		
 		worldObj.setBlockToAir(xCoord, yCoord - 3, zCoord)
-		worldObj.setBlock(xCoord, yCoord - 3, zCoord, recipe.out.block, recipe.out.meta, 3)
+		worldObj.setBlock(xCoord, yCoord - 3, zCoord, recipe.output.block, recipe.output.meta, 3)
 		
-		if (ItemNBTHelper.getBoolean(recipe.out, TAG_SUFF_TILE, false)) run tile@{
-			val copy = recipe.out.copy()
-			copy.tagCompound.removeTag(TAG_SUFF_TILE)
-			
-			val tile = createAndLoadEntity(copy.tagCompound) ?: return@tile
-			
-			tile.xCoord = xCoord
-			tile.yCoord = yCoord - 3
-			tile.zCoord = zCoord
-			
-			worldObj.setTileEntity(xCoord, yCoord - 3, zCoord, tile)
-		}
+		tryToLoadTile(recipe)
 		
 		worldObj.playSoundEffect(xCoord.D, yCoord.D, zCoord.D, "botania:enchanterEnchant", 1f, 1f)
 		
@@ -386,6 +372,21 @@ class TileTreeCrafter: ASJTile(), ISparkAttachable {
 					}
 			}
 		}
+	}
+	
+	fun tryToLoadTile(recipe: RecipeTreeCrafting) {
+		recipe.outTileId ?: return
+		
+		val copy = recipe.output.copy()
+		copy.tagCompound.setString("id", recipe.outTileId)
+		
+		val tile = createAndLoadEntity(copy.tagCompound) ?: return
+		
+		tile.xCoord = xCoord
+		tile.yCoord = yCoord - 3
+		tile.zCoord = zCoord
+		
+		worldObj.setTileEntity(xCoord, yCoord - 3, zCoord, tile)
 	}
 	
 	/**

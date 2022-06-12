@@ -1,6 +1,7 @@
 package alfheim.common.lexicon.page
 
 import alexsocol.asjlib.*
+import alfheim.api.ModInfo
 import alfheim.api.entity.race
 import alfheim.api.lib.LibResourceLocations
 import alfheim.api.spell.SpellBase
@@ -16,7 +17,7 @@ import vazkii.botania.client.core.handler.HUDHandler
 import vazkii.botania.common.block.tile.mana.TilePool
 import vazkii.botania.common.lexicon.page.PageText
 
-class PageSpell(internal val spell: SpellBase): LexiconPage("botania.page." + spell.name) {
+class PageSpell(internal val spell: SpellBase): LexiconPage("${ModInfo.MODID}.page.${spell.name}") {
 	
 	@SideOnly(Side.CLIENT)
 	override fun renderScreen(gui: IGuiLexiconEntry, mx: Int, my: Int) {

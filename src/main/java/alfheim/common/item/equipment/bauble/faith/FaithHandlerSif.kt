@@ -91,8 +91,6 @@ object FaithHandlerSif: IFaithHandler {
 		val cooldown = getInt(emblem, TAG_COOLDOWN, 0)
 		if (cooldown != 0 || e.entityPlayer.isSneaking || player.heldItem != null || !ManaItemHandler.requestManaExact(emblem, e.entityPlayer, 50, false)) return
 		
-		if (InteractionSecurity.isInteractionBanned(player, e.x, e.y, e.z, e.world)) return
-		
 		val world = e.world
 		val block = world.getBlock(e.x, e.y, e.z)
 		

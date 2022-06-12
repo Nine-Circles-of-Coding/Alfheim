@@ -66,9 +66,11 @@ class ItemRodGrass: ItemMod("grassRod"), IManaUsingItem {
 			if (!ManaItemHandler.requestManaExactForTool(stack, player, cost, false)) return false
 			if (InteractionSecurity.isInteractionBanned(player, x, y, z, world)) return false
 			
-			world.setBlock(x, y, z, block)
-			ManaItemHandler.requestManaExactForTool(stack, player, cost, true)
-			for (i in 0..5) Botania.proxy.sparkleFX(world, x + Math.random(), y + Math.random(), z + Math.random(), r, g, b, 1f, 5)
+			ManaItemHandler.requestManaExactForTool(stack, player, cost, world.isRemote)
+			if (world.isRemote)
+				world.setBlock(x, y, z, block)
+			else
+				for (i in 0..5) Botania.proxy.sparkleFX(world, x + Math.random(), y + Math.random(), z + Math.random(), r, g, b, 1f, 5)
 			
 			return true
 		}

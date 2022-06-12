@@ -6,6 +6,7 @@ import net.minecraft.launchwrapper.IClassTransformer
 import org.lwjgl.opengl.GL11
 import org.objectweb.asm.*
 import org.objectweb.asm.Opcodes.*
+import vazkii.botania.api.subtile.SubTileEntity
 
 @Suppress("NAME_SHADOWING", "ClassName", "unused")
 class AlfheimClassTransformer: IClassTransformer {
@@ -93,6 +94,15 @@ class AlfheimClassTransformer: IClassTransformer {
 					
 					cw.toByteArray()
 				} else basicClass
+			}
+			
+			"vazkii.botania.common.block.tile.TileSpecialFlower"            -> {
+				println("Transforming $transformedName")
+				val cr = ClassReader(basicClass)
+				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
+				val ct = `TileSpecialFlower$ClassVisitor`(cw)
+				cr.accept(ct, ClassReader.SKIP_FRAMES)
+				cw.toByteArray()
 			}
 			
 			"vazkii.botania.common.entity.EntityDoppleganger"               -> {
@@ -402,6 +412,27 @@ class AlfheimClassTransformer: IClassTransformer {
 				}
 				
 				super.visitMethodInsn(opcode, owner, name, desc, itf)
+			}
+		}
+	}
+	
+	internal class `TileSpecialFlower$ClassVisitor`(cv: ClassVisitor): ClassVisitor(ASM5, cv) {
+		
+		override fun visitField(access: Int, name: String?, desc: String?, signature: String?, value: Any?): FieldVisitor {
+			val newVal = if (value == "subTileName") SubTileEntity.TAG_TYPE else value
+			return super.visitField(access, name, desc, signature, newVal)
+		}
+		
+		override fun visitMethod(access: Int, name: String?, desc: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor {
+			return `TileSpecialFlower$MethodVisitor`(super.visitMethod(access, name, desc, signature, exceptions))
+		}
+		
+		internal class `TileSpecialFlower$MethodVisitor`(mv: MethodVisitor): MethodVisitor(ASM5, mv) {
+			
+			override fun visitLdcInsn(cst: Any?) {
+				val newCst = if (cst == "subTileName") SubTileEntity.TAG_TYPE else cst
+				
+				super.visitLdcInsn(newCst)
 			}
 		}
 	}

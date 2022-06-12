@@ -21,7 +21,6 @@ class ItemSuperIcePendant: ItemIcePendant() {
 		if (entity !is EntityPlayer) return
 		
 		val e = ASJUtilities.getMouseOver(entity, 16.0, true)?.entityHit as? EntityLivingBase ?: return
-		if (!InteractionSecurity.canHurtEntity(entity, e)) return
 		
 		if (!ManaItemHandler.requestManaExact(stack, entity, 100, false)) return
 		

@@ -39,7 +39,7 @@ class EntitySpellGravityTrap @JvmOverloads constructor(world: World, var caster:
 			setDead()
 			return
 		}
-		if (isDead || ticksExisted < 20 || ASJUtilities.isClient) return
+		if (isDead || ticksExisted < 20 || ASJUtilities.isClient || caster == null) return
 		
 		val l = worldObj.getEntitiesWithinAABB(Entity::class.java, AxisAlignedBB.getBoundingBox(posX, posY + 8, posZ, posX, posY + 8, posZ).expand(SpellGravityTrap.radius, 9.0, SpellGravityTrap.radius)) as List<Entity>
 		for (e in l) {

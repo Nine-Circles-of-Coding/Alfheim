@@ -60,25 +60,22 @@ object FaithHandlerNjord: IFaithHandler {
 		if (getGodPowerLevel(player) < 3) return
 		if (player.isSneaking || !player.isInsideOfMaterial(Material.air)) return
 		
-		if (InteractionSecurity.isInteractionBanned(player, e.x, e.y, e.z))
-			return
 		
 		val state = player.worldObj.getBlock(e.x, e.y, e.z)
 		
-		if (state.material.isLiquid) {
-			val originalStack = player.heldItem?.copy() ?: return
-			val result = player.heldItem.item.onItemUse(player.heldItem, player, player.worldObj, e.x, e.y, e.z, e.side, 0f, 0f, 0f)
-			
-			if (player.capabilities.isCreativeMode)
-				player.setCurrentItemOrArmor(0, originalStack)
-			else if (player.heldItem.stackSize <= 0) {
-				ForgeEventFactory.onPlayerDestroyItem(player, originalStack)
-				player.setCurrentItemOrArmor(0, null)
-			}
-			
-			if (result)
-				player.swingItem()
+		if (!state.material.isLiquid) return
+		val originalStack = player.heldItem?.copy() ?: return
+		val result = player.heldItem.tryPlaceItemIntoWorld(player, player.worldObj, e.x, e.y, e.z, e.side, 0f, 0f, 0f)
+		
+		if (player.capabilities.isCreativeMode)
+			player.setCurrentItemOrArmor(0, originalStack)
+		else if (player.heldItem.stackSize <= 0) {
+			ForgeEventFactory.onPlayerDestroyItem(player, originalStack)
+			player.setCurrentItemOrArmor(0, null)
 		}
+		
+		if (result)
+			player.swingItem()
 	}
 	
 	@SubscribeEvent

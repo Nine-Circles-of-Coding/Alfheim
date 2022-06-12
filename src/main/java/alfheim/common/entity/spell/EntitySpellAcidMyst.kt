@@ -41,7 +41,7 @@ class EntitySpellAcidMyst(world: World): Entity(world), ITimeStopSpecific {
 		
 		if (ticksExisted % 20 == 0) VisualEffectHandler.sendPacket(VisualEffects.ACID, this)
 		
-		val l = worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, alexsocol.asjlib.getBoundingBox(posX, posY, posZ).expand(SpellAcidMyst.radius)) as MutableList<EntityLivingBase>
+		val l = worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, getBoundingBox(posX, posY, posZ).expand(SpellAcidMyst.radius)) as MutableList<EntityLivingBase>
 		l.remove(caster!!)
 		for (e in l)
 			if (!PartySystem.mobsSameParty(caster!!, e) && Vector3.entityDistance(caster!!, e) <= SpellAcidMyst.radius && InteractionSecurity.canHurtEntity(caster ?: continue, e))

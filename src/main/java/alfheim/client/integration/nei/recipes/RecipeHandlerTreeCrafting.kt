@@ -5,6 +5,7 @@ import alexsocol.asjlib.render.ASJRenderHelper
 import alfheim.api.*
 import alfheim.api.crafting.recipe.RecipeTreeCrafting
 import alfheim.api.lib.LibResourceLocations
+import alfheim.common.block.AlfheimBlocks
 import codechicken.nei.*
 import codechicken.nei.recipe.TemplateRecipeHandler
 import net.minecraft.item.ItemStack
@@ -15,7 +16,6 @@ import vazkii.botania.client.core.handler.HUDHandler
 import vazkii.botania.client.lib.LibResources
 import vazkii.botania.common.block.tile.mana.TilePool
 import java.awt.Rectangle
-import java.util.*
 import kotlin.math.*
 
 open class RecipeHandlerTreeCrafting: TemplateRecipeHandler() {
@@ -26,9 +26,9 @@ open class RecipeHandlerTreeCrafting: TemplateRecipeHandler() {
 		super.drawBackground(recipe)
 		GL11.glEnable(GL11.GL_BLEND)
 		GL11.glColor4f(1f, 1f, 1f, 0.5F)
-		mc.renderEngine.bindTexture(LibResourceLocations.petalOverlay)
-		ASJRenderHelper.drawTexturedModalRect(45, 10, 0, 38, 7, 92, 92)
-		HUDHandler.renderManaBar(32, 113, 0x0000FF, 0.75F, (arecipes[recipe] as CachedTreeRecipe).manaUsage, TilePool.MAX_MANA / 10)
+		mc.renderEngine.bindTexture(LibResourceLocations.suffuserOverlay)
+		ASJRenderHelper.drawTexturedModalRect(7, 2, 0, 0, 0, 142, 93)
+		HUDHandler.renderManaBar(32, 113, 0x0000FF, 0.75F, (arecipes[recipe] as CachedTreeRecipe).manaUsage, TilePool.MAX_MANA)
 	}
 	
 	open val recipeID: String
@@ -101,9 +101,10 @@ open class RecipeHandlerTreeCrafting: TemplateRecipeHandler() {
 		
 		init {
 			setIngredients(recipe.inputs)
-			output = PositionedStack(recipe.output, 111, 21)
+			output = PositionedStack(recipe.output, 126, 55)
 			manaUsage = recipe.manaUsage
-			inputs.add(PositionedStack(recipe.core, 73, 55))
+			inputs.add(PositionedStack(recipe.core, 20, 55))
+			inputs.add(PositionedStack(ItemStack(AlfheimBlocks.treeCrafterBlock), 73, 55))
 		}
 		
 		fun setIngredients(inputs: List<Any>) {
@@ -129,4 +130,5 @@ open class RecipeHandlerTreeCrafting: TemplateRecipeHandler() {
 		
 		override fun getResult() = output
 	}
+	
 }

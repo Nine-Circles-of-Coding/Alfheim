@@ -92,12 +92,10 @@ open class ItemSnowArmor(type: Int, name: String): ItemManasteelArmor(type, name
 			val x = player.posX.mfloor()
 			val y = player.boundingBox.minY.mfloor() - 1
 			val z = player.posZ.mfloor()
-			
-			checkSet(world, player, x, y, z)
-			checkSet(world, player, x + 1, y, z)
-			checkSet(world, player, x - 1, y, z)
-			checkSet(world, player, x, y, z + 1)
-			checkSet(world, player, x, y, z - 1)
+		
+			for (i in -1..1)
+				for (j in -1..1)
+					checkSet(world, player, x + i, y, z + j)
 		}
 	}
 	

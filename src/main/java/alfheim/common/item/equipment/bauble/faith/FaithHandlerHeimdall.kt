@@ -16,7 +16,6 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.potion.*
 import net.minecraftforge.event.entity.living.LivingHurtEvent
-import net.minecraftforge.fluids.IFluidBlock
 import vazkii.botania.api.mana.ManaItemHandler
 import vazkii.botania.common.Botania
 import vazkii.botania.common.block.ModBlocks
@@ -42,12 +41,12 @@ object FaithHandlerHeimdall: IFaithHandler {
 		bifrostPlatform(player, stack)
 		
 		val b = player.isPotionActive(Potion.blindness)
-		val nv = player.isPotionActive(Potion.nightVision)
+		val nv = player.getActivePotionEffect(Potion.nightVision)
 		
-		if (!b && nv) return
+		if (!b && nv != null && nv.duration > 50) return
 		
 		if (!player.worldObj.isRemote && ManaItemHandler.requestManaExact(stack, player, 1, true)) {
-			if (!nv) player.addPotionEffect(PotionEffect(Potion.nightVision.id, 100, 0))
+			player.addPotionEffect(PotionEffect(Potion.nightVision.id, 100, 0))
 			if (b) player.removePotionEffect(Potion.blindness.id)
 		}
 	}
@@ -81,42 +80,40 @@ object FaithHandlerHeimdall: IFaithHandler {
 		val world = player.worldObj
 		if (world.isRemote) return
 		
-		if (player.heldItem?.item === ModItems.rainbowRod) {
-			if (ManaItemHandler.requestManaExact(emblem, player, 10, false)) {
-				val motVec = getMotionVec(player)
-				val (x, y, z) = Vector3(player.posX + motVec.x, (player.posY + if (player.isSneaking) -2.99 else -0.99).mfloor(), player.posZ + motVec.z).mf()
+		if (player.heldItem?.item !== ModItems.rainbowRod) return
+		
+		if (!ManaItemHandler.requestManaExact(emblem, player, 10, false)) return
+		val motVec = getMotionVec(player)
+		val (x, y, z) = Vector3(player.posX + motVec.x, (player.posY + if (player.isSneaking) -2.99 else -0.99).mfloor(), player.posZ + motVec.z).mf()
+		
+		if (y < 0 || y >= 256) return
+		
+		for (i in -2..2)
+			for (k in -2..2) {
+				if (abs(i) == 2 && abs(k) == 2) continue
 				
-				if (y < 0 || y >= 256) return
+				if (InteractionSecurity.isPlacementBanned(player, x + i, y, z + k, world, ModBlocks.bifrost))
+					continue
 				
-				for (i in -2..2)
-					for (k in -2..2) {
-						if (abs(i) == 2 && abs(k) == 2) continue
-						
-						if (InteractionSecurity.isPlacementBanned(player, x + i, y, z + k, world, ModBlocks.bifrost))
-							continue
-						
-						val block = world.getBlock(x + i, y, z + k)
-						if (block is IFluidBlock) continue
-						
-						if (block.isAir(world, x + i, y, z + k) || block.isReplaceable(world, x + i, y, z + k)) {
-							world.setBlock(x + i, y, z + k, ModBlocks.bifrost)
-							
-							val tileBifrost = world.getTileEntity(x + i, y, z + k) as TileBifrost
-							
-							tileBifrost.ticks = 5
-							player.fallDistance = 0f
-							ManaItemHandler.requestManaExact(emblem, player, 10, true)
-						} else if (block == ModBlocks.bifrost) {
-							val tileBifrost = world.getTileEntity(x + i, y, z + k) as TileBifrost
-							
-							if (tileBifrost.ticks < 2) {
-								tileBifrost.ticks = 5
-								ManaItemHandler.requestManaExact(emblem, player, 10, true)
-							}
-						}
+				val block = world.getBlock(x + i, y, z + k)
+				
+				if (block.isAir(world, x + i, y, z + k)) {
+					world.setBlock(x + i, y, z + k, ModBlocks.bifrost)
+					
+					val tileBifrost = world.getTileEntity(x + i, y, z + k) as TileBifrost
+					
+					tileBifrost.ticks = 5
+					player.fallDistance = 0f
+					ManaItemHandler.requestManaExact(emblem, player, 10, true)
+				} else if (block == ModBlocks.bifrost) {
+					val tileBifrost = world.getTileEntity(x + i, y, z + k) as TileBifrost
+					
+					if (tileBifrost.ticks < 2) {
+						tileBifrost.ticks = 5
+						ManaItemHandler.requestManaExact(emblem, player, 10, true)
 					}
+				}
 			}
-		}
 	}
 	
 	@SubscribeEvent

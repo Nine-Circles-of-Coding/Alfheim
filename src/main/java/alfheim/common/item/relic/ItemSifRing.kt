@@ -1,25 +1,24 @@
 package alfheim.common.item.relic
 
 import alexsocol.asjlib.*
+import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.security.InteractionSecurity
 import alfheim.common.item.AlfheimItems
 import baubles.api.BaubleType
 import baubles.common.lib.PlayerHandler
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
+import net.minecraft.block.Block
 import net.minecraft.entity.EntityAgeable
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
 import net.minecraft.util.ChunkCoordinates
-import net.minecraft.world.biome.BiomeGenBase
 import net.minecraftforge.event.entity.living.LivingEvent
 import vazkii.botania.api.mana.ManaItemHandler
 import vazkii.botania.common.item.ModItems
 import vazkii.botania.common.item.relic.ItemRelicBauble
 
 class ItemSifRing: ItemRelicBauble("SifRing") {
-	
-	val desertIDs = arrayOf(BiomeGenBase.desert.biomeID, BiomeGenBase.desertHills.biomeID, BiomeGenBase.desert.biomeID + 128, BiomeGenBase.desertHills.biomeID + 128)
 	
 	init {
 		eventForge()
@@ -35,25 +34,35 @@ class ItemSifRing: ItemRelicBauble("SifRing") {
 		growAnimals(ring, player)
 	}
 	
-	val list = ArrayList<ChunkCoordinates>()
+	val list = ArrayList<Pair<ChunkCoordinates, Block>>()
 	
 	fun reviveCacti(stack: ItemStack, player: EntityPlayer) {
 		if (!ManaItemHandler.requestManaExact(stack, player, 20, true)) return
 		
 		val world = player.worldObj
 		
-		for (x in -8..8)
-			for (y in -3..3)
-				for (z in -8..8)
-					if (world.getBiomeGenForCoords(player.posX.mfloor() + x, player.posZ.mfloor() + z).biomeID in desertIDs)
-						if (world.getBlock(player, x, y, z) === Blocks.deadbush)
-							list.add(ChunkCoordinates(x, y, z))
+		val (x, y, z) = Vector3.fromEntity(player).mf()
 		
-		val (x, y, z) = list.firstOrNull {
-			val (x, y, z) = it
-			!InteractionSecurity.isPlacementBanned(player, x, y, z, world, Blocks.cactus)
+		for (i in -4..4)
+			for (j in -3..3)
+				for (k in -4..4) {
+					if (world.getBlock(x + i, y + j, z + k) !== Blocks.deadbush) continue
+					
+					val cactus = Blocks.cactus.canBlockStay(world, x + i, y + j, z + k)
+					val sapling = Blocks.sapling.canBlockStay(world, x + i, y + j, z + k)
+					
+					if (cactus || sapling)
+						list.add(ChunkCoordinates(x + i, y + j, z + k) to if (cactus) Blocks.cactus else Blocks.sapling)
+				}
+		
+		val (pos, block) = list.firstOrNull {
+			val (i, j, k) = it.first
+			!InteractionSecurity.isPlacementBanned(player, i, j, k, world, Blocks.cactus)
 		} ?: return
-		world.setBlock(player, Blocks.cactus, x, y, z)
+		
+		val (i, j, k) = pos
+		world.setBlock(i, j, k, block)
+		
 		list.clear()
 	}
 	

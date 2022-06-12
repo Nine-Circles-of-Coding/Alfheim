@@ -14,6 +14,7 @@ import alexsocol.asjlib.render.ASJRenderHelper.interpolate
 import alexsocol.asjlib.render.ASJRenderHelper.setBlend
 import alexsocol.asjlib.render.ASJRenderHelper.setGlow
 import alexsocol.asjlib.render.ASJRenderHelper.setTwoside
+import alexsocol.asjlib.security.InteractionSecurity
 import alexsocol.patcher.event.RenderEntityPostEvent
 import alfheim.api.ModInfo
 import alfheim.api.lib.LibResourceLocations
@@ -113,6 +114,7 @@ class ItemGleipnir: ItemRelic("Gleipnir") {
 				val size = (260 - stack.cooldown) / 2.5
 				val list = world.getEntitiesWithinAABB(EntityLivingBase::class.java, entity.boundingBox(1).expand(size, 0.0, size)) as MutableList<EntityLivingBase>
 				list.remove(entity)
+				list.removeAll { InteractionSecurity.canHurtEntity(entity, it) }
 				list.forEach {
 					val punch = Vector3.fromEntity(entity).sub(Vector3.fromEntity(it)).normalize().mul(size)
 					it.knockBack(entity, 1f, punch.x, punch.z)

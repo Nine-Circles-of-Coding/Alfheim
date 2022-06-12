@@ -1961,6 +1961,7 @@ object AlfheimRecipes {
 	private fun registerDendrology() {
 		recipeLightningTree = AlfheimAPI.addTreeRecipe(50000,
 													   ItemStack(lightningSapling),
+		                                               null,
 													   ItemStack(irisSapling),
 													   350,
 													   MANA_STEEL, MANA_STEEL, MANA_STEEL,
@@ -1970,6 +1971,7 @@ object AlfheimRecipes {
 		
 		recipeInfernalTree = AlfheimAPI.addTreeRecipe(10000,
 													  ItemStack(netherSapling),
+													  null,
 													  ItemStack(irisSapling),
 													  70,
 													  "ingotBrickNether", "ingotBrickNether", "ingotBrickNether",
@@ -1979,6 +1981,7 @@ object AlfheimRecipes {
 		
 		recipeCalicoTree = AlfheimAPI.addTreeRecipe(50000,
 													ItemStack(calicoSapling),
+													null,
 													ItemStack(irisSapling),
 													70,
 													ItemStack(soul_sand), ItemStack(soul_sand), ItemStack(soul_sand),
@@ -1988,6 +1991,7 @@ object AlfheimRecipes {
 		
 		recipeCircuitTree = AlfheimAPI.addTreeRecipe(10000,
 													 ItemStack(circuitSapling),
+													 null,
 													 ItemStack(irisSapling),
 													 70,
 													 ItemStack(repeater), ItemStack(comparator), ItemStack(repeater),
@@ -1997,6 +2001,7 @@ object AlfheimRecipes {
 		
 		recipeSealingTree = AlfheimAPI.addTreeRecipe(50000,
 													 ItemStack(sealingSapling),
+													 null,
 													 ItemStack(irisSapling),
 													 350,
 													 ELEMENTIUM, ELEMENTIUM, ELEMENTIUM,

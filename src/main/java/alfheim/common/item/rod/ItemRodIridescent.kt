@@ -74,7 +74,7 @@ class ItemRodIridescent(name: String = "rodColorfulSkyDirt"): ItemIridescent(nam
 		val world = player.worldObj
 		val stack = player.heldItem ?: return
 		
-		if (!player.isSneaking) return
+		if (!player.isSneaking || stack.item !== this) return
 		
 		var damage = stack.meta
 		if (!world.isRemote) {

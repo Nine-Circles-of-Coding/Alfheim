@@ -73,7 +73,7 @@ class BlockAltLeaves: BlockLeavesMod(), IGlowingLayerBlock {
 	override fun getBlockHardness(world: World, x: Int, y: Int, z: Int) = if (world.getBlockMetadata(x, y, z) % 8 == yggMeta) -1f else super.getBlockHardness(world, x, y, z)
 	
 	override fun register(name: String) {
-		GameRegistry.registerBlock(this, ItemUniqueSubtypedBlockMod::class.java, name)
+		GameRegistry.registerBlock(this, ItemUniqueSubtypedBlockMod::class.java, name, ALT_TYPES.size)
 	}
 	
 	override fun registerBlockIcons(reg: IIconRegister) {

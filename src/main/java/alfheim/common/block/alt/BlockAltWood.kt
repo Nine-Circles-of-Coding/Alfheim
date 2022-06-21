@@ -68,7 +68,7 @@ class BlockAltWood(val set: Int): BlockModRotatedPillar(Material.wood), IFuelHan
 	override fun quantityDropped(random: Random) = 1
 	
 	override fun register(name: String) {
-		GameRegistry.registerBlock(this, ItemUniqueSubtypedBlockMod::class.java, name)
+		GameRegistry.registerBlock(this, ItemUniqueSubtypedBlockMod::class.java, name, ALT_TYPES.size / 2)
 	}
 	
 	override fun getTopIcon(meta: Int) = icons[0].safeGet(meta % 4)

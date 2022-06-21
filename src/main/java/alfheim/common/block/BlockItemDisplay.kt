@@ -61,7 +61,7 @@ class BlockItemDisplay: BlockMod(Material.wood), ILexiconable, ITileEntityProvid
 	}
 	
 	internal fun register(name: String) {
-		GameRegistry.registerBlock(this, ItemUniqueSubtypedBlockMod::class.java, name)
+		GameRegistry.registerBlock(this, ItemUniqueSubtypedBlockMod::class.java, name, 3)
 	}
 	
 	override fun addCollisionBoxesToList(world: World, x: Int, y: Int, z: Int, axis: AxisAlignedBB, bounds: MutableList<Any?>, entity: Entity?) {

@@ -28,21 +28,9 @@ open class ItemSubtypedBlockMod(block: Block): ItemBlockWithMetadata(block, bloc
 	}
 }
 
-class ItemUniqueSubtypedBlockMod(block: Block): ItemBlockWithMetadata(block, block) {
-	
-	override fun getMetadata(meta: Int): Int {
-		if (field_150939_a is BlockLeavesMod) return meta or (field_150939_a as BlockLeavesMod).decayBit()
-		if (field_150939_a is BlockModRotatedPillar) return meta and 0x3
-		return meta
-	}
-	
-	override fun getDamage(stack: ItemStack): Int {
-		var meta = super.getDamage(stack)
-		if (field_150939_a is BlockLeavesMod) meta %= 8
-		if (field_150939_a is BlockModRotatedPillar) meta %= 4
-		return meta
-	}
+@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN") // fucking reflection
+class ItemUniqueSubtypedBlockMod(block: Block, val subtypes: Integer): ItemBlockWithMetadata(block, block) {
 	
 	override fun getUnlocalizedNameInefficiently(stack: ItemStack) =
-		super.getUnlocalizedNameInefficiently(stack).replace("tile.", "tile.${ModInfo.MODID}:") + getDamage(stack)
+		super.getUnlocalizedNameInefficiently(stack).replace("tile.", "tile.${ModInfo.MODID}:") + stack.meta % subtypes.toInt()
 }

@@ -80,7 +80,7 @@ class BlockAltPlanks: BlockMod(Material.wood), ILexiconable, IFuelHandler {
 	override fun getFireSpreadSpeed(world: IBlockAccess?, x: Int, y: Int, z: Int, face: ForgeDirection?) = 0
 	
 	internal fun register(name: String) {
-		GameRegistry.registerBlock(this, ItemUniqueSubtypedBlockMod::class.java, name)
+		GameRegistry.registerBlock(this, ItemUniqueSubtypedBlockMod::class.java, name, ALT_TYPES.size - 1)
 	}
 	
 	override fun getSubBlocks(item: Item?, tab: CreativeTabs?, list: MutableList<Any?>?) {

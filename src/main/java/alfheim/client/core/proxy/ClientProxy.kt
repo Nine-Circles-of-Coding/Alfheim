@@ -202,7 +202,7 @@ class ClientProxy: CommonProxy() {
 		val keyCast = KeyBinding("key.cast.desc", Keyboard.KEY_C, "key.categories.alfheim")
 		val keyUnCast = KeyBinding("key.uncast.desc", Keyboard.KEY_X, "key.categories.alfheim")
 		val keySelMob = KeyBinding("key.selmob.desc", Keyboard.KEY_R, "key.categories.alfheim")
-		val keySelTeam = KeyBinding("key.selteam.desc", Keyboard.KEY_T, "key.categories.alfheim")
+		val keySelTeam = KeyBinding("key.selteam.desc", if (mc.session.username == "AlexSocol") Keyboard.KEY_T else Keyboard.KEY_Y, "key.categories.alfheim")
 		
 		init {
 			removeKeyBinding(keyFlight)

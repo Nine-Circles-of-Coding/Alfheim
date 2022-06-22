@@ -201,13 +201,13 @@ class EntityFlugel(world: World): EntityCreature(world), IBotaniaBossWithName { 
 			return
 		}
 		
-		super.onDeath(source)
-		
 		playSoundAtEntity("random.explode", 20f, (1f + (worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.2f) * 0.7f)
 		worldObj.spawnParticle("hugeexplosion", posX, posY, posZ, 1.0, 0.0, 0.0)
 		
 		for (player in playersAround)
 			player.triggerAchievement(if (isHardMode) AlfheimAchievements.flugelHardKill else AlfheimAchievements.flugelKill)
+		
+		super.onDeath(source)
 		
 		if (isHardMode) {
 			

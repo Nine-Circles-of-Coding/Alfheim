@@ -164,32 +164,38 @@ class ItemTankMask: ItemRelicBauble("TankMask"), IBaubleRender, IManaUsingItem {
 		@SubscribeEvent(priority = EventPriority.LOWEST)
 		fun onEntityDeath(e: LivingDeathEvent) {
 			val player = e.entityLiving as? EntityPlayer ?: return
+			val baubles = PlayerHandler.getPlayerBaubles(player)
 			
+			val amulet = baubles[0]?.copy()
 			if (e.source.damageType == DamageSourceSpell.possession.damageType) {
-				val baubles = PlayerHandler.getPlayerBaubles(player)
-				if (baubles[0]?.item === AlfheimItems.mask) {
-					setInt(baubles[0], TAG_POSSESSION, 0)
-					if (!player.inventory.addItemStackToInventory(baubles[0]!!.copy())) {
-						player.dropPlayerItemWithRandomChoice(baubles[0]!!.copy(), false)
-					}
+				if (amulet?.item === AlfheimItems.mask) {
+					(amulet.item as IBauble).onUnequipped(amulet, player)
+					
+					setInt(amulet, TAG_POSSESSION, 0)
+					if (!player.inventory.addItemStackToInventory(amulet))
+						player.dropPlayerItemWithRandomChoice(amulet, false)
+					
 					baubles[0] = null
 				}
 			}
 			
-			if (e.entityLiving.isPotionActive(AlfheimConfigHandler.potionIDLeftFlame))
+			if (player.isPotionActive(AlfheimConfigHandler.potionIDLeftFlame))
 				return
 			
 			if (canBeSaved(player)) {
 				val slot = ASJUtilities.getSlotWithItem(AlfheimItems.mask, player.inventory)
-				val baubles = PlayerHandler.getPlayerBaubles(player)
-				if (baubles[0] != null)
-					if (!player.inventory.addItemStackToInventory(baubles[0]!!.copy())) player.dropPlayerItemWithRandomChoice(baubles[0]!!.copy(), false)
+				if (amulet != null) {
+					(amulet.item as IBauble).onUnequipped(amulet, player)
+					
+					if (!player.inventory.addItemStackToInventory(amulet))
+						player.dropPlayerItemWithRandomChoice(amulet, false)
+				}
 				
-				baubles[0] = player.inventory[slot]!!.copy()
-				player.inventory.consumeInventoryItem(AlfheimItems.mask)
+				baubles[0] = player.inventory[slot]?.copy()
+				player.inventory[slot] = null
 				e.isCanceled = true
-				val h = max(0f, min(max(e.entityLiving.health, e.entityLiving.maxHealth / 4f), e.entityLiving.maxHealth))
-				e.entityLiving.health = h
+				val h = max(0f, min(max(player.health, player.maxHealth / 4f), player.maxHealth))
+				player.health = h
 			}
 		}
 		
@@ -208,14 +214,16 @@ class ItemTankMask: ItemRelicBauble("TankMask"), IBaubleRender, IManaUsingItem {
 		}
 		
 		fun canBeSaved(player: EntityPlayer): Boolean {
+			if (ASJUtilities.getAmount(player.inventory, ItemStack(AlfheimItems.mask)) > 1) return false
+			
 			val slot = ASJUtilities.getSlotWithItem(AlfheimItems.mask, player.inventory)
 			
 			if (slot == -1) return false
 			
 			if (!getBoolean(player.inventory[slot], TAG_ACTIVATED, false) || getInt(player.inventory[slot], TAG_COOLDOWN, 0) > 0) return false
 			
-			val baubles = PlayerHandler.getPlayerBaubles(player)
-			if ((baubles[0]?.item as? IBauble)?.canUnequip(baubles[0], player) == false)
+			val amulet = PlayerHandler.getPlayerBaubles(player)[0]
+			if ((amulet?.item as? IBauble)?.canUnequip(amulet, player) == false)
 				return false
 			
 			return true

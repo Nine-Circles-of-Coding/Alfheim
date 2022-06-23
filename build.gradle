@@ -37,7 +37,7 @@ repositories {
 }
 
 group = "main"
-version = mainMod ? "BETA-39" : "12"
+version = mainMod ? "BETA-40" : "12"
 archivesBaseName = mainMod ? "Alfheim" : "Alfheim-Modular"
 def modid = mainMod ? "alfheim" : "alfmod"
 def desc = mainMod ? "Botania addon alowing you to travel to Alfheim" : "Alfheim time-limited events"

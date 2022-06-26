@@ -989,7 +989,7 @@ class EntityFlugel(world: World): EntityCreature(world), IBotaniaBossWithName { 
 			
 			players.forEach {
 				if (isTruePlayer(it))
-					e.playersDamage[player.commandSenderName] = 0f
+					e.playersDamage[it.commandSenderName] = 0f
 			}
 			
 			e.playerCount = playerCount

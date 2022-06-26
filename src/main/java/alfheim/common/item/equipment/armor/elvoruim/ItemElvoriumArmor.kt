@@ -12,11 +12,10 @@ import cpw.mods.fml.common.Optional
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.model.ModelBiped
 import net.minecraft.client.renderer.texture.IIconRegister
-import net.minecraft.entity.*
+import net.minecraft.entity.SharedMonsterAttributes
 import net.minecraft.entity.ai.attributes.AttributeModifier
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.*
 import net.minecraft.world.World
 import thaumcraft.api.IVisDiscountGear
@@ -100,14 +99,8 @@ open class ItemElvoriumArmor(type: Int, name: String): ItemManasteelArmor(type, 
 		addStringToTooltip(StatCollector.translateToLocal("botania.armorset.terrasteel.desc2"), list)    // Passive mana regen
 	}
 	
-	override fun onUpdate(stack: ItemStack, world: World, entity: Entity?, slotID: Int, inHand: Boolean) {
-		if (entity is EntityPlayer)
-			onArmorTick(world, entity, stack)
-	}
-	
 	override fun onArmorTick(world: World, player: EntityPlayer, stack: ItemStack) {
 		super.onArmorTick(world, player, stack)
-		if (!stack.hasTagCompound()) stack.stackTagCompound = NBTTagCompound()
 		ItemNBTHelper.setBoolean(stack, "SET", hasArmorSet(player))
 	}
 	

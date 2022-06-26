@@ -81,7 +81,7 @@ class ItemRodClicker: ItemMod("RodClicker"), IAvatarWieldable {
 		
 		val leftClick = wand.isLeftClick()
 		
-		val entities = world.getEntitiesWithinAABB(Entity::class.java, getBoundingBox(xl + 0.5, yl + 0.5, zl + 0.5).expand(0.5)) as MutableList<Entity>
+		val entities = world.getEntitiesWithinAABB(Entity::class.java, getBoundingBox(xl, yl, zl).offset(0.5).expand(0.5)) as MutableList<Entity>
 		
 		var block = world.getBlock(xl, yl, zl)
 		if (block === Blocks.air) {
@@ -107,19 +107,21 @@ class ItemRodClicker: ItemMod("RodClicker"), IAvatarWieldable {
 		equipPlayer(player, inv, delay)
 		
 		try {
-			// code from Thaumic Tinkerer by Vazkii
+			// code base from Elemental Tinkerer by Vazkii
 			// TODO add events
 			if (leftClick) run {
 				if (entities.isEmpty()) return@run
-				player.getAttributeMap().applyAttributeModifiers(player.heldItem.attributeModifiers)
+				val mods = player.heldItem?.attributeModifiers
+				if (mods != null) player.getAttributeMap().applyAttributeModifiers(mods)
 				entities.firstOrNull {
 					it !is EntityItem && !it.isDead && (it as? EntityLivingBase)?.isEntityAlive != false
 				}?.let {
 					player.attackTargetEntityWithCurrentItem(it)
 					tile.recieveMana(-COST_AVATAR)
 				}
+				if (mods != null) player.getAttributeMap().removeAttributeModifiers(mods)
 			} else {
-				ForgeEventFactory.onPlayerInteract(player, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, xl, yl, zl, s, world)
+//				ForgeEventFactory.onPlayerInteract(player, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, xl, yl, zl, s, world)
 				val entity = if (entities.isEmpty()) null else entities.random()
 				
 				var done = (entity != null && player.interactWith(entity))

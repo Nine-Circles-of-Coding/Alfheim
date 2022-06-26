@@ -273,13 +273,13 @@ alfheim.page.stories3=Until something unimaginable happened on one rather ordina
 
 ################################################################ BACKPORT ################################################################
 
-alfheim.page.cosmeticBaubles34=真正的思考
+botania.page.cosmeticBaubles34=真正的思考
 
-alfheim.page.lens38=&1信使透镜&0大大减少了每束&4魔 &4力射线&0携带的&4魔力&0,但大幅度 增加了射线的速度和最远射 程. <br>在和&1魔力检测器&0,&1浮动火把&0等 物品的交互之中非常有用
-alfheim.page.lens39=信使透镜
+botania.page.lens38=&1信使透镜&0大大减少了每束&4魔 &4力射线&0携带的&4魔力&0,但大幅度 增加了射线的速度和最远射 程. <br>在和&1魔力检测器&0,&1浮动火把&0等 物品的交互之中非常有用
+botania.page.lens39=信使透镜
 
-alfheim.page.elvenLenses11=&1拌线透镜&0可以检测前方是否 有生物经过,只有在发射器射 出的魔力射线的轨道里有生 物经过的时候才会发射&4魔力 &4射线&0
-alfheim.page.elvenLenses12=拌线透镜
+botania.page.elvenLenses11=&1拌线透镜&0可以检测前方是否 有生物经过,只有在发射器射 出的魔力射线的轨道里有生 物经过的时候才会发射&4魔力 &4射线&0
+botania.page.elvenLenses12=拌线透镜
 
 alfheim.entry.amulCirs=触空护符
 alfheim.tagline.amulCirs=二 段 跳

@@ -488,25 +488,25 @@ alfheim.page.gungnir0=Unbreakable, unstopable, unmissable - three &oun&0 to desc
 
 ################################################################ BACKPORT ################################################################
 
-alfheim.page.cosmeticBaubles34=Really makes you think
+botania.page.cosmeticBaubles34=Really makes you think
 
-alfheim.page.lens38=The &1Messenger Lens&0 massively decreases the amount of &4Mana&0 a &4Mana Burst&0 carries, and also drastically increases the burst's speed and maximum distance.<br>This can be very useful for interactions with blocks such as the &1Mana Detector&0, &1Drum of the Wild&0, &1Animated Torch&0, among others.
-alfheim.page.lens39=Messenger Lens
+botania.page.lens38=The &1Messenger Lens&0 massively decreases the amount of &4Mana&0 a &4Mana Burst&0 carries, and also drastically increases the burst's speed and maximum distance.<br>This can be very useful for interactions with blocks such as the &1Mana Detector&0, &1Drum of the Wild&0, &1Animated Torch&0, among others.
+botania.page.lens39=Messenger Lens
 
-alfheim.page.lens40=&1Push Lens&0 will enable Mana Burst to force the first entity it collide to move with it.
-alfheim.page.lens41=Push Lens
+botania.page.lens40=&1Push Lens&0 will enable Mana Burst to force the first entity it collide to move with it.
+botania.page.lens41=Push Lens
 
-alfheim.page.lens42=&1Smelt Lens&0 is like a furnace, it will enable Mana Burst to smelt the block ti collide.
-alfheim.page.lens43=Smelt Lens
+botania.page.lens42=&1Smelt Lens&0 is like a furnace, it will enable Mana Burst to smelt the block ti collide.
+botania.page.lens43=Smelt Lens
 
-alfheim.page.lens44=&1Superconductor Lens&0 can make mana transfer become much more efficient, while making the mana beam become really dangerous to players.<br>The mana beam will deal high damage to only players.
-alfheim.page.lens45=Superconductor Lens
+botania.page.lens44=&1Superconductor Lens&0 can make mana transfer become much more efficient, while making the mana beam become really dangerous to players.<br>The mana beam will deal high damage to only players.
+botania.page.lens45=Superconductor Lens
 
-alfheim.page.lens46=&1Track Lens&0 will enable Mana Burst to locate the first entity within 3 meters and keep tracking until either is dead.
-alfheim.page.lens47=Track Lens
+botania.page.lens46=&1Track Lens&0 will enable Mana Burst to locate the first entity within 3 meters and keep tracking until either is dead.
+botania.page.lens47=Track Lens
 
-alfheim.page.elvenLenses11=The &1Tripwire Lens&0 is another &4Control Lens&0.<br>A spreader that has it attached will only be allowed to fire if there is one or more mobs, or players, in the path described by the &4mana burst&0 that the spreader would shoot.
-alfheim.page.elvenLenses12=Tripwire Lens
+botania.page.elvenLenses11=The &1Tripwire Lens&0 is another &4Control Lens&0.<br>A spreader that has it attached will only be allowed to fire if there is one or more mobs, or players, in the path described by the &4mana burst&0 that the spreader would shoot.
+botania.page.elvenLenses12=Tripwire Lens
 
 alfheim.entry.amulCirs=Cirrus Amulet
 alfheim.tagline.amulCirs=Gives you double jump

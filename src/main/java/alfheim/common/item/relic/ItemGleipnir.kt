@@ -50,6 +50,8 @@ class ItemGleipnir: ItemRelic("Gleipnir") {
 	}
 	
 	override fun itemInteractionForEntity(stack: ItemStack, player: EntityPlayer, target: EntityLivingBase): Boolean {
+		if (target is EntityPlayer) return false // FIXME player handling is wrong, maybe send motion packets?
+		
 		if (player.isSneaking) return false
 		
 		if (target.isLeashed) {

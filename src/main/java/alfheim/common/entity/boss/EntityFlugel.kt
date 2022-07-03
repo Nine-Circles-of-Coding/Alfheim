@@ -624,7 +624,7 @@ class EntityFlugel(world: World): EntityCreature(world), IBotaniaBossWithName { 
 		health = maxHealth
 		aiTask = AITask.NONE
 		aiTaskTimer = 0
-		playersDamage.clear()
+		playersDamage.forEach { (k, _) -> playersDamage[k] = 0f }
 		playersDamage[summoner] = 0.1f
 	}
 	
@@ -977,7 +977,6 @@ class EntityFlugel(world: World): EntityCreature(world), IBotaniaBossWithName { 
 			if (ultra) e.isUltraMode = ultra
 			
 			e.summoner = player.commandSenderName
-			e.playersDamage[player.commandSenderName] = 0.1f
 			
 			if (miku) {
 				e.alwaysRenderNameTag = true
@@ -991,6 +990,7 @@ class EntityFlugel(world: World): EntityCreature(world), IBotaniaBossWithName { 
 				if (isTruePlayer(it))
 					e.playersDamage[it.commandSenderName] = 0f
 			}
+			e.playersDamage[player.commandSenderName] = 0.1f
 			
 			e.playerCount = playerCount
 			e.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.maxHealth).baseValue = (MAX_HP * playerCount * if (hard) 2 else 1).D

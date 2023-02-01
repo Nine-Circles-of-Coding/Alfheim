@@ -1,16 +1,9 @@
 <news>
 	<version id="LATEST">
-		<val>BETA-40</val>
+		<val>44</val>
 	</version>
-	<!-- Deprecated, use UNIVERSAL instead, left for backward compatibility -->
-	<version id="ALL">
-		<val> </val>
-	</version>
-	<!-- New tag for ALL versions, now supports json - start with "$json" -->
 	<version id="UNIVERSAL">
-		<val>$json["Official Alfheim Discord server is here! *",{"text":"click","color":"gold","hoverEvent":{"action":"show_text","value":{"text":"Join discord server","color":"gold"}},"clickEvent":{"action":"open_url","value":"https://discord.gg/dqQXZHq"}},"*"]</val>	</version>
-	<version id="MODULAR">
-		<val>https://bitbucket.org/AlexSocol/alfheim/raw/e55ab501b363c0280fa4cc80a2b3302b60236454/release/Alfheim-Modular-12.jar</val>
+		<val>$json["Official Alfheim Discord server is here! *",{"text":"click","color":"gold","hoverEvent":{"action":"show_text","value":{"text":"Join discord server","color":"gold"}},"clickEvent":{"action":"open_url","value":"https://discord.gg/dqQXZHq"}},"*"]</val>
 	</version>
 	<version id="BETA-5">
 		<val>Important bugfixes were made, please update!</val>
@@ -116,5 +109,17 @@
 	</version>
 	<version id="BETA-39">
 		<val>Even more bug fixes... Better late than never :'D</val>
+	</version>
+	<version id="BETA-40">
+		<val>Just see changelogs... (1)</val>
+	</version>
+	<version id="RC-41">
+		<val>Just see changelogs... (2)</val>
+	</version>
+	<version id="RC-42">
+		<val>Just see changelogs... (3)</val>
+	</version>
+	<version id="RC-43">
+		<val>Just see changelogs... (4)</val>
 	</version>
 </news>

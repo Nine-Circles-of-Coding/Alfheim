@@ -2,6 +2,7 @@ package alfheim.common.item.equipment.armor.elvoruim
 
 import alexsocol.asjlib.*
 import alfheim.api.*
+import alfheim.client.core.helper.IconHelper
 import alfheim.client.model.armor.ModelElvoriumArmor
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.util.AlfheimTab
@@ -12,7 +13,7 @@ import cpw.mods.fml.common.Optional
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.model.ModelBiped
 import net.minecraft.client.renderer.texture.IIconRegister
-import net.minecraft.entity.SharedMonsterAttributes
+import net.minecraft.entity.*
 import net.minecraft.entity.ai.attributes.AttributeModifier
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
@@ -29,7 +30,7 @@ import vazkii.botania.common.item.equipment.armor.manasteel.ItemManasteelArmor
 import java.util.*
 
 @Optional.Interface(modid = "Thaumcraft", iface = "thaumcraft.api.IVisDiscountGear", striprefs = true)
-open class ItemElvoriumArmor(type: Int, name: String): ItemManasteelArmor(type, name, AlfheimAPI.ElvoriumArmor), IManaDiscountArmor, IManaProficiencyArmor, IVisDiscountGear {
+open class ItemElvoriumArmor(type: Int, name: String): ItemManasteelArmor(type, name, AlfheimAPI.elvoriumArmor), IManaDiscountArmor, IManaProficiencyArmor, IVisDiscountGear {
 	
 	init {
 		creativeTab = AlfheimTab
@@ -46,22 +47,17 @@ open class ItemElvoriumArmor(type: Int, name: String): ItemManasteelArmor(type, 
 	}
 	
 	override fun getIsRepairable(armor: ItemStack?, material: ItemStack): Boolean {
-		return material.item === AlfheimItems.elvenResource && material.meta == ElvenResourcesMetas.ElvoriumIngot
+		return material.item === AlfheimItems.elvenResource && material.meta == ElvenResourcesMetas.ElvoriumIngot.I
 	}
 	
 	override fun getAttributeModifiers(stack: ItemStack): Multimap<String, AttributeModifier> {
 		val multimap = HashMultimap.create<String, AttributeModifier>()
 		val uuid = UUID(unlocalizedName.hashCode().toLong(), 0)
-		multimap.put(SharedMonsterAttributes.knockbackResistance.attributeUnlocalizedName, AttributeModifier(uuid, "Elvorium modifier $type", getArmorDisplay(null, ItemStack(this), type).D / 20, 0))
+		multimap.put(SharedMonsterAttributes.knockbackResistance.attributeUnlocalizedName, AttributeModifier(uuid, "Elvorium modifier $type", 0.25, 0))
 		return multimap
 	}
 	
-	override fun getArmorSetStacks(): Array<ItemStack> {
-		if (armorset == null)
-			armorset = arrayOf(ItemStack(AlfheimItems.elvoriumHelmet), ItemStack(AlfheimItems.elvoriumChestplate), ItemStack(AlfheimItems.elvoriumLeggings), ItemStack(AlfheimItems.elvoriumBoots))
-		
-		return armorset!!
-	}
+	override fun getArmorSetStacks() = armorset
 	
 	override fun hasArmorSetItem(player: EntityPlayer, i: Int): Boolean {
 		val stack = player.inventory.armorInventory[3 - i] ?: return false
@@ -78,7 +74,7 @@ open class ItemElvoriumArmor(type: Int, name: String): ItemManasteelArmor(type, 
 	
 	@SideOnly(Side.CLIENT)
 	override fun registerIcons(reg: IIconRegister) {
-		itemIcon = reg.registerIcon(ModInfo.MODID + ':'.toString() + this.unlocalizedName.substring(5))
+		itemIcon = IconHelper.forItem(reg, this)
 	}
 	
 	override fun getUnlocalizedNameInefficiently(stack: ItemStack): String {
@@ -124,8 +120,20 @@ open class ItemElvoriumArmor(type: Int, name: String): ItemManasteelArmor(type, 
 	
 	companion object {
 		
-		internal var armorset: Array<ItemStack>? = null
+		val armorset: Array<ItemStack> by lazy { arrayOf(ItemStack(AlfheimItems.elvoriumHelmet), ItemStack(AlfheimItems.elvoriumChestplate), ItemStack(AlfheimItems.elvoriumLeggings), ItemStack(AlfheimItems.elvoriumBoots)) }
 		
-		fun hasSet(player: EntityPlayer?) = (AlfheimItems.elvoriumChestplate as ItemElvoriumArmor).hasArmorSet(player)
+		init {
+			eventForge()
+		}
+		
+		fun hasSet(player: EntityPlayer) = (AlfheimItems.elvoriumChestplate as ItemElvoriumArmor).hasArmorSet(player)
+		
+//		@SubscribeEvent(priority = EventPriority.LOWEST)
+//		fun onLivingHurt(e: LivingHurtEvent) {
+//			if (e.source.isUnblockable) return
+//			val player = e.entity as? EntityPlayer ?: return
+//			if (!hasSet(player)) return
+//			e.ammount -= ManaItemHandler.requestManaForTool(player.inventory.armorInventory[0], player, e.ammount.mceil() * 100, true) / 100f
+//		}
 	}
 }

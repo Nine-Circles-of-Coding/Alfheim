@@ -3,11 +3,15 @@ package alfheim.common.entity
 import alexsocol.asjlib.*
 import alexsocol.asjlib.extendables.EntityRidableFlying
 import alexsocol.asjlib.math.Vector3
+import alfheim.api.lib.LibResourceLocations
 import alfheim.api.spell.ITimeStopSpecific
+import alfheim.client.model.entity.*
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.helper.ContributorsPrivacyHelper
+import cpw.mods.fml.relauncher.*
 import net.minecraft.block.Block
 import net.minecraft.block.material.Material
+import net.minecraft.client.model.ModelBase
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.*
 import net.minecraft.entity.player.EntityPlayer
@@ -19,7 +23,9 @@ import net.minecraft.server.MinecraftServer
 import net.minecraft.util.*
 import net.minecraft.world.World
 import vazkii.botania.api.mana.ManaItemHandler
+import java.awt.Color
 import java.util.*
+import kotlin.collections.HashMap
 
 class EntityLolicorn(world: World): EntityRidableFlying(world), ITimeStopSpecific {
 	
@@ -43,9 +49,9 @@ class EntityLolicorn(world: World): EntityRidableFlying(world), ITimeStopSpecifi
 		}
 		set(uuid) = dataWatcher.updateObject(16, "$uuid")
 	
-	var type: Int
-		get() = dataWatcher.getWatchableObjectInt(17)
-		set(type) = dataWatcher.updateObject(17, type)
+	var type: EnumMountType
+		get() = EnumMountType.values()[dataWatcher.getWatchableObjectInt(17)]
+		set(value) = dataWatcher.updateObject(17, value.ordinal)
 	
 	init {
 		stepHeight = 1.5f
@@ -72,7 +78,7 @@ class EntityLolicorn(world: World): EntityRidableFlying(world), ITimeStopSpecifi
 	override fun attackEntityFrom(src: DamageSource, dmg: Float): Boolean {
 		if (src.entity is EntityLivingBase && (src.entity as EntityLivingBase).heldItem?.item === Items.slime_ball) {
 			addPotionEffect(PotionEffect(Potion.moveSlowdown.id, 50, 4))
-			rider?.addPotionEffect(PotionEffect(Potion.confusion.id, 100, 0))
+			rider?.addPotionEffect(PotionEffect(Potion.confusion.id, 100))
 		}
 		
 		return false
@@ -100,10 +106,10 @@ class EntityLolicorn(world: World): EntityRidableFlying(world), ITimeStopSpecifi
 	override fun interact(player: EntityPlayer?): Boolean {
 		var sup = false
 		try {
-			if (player == null) return sup
+			if (player == null) return false
 			if (owner.isNotEmpty() && player.commandSenderName != owner) {
 				ASJUtilities.say(player, "Owned by $owner")
-				return sup
+				return false
 			}
 			
 			sup = super.interact(player)
@@ -151,7 +157,7 @@ class EntityLolicorn(world: World): EntityRidableFlying(world), ITimeStopSpecifi
 			if (Vector3.entityDistancePlane(this, master) > 32.0) setDead()
 			else {
 				++unmountCounter
-				if (unmountCounter >= AlfheimConfigHandler.lolicornLife) setDead()
+				if (unmountCounter >= AlfheimConfigHandler.mountLife) setDead()
 			}
 	}
 	
@@ -160,15 +166,10 @@ class EntityLolicorn(world: World): EntityRidableFlying(world), ITimeStopSpecifi
 		super.moveEntityWithHeading(mS, mF)
 		
 		if (mF > 0f)
-			for (i in 1..8)
-				worldObj.spawnParticle("reddust",
-									   posX + Math.random() - 0.5,
-									   posY + Math.random() - 0.5,
-									   posZ + Math.random() - 0.5,
-									   if (Math.random() < 0.5) 0.0 else 1.0,
-									   if (Math.random() < 0.5) 0.0 else 1.0,
-									   if (Math.random() < 0.5) 0.0 else 1.0
-				)
+			for (i in 1..8) {
+				val c = Color.getHSBColor(Math.random().F, 1f, 1f)
+				worldObj.spawnParticle("reddust", posX + Math.random() - 0.5, posY + Math.random() - 0.5, posZ + Math.random() - 0.5, c.red / 255.0, c.green / 255.0, c.blue / 255.0)
+			}
 	}
 	
 	override fun isMovementBlocked() = rider != null && !rider!!.isJumping
@@ -177,13 +178,13 @@ class EntityLolicorn(world: World): EntityRidableFlying(world), ITimeStopSpecifi
 		if (rng.nextInt(8) == 1) super.playLivingSound()
 	}
 	
-	override fun getLivingSound() = "mob.horse.idle"
+	override fun getLivingSound() = type.livingSound
 	
-	private fun getAngrySoundName() = "mob.horse.angry"
+	private fun getAngrySoundName() = type.angrySoundName
 	
-	override fun getHurtSound() = "mob.horse.hit"
+	override fun getHurtSound() = ""
 	
-	override fun getDeathSound() = "mob.horse.death"
+	override fun getDeathSound() = ""
 	
 	override fun func_145780_a(x: Int, y: Int, z: Int, block: Block) {
 		var soundtype: Block.SoundType = block.stepSound
@@ -214,15 +215,31 @@ class EntityLolicorn(world: World): EntityRidableFlying(world), ITimeStopSpecifi
 		}
 	}
 	
+	fun bind(username: String, uniqueID: UUID? = null): EntityLolicorn {
+		if (uniqueID != null)
+			ownerUUID = uniqueID
+		
+		owner = username
+		
+		type = EnumMountType.LOLICORN
+		
+		if (ContributorsPrivacyHelper.isCorrect(owner, "KAIIIAK")) type = EnumMountType.RORYCORN
+		if (ContributorsPrivacyHelper.isCorrect(owner, "AlexSocol")) type = EnumMountType.SLEIPNIR
+		
+		if (owner in privateModels)
+			type = privateModels[owner]!!
+		
+		return this
+	}
+	
 	override fun mount(player: EntityPlayer) {
 		super.mount(player)
 		unmountCounter = 0
-		
-		owner = player.commandSenderName
-		ownerUUID = player.uniqueID
-		val custom = if (type == 1) ".Odin" else if (ContributorsPrivacyHelper.isCorrect(player, "KAIIIAK")) ".KAIIIAK" else ""
-		customNameTag = StatCollector.translateToLocalFormatted("entity.alfheim.Lolicorn.desc$custom", owner)
 	}
+	
+	override fun hasCustomNameTag() = true
+	
+	override fun getCustomNameTag() = StatCollector.translateToLocalFormatted("entity.alfheim.Lolicorn.desc${type.postfix}", owner)!!
 	
 	var look = Vector3()
 	
@@ -243,15 +260,27 @@ class EntityLolicorn(world: World): EntityRidableFlying(world), ITimeStopSpecifi
 		super.readEntityFromNBT(nbt)
 		owner = nbt.getString("Owner")
 		ownerUUID = UUID.fromString(nbt.getString("OwnerUUID"))
+		
+		bind(owner)
 	}
 	
 	companion object {
 		
-		val requests = mutableSetOf<String>()
-		val timing = mutableMapOf<String, Int>()
+		val requests = HashSet<String>()
+		val timing = HashMap<String, Int>()
+		
+		val privateModels = HashMap<String, EnumMountType>()
+		
+		init {
+			Thread({
+				ContributorsPrivacyHelper.connect("PrivateMounts.txt") {
+					forEach { it.split(":").also { (k, v) -> privateModels[k] = EnumMountType.valueOfOrNull(v) ?: EnumMountType.LOLICORN } }
+				}
+			}, "Private Alfheim Mount Load").start()
+		}
 		
 		fun call(caller: EntityPlayer) {
-			if (caller.dimension != AlfheimConfigHandler.dimensionIDAlfheim && AlfheimConfigHandler.lolicornAlfheimOnly)
+			if (caller.dimension != AlfheimConfigHandler.dimensionIDAlfheim && AlfheimConfigHandler.mountAlfheimOnly)
 				ASJUtilities.say(caller, "alfheimmisc.mount.unavailable").also { return }
 			
 			if (caller.ridingEntity is EntityLolicorn) return
@@ -268,16 +297,49 @@ class EntityLolicorn(world: World): EntityRidableFlying(world), ITimeStopSpecifi
 				if (timing[cr]!! <= 0) {
 					
 					MinecraftServer.getServer()?.configurationManager?.func_152612_a(cr)?.let { player ->
-						var can = ManaItemHandler.requestManaExact(ItemStack(Blocks.stone), player, AlfheimConfigHandler.lolicornCost, false)
-						if (!can) ASJUtilities.say(player, "alfheimmisc.cast.momana").also { return@let }
-						if (can) can = player.worldObj.spawnEntityInWorld(EntityLolicorn(player.worldObj).apply { owner = player.commandSenderName }.apply { setPosition(player.posX, player.posY, player.posZ) })
-						if (!can) ASJUtilities.say(player, "alfheimmisc.mount.unavailable").also { return@let }
-						if (can) ManaItemHandler.requestManaExact(ItemStack(Blocks.stone), player, AlfheimConfigHandler.lolicornCost, true)
+						var can = ManaItemHandler.requestManaExact(ItemStack(Blocks.stone), player, AlfheimConfigHandler.mountCost, false)
+						if (!can) return@let ASJUtilities.say(player, "alfheimmisc.cast.nomana")
+						can = EntityLolicorn(player.worldObj).bind(player.commandSenderName, player.uniqueID).apply { setPosition(player.posX, player.posY, player.posZ) }.spawn()
+						if (!can) return@let ASJUtilities.say(player, "alfheimmisc.mount.unavailable")
+						ManaItemHandler.requestManaExact(ItemStack(Blocks.stone), player, AlfheimConfigHandler.mountCost, true)
 					}
 					
 					i.remove()
 					timing.remove(cr)
 				}
+			}
+		}
+		
+		enum class EnumMountType(val postfix: String,
+		                         val texture: ResourceLocation,
+		                             modelProvider: () -> Any,
+		                         val preRenderCallback: () -> Unit = {},
+		                         val livingSound: String = "mob.horse.idle",
+		                         val angrySoundName: String = "mob.horse.angry"
+		                        ) {
+			LOLICORN("", LibResourceLocations.lolicorn, { ModelEntityLolicorn }),
+			RORYCORN(".KAIIIAK", LibResourceLocations.roricorn, { ModelEntityLolicorn }),
+			FENRIR(".Fenrir", LibResourceLocations.fenrir, { ModelEntityFenrir }, { glScalef(1.5f) }, "mob.wolf.growl", "mob.wolf.growl"),
+			SLEIPNIR(".Odin", LibResourceLocations.sleipnir, { ModelEntitySleipnir });
+			
+			private val model: Any
+			
+			init {
+				model = if (ASJUtilities.isClient) {
+					modelProvider()
+				} else {
+					0
+				}
+			}
+			
+			@SideOnly(Side.CLIENT)
+			fun model(): ModelBase {
+				return model as ModelBase
+			}
+			
+			companion object {
+				
+				fun valueOfOrNull(value: String): EnumMountType? = try { valueOf(value) } catch (e: IllegalArgumentException) { null }
 			}
 		}
 	}

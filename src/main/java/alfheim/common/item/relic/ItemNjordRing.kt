@@ -1,6 +1,7 @@
 package alfheim.common.item.relic
 
 import alexsocol.asjlib.*
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.item.AlfheimItems
 import baubles.api.BaubleType
 import baubles.common.lib.PlayerHandler
@@ -8,7 +9,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import net.minecraft.block.material.Material
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
-import net.minecraft.potion.*
+import net.minecraft.potion.Potion
 import net.minecraftforge.event.entity.living.LivingEvent
 import vazkii.botania.api.mana.ManaItemHandler
 import vazkii.botania.common.core.helper.ItemNBTHelper
@@ -24,6 +25,8 @@ class ItemNjordRing: ItemRelicBauble("NjordRing") {
 	
 	@SubscribeEvent
 	fun onPlayerTick(e: LivingEvent.LivingUpdateEvent) {
+		if (RagnarokHandler.blockedPowers[2]) return
+		
 		val player = e.entityLiving as? EntityPlayer ?: return
 		val ring = getNjordRing(player) ?: return
 		
@@ -66,12 +69,12 @@ class ItemNjordRing: ItemRelicBauble("NjordRing") {
 		if (changeZ) player.motionZ = motionZ
 		
 		if (player.isInsideOfMaterial(Material.water)) {
-			player.addPotionEffect(PotionEffect(Potion.nightVision.id, 100, 0, true))
+			player.addPotionEffect(PotionEffectU(Potion.nightVision.id, 100))
 		}
 		
 		if (player.air <= 1) {
 			val mana = ManaItemHandler.requestMana(ring, player, 300, true)
-			if (mana > 0) // If zero gets in the player has no air but won't drown.
+			if (mana > 0) // If zero gets in the player has no air but won't drown. Not the way it should be.
 				player.air = mana
 		}
 	}

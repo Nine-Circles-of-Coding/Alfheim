@@ -2,7 +2,6 @@ package alfheim.client.render.item
 
 import alexsocol.asjlib.*
 import alfheim.api.AlfheimAPI
-import alfheim.api.block.tile.SubTileAnomalyBase
 import alfheim.api.lib.LibResourceLocations
 import alfheim.common.block.AlfheimBlocks
 import alfheim.common.item.block.ItemBlockAnomaly
@@ -33,10 +32,11 @@ object RenderItemAnomaly: IItemRenderer {
 			glTranslated(0.0, -0.5, -1.0)
 		}
 		
-		renderItemAnomaly(AlfheimAPI.getAnomalyInstance(ItemBlockAnomaly.getType(item)))
+		val (_, _, strip, color) = AlfheimAPI.getAnomaly(ItemBlockAnomaly.getType(item))
+		renderItemAnomaly(strip, color, 32)
 	}
 	
-	fun renderItemAnomaly(subtile: SubTileAnomalyBase) {
+	fun renderItemAnomaly(strip: Int, color: Int, frames: Int) {
 		glPushMatrix()
 		glAlphaFunc(GL_GREATER, 1 / 255f)
 		glDepthMask(false)
@@ -47,10 +47,7 @@ object RenderItemAnomaly: IItemRenderer {
 		glPushMatrix()
 		
 		mc.renderEngine.bindTexture(LibResourceLocations.anomalies)
-		val frames = subtile.frames
-		val frame = ((System.nanoTime() / 40000000L + 1L) % frames.toLong()).I
-		val strip = subtile.strip
-		val color = subtile.color
+		val frame = ((System.nanoTime() / 40000000L + 1L) % 32.toLong()).I
 		
 		glTranslated(0.5, 0.5, 0.5)
 		renderAnimatedQuadStrip(1.5f, 1f, frames, strip, frame, color)

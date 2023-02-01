@@ -13,7 +13,7 @@ import vazkii.botania.common.core.helper.ItemNBTHelper
 /**
  * @author ExtraMeteorP, CKATEPTb
  */
-class RecipeCleanRelic: IRecipe {
+object RecipeCleanRelic: IRecipe {
 	
 	override fun matches(inv: InventoryCrafting, world: World?): Boolean {
 		var foundRelic = false
@@ -24,7 +24,7 @@ class RecipeCleanRelic: IRecipe {
 			if (stack.item is IRelic && !foundRelic)
 				foundRelic = true
 			else if (!foundItem) {
-				if (stack.item === AlfheimItems.elvenResource && stack.meta == ElvenResourcesMetas.DasRheingold)
+				if (stack.item === AlfheimItems.elvenResource && stack.meta == ElvenResourcesMetas.DasRheingold.I)
 					foundItem = true
 				else
 					return false
@@ -42,7 +42,7 @@ class RecipeCleanRelic: IRecipe {
 			val stack = inv[i] ?: continue
 			if (stack.item is IRelic)
 				item = stack
-			else if (stack.item === AlfheimItems.elvenResource && stack.meta == ElvenResourcesMetas.DasRheingold)
+			else if (stack.item === AlfheimItems.elvenResource && stack.meta == ElvenResourcesMetas.DasRheingold.I)
 				cloth = stack
 		}
 		

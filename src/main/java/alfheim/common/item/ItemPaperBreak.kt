@@ -8,7 +8,7 @@ import cpw.mods.fml.relauncher.*
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
-import net.minecraft.util.*
+import net.minecraft.util.IIcon
 import net.minecraft.world.World
 import vazkii.botania.common.core.helper.ItemNBTHelper.getCompound
 
@@ -42,7 +42,7 @@ class ItemPaperBreak: ItemMod("PaperBreak") {
 				if (pt.remove(name))
 					--stack.stackSize
 				else
-					player.addChatMessage(ChatComponentText(StatCollector.translateToLocalFormatted("alfheimmisc.party.notinpartyoffline", name)))
+					ASJUtilities.say(player, "alfheimmisc.party.notinpartyoffline", name)
 				return stack
 			}
 			

@@ -5,7 +5,7 @@ import alfheim.common.core.util.DamageSourceSpell
 import alfheim.common.spell.darkness.SpellDeathMark
 import net.minecraft.entity.EntityLivingBase
 
-class PotionDeathMark: PotionAlfheim(AlfheimConfigHandler.potionIDDeathMark, "deathMark", true, 0x553355) {
+object PotionDeathMark: PotionAlfheim(AlfheimConfigHandler.potionIDDeathMark, "deathMark", true, 0x553355) {
 	
 	override fun isReady(time: Int, ampl: Int) = time == 1
 	

@@ -69,7 +69,7 @@ class SubTileCrysanthermum: SubTileGenerating() {
 		
 		val remote = supertile.worldObj.isRemote
 		val biomeStone = ModFluffBlocks.biomeStoneA.toItem()
-		val items = supertile.worldObj.getEntitiesWithinAABB(EntityItem::class.java, supertile.boundingBox(1))
+		val items = getEntitiesWithinAABB(supertile.worldObj, EntityItem::class.java, supertile.boundingBox(1))
 		val slowdown = slowdownFactor
 		
 		if (ticksExisted % 600 == 0) {
@@ -80,29 +80,27 @@ class SubTileCrysanthermum: SubTileGenerating() {
 		}
 		
 		for (item in items) {
-			if (item is EntityItem) {
-				val stack = item.entityItem
-				if (stack != null && stack.item === biomeStone && !item.isDead && item.age >= slowdown) {
-					val meta = stack.meta % 8
-					if (!remote && canGeneratePassively()) {
-						deminishing = if (lastBlocks.contains(meta)) 8 else max(0, deminishing - 1)
-						if (lastBlocks.size > 7) lastBlocks.removeFirst()
-						lastBlocks.addLast(meta)
-						temp += getTemp(meta)
-						sync()
-					}
-					
-					for (i in 0..9) {
-						val m = 0.2f
-						val mx = (Math.random() - 0.5).F * m
-						val my = (Math.random() - 0.5).F * m
-						val mz = (Math.random() - 0.5).F * m
-						supertile.worldObj.spawnParticle("blockcrack_${stack.item.id}_$meta", item.posX, item.posY, item.posZ, mx.D, my.D, mz.D)
-					}
-					--item.entityItem.stackSize
-					if (!remote && item.entityItem.stackSize <= 0)
-						item.setDead()
+			val stack = item.entityItem
+			if (stack != null && stack.item === biomeStone && !item.isDead && item.age >= slowdown) {
+				val meta = stack.meta % 8
+				if (!remote && canGeneratePassively()) {
+					deminishing = if (lastBlocks.contains(meta)) 8 else max(0, deminishing - 1)
+					if (lastBlocks.size > 7) lastBlocks.removeFirst()
+					lastBlocks.addLast(meta)
+					temp += getTemp(meta)
+					sync()
 				}
+				
+				for (i in 0..9) {
+					val m = 0.2f
+					val mx = (Math.random() - 0.5).F * m
+					val my = (Math.random() - 0.5).F * m
+					val mz = (Math.random() - 0.5).F * m
+					supertile.worldObj.spawnParticle("blockcrack_${stack.item.id}_$meta", item.posX, item.posY, item.posZ, mx.D, my.D, mz.D)
+				}
+				--item.entityItem.stackSize
+				if (!remote && item.entityItem.stackSize <= 0)
+					item.setDead()
 			}
 		}
 		val c = Color(color)

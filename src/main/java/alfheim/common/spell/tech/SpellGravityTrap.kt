@@ -26,8 +26,7 @@ object SpellGravityTrap: SpellBase("gravitytrap", EnumRace.LEPRECHAUN, 10000, 60
 			// if (!WorldGuardCommons.canDoSomethingHere(caster, mop.hitVec.xCoord, mop.hitVec.yCoord + 0.1, mop.hitVec.zCoord)) return SpellCastResult.NOTALLOW
 			
 			val result = checkCastOver(caster)
-			if (result == SpellCastResult.OK)
-				caster.worldObj.spawnEntityInWorld(EntitySpellGravityTrap(caster.worldObj, caster, mop.hitVec.xCoord, mop.hitVec.yCoord + 0.1, mop.hitVec.zCoord))
+			if (result == SpellCastResult.OK) EntitySpellGravityTrap(caster.worldObj, caster, mop.hitVec.xCoord, mop.hitVec.yCoord + 0.1, mop.hitVec.zCoord).spawn()
 			return result
 		}
 		return SpellCastResult.WRONGTGT

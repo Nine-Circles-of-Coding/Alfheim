@@ -2,15 +2,16 @@ package alfheim.common.item.equipment.bauble.faith
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
-import alexsocol.asjlib.security.InteractionSecurity
 import alfheim.api.item.ColorOverrideHelper
 import alfheim.common.core.handler.*
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.entity.EntityThrownPotion
 import alfheim.common.item.AlfheimItems
 import alfheim.common.item.equipment.bauble.*
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.attributes.AttributeModifier
+import net.minecraft.entity.boss.IBossDisplayData
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.projectile.*
 import net.minecraft.item.ItemStack
@@ -31,47 +32,58 @@ object FaithHandlerOdin: IFaithHandler {
 	}
 	
 	override fun onEquipped(stack: ItemStack, player: EntityPlayer, type: IFaithHandler.FaithBauble) {
+		if (RagnarokHandler.blockedPowers[5]) return
+		
 		if (type == IFaithHandler.FaithBauble.CLOAK) player.getEntityAttribute(SharedMonsterAttributes.knockbackResistance).apply { removeModifier(mod_knock); applyModifier(mod_knock) }
 	}
 	
 	override fun onUnequipped(stack: ItemStack, player: EntityPlayer, type: IFaithHandler.FaithBauble) {
+		if (RagnarokHandler.blockedPowers[5]) return
+		
 		if (type == IFaithHandler.FaithBauble.CLOAK) player.getEntityAttribute(SharedMonsterAttributes.knockbackResistance).removeModifier(mod_knock)
 	}
 	
 	// no potions
 	override fun onWornTick(stack: ItemStack, player: EntityPlayer, type: IFaithHandler.FaithBauble) {
-		if (type == IFaithHandler.FaithBauble.CLOAK) {
-			val potions = player.worldObj.getEntitiesWithinAABB(EntityPotion::class.java, player.boundingBox(6)) as MutableList<EntityThrowable>
-			potions.addAll(player.worldObj.getEntitiesWithinAABB(EntityThrownPotion::class.java, player.boundingBox(6)) as List<EntityThrowable>)
-			potions.removeAll { it.thrower === player }
-			
-			if (AlfheimConfigHandler.enableMMO && ASJUtilities.isServer) {
-				val pt = CardinalSystem.PartySystem.getParty(player)
-				potions.removeAll { pt.isMember(it.thrower) }
-			}
-			
-			potions.forEach {
-				if (InteractionSecurity.canInteractWithEntity(player, it))
-					it.worldObj.removeEntity(it)
-			}
+		if (RagnarokHandler.blockedPowers[5]) return
+		
+		if (type != IFaithHandler.FaithBauble.CLOAK) return
+		
+		val potions = ArrayList<EntityThrowable>()
+		potions += getEntitiesWithinAABB(player.worldObj, EntityPotion::class.java, player.boundingBox(6))
+		potions += getEntitiesWithinAABB(player.worldObj, EntityThrownPotion::class.java, player.boundingBox(6))
+		potions.removeAll { it.thrower === player }
+		
+		if (AlfheimConfigHandler.enableMMO && ASJUtilities.isServer) {
+			val pt = CardinalSystem.PartySystem.getParty(player)
+			potions.removeAll { pt.isMember(it.thrower) }
+		}
+		
+		potions.forEach {
+//				if (InteractionSecurity.canDoSomethingWithEntity(player, it))
+			it.worldObj.removeEntity(it)
 		}
 	}
 	
 	@SubscribeEvent
 	fun noPotions(e: EntityJoinWorldEvent) {
+		if (RagnarokHandler.blockedPowers[5]) return
+		
 		if (e.entity !is EntityPotion && e.entity !is EntityThrownPotion) return
 		
 		if (e.world.playerEntities.any {
 				it as EntityPlayer
 				Vector3.entityDistance(e.entity, it) < 6 &&
-				ItemPriestCloak.getCloak(5, it) != null &&
-				InteractionSecurity.canInteractWithEntity(it, e.entity)
+				ItemPriestCloak.getCloak(5, it) != null
+//				InteractionSecurity.canDoSomethingWithEntity(it, e.entity)
 			})
 			e.isCanceled = true
 	}
 	
 	@SubscribeEvent
 	fun onPlayerAttack(e: LivingHurtEvent) {
+		if (RagnarokHandler.blockedPowers[5]) return
+		
 		val player = e.source.entity as? EntityPlayer ?: return
 		
 		if (ItemPriestEmblem.getEmblem(5, player) == null) return
@@ -82,6 +94,9 @@ object FaithHandlerOdin: IFaithHandler {
 	
 	@SubscribeEvent
 	fun onPlayerTargeted(e: LivingSetAttackTargetEvent) {
+		if (RagnarokHandler.blockedPowers[5]) return
+		
+		if (e.entityLiving is IBossDisplayData) return
 		val player = e.target as? EntityPlayer ?: return
 		
 		if (ItemPriestCloak.getCloak(5, player) == null) return
@@ -92,6 +107,8 @@ object FaithHandlerOdin: IFaithHandler {
 	}
 	
 	override fun getGodPowerLevel(player: EntityPlayer): Int {
+		if (RagnarokHandler.blockedPowers[5]) return 0
+		
 		var lvl = 0
 		
 		if (player.inventory.hasItemStack(ItemStack(AlfheimItems.gungnir))) lvl += 4
@@ -118,15 +135,15 @@ object FaithHandlerOdin: IFaithHandler {
 //		spawnEmblem5(x, y, z, r.D, g.D, b.D, yawOff - yaw)
 		
 		for (i in 1..9) {
-			val pos = Vector3(x, y + 2, z).add(Vector3(0.0, 0.0, 0.5)/*.rotate(yawOff, Vector3.oY.copy().negate()).rotate(yaw, Vector3.oY.copy().negate())*/.rotate(i * 40.0, Vector3.oY))
+			val pos = Vector3(x, y + 2, z).add(Vector3(0, 0, 0.5)/*.rotateOY(-yawOff).rotateOY(-yaw)*/.rotateOY(i * 40))
 			Botania.proxy.sparkleFX(mc.theWorld, pos.x, pos.y, pos.z, r.F, g.F, b.F, 1f, 1)
 		}
 	}
 	
-	fun spawnEmblem5(x: Double, y: Double, z: Double, r: Double, g: Double, b: Double, yaw: Double) {
-		for (i in 1..9) {
-			val pos = Vector3(x, y + 1.75, z).add(Vector3(0.0, 0.0, 0.5).rotate(yaw + i * 40.0, Vector3.oY))
-			Botania.proxy.sparkleFX(mc.theWorld, pos.x, pos.y, pos.z, r.F, g.F, b.F, 1f, 1)
-		}
-	}
+//	fun spawnEmblem5(x: Double, y: Double, z: Double, r: Double, g: Double, b: Double, yaw: Double) {
+//		for (i in 1..9) {
+//			val pos = Vector3(x, y + 1.75, z).add(Vector3(0.0, 0.0, 0.5).rotate(yaw + i * 40.0, Vector3.oY))
+//			Botania.proxy.sparkleFX(mc.theWorld, pos.x, pos.y, pos.z, r.F, g.F, b.F, 1f, 1)
+//		}
+//	}
 }

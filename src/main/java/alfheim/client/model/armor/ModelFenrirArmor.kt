@@ -1,6 +1,6 @@
 package alfheim.client.model.armor
 
-import alexsocol.asjlib.F
+import alexsocol.asjlib.*
 import alexsocol.asjlib.render.ASJRenderHelper
 import net.minecraft.client.model.*
 import net.minecraft.entity.*
@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL11
 /**
  * Created by wiiv.
  */
-class ModelFenrirArmor(val slot: Int): ModelBiped() {
+class ModelFenrirArmor(val slot: Int, gedeons: Boolean = false): ModelBiped() {
 	
 	private val helmAnchor: ModelRenderer
 	private val helm: ModelRenderer
@@ -45,122 +45,125 @@ class ModelFenrirArmor(val slot: Int): ModelBiped() {
 	private val bootR: ModelRenderer
 	
 	init {
-		this.textureWidth = 64
-		this.textureHeight = 128
+		textureWidth = 64
+		textureHeight = 128
 		val s = 0.01f
 		
 		//helm
-		this.helmAnchor = ModelRenderer(this, 0, 0)
-		this.helmAnchor.setRotationPoint(0.0f, 0.0f, 0.0f)
-		this.helmAnchor.addBox(-1.0f, -2.0f, 0.0f, 2, 2, 2, s)
-		this.helm = ModelRenderer(this, 0, 0)
-		this.helm.setRotationPoint(0.0f, 0.0f, 0.0f)
-		this.helm.addBox(-4.5f, -9.0f, -4.5f, 9, 9, 9, s)
-		this.helmFur = ModelRenderer(this, 0, 18)
-		this.helmFur.setRotationPoint(0.0f, -2.0f, -4.5f)
-		this.helmFur.addBox(-5.5f, 0.0f, -1.0f, 11, 5, 11, s)
-		this.setRotateAngle(helmFur, 0.2617993877991494f, 0.0f, 0.0f)
-		this.helmSnout = ModelRenderer(this, 36, 0)
-		this.helmSnout.setRotationPoint(0.0f, -3.0f, -4.5f)
-		this.helmSnout.addBox(-2.5f, 0.0f, -5.0f, 5, 4, 6, s)
-		this.setRotateAngle(helmSnout, 0.2617993877991494f, 0.0f, 0.0f)
-		this.helmEarL = ModelRenderer(this, 36, 10)
-		this.helmEarL.mirror = true
-		this.helmEarL.setRotationPoint(3.5f, -9.0f, -0.5f)
-		this.helmEarL.addBox(-3.0f, -3.0f, 0.0f, 4, 5, 2, s)
-		this.setRotateAngle(helmEarL, 0.0f, 0.0f, 0.2617993877991494f)
-		this.helmEarR = ModelRenderer(this, 36, 10)
-		this.helmEarR.setRotationPoint(-3.5f, -9.0f, -0.5f)
-		this.helmEarR.addBox(-1.0f, -3.0f, 0.0f, 4, 5, 2, s)
-		this.setRotateAngle(helmEarR, 0.0f, 0.0f, -0.2617993877991494f)
+		helmAnchor = ModelRenderer(this, 0, 0)
+		helmAnchor.setRotationPoint(0.0f, 0.0f, 0.0f)
+		helmAnchor.addBox(-1.0f, -2.0f, 0.0f, 2, 2, 2, s)
+		helm = ModelRenderer(this, 0, 0)
+		helm.setRotationPoint(0.0f, 0.0f, 0.0f)
+		helm.addBox(-4.5f, -9.0f, -4.5f, 9, 9, 9, s)
+		helmFur = ModelRenderer(this, 0, 18)
+		helmFur.setRotationPoint(0.0f, -2.0f, -4.5f)
+		helmFur.addBox(-5.5f, 0.0f, -1.0f, 11, 5, 11, s)
+		setRotateAngle(helmFur, 0.2617994f, 0.0f, 0.0f)
+		helmSnout = ModelRenderer(this, 36, 0)
+		helmSnout.setRotationPoint(0.0f, -3.0f, -4.5f)
+		helmSnout.addBox(-2.5f, 0.0f, -5.0f, 5, 4, 6, s)
+		setRotateAngle(helmSnout, 0.2617994f, 0.0f, 0.0f)
+		helmEarL = ModelRenderer(this, 36, 10)
+		helmEarL.mirror = true
+		helmEarL.setRotationPoint(3.5f, -9.0f, -0.5f)
+		helmEarL.addBox(-3.0f, -3.0f, 0.0f, 4, 5, 2, s)
+		setRotateAngle(helmEarL, 0.0f, 0.0f, 0.2617994f)
+		helmEarR = ModelRenderer(this, 36, 10)
+		helmEarR.setRotationPoint(-3.5f, -9.0f, -0.5f)
+		helmEarR.addBox(-1.0f, -3.0f, 0.0f, 4, 5, 2, s)
+		setRotateAngle(helmEarR, 0.0f, 0.0f, -0.2617994f)
 		
 		//body
-		this.bodyAnchor = ModelRenderer(this, 0, 0)
-		this.bodyAnchor.setRotationPoint(0.0f, 0.0f, 0.0f)
-		this.bodyAnchor.addBox(-1.0f, 0.0f, -1.0f, 2, 2, 2, s)
-		this.bodyTop = ModelRenderer(this, 0, 35)
-		this.bodyTop.setRotationPoint(0.0f, 0.0f, 0.0f)
-		this.bodyTop.addBox(-4.5f, -0.5f, -3.0f, 9, 6, 7, s)
-		this.bodyBottom = ModelRenderer(this, 0, 48)
-		this.bodyBottom.setRotationPoint(0.0f, 0.0f, 0.0f)
-		this.bodyBottom.addBox(-3.5f, 4.5f, -2.5f, 7, 5, 5, s)
+		bodyAnchor = ModelRenderer(this, 0, 0)
+		bodyAnchor.setRotationPoint(0.0f, 0.0f, 0.0f)
+		bodyAnchor.addBox(-1.0f, 0.0f, -1.0f, 2, 2, 2, s)
+		bodyTop = ModelRenderer(this, 0, 35)
+		bodyTop.setRotationPoint(0.0f, 0.0f, 0.0f)
+		bodyTop.addBox(-4.5f, -0.5f, -3.0f, 9, 6, 7, s)
+		bodyBottom = ModelRenderer(this, 0, 48)
+		bodyBottom.setRotationPoint(0.0f, 0.0f, 0.0f)
+		bodyBottom.addBox(-3.5f, 4.5f, -2.5f, 7, 5, 5, s)
 		
 		//armL
-		this.armLAnchor = ModelRenderer(this, 0, 0)
-		this.armLAnchor.mirror = true
-		this.armLAnchor.setRotationPoint(4.0f, 2.0f, 0.0f)
-		this.armLAnchor.addBox(0.0f, -1.0f, -1.0f, 2, 2, 2, s)
-		this.armL = ModelRenderer(this, 0, 58)
-		this.armL.mirror = true
-		this.armL.setRotationPoint(0.0f, 0.0f, 0.0f)
-		this.armL.addBox(-1.5f, 2.5f, -2.5f, 5, 3, 5, s)
-		this.armLpauldron = ModelRenderer(this, 0, 66)
-		this.armLpauldron.mirror = true
-		this.armLpauldron.addBox(-0.5f, -2.5f, -3.5f, 5, 5, 7, s)
-		this.armLpaw = ModelRenderer(this, 24, 66)
-		this.armLpaw.mirror = true
-		this.armLpaw.setRotationPoint(2.5f, 5.5f, 0.0f)
-		this.armLpaw.addBox(-1.0f, 0.0f, -2.5f, 3, 6, 5, s)
-		this.setRotateAngle(armLpaw, 0.0f, 0.0f, 0.2617993877991494f)
+		armLAnchor = ModelRenderer(this, 0, 0)
+		armLAnchor.mirror = true
+		armLAnchor.setRotationPoint(4.0f, 2.0f, 0.0f)
+		armLAnchor.addBox(0.0f, -1.0f, -1.0f, 2, 2, 2, s)
+		armL = ModelRenderer(this, 0, 58)
+		armL.mirror = true
+		armL.setRotationPoint(0.0f, 0.0f, 0.0f)
+		armL.addBox(-1.5f, 2.5f, -2.5f, 5, 3, 5, s)
+		armLpauldron = ModelRenderer(this, 0, 66)
+		armLpauldron.mirror = true
+		armLpauldron.addBox(-0.5f, -2.5f, -3.5f, 5, 5, 7, s)
+		armLpaw = ModelRenderer(this, 24, 66)
+		armLpaw.mirror = true
+		armLpaw.setRotationPoint(2.5f, 5.5f, 0.0f)
+		armLpaw.addBox(-1.0f, 0.0f, -2.5f, 3, 6, 5, s)
+		setRotateAngle(armLpaw, 0.0f, 0.0f, 0.2617994f)
 		
 		//armR
-		this.armRAnchor = ModelRenderer(this, 0, 0)
-		this.armRAnchor.mirror = true
-		this.armRAnchor.setRotationPoint(-4.0f, 2.0f, 0.0f)
-		this.armRAnchor.addBox(-2.0f, -1.0f, -1.0f, 2, 2, 2, s)
-		this.armR = ModelRenderer(this, 0, 58)
-		this.armR.setRotationPoint(0.0f, 0.0f, 0.0f)
-		this.armR.addBox(-3.5f, 2.5f, -2.5f, 5, 3, 5, s)
-		this.armRpauldron = ModelRenderer(this, 0, 66)
-		this.armRpauldron.addBox(-4.5f, -2.5f, -3.5f, 5, 5, 7, s)
-		this.armRpaw = ModelRenderer(this, 24, 66)
-		this.armRpaw.setRotationPoint(-2.5f, 5.5f, 0.0f)
-		this.armRpaw.addBox(-2.0f, 0.0f, -2.5f, 3, 6, 5, s)
-		this.setRotateAngle(armRpaw, 0.0f, 0.0f, -0.2617993877991494f)
+		armRAnchor = ModelRenderer(this, 0, 0)
+		armRAnchor.mirror = true
+		armRAnchor.setRotationPoint(-4.0f, 2.0f, 0.0f)
+		armRAnchor.addBox(-2.0f, -1.0f, -1.0f, 2, 2, 2, s)
+		armR = ModelRenderer(this, 0, 58)
+		armR.setRotationPoint(0.0f, 0.0f, 0.0f)
+		armR.addBox(-3.5f, 2.5f, -2.5f, 5, 3, 5, s)
+		armRpauldron = ModelRenderer(this, 0, 66)
+		armRpauldron.addBox(-4.5f, -2.5f, -3.5f, 5, 5, 7, s)
+		armRpaw = ModelRenderer(this, 24, 66)
+		armRpaw.setRotationPoint(-2.5f, 5.5f, 0.0f)
+		armRpaw.addBox(-2.0f, 0.0f, -2.5f, 3, 6, 5, s)
+		setRotateAngle(armRpaw, 0.0f, 0.0f, -0.2617994f)
 		
 		//pants
-		this.pantsAnchor = ModelRenderer(this, 0, 0)
-		this.pantsAnchor.setRotationPoint(0.0f, 0.0f, 0.0f)
-		this.pantsAnchor.addBox(-1.0f, 0.0f, -1.0f, 2, 2, 2, s)
-		this.belt = ModelRenderer(this, 0, 78)
-		this.belt.setRotationPoint(0.0f, 0.0f, 0.0f)
-		this.belt.addBox(-4.5f, 8.5f, -3.0f, 9, 5, 6, s)
-		this.legL = ModelRenderer(this, 0, 89)
-		this.legL.mirror = true
-		this.legL.setRotationPoint(1.9f, 12.0f, 0.0f)
-		this.legL.addBox(-2.39f, -0.5f, -2.5f, 5, 7, 5, s)
-		this.legR = ModelRenderer(this, 0, 89)
-		this.legR.setRotationPoint(-1.9f, 12.0f, 0.0f)
-		this.legR.addBox(-2.61f, -0.5f, -2.5f, 5, 7, 5, s)
+		pantsAnchor = ModelRenderer(this, 0, 0)
+		pantsAnchor.setRotationPoint(0.0f, 0.0f, 0.0f)
+		pantsAnchor.addBox(-1.0f, 0.0f, -1.0f, 2, 2, 2, s)
+		belt = ModelRenderer(this, 0, 78)
+		belt.setRotationPoint(0.0f, 0.0f, 0.0f)
+		belt.addBox(-4.5f, 8.5f, -3.0f, 9, 5, 6, s)
+		legL = ModelRenderer(this, 0, 89)
+		legL.mirror = true
+		legL.setRotationPoint(1.9f, 12.0f, 0.0f)
+		legL.addBox(-2.39f, -0.5f, -2.5f, 5, 7, 5, s)
+		legR = ModelRenderer(this, 0, 89)
+		legR.setRotationPoint(-1.9f, 12.0f, 0.0f)
+		legR.addBox(-2.61f, -0.5f, -2.5f, 5, 7, 5, s)
 		
 		//boots
-		this.bootL = ModelRenderer(this, 0, 101)
-		this.bootL.mirror = true
-		this.bootL.setRotationPoint(1.9f, 12.0f, 0.0f)
-		this.bootL.addBox(-2.39f, 8.5f, -2.5f, 5, 4, 5, s)
-		this.bootR = ModelRenderer(this, 0, 101)
-		this.bootR.setRotationPoint(-1.9f, 12.0f, 0.0f)
-		this.bootR.addBox(-2.61f, 8.5f, -2.5f, 5, 4, 5, s)
+		bootL = ModelRenderer(this, 0, 101)
+		bootL.mirror = true
+		bootL.setRotationPoint(1.9f, 12.0f, 0.0f)
+		bootL.addBox(-2.39f, 8.5f, -2.5f, 5, 4, 5, s)
+		bootR = ModelRenderer(this, 0, 101)
+		bootR.setRotationPoint(-1.9f, 12.0f, 0.0f)
+		bootR.addBox(-2.61f, 8.5f, -2.5f, 5, 4, 5, s)
 		
 		//hierarchy
-		this.helmAnchor.addChild(this.helm)
-		this.helm.addChild(this.helmEarL)
-		this.helm.addChild(this.helmEarR)
-		this.helm.addChild(this.helmSnout)
-		this.helm.addChild(this.helmFur)
+		helmAnchor.addChild(helm)
+		helm.addChild(helmEarL)
+		helm.addChild(helmEarR)
+		helm.addChild(helmSnout)
+		helm.addChild(helmFur)
 		
-		this.bodyAnchor.addChild(this.bodyTop)
-		this.bodyTop.addChild(this.bodyBottom)
-		this.armLAnchor.addChild(this.armL)
-		this.armL.addChild(this.armLpauldron)
-		this.armL.addChild(this.armLpaw)
-		this.armRAnchor.addChild(this.armR)
-		this.armR.addChild(this.armRpauldron)
-		this.armR.addChild(this.armRpaw)
+		bodyAnchor.addChild(bodyTop)
+		bodyTop.addChild(bodyBottom)
+		armLAnchor.addChild(armL)
+		armL.addChild(armLpauldron)
+		armL.addChild(armLpaw)
+		armRAnchor.addChild(armR)
+		armR.addChild(armRpauldron)
+		armR.addChild(armRpaw)
 		
-		this.pantsAnchor.addChild(this.belt)
-		this.belt.addChild(this.legL)
-		this.belt.addChild(this.legR)
+		pantsAnchor.addChild(belt)
+		
+		if (gedeons) {
+			belt.addChild(legL)
+			belt.addChild(legR)
+		}
 	}
 	
 	override fun render(entity: Entity, limbSwing: Float, limbSwingAmount: Float, ageInTicks: Float, netHeadYaw: Float, headPitch: Float, scale: Float) {
@@ -241,11 +244,10 @@ class ModelFenrirArmor(val slot: Int): ModelBiped() {
 		val living = entity as EntityLivingBase?
 		isSneak = living?.isSneaking ?: false
 		if (living != null && living is EntityPlayer) {
-			val player = living
-			val itemstack = player.inventory.getCurrentItem()
+			val itemstack = living.inventory.getCurrentItem()
 			heldItemRight = if (itemstack != null) 1 else 0
 			aimedBow = false
-			if (itemstack != null && player.getItemInUseCount() > 0) {
+			if (itemstack != null && living.getItemInUseCount() > 0) {
 				val enumaction = itemstack.itemUseAction
 				if (enumaction == EnumAction.block) {
 					heldItemRight = 3

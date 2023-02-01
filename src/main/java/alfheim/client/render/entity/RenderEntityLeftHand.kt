@@ -71,7 +71,8 @@ object RenderEntityLeftHand {
 	
 	private fun renderRoyalStaff(e: RenderPlayerEvent.Specials.Pre) {
 		if (e.entityPlayer.heldItem?.item !== AlfheimItems.royalStaff) {
-			glTranslated(0.1, 1.5, 0.15)
+			glRotatef(-20.5f, 1f, 0f, 1f)
+			glTranslated(0.1325, 1.5, 0.15)
 			glRotatef(180f, 1f, 0f, 0f)
 			
 			glEnable(GL_BLEND)

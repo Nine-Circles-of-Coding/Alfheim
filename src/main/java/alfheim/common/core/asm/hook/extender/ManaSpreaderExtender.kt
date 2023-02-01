@@ -178,17 +178,13 @@ object ManaSpreaderExtender {
 		if (textureHook) {
 			textureHook = false
 			tm.bindTexture(
-				if (isGolden()) (
-					if (ClientProxy.dootDoot)
-						LibResourceLocations.uberSpreaderHalloweenGolden
-					else
-						LibResourceLocations.uberSpreaderGolden
-								) else (
-					if (ClientProxy.dootDoot)
-						LibResourceLocations.uberSpreaderHalloween
-					else
-						LibResourceLocations.uberSpreader
-									   )
+				if (isGolden()) {
+					if (ClientProxy.dootDoot) LibResourceLocations.uberSpreaderHalloweenGolden
+					else LibResourceLocations.uberSpreaderGolden
+				} else {
+					if (ClientProxy.dootDoot) LibResourceLocations.uberSpreaderHalloween
+					else LibResourceLocations.uberSpreader
+				}
 			)
 			
 			return true

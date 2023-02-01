@@ -16,8 +16,8 @@ import vazkii.botania.api.lexicon.LexiconPage
 import vazkii.botania.api.lexicon.multiblock.MultiblockSet
 import vazkii.botania.client.core.handler.MultiblockRenderHandler
 import vazkii.botania.client.lib.LibResources
-import java.util.*
 import kotlin.math.*
+import vazkii.botania.client.core.helper.RenderHelper as BRenderHelper
 
 class PageMultiblockLearnable(unName: String, internal val setUn: MultiblockSet, internal val set: MultiblockSet, internal val achievement: Achievement): LexiconPage(unName) {
 	
@@ -78,17 +78,23 @@ class PageMultiblockLearnable(unName: String, internal val setUn: MultiblockSet,
 		
 		glPushMatrix()
 		glTranslatef(0f, 0f, 200f)
-		if (mx >= x && mx < x + 16 && my >= y && my < y + 16) {
+		if (mx >= x && mx < x + 16 && my >= y && my < y + 16) run {
 			val mats = ArrayList<String>()
-			mats.add(StatCollector.translateToLocal("botaniamisc.materialsRequired"))
-			for (stack in m.materials) {
-				var size = "" + stack.stackSize
-				if (size.length < 2)
-					size = "0$size"
-				mats.add(" " + EnumChatFormatting.AQUA + size + " " + EnumChatFormatting.GRAY + stack.displayName)
+			
+			if (known()) {
+				mats.add(StatCollector.translateToLocal("botaniamisc.materialsRequired"))
+				
+				for (stack in m.materials) {
+					var size = "" + stack.stackSize
+					if (size.length < 2)
+						size = "0$size"
+					mats.add(" " + EnumChatFormatting.AQUA + size + " " + EnumChatFormatting.GRAY + stack.displayName)
+				}
+			} else {
+				mats.add(StatCollector.translateToLocal("alfheimmisc.unknownMaterials"))
 			}
 			
-			vazkii.botania.client.core.helper.RenderHelper.renderTooltip(mx, my, mats)
+			BRenderHelper.renderTooltip(mx, my, mats)
 		}
 		glPopMatrix()
 	}

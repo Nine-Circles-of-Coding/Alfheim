@@ -9,13 +9,12 @@ import net.minecraft.world.World
 import net.minecraftforge.oredict.OreDictionary
 import vazkii.botania.api.mana.ILens
 import vazkii.botania.common.item.lens.ItemLens
-import java.util.*
 
 /**
  * @author WireSegal
  * Created at 8:26 PM on 2/21/16.
  */
-class RecipeRainbowLensDye: IRecipe {
+object RecipeRainbowLensDye: IRecipe {
 	
 	override fun matches(inv: InventoryCrafting, world: World?): Boolean {
 		ores = OreDictionary.getOres(LibOreDict.DYES[16])

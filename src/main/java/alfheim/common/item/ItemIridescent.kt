@@ -4,8 +4,6 @@ import alexsocol.asjlib.meta
 import alfheim.api.ModInfo
 import alfheim.client.core.helper.IconHelper
 import alfheim.common.block.AlfheimBlocks
-import alfheim.common.core.util.AlfheimTab
-import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.relauncher.*
 import net.minecraft.block.Block
 import net.minecraft.client.renderer.texture.IIconRegister
@@ -17,7 +15,7 @@ import net.minecraft.util.*
 import vazkii.botania.common.Botania
 import java.awt.Color
 
-open class ItemIridescent(name: String): Item() {
+open class ItemIridescent(name: String): ItemMod(name) {
 	
 	companion object {
 		
@@ -25,14 +23,18 @@ open class ItemIridescent(name: String): Item() {
 		
 		fun rainbowColor() = Color.HSBtoRGB(Botania.proxy.worldElapsedTicks * 2 % 360 / 360F, 1F, 1F)
 		
-		fun colorFromItemStack(par1ItemStack: ItemStack): Int {
-			if (par1ItemStack.meta == TYPES) {
+		fun colorFromItemStack(stack: ItemStack): Int {
+			if (stack.meta == 1000) {
+				return 0x63CC2F
+			}
+			
+			if (stack.meta == TYPES) {
 				return rainbowColor()
 			}
-			if (par1ItemStack.meta >= EntitySheep.fleeceColorTable.size)
+			if (stack.meta >= EntitySheep.fleeceColorTable.size)
 				return 0xFFFFFF
 			
-			val color = EntitySheep.fleeceColorTable[par1ItemStack.meta]
+			val color = EntitySheep.fleeceColorTable[stack.meta]
 			return Color(color[0], color[1], color[2]).rgb
 		}
 		
@@ -60,47 +62,36 @@ open class ItemIridescent(name: String): Item() {
 	}
 	
 	init {
-		creativeTab = AlfheimTab
 		setHasSubtypes(true)
-		unlocalizedName = name
 	}
 	
 	lateinit var overlayIcon: IIcon
 	
 	override fun requiresMultipleRenderPasses() = true
 	
-	override fun setUnlocalizedName(name: String): Item {
-		GameRegistry.registerItem(this, name)
-		return super.setUnlocalizedName(name)
-	}
-	
-	override fun getUnlocalizedNameInefficiently(par1ItemStack: ItemStack) =
-		super.getUnlocalizedNameInefficiently(par1ItemStack).replace("item\\.".toRegex(), "item.${ModInfo.MODID}:")
-	
-	@SideOnly(Side.CLIENT)
 	override fun getIconFromDamageForRenderPass(meta: Int, pass: Int) =
 		if (pass == 1) overlayIcon else super.getIconFromDamageForRenderPass(meta, pass)!!
 	
 	@SideOnly(Side.CLIENT)
-	override fun registerIcons(iconRegister: IIconRegister) {
-		itemIcon = IconHelper.forItem(iconRegister, this)
-		overlayIcon = IconHelper.forItem(iconRegister, this, "Overlay")
+	override fun registerIcons(reg: IIconRegister) {
+		super.registerIcons(reg)
+		overlayIcon = IconHelper.forItem(reg, this, "Overlay")
 	}
 	
-	override fun getColorFromItemStack(par1ItemStack: ItemStack, pass: Int): Int =
-		if (pass > 0) 0xFFFFFF else colorFromItemStack(par1ItemStack)
+	override fun getColorFromItemStack(stack: ItemStack, pass: Int): Int =
+		if (pass > 0) 0xFFFFFF else colorFromItemStack(stack)
 	
 	fun addStringToTooltip(s: String, tooltip: MutableList<Any?>?) {
 		tooltip!!.add(s.replace("&".toRegex(), "\u00a7"))
 	}
 	
-	override fun addInformation(par1ItemStack: ItemStack?, par2EntityPlayer: EntityPlayer?, par3List: MutableList<Any?>?, par4: Boolean) {
-		if (par1ItemStack == null) return
-		addStringToTooltip("&7" + StatCollector.translateToLocal("misc.${ModInfo.MODID}.color." + par1ItemStack.meta) + "&r", par3List)
+	override fun addInformation(stack: ItemStack?, player: EntityPlayer?, tooltip: MutableList<Any?>?, adv: Boolean) {
+		if (stack == null) return
+		addStringToTooltip("&7" + StatCollector.translateToLocal("misc.${ModInfo.MODID}.color." + stack.meta) + "&r", tooltip)
 	}
 	
-	override fun getUnlocalizedName(par1ItemStack: ItemStack?) =
-		if (par1ItemStack != null) getUnlocalizedNameLazy(par1ItemStack)!! else ""
+	override fun getUnlocalizedName(stack: ItemStack?) =
+		if (stack != null) getUnlocalizedNameLazy(stack)!! else ""
 	
 	internal fun getUnlocalizedNameLazy(par1ItemStack: ItemStack) = super.getUnlocalizedName(par1ItemStack)
 }

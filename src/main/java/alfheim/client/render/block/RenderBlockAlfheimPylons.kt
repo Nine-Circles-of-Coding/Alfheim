@@ -17,6 +17,7 @@ object RenderBlockAlfheimPylons: ISimpleBlockRenderingHandler {
 		glTranslated(-0.5, -0.7, -0.5)
 		RenderTileAlfheimPylons.orange = metadata == 1
 		RenderTileAlfheimPylons.red = metadata == 2
+		RenderTileAlfheimPylons.creation = metadata == 3
 		RenderTileAlfheimPylons.hand = true
 		TileEntityRendererDispatcher.instance.renderTileEntityAt(TileAlfheimPylon(), 0.0, 0.0, 0.0, 0f)
 		glPopMatrix()

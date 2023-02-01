@@ -35,10 +35,10 @@ class BlockSnowLayer: BlockMod(Material.snow) {
 		blockIcon = reg.registerIcon("snow")
 	}
 	
-	override fun getCollisionBoundingBoxFromPool(world: World, x: Int, y: Int, z: Int): AxisAlignedBB? {
+	override fun getCollisionBoundingBoxFromPool(world: World, x: Int, y: Int, z: Int): AxisAlignedBB {
 		val l = world.getBlockMetadata(x, y, z) and 7
 		val f = 0.125f
-		return AxisAlignedBB.getBoundingBox(x.D + minX, y.D + minY, z.D + minZ, x.D + maxX, (y + l * f).D, z.D + maxZ)
+		return getBoundingBox(x + minX, y + minY, z + minZ, x + maxX, (y + l * f), z + maxZ)
 	}
 	
 	override fun isOpaqueCube() = false

@@ -7,7 +7,7 @@ import alfheim.common.lexicon.AlfheimLexiconData
 import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.relauncher.*
 import net.minecraft.block.*
-import net.minecraft.block.material.*
+import net.minecraft.block.material.Material
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.passive.EntitySheep
 import net.minecraft.entity.player.EntityPlayer
@@ -34,7 +34,7 @@ class BlockColoredDirt: BlockMod(Material.ground), IGrowable, ILexiconable {
 		BotaniaAPI.registerPaintableBlock(this)
 	}
 	
-	override fun func_149851_a(world: World, x: Int, y: Int, z: Int, remote: Boolean) = true
+	override fun func_149851_a(world: World, x: Int, y: Int, z: Int, remote: Boolean) = world.isAirBlock(x, y + 1, z)
 	
 	override fun func_149852_a(world: World, random: Random, x: Int, y: Int, z: Int) = true
 	

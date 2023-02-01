@@ -17,7 +17,7 @@ class ItemSoulHorn: ItemMod("SoulHorn") {
 		// Stupid Et Futurum
 		if (player.isSneaking && stack.meta == 1) {
 			val success = EntityFlugel.spawn(player, stack, world, x, y, z, true, true)
-			if (success) stack.meta = 0
+			if (success && !player.capabilities.isCreativeMode) stack.meta = 0
 			return success
 		}
 		return false

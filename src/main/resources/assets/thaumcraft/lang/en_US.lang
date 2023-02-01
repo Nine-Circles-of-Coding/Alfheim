@@ -61,10 +61,10 @@ tc.research_name.ROD_alfheimSpiritual_staff=Spiritual Staff Core
 tc.research_text.ROD_alfheimSpiritual_staff=[ALF] Rainbow regenerator
 tc.research_page.ROD_alfheimSpiritual_staff.1=After slaying the Guardian of Gaia his spirit was condensed into tangible form. Experimenting with those spirits gived unexpected results - using them to create a wand core will lead this core to collect all nearby mana and somehow transform it into vis.<BR>Such a core can store up to 85 vis of every type. You think this amount might be even higher, but you have no ideas how to increase it.
 
-tc.research_name.alfheimTransElementium=Elementium Transmutation
-tc.research_text.alfheimTransElementium=Transmutation of metals into elementium
-tc.research_page.alfheimTransElementium.1=You have discovered a way to multiply elementium by steeping elementium nuggets in §5metallum§0 harvested from other metals.
+tc.research_name.alfheimTRANSELEMENTIUM=Elementium Transmutation
+tc.research_text.alfheimTRANSELEMENTIUM=Transmutation of metals into elementium
+tc.research_page.alfheimTRANSELEMENTIUM.1=You have discovered a way to multiply elementium by steeping elementium nuggets in §5metallum§0 harvested from other metals.
 
-tc.research_name.alfheimPureElementium=Elementium Purification
-tc.research_text.alfheimPureElementium=Purification of elementium into native clusters
-tc.research_page.alfheimPureElementium.1=Native clusters are rare concentrations of metals in its purest form. You have discovered a way to purify and concentrate normal elementium ore into a native elementium cluster.<BR>When smelted these clusters produces twice the normal amount of elementium ingots.
+tc.research_name.alfheimPUREELEMENTIUM=Elementium Purification
+tc.research_text.alfheimPUREELEMENTIUM=Purification of elementium into native clusters
+tc.research_page.alfheimPUREELEMENTIUM.1=Native clusters are rare concentrations of metals in its purest form. You have discovered a way to purify and concentrate normal elementium ore into a native elementium cluster.<BR>When smelted these clusters produces twice the normal amount of elementium ingots.

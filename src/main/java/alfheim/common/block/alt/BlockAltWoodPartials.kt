@@ -10,10 +10,12 @@ import cpw.mods.fml.common.IFuelHandler
 import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.block.*
 import net.minecraft.creativetab.CreativeTabs
+import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.*
 import net.minecraft.util.IIcon
-import net.minecraft.world.World
+import net.minecraft.world.*
+import net.minecraftforge.common.util.ForgeDirection
 
 class BlockAltWoodSlab(full: Boolean, source: Block = AlfheimBlocks.altPlanks):
 	BlockSlabMod(full, 0, source, source.unlocalizedName.replace("tile.".toRegex(), "") + "Slab" + (if (full) "Full" else "")), IFuelHandler {
@@ -21,6 +23,24 @@ class BlockAltWoodSlab(full: Boolean, source: Block = AlfheimBlocks.altPlanks):
 	init {
 		GameRegistry.registerFuelHandler(this)
 	}
+	
+	override fun getExplosionResistance(entity: Entity?, world: World, x: Int, y: Int, z: Int, explosionX: Double, explosionY: Double, explosionZ: Double) =
+		if (world.getBlockMetadata(x, y, z) % 8 == 6)
+			Float.MAX_VALUE
+		else
+			super.getExplosionResistance(entity, world, x, y, z, explosionX, explosionY, explosionZ)
+	
+	override fun getBlockHardness(world: World, x: Int, y: Int, z: Int) =
+		if (world.getBlockMetadata(x, y, z) % 8 == 6)
+			-1f
+		else
+			super.getBlockHardness(world, x, y, z)
+	
+	override fun getFlammability(world: IBlockAccess, x: Int, y: Int, z: Int, face: ForgeDirection?) =
+		if (world.getBlockMetadata(x, y, z) % 8 == 6) 0 else super.getFlammability(world, x, y, z, face)
+	
+	override fun getFireSpreadSpeed(world: IBlockAccess, x: Int, y: Int, z: Int, face: ForgeDirection?) =
+		if (world.getBlockMetadata(x, y, z) % 8 == 6) 0 else super.getFireSpreadSpeed(world, x, y, z, face)
 	
 	override fun getSubBlocks(item: Item?, tab: CreativeTabs?, list: MutableList<Any?>) {
 		for (i in 0 until LibOreDict.ALT_TYPES.size - 1)
@@ -65,6 +85,14 @@ class BlockYggStairs: BlockAltWoodStairs(BlockAltLeaves.yggMeta), IFuelHandler {
 	init {
 		setBlockUnbreakable()
 	}
+	
+	override fun getExplosionResistance(entity: Entity?, world: World, x: Int, y: Int, z: Int, explosionX: Double, explosionY: Double, explosionZ: Double) = Float.MAX_VALUE
+	
+	override fun getBlockHardness(world: World, x: Int, y: Int, z: Int) = -1f
+	
+	override fun getFlammability(world: IBlockAccess, x: Int, y: Int, z: Int, face: ForgeDirection?) = 0
+	
+	override fun getFireSpreadSpeed(world: IBlockAccess, x: Int, y: Int, z: Int, face: ForgeDirection?) = 0
 	
 	override fun getEntry(world: World, x: Int, y: Int, z: Int, player: EntityPlayer?, lexicon: ItemStack?) = null
 	

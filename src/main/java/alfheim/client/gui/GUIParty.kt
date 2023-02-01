@@ -24,13 +24,14 @@ import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER
 import vazkii.botania.api.BotaniaAPI
 import vazkii.botania.api.mana.*
-import vazkii.botania.common.core.handler.ConfigHandler
+import vazkii.botania.client.core.helper.ShaderHelper
 import java.awt.Color
 import java.text.DecimalFormat
 import kotlin.math.*
 
-@Suppress("UNCHECKED_CAST")
-class GUIParty: Gui() {
+object GUIParty: Gui() {
+	
+	val format = DecimalFormat("0.0#")
 	
 	@SubscribeEvent
 	fun onOverlayRendering(event: RenderGameOverlayEvent.Post) {
@@ -62,15 +63,6 @@ class GUIParty: Gui() {
 		
 		if (AlfheimConfigHandler.selfHealthUI) {
 			glPushMatrix()
-			/*glPushMatrix();
-			glTranslated(8, 8, 0);
-			glScaled(3./4, 3./8, 1);
-			mc.renderEngine.bindTexture(mc.thePlayer.getLocationSkin());
-			zLevel = -89.5F;
-			drawTexturedModalRect(0, 0, 32, 64, 32, 64);
-			zLevel = -89f;
-			drawTexturedModalRect(0, 0, 160, 64, 32, 64);
-			glPopMatrix();*/
 			
 			glColor4d(1.0, 1.0, 1.0, 1.0)
 			mc.renderEngine.bindTexture(LibResourceLocations.health)
@@ -196,6 +188,11 @@ class GUIParty: Gui() {
 				glTranslated(0.0, 0.0, 89.0)
 			}
 			glColor4d(1.0, 1.0, 1.0, 1.0)
+			
+			glScaled(0.5)
+			glTranslatef(5f, 80f, 0f)
+			renderPotions(player, player.activePotionEffects.size, null, 19)
+			
 			glPopMatrix()
 		}
 		
@@ -221,14 +218,14 @@ class GUIParty: Gui() {
 				
 				color = when {
 					i == 0         -> red        // PL
-					pt.isPlayer(i) -> -0x1        // Player
-					else           -> yellow    // Mob
+					pt.isPlayer(i) -> -0x1       // Player
+					else           -> yellow     // Mob
 				}
 				
 				if (l == null) {
 					color = 0xCCCCCC
 					col = when (val it = pt.getType(i)) {
-						in EnumRace.values().indices -> EnumRace.getRGBColor(it.D)
+						in EnumRace.values().indices -> EnumRace.getRGBColor(it)
 						LibResourceLocations.BOSS    -> 0xA2018C
 						LibResourceLocations.NPC     -> -0xFF5501
 						LibResourceLocations.MOB     -> col
@@ -390,7 +387,7 @@ class GUIParty: Gui() {
 				// ################ debuffs: ################
 				run debuffs@{
 					if (l == null) return@debuffs
-					val pes = l!!.activePotionEffects as Collection<PotionEffect>
+					val pes = l!!.activePotionEffects
 					if (pes.isEmpty()) return@debuffs
 					glPushMatrix()
 					glTranslated(34.0, (y + 32).D, 0.0)
@@ -398,10 +395,7 @@ class GUIParty: Gui() {
 					glScaled(s2)
 					glColor4d(1.0, 1.0, 1.0, 1.0)
 					
-					var bads = 0
-					for (pe in pes) if (Potion.potionTypes[pe.potionID].isBadEffect) ++bads
-					
-					renderPotions(l, bads, true, true)
+					renderPotions(l!!, pes.size, null, 10)
 					
 					glPopMatrix()
 				}
@@ -519,6 +513,7 @@ class GUIParty: Gui() {
 			
 			// ################ potions: ################
 			run potions@{
+				@Suppress("UNCHECKED_CAST")
 				val pes = l!!.activePotionEffects as Collection<PotionEffect>
 				if (pes.isEmpty()) return@potions
 				
@@ -532,9 +527,9 @@ class GUIParty: Gui() {
 				for (pe in pes) if (Potion.potionTypes[pe.potionID].isBadEffect) ++bads else ++goods
 				
 				glTranslated(274.0, 56.0, 0.0)
-				renderPotions(PlayerSegmentClient.target, bads, true, false)
+				renderPotions(PlayerSegmentClient.target!!, bads, true, 9)
 				glTranslated(-198.0, 22.0, 0.0)
-				renderPotions(PlayerSegmentClient.target, goods, false, false)
+				renderPotions(PlayerSegmentClient.target!!, goods, false, 20)
 				
 				glPopMatrix()
 			}
@@ -565,7 +560,7 @@ class GUIParty: Gui() {
 				Tessellator.instance.addVertexWithUV(36.0, 4.0, 0.0, 1.0, 0.0)
 				Tessellator.instance.draw()
 				
-				if (ConfigHandler.useShaders) ASJShaderHelper.useShader(LibShaderIDs.idShadow)
+				if (ShaderHelper.useShaders()) ASJShaderHelper.useShader(LibShaderIDs.idShadow)
 				
 				val mod = if (mc.thePlayer.race == EnumRace.HUMAN) 1.0 else mc.thePlayer.flight.mfloor() / ElvenFlightHelper.max
 				val time = sin((mc.theWorld.totalWorldTime / 2).D) * 0.5
@@ -578,7 +573,7 @@ class GUIParty: Gui() {
 				Tessellator.instance.addVertexWithUV(36.0, 36 - mod * 32, 0.0, 1.0, 1 - mod)
 				Tessellator.instance.draw()
 			} else {
-				if (ConfigHandler.useShaders) ASJShaderHelper.useShader(LibShaderIDs.idShadow)
+				if (ShaderHelper.useShaders()) ASJShaderHelper.useShader(LibShaderIDs.idShadow)
 			}
 			
 			y += 20
@@ -631,37 +626,41 @@ class GUIParty: Gui() {
 			glPopMatrix()
 			glMatrixMode(GL_MODELVIEW)
 			
-			if (ConfigHandler.useShaders) ASJShaderHelper.releaseShader()
+			if (ShaderHelper.useShaders()) ASJShaderHelper.releaseShader()
 		}
 		
 		glDisable(GL_BLEND)
 		glPopMatrix()
 	}
 	
-	fun renderPotions(e: EntityLivingBase?, count: Int, bads: Boolean, pt: Boolean) {
+	fun renderPotions(e: EntityLivingBase, count: Int, bads: Boolean?, maxCount: Int) {
 		if (count < 1) return
+		
 		var potion: Potion
 		var j = 0.0
-		val k = if (count > (if (bads) if (pt) 10 else 9 else 20)) (if (bads) if (pt) 180.0 else 162.0 else 360.0) / (count - 1) else 18.0
+		val maxSpace = maxCount * 18.0
+		val k = if (count > maxCount) maxSpace / (count - 1) else 18.0
 		
-		for (o in e!!.activePotionEffects) {
+		for (o in e.activePotionEffects) {
 			val pe = o as PotionEffect
 			potion = Potion.potionTypes[pe.getPotionID()]
-			if (bads != potion.isBadEffect) continue
+			if (bads != null && bads != potion.isBadEffect) continue
 			
 			if (potion.hasStatusIcon()) {
 				glDisable(GL_BLEND)
-				glColor4d((if (bads) 1 else 0).D, (if (bads) 0 else 1).D, 0.0, 1.0)
+				glColor4f(if (potion.isBadEffect) 1f else 0f, if (potion.isBadEffect) 0f else 1f, 0f, 1f)
 				mc.textureManager.bindTexture(LibResourceLocations.widgets)
 				drawTexturedModalRect(j, 0.0, 1.0, 1.0, 20.0, 20.0)
 				glEnable(GL_BLEND)
-				glColor4d(1.0, 1.0, 1.0, 1.0)
+				glColor4f(1f, 1f, 1f, if (pe.duration < 100) sin(e.ticksExisted / 2f) / 2 + 0.75f else 1f)
 				mc.textureManager.bindTexture(LibResourceLocations.inventory)
 				val l = potion.statusIconIndex
 				drawTexturedModalRect(j + 1, 1.0, (l % 8 * 18).D, (198 + l / 8 * 18).D, 18.0, 18.0)
 				j += k
 			}
 		}
+		
+		glColor4f(1f, 1f, 1f, 1f)
 	}
 	
 	fun drawTexturedModalRect(x: Double, y: Double, u: Double, v: Double, width: Double, height: Double) {
@@ -673,10 +672,5 @@ class GUIParty: Gui() {
 		Tessellator.instance.addVertexWithUV(x + width, y, zLevel.D, (u + width) * f, v * f1)
 		Tessellator.instance.addVertexWithUV(x, y, zLevel.D, u * f, v * f1)
 		Tessellator.instance.draw()
-	}
-	
-	companion object {
-		
-		val format = DecimalFormat("0.0#")
 	}
 }

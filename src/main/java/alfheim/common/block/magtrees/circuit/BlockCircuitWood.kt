@@ -9,6 +9,7 @@ import net.minecraft.block.material.Material
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.world.*
+import net.minecraftforge.common.util.ForgeDirection
 import java.util.*
 
 class BlockCircuitWood: BlockModRotatedPillar(Material.wood), ICircuitBlock {
@@ -19,11 +20,18 @@ class BlockCircuitWood: BlockModRotatedPillar(Material.wood), ICircuitBlock {
 		tickRandomly = true
 	}
 	
+	override fun onBlockAdded(world: World, x: Int, y: Int, z: Int) {
+		val below = world.getBlock(x, y - 1, z)
+		if (below !is ICircuitBlock) return
+		
+		below.updateTick(world, x, y - 1, z, world.rand)
+	}
+	
 	override fun canSustainLeaves(world: IBlockAccess, x: Int, y: Int, z: Int) = true
 	
 	override fun isWood(world: IBlockAccess?, x: Int, y: Int, z: Int) = true
 	
-	override fun breakBlock(world: World, x: Int, y: Int, z: Int, block: Block, fortune: Int) {
+	override fun breakBlock(world: World, x: Int, y: Int, z: Int, block: Block, meta: Int) {
 		val b0: Byte = 4
 		val i1: Int = b0 + 1
 		
@@ -36,7 +44,8 @@ class BlockCircuitWood: BlockModRotatedPillar(Material.wood), ICircuitBlock {
 					}
 				}
 		}
-		super.breakBlock(world, x, y, z, block, fortune)
+		
+		onBlockAdded(world, x, y, z)
 	}
 	
 	override fun damageDropped(meta: Int) = 0
@@ -52,8 +61,8 @@ class BlockCircuitWood: BlockModRotatedPillar(Material.wood), ICircuitBlock {
 	// ####
 	
 	override fun updateTick(world: World, x: Int, y: Int, z: Int, random: Random) {
-		super.updateTick(world, x, y, z, random)
 		world.notifyBlocksOfNeighborChange(x, y, z, this)
+		onBlockAdded(world, x, y, z)
 	}
 	
 	override fun getLightValue(world: IBlockAccess?, x: Int, y: Int, z: Int) = 8
@@ -63,4 +72,6 @@ class BlockCircuitWood: BlockModRotatedPillar(Material.wood), ICircuitBlock {
 	override fun tickRate(world: World) = 1
 	
 	override fun isProvidingWeakPower(blockAccess: IBlockAccess, x: Int, y: Int, z: Int, meta: Int) = ICircuitBlock.getPower(blockAccess, x, y, z)
+	
+	override fun isSideSolid(world: IBlockAccess?, x: Int, y: Int, z: Int, side: ForgeDirection?) = true
 }

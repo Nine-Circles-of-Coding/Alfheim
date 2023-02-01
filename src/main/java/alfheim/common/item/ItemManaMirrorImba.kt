@@ -137,32 +137,28 @@ class ItemManaMirrorImba: ItemMod("manaMirrorImba"), IManaItem, ICoordBoundItem,
 	fun getDimension(stack: ItemStack): Int = ItemNBTHelper.getInt(stack, TAG_DIM, 0)
 	
 	fun getManaPool(stack: ItemStack): IManaPool? {
+		if (ASJUtilities.isClient) return null
 		val server = MinecraftServer.getServer() ?: return DummyPool
 		
-		val coords = getPoolCoords(stack)
-		if (coords.posY == -1)
-			return null
-		
 		val dim = getDimension(stack)
-		val world = server.worldServers.firstOrNull { it.provider.dimensionId == dim } ?: return null
+		val world = server.worldServerForDimension(dim) ?: return null
 		
-		val tile = world.getTileEntity(coords.posX, coords.posY, coords.posZ)
-		if (tile != null && tile is IManaPool)
-			return tile
+		val (x, y, z) = getPoolCoords(stack)
+		if (!world.blockExists(x, y, z)) return null
 		
-		return null
+		return world.getTileEntity(x, y, z) as? IManaPool
 	}
 	
 	override fun canReceiveManaFromPool(stack: ItemStack, from: TileEntity): Boolean {
 		val pool = getManaPool(stack) ?: return false
 		
-		return if (pool !== DummyPool) !pool.isOutputtingPower && !pool.isFull else false
+		return if (pool !== DummyPool) !pool.isFull else false
 	}
 	
 	override fun canExportManaToPool(stack: ItemStack, to: TileEntity): Boolean {
 		val pool = getManaPool(stack) ?: return false
 		
-		return if (pool !== DummyPool) pool.isOutputtingPower else false
+		return pool !== DummyPool
 	}
 	
 	override fun canReceiveManaFromItem(stack: ItemStack, otherStack: ItemStack) = false
@@ -175,10 +171,10 @@ class ItemManaMirrorImba: ItemMod("manaMirrorImba"), IManaItem, ICoordBoundItem,
 		if (world.provider.dimensionId != ItemNBTHelper.getInt(stack, "dim", Int.MAX_VALUE)) return null
 		
 		val coords = getPoolCoords(stack)
-		if (coords.posY == -1)
-			return null
+		val (x, y, z) = coords
+		if (!world.blockExists(x, y, z)) return null
 		
-		val tile = world.getTileEntity(coords.posX, coords.posY, coords.posZ)
+		val tile = world.getTileEntity(x, y, z)
 		
 		return if (tile is IManaPool) coords else null
 	}
@@ -186,7 +182,7 @@ class ItemManaMirrorImba: ItemMod("manaMirrorImba"), IManaItem, ICoordBoundItem,
 	override fun getManaFractionForDisplay(stack: ItemStack) = (getMana(stack).F / getMaxMana(stack).F).clamp(0f, 1f - Float.MIN_VALUE)
 }
 
-private object DummyPool: IManaPool {
+object DummyPool: IManaPool {
 	
 	override fun isFull() = false
 	override fun recieveMana(mana: Int) = Unit

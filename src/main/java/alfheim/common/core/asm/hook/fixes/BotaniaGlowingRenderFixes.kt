@@ -1,5 +1,6 @@
 package alfheim.common.core.asm.hook.fixes
 
+import cpw.mods.fml.relauncher.*
 import gloomyfolken.hooklib.asm.Hook
 import net.minecraft.client.renderer.OpenGlHelper
 import net.minecraft.entity.Entity
@@ -15,6 +16,7 @@ object BotaniaGlowingRenderFixes {
 	var lastX = 0f
 	var lastY = 0f
 	
+	@SideOnly(Side.CLIENT)
 	@JvmStatic
 	@Hook(targetMethod = "renderManaTablet")
 	fun renderManaTabletPre(renderer: BaubleRenderHandler, event: RenderPlayerEvent) {
@@ -22,12 +24,14 @@ object BotaniaGlowingRenderFixes {
 		lastY = OpenGlHelper.lastBrightnessY
 	}
 	
+	@SideOnly(Side.CLIENT)
 	@JvmStatic
 	@Hook(targetMethod = "renderManaTablet", injectOnExit = true)
 	fun renderManaTabletPost(renderer: BaubleRenderHandler, event: RenderPlayerEvent) {
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastX, lastY)
 	}
 	
+	@SideOnly(Side.CLIENT)
 	@JvmStatic
 	@Hook(targetMethod = "onPlayerBaubleRender")
 	fun onPlayerBaubleRenderPre(item: ItemBloodPendant, stack: ItemStack, event: RenderPlayerEvent, type: IBaubleRender.RenderType) {
@@ -35,12 +39,14 @@ object BotaniaGlowingRenderFixes {
 		lastY = OpenGlHelper.lastBrightnessY
 	}
 	
+	@SideOnly(Side.CLIENT)
 	@JvmStatic
 	@Hook(targetMethod = "onPlayerBaubleRender", injectOnExit = true)
 	fun onPlayerBaubleRenderPost(item: ItemBloodPendant, stack: ItemStack, event: RenderPlayerEvent, type: IBaubleRender.RenderType) {
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastX, lastY)
 	}
 	
+	@SideOnly(Side.CLIENT)
 	@JvmStatic
 	@Hook(targetMethod = "doRender")
 	fun doRenderPre(render: RenderPixie, entity: Entity, x: Double, y: Double, z: Double, f1: Float, f2: Float) {
@@ -48,12 +54,14 @@ object BotaniaGlowingRenderFixes {
 		lastY = OpenGlHelper.lastBrightnessY
 	}
 	
+	@SideOnly(Side.CLIENT)
 	@JvmStatic
 	@Hook(targetMethod = "doRender", injectOnExit = true)
 	fun doRenderPost(render: RenderPixie, entity: Entity, x: Double, y: Double, z: Double, f1: Float, f2: Float) {
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastX, lastY)
 	}
 	
+	@SideOnly(Side.CLIENT)
 	@JvmStatic
 	@Hook(targetMethod = "onPlayerBaubleRender")
 	fun onPlayerBaubleRenderPre(item: ItemFlightTiara, stack: ItemStack, event: RenderPlayerEvent, type: IBaubleRender.RenderType) {
@@ -61,6 +69,7 @@ object BotaniaGlowingRenderFixes {
 		lastY = OpenGlHelper.lastBrightnessY
 	}
 	
+	@SideOnly(Side.CLIENT)
 	@JvmStatic
 	@Hook(targetMethod = "onPlayerBaubleRender", injectOnExit = true)
 	fun onPlayerBaubleRenderPost(item: ItemFlightTiara, stack: ItemStack, event: RenderPlayerEvent, type: IBaubleRender.RenderType) {

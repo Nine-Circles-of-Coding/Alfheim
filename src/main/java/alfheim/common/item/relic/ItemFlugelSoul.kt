@@ -5,6 +5,8 @@ import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.render.ASJRenderHelper
 import alexsocol.asjlib.security.InteractionSecurity
 import alfheim.api.lib.LibResourceLocations
+import alfheim.common.core.asm.hook.AlfheimHookHandler
+import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.helper.ElvenFlightHelper
 import alfheim.common.core.util.AlfheimTab
 import alfheim.common.entity.boss.EntityFlugel
@@ -42,7 +44,6 @@ import vazkii.botania.common.item.relic.ItemRelic
 import java.awt.Color
 import kotlin.math.*
 
-@Suppress("UNCHECKED_CAST")
 class ItemFlugelSoul: ItemRelic("FlugelSoul"), ILensEffect, IImmortalHandledItem {
 	
 	init {
@@ -61,50 +62,48 @@ class ItemFlugelSoul: ItemRelic("FlugelSoul"), ILensEffect, IImmortalHandledItem
 	override fun onItemUse(stack: ItemStack, player: EntityPlayer, world: World, x: Int, y: Int, z: Int, side: Int, hitX: Float, hitY: Float, hitZ: Float): Boolean {
 		val tile = world.getTileEntity(x, y, z)
 		if (tile is TileBrewery) {
-			tile[0] = stack.splitStack(1)
-		} else { // Stupid Et Futurum
-			if (player.isSneaking && getBlocked(stack) < SEGMENTS) {
-				val success = EntityFlugel.spawn(player, stack, world, x, y, z, true, false)
-				if (success) setDisabled(stack, getBlocked(stack), true)
-				return success
-			}
+			if (tile[0] == null)
+				tile[0] = stack.splitStack(1)
+		} else if (player.isSneaking && getBlocked(stack) < SEGMENTS) { // Stupid Et Futurum
+			val success = EntityFlugel.spawn(player, stack, world, x, y, z, true, false)
+			if (success) setDisabled(stack, getBlocked(stack), true)
+			return success
 		}
 		return false
 	}
 	
 	override fun onItemRightClick(stack: ItemStack, world: World, player: EntityPlayer): ItemStack {
-		if (isRightPlayer(player, stack) && !player.isSneaking) {
-			val metaWas = stack.meta
-			stack.meta = 0xFACE17
-			
-			val segment = getSegmentLookedAt(stack, player)
-			val pos = getWarpPoint(stack, segment)
-			if (pos.isValid) {
-				if (!world.isRemote && player is EntityPlayerMP && ManaItemHandler.requestManaExact(stack, player, pos.mana(player), true)) {
-					if (!InteractionSecurity.isInteractionBanned(player, pos.x, pos.y, pos.z, MinecraftServer.getServer().worldServerForDimension(pos.dim))) {
-						player.playSoundAtEntity("mob.endermen.portal", 1f, 1f)
-						ASJUtilities.sendToDimensionWithoutPortal(player, pos.dim, pos.x, pos.y, pos.z)
-					}
-				}
-			} else {
-				if (!InteractionSecurity.isInteractionBanned(player))
-					setWarpPoint(stack, segment, player.posX, player.posY, player.posZ, world.provider.dimensionId)
+		if (!isRightPlayer(player, stack) || player.isSneaking) return stack
+		
+		val metaWas = stack.meta
+		stack.meta = 0xFACE17
+		
+		val segment = getSegmentLookedAt(stack, player)
+		val pos = getWarpPoint(stack, segment)
+		if (pos.isValid) {
+			if (!world.isRemote && player is EntityPlayerMP && ManaItemHandler.requestManaExact(stack, player, pos.mana(player), true) &&
+				!InteractionSecurity.isInteractionBanned(player, pos.x, pos.y, pos.z, MinecraftServer.getServer().worldServerForDimension(pos.dim)) &&
+				player.dimension != AlfheimConfigHandler.dimensionIDHelheim) {
+				player.playSoundAtEntity("mob.endermen.portal", 1f, 1f)
+				AlfheimHookHandler.allowtp = true
+				ASJUtilities.sendToDimensionWithoutPortal(player, pos.dim, pos.x, pos.y, pos.z)
 			}
-			
-			stack.meta = metaWas
-		}
+		} else if (!InteractionSecurity.isInteractionBanned(player))
+			setWarpPoint(stack, segment, player.posX, player.posY, player.posZ, world.provider.dimensionId)
+		
+		stack.meta = metaWas
 		
 		return stack
 	}
 	
 	override fun onEntitySwing(player: EntityLivingBase, stack: ItemStack): Boolean {
-		if (player.isSneaking && player is EntityPlayer && isRightPlayer(player, stack)) {
-			val segment = getSegmentLookedAt(stack, player)
-			val pos = getWarpPoint(stack, segment)
-			if (pos.isValid) {
-				setWarpPoint(stack, segment, 0.0, -1.0, 0.0, 0)
-				return false
-			}
+		if (!player.isSneaking || player !is EntityPlayer || !isRightPlayer(player, stack)) return false
+		
+		val segment = getSegmentLookedAt(stack, player)
+		val pos = getWarpPoint(stack, segment)
+		if (pos.isValid) {
+			setWarpPoint(stack, segment, 0.0, -1.0, 0.0, 0)
+			return false
 		}
 		
 		return false
@@ -124,13 +123,12 @@ class ItemFlugelSoul: ItemRelic("FlugelSoul"), ILensEffect, IImmortalHandledItem
 			if (firstTick) tickFirst(stack)
 		}
 		
-		if (entity is EntityPlayer) {
-			val tiara = PlayerHandler.getPlayerBaubles(entity)[0]
-			if (tiara != null && tiara.item is ItemFlightTiara)
-				ItemNBTHelper.setInt(tiara, TAG_TIME_LEFT, MAX_FLY_TIME)
-			
-			ElvenFlightHelper.regen(entity, 10)
-		}
+		if (entity !is EntityPlayer) return
+		
+		val tiara = PlayerHandler.getPlayerBaubles(entity)[0]
+		if (tiara != null && tiara.item is ItemFlightTiara) ItemNBTHelper.setInt(tiara, TAG_TIME_LEFT, MAX_FLY_TIME)
+		
+		ElvenFlightHelper.regen(entity, 10)
 	}
 	
 	override fun doParticles(burst: IManaBurst?, stack: ItemStack?) = true
@@ -141,40 +139,40 @@ class ItemFlugelSoul: ItemRelic("FlugelSoul"), ILensEffect, IImmortalHandledItem
 	
 	override fun updateBurst(burst: IManaBurst?, stack: ItemStack) {
 		val entity = burst as EntityThrowable
-		val axis = AxisAlignedBB.getBoundingBox(entity.posX, entity.posY, entity.posZ, entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ).expand(1.0)
-		val entities = entity.worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, axis) as List<EntityLivingBase>
+		val axis = getBoundingBox(entity.posX, entity.posY, entity.posZ, entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ).expand(1)
+		val entities = getEntitiesWithinAABB(entity.worldObj, EntityLivingBase::class.java, axis)
 		val attacker = ItemNBTHelper.getInt(burst.sourceLens, TAG_ATTACKER_ID, -1)
 		
-		for (living in entities) {
-			if (living.entityId == attacker) continue
-			
-			if (living.hurtTime == 0) {
-				if (!burst.isFake && !entity.worldObj.isRemote) {
-					living.attackEntityFrom(DamageSource.magic, if (stack.meta > 0) 10f else 8f)
-					entity.setDead()
-					break
-				}
-			}
+		entities.forEach {
+			if (it.entityId == attacker) return@forEach
+			if (it.hurtTime != 0) return@forEach
+			if (burst.isFake || entity.worldObj.isRemote) return@forEach
+			it.attackEntityFrom(DamageSource.magic, if (stack.meta > 0) 10f else 8f)
+			entity.setDead()
+			return
 		}
 	}
 	
 	override fun onEntityItemImmortalUpdate(entity: EntityItemImmortal): Boolean {
-		val stack = entity.stack ?: return false
-		val horn = (entity.worldObj.getEntitiesWithinAABB(EntityItem::class.java, entity.boundingBox(0.5)) as List<EntityItem>).firstOrNull { it.entityItem?.item === AlfheimItems.soulHorn } ?: return false
+		if (entity.ticksExisted < 20) return false
 		
-		if (horn.entityItem.meta == 0 && getBlocked(stack) == 0) {
-			for (i in 0 until SEGMENTS)
-				setDisabled(stack, i, true)
-			
-			horn.entityItem.meta = 1
-			
-			val v = Vector3()
-			
-			for (i in 0 until 360 step 5) {
-				val c = Color.getHSBColor(i / 360f, 1f, 1f)
-				v.rand().sub(0.5).normalize().mul(Math.random() * 0.5)
-				Botania.proxy.sparkleFX(entity.worldObj, entity.posX + v.x, entity.posY + v.y, entity.posZ + v.z, c.red / 255f, c.green / 255f, c.blue / 255f, 1.5f, 5)
-			}
+		val stack = entity.stack ?: return false
+		val horn = getEntitiesWithinAABB(entity.worldObj, EntityItem::class.java, entity.boundingBox(0.5)).firstOrNull { it.ticksExisted > 20 && it.entityItem?.item === AlfheimItems.soulHorn } ?: return false
+		
+		if (horn.entityItem.meta != 0 || getBlocked(stack) != 0)
+			return false
+		
+		for (i in 0 until SEGMENTS)
+			setDisabled(stack, i, true)
+		
+		horn.entityItem.meta = 1
+		
+		val v = Vector3()
+		
+		for (i in 0 until 360 step 5) {
+			val c = Color.getHSBColor(i / 360f, 1f, 1f)
+			v.rand().sub(0.5).normalize().mul(Math.random() * 0.5)
+			Botania.proxy.sparkleFX(entity.worldObj, entity.posX + v.x, entity.posY + v.y, entity.posZ + v.z, c.red / 255f, c.green / 255f, c.blue / 255f, 1.5f, 5)
 		}
 		
 		return false
@@ -213,8 +211,7 @@ class ItemFlugelSoul: ItemRelic("FlugelSoul"), ILensEffect, IImmortalHandledItem
 		fun onRenderWorldLast(event: RenderWorldLastEvent) {
 			val player = mc.thePlayer
 			val stack = player.currentEquippedItem
-			if (stack != null && stack.item === AlfheimItems.flugelSoul)
-				render(stack, player, event.partialTicks)
+			if (stack != null && stack.item === AlfheimItems.flugelSoul) render(stack, player, event.partialTicks)
 		}
 		
 		@SubscribeEvent
@@ -288,10 +285,8 @@ class ItemFlugelSoul: ItemRelic("FlugelSoul"), ILensEffect, IImmortalHandledItem
 				}
 				
 				val c = if (seg % 2 == 0) 0.6f else 1f
-				if (isDisabled(stack, seg))
-					glColor4f(c, 0f, 0f, a)
-				else
-					glColor4f(c, c, c, a)
+				if (isDisabled(stack, seg)) glColor4f(c, 0f, 0f, a)
+				else glColor4f(c, c, c, a)
 				
 				mc.renderEngine.bindTexture(if (isDisabled(stack, seg)) LibResourceLocations.glow else LibResourceLocations.glowCyan)
 				tess.startDrawingQuads()

@@ -8,13 +8,11 @@ import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.util.AlfheimTab
 import alfheim.common.entity.EntitySubspace
 import com.google.common.collect.Multimap
-import cpw.mods.fml.common.FMLCommonHandler
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.attributes.AttributeModifier
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.projectile.EntityThrowable
 import net.minecraft.item.*
-import net.minecraft.potion.PotionEffect
 import net.minecraft.util.*
 import net.minecraft.world.World
 import vazkii.botania.api.internal.IManaBurst
@@ -27,7 +25,6 @@ import java.util.*
 /**
  * @author ExtraMeteorP, CKATEPTb
  */
-@Suppress("UNCHECKED_CAST")
 class ItemSpearSubspace: ItemRelic("SpearSubspace"), IManaUsingItem, ILensEffect {
 	
 	init {
@@ -61,7 +58,7 @@ class ItemSpearSubspace: ItemRelic("SpearSubspace"), IManaUsingItem, ILensEffect
 						sub.type = 1
 						sub.size = 0.40f + world.rand.nextFloat() * 0.15f
 						if (!world.isRemote && ManaItemHandler.requestManaExactForTool(stack, entity, 400, true))
-							world.spawnEntityInWorld(sub)
+							sub.spawn()
 					}
 					
 					setCooldown(stack, 25)
@@ -115,11 +112,11 @@ class ItemSpearSubspace: ItemRelic("SpearSubspace"), IManaUsingItem, ILensEffect
 					sub.size = 1f + world.rand.nextFloat()
 					sub.type = 0
 					
-					player.worldObj.spawnEntityInWorld(sub)
+					sub.spawn()
 					
 					if (i == 1) sub.playSoundAtEntity("${ModInfo.MODID}:spearsubspace", 1f, 1f + player.worldObj.rand.nextFloat() * 3f)
 				}
-			player.addPotionEffect(PotionEffect(AlfheimConfigHandler.potionIDEternity, 120, 0))
+			player.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDEternity, 120))
 			
 			setCooldown(stack, 200)
 		}
@@ -151,12 +148,13 @@ class ItemSpearSubspace: ItemRelic("SpearSubspace"), IManaUsingItem, ILensEffect
 	override fun updateBurst(burst: IManaBurst, stack: ItemStack) {
 		val entity = burst as EntityThrowable
 		
-		val axis = AxisAlignedBB.getBoundingBox(entity.posX - 2.5f, entity.posY - 2.5f, entity.posZ - 2.5f, entity.lastTickPosX + 2.5f, entity.lastTickPosY + 2.5f, entity.lastTickPosZ + 2.5f)
+		val axis = getBoundingBox(entity.posX, entity.posY, entity.posZ, entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ).expand(2.5)
 		
-		val entities = entity.worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, axis) as List<EntityLivingBase>
-		for (living in entities)
-			if (living !== burst.thrower)
-				living.attackEntityFrom(DamageSource.causeIndirectMagicDamage(burst, burst.thrower), 6f)
+		val entities = getEntitiesWithinAABB(entity.worldObj, EntityLivingBase::class.java, axis)
+		entities.forEach {
+			if (it !== burst.thrower)
+				it.attackEntityFrom(DamageSource.causeIndirectMagicDamage(burst, burst.thrower), 6f)
+		}
 	}
 	
 	val TAG_COOLDOWN = "cooldown"

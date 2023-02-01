@@ -5,7 +5,7 @@ import net.minecraft.entity.*
 import net.minecraft.entity.ai.attributes.*
 import java.util.*
 
-class PotionTank: PotionAlfheim(AlfheimConfigHandler.potionIDTank, "tank", false, 0xFFDD00) {
+object PotionTank: PotionAlfheim(AlfheimConfigHandler.potionIDTank, "tank", false, 0xFFDD00) {
 	
 	val uuid = UUID.fromString("4107C0A4-DB3F-A48D-D9AA-C2701B32B143")!!
 	

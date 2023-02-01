@@ -4,6 +4,7 @@ import alexsocol.asjlib.*
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.util.AlfheimTab
 import baubles.api.*
+import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
@@ -30,14 +31,16 @@ class ItemMultibauble: ItemBauble("multibauble"), IManaGivingItem {
 		
 		val baubles = ItemBaubleBox.loadStacks(player.inventory[slot])
 		
-		baubles.forEachIndexed { i, bauble ->
-			if (i < AlfheimConfigHandler.multibaubleCount && bauble != null) {
-				val item = bauble.item
-				if (item is IBauble && item !is ItemMultibauble && item !is IRelic) {
-					if (ManaItemHandler.requestManaExact(stack, player, 2, !player.worldObj.isRemote))
-						item.onWornTick(bauble, player)
-				}
-			}
+		for ((i, bauble) in baubles.withIndex()) {
+			if (i >= AlfheimConfigHandler.multibaubleCount) break
+			
+			val item = bauble?.item ?: continue
+			val id = GameRegistry.findUniqueIdentifierFor(item).toString()
+			if (id in AlfheimConfigHandler.multibaubleBlacklist) continue
+			
+			if (item !is IBauble || item is ItemMultibauble || item is IRelic) continue
+			if (ManaItemHandler.requestManaExact(stack, player, 2, !player.worldObj.isRemote))
+				item.onWornTick(bauble, player)
 		}
 		
 		ItemBaubleBox.setStacks(player.inventory[slot], baubles)

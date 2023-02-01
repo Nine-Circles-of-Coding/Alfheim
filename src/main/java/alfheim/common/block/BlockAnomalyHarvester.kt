@@ -7,6 +7,7 @@ import alfheim.common.block.base.BlockContainerMod
 import alfheim.common.block.tile.*
 import net.minecraft.block.Block
 import net.minecraft.block.material.Material
+import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.world.World
@@ -26,6 +27,7 @@ class BlockAnomalyHarvester: BlockContainerMod(Material.iron), IWandable {
 		setStepSound(Block.soundTypeMetal)
 	}
 	
+	override fun registerBlockIcons(reg: IIconRegister) = Unit
 	override fun renderAsNormalBlock() = false
 	override fun isOpaqueCube() = false
 	override fun getRenderType() = LibRenderIDs.idHarvester

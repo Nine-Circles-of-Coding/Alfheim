@@ -3,13 +3,12 @@ package alfheim.common.item.relic
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alfheim.api.AlfheimAPI
-import alfheim.common.core.handler.AlfheimConfigHandler
+import alfheim.common.core.helper.*
 import alfheim.common.core.util.AlfheimTab
 import com.google.common.collect.*
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.attributes.AttributeModifier
-import net.minecraft.entity.boss.IBossDisplayData
 import net.minecraft.entity.monster.IMob
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.projectile.EntityThrowable
@@ -41,20 +40,15 @@ class ItemExcaliber: ItemManasteelSword(AlfheimAPI.EXCALIBER, "Excaliber"), IRel
 		creativeTab = AlfheimTab
 	}
 	
-	override fun onUpdate(stack: ItemStack?, world: World, entity: Entity?, slotID: Int, inHand: Boolean) {
-		if (entity is EntityPlayer) {
-			val player = entity as EntityPlayer?
-			ItemRelic.updateRelic(stack, player)
-			if (ItemRelic.isRightPlayer(player!!, stack)) {
-				val haste = player.getActivePotionEffect(Potion.digSpeed.id)
-				val check = if (haste == null) 1f / 6f else if (haste.getAmplifier() == 0) 0.4f else if (haste.getAmplifier() == 2) 1f / 3f else 0.5f
-				if (!world.isRemote && inHand && player.swingProgress == check && ManaItemHandler.requestManaExact(stack, player, 1, true)) {
-					val burst = getBurst(player, stack!!)
-					world.spawnEntityInWorld(burst)
-					player.playSoundAtEntity("botania:terraBlade", 0.4f, 1.4f)
-				}
-			}
-		}
+	override fun onUpdate(stack: ItemStack, world: World, player: Entity?, slotID: Int, inHand: Boolean) {
+		if (player !is EntityPlayer) return
+		ItemRelic.updateRelic(stack, player)
+		if (!ItemRelic.isRightPlayer(player, stack)) return
+		val haste = player.getActivePotionEffect(Potion.digSpeed.id)
+		val check = if (haste == null) 1f / 6f else if (haste.getAmplifier() == 0) 0.4f else if (haste.getAmplifier() == 2) 1f / 3f else 0.5f
+		if (world.isRemote || !inHand || player.swingProgress != check) return
+		getBurst(player, stack).spawn()
+		player.playSoundAtEntity("botania:terraBlade", 0.4f, 1.4f)
 	}
 	
 	override fun getIsRepairable(stack: ItemStack?, material: ItemStack?) = false
@@ -81,7 +75,7 @@ class ItemExcaliber: ItemManasteelSword(AlfheimAPI.EXCALIBER, "Excaliber"), IRel
 	
 	override fun getAttributeModifiers(stack: ItemStack): Multimap<String, AttributeModifier> {
 		val multimap = HashMultimap.create<String, AttributeModifier>()
-		multimap.put(SharedMonsterAttributes.attackDamage.attributeUnlocalizedName, AttributeModifier(uuid, "Weapon modifier", 10.0, 0))
+		multimap.put(SharedMonsterAttributes.attackDamage.attributeUnlocalizedName, AttributeModifier(field_111210_e, "Weapon modifier", 10.0, 0))
 		multimap.put(SharedMonsterAttributes.movementSpeed.attributeUnlocalizedName, AttributeModifier(uuid, "Weapon modifier", 0.3, 1))
 		return multimap
 	}
@@ -111,21 +105,20 @@ class ItemExcaliber: ItemManasteelSword(AlfheimAPI.EXCALIBER, "Excaliber"), IRel
 	
 	override fun updateBurst(burst: IManaBurst, stack: ItemStack) {
 		val entity = burst as EntityThrowable
-		val axis = AxisAlignedBB.getBoundingBox(entity.posX, entity.posY, entity.posZ, entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ).expand(1.0, 1.0, 1.0)
+		val axis = getBoundingBox(entity.posX, entity.posY, entity.posZ, entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ).expand(1)
 		
 		val attacker = ItemNBTHelper.getString(burst.sourceLens, TAG_ATTACKER_USERNAME, "")
 		var homeID = ItemNBTHelper.getInt(stack, TAG_HOME_ID, -1)
 		if (homeID == -1) {
-			val axis1 = AxisAlignedBB.getBoundingBox(entity.posX, entity.posY, entity.posZ, entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ).expand(5.0, 5.0, 5.0)
-			val entities = entity.worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, axis1) as List<EntityLivingBase>
-			for (living in entities) {
-				if (living !is EntityPlayer && (living !is IBossDisplayData || AlfheimConfigHandler.superSpellBosses) && living is IMob && living.hurtTime == 0) {
-					homeID = living.entityId
-					ItemNBTHelper.setInt(stack, TAG_HOME_ID, homeID)
-				}
+			val axis1 = getBoundingBox(entity.posX, entity.posY, entity.posZ, entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ).expand(5)
+			val entities = getEntitiesWithinAABB(entity.worldObj, EntityLivingBase::class.java, axis1)
+			entities.forEach {
+				if (it is EntityPlayer || it !is IMob || it.hurtTime != 0) return@forEach
+				homeID = it.entityId
+				ItemNBTHelper.setInt(stack, TAG_HOME_ID, homeID)
 			}
 		}
-		val entities = entity.worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, axis) as List<EntityLivingBase>
+		val entities = getEntitiesWithinAABB(entity.worldObj, EntityLivingBase::class.java, axis)
 		val home: Entity?
 		if (homeID != -1) {
 			home = entity.worldObj.getEntityByID(homeID)
@@ -136,26 +129,22 @@ class ItemExcaliber: ItemManasteelSword(AlfheimAPI.EXCALIBER, "Excaliber"), IRel
 			}
 		}
 		
-		for (living in entities) {
-			if (living !is EntityPlayer || living.commandSenderName != attacker && (MinecraftServer.getServer() == null || MinecraftServer.getServer().isPVPEnabled)) {
-				if (living.hurtTime == 0) {
-					val cost = 1
-					val mana = burst.mana
-					if (mana >= cost) {
-						burst.mana = mana - cost
-						var damage = 4f + AlfheimAPI.EXCALIBER.damageVsEntity
-						if (!burst.isFake && !entity.worldObj.isRemote) {
-							val player = living.worldObj.getPlayerEntityByName(attacker)
-							val mod = player?.getAttributeMap()?.getAttributeInstance(SharedMonsterAttributes.attackDamage)?.attributeValue?.F
-							damage = mod ?: damage
-							if (player != null) damage += EnchantmentHelper.getEnchantmentModifierLiving(player, living)
-							living.attackEntityFrom(if (player == null) DamageSource.magic else DamageSource.causePlayerDamage(player), damage)
-							entity.setDead()
-							break
-						}
-					}
-				}
-			}
+		entities.forEach {
+			if (it is EntityPlayer && !(it.commandSenderName != attacker && (MinecraftServer.getServer() == null || MinecraftServer.getServer().isPVPEnabled))) return@forEach
+			if (it.hurtTime != 0) return@forEach
+			val cost = 1
+			val mana = burst.mana
+			if (mana < cost) return@forEach
+			burst.mana = mana - cost
+			var damage = 4f + AlfheimAPI.EXCALIBER.damageVsEntity
+			if (burst.isFake || entity.worldObj.isRemote) return@forEach
+			val player = it.worldObj.getPlayerEntityByName(attacker)
+			val mod = player?.getAttributeMap()?.getAttributeInstance(SharedMonsterAttributes.attackDamage)?.attributeValue?.F
+			damage = mod ?: damage
+			if (player != null) damage += EnchantmentHelper.getEnchantmentModifierLiving(player, it)
+			it.attackEntityFrom(if (player == null) DamageSource.magic else DamageSource.causePlayerDamage(player).setDamageBypassesArmor().setMagicDamage().setTo(ElementalDamage.LIGHTNESS), damage)
+			entity.setDead()
+			return
 		}
 	}
 	

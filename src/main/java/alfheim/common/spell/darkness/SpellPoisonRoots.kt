@@ -9,7 +9,6 @@ import alfheim.common.core.handler.CardinalSystem.PartySystem
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.potion.*
-import java.util.*
 
 object SpellPoisonRoots: SpellBase("poisonroots", EnumRace.IMP, 60000, 6000, 30) {
 	
@@ -38,7 +37,7 @@ object SpellPoisonRoots: SpellBase("poisonroots", EnumRace.IMP, 60000, 6000, 30)
 		
 		if (!flagBadEffs) return SpellCastResult.WRONGTGT
 		
-		val l = caster.worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, caster.boundingBox.expand(radius)) as MutableList<EntityLivingBase>
+		val l = getEntitiesWithinAABB(caster.worldObj, EntityLivingBase::class.java, caster.boundingBox.expand(radius))
 		l.removeAll { !InteractionSecurity.canHurtEntity(caster, it) }
 		val flagNotParty = l.any { !pt.isMember(it) }
 		
@@ -62,7 +61,7 @@ object SpellPoisonRoots: SpellBase("poisonroots", EnumRace.IMP, 60000, 6000, 30)
 				if (pt.isMember(target)) return SpellCastResult.NOTARGET            // Some desync, sorry for your mana :(
 				
 				if (Potion.potionTypes[pe.getPotionID()].isBadEffect) {
-					target.addPotionEffect(PotionEffect(pe.potionID, pe.duration, pe.amplifier, pe.isAmbient))
+					target.addPotionEffect(PotionEffect(pe).apply { isAmbient = pe.isAmbient })
 					remove.add(pe)
 					if (mobs.hasNext())
 						target = mobs.next()
@@ -75,7 +74,7 @@ object SpellPoisonRoots: SpellBase("poisonroots", EnumRace.IMP, 60000, 6000, 30)
 			remove.clear()
 		}
 		
-		for (e in l) if (!pt.isMember(e)) e.addPotionEffect(PotionEffect(Potion.moveSlowdown.id, duration, efficiency.I, true))
+		for (e in l) if (!pt.isMember(e)) e.addPotionEffect(PotionEffectU(Potion.moveSlowdown.id, duration, efficiency.I))
 		
 		return result
 	}

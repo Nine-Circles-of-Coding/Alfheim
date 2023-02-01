@@ -63,13 +63,13 @@ class EntityAlfheimPixie(world: World): EntityFlyingCreature(world) {
 				Botania.proxy.sparkleFX(worldObj, posX + (Math.random() - 0.5) * 0.25, posY + 0.5 + (Math.random() - 0.5) * 0.25, posZ + (Math.random() - 0.5) * 0.25, 1f, 0.25f, 0.9f, 0.1f + Math.random().F * 0.25f, 12)
 		
 		var player: EntityPlayer? = worldObj.getClosestPlayerToEntity(this, 64.0)
-		if (player == null) {
-			setDead()
-			onDeath(DamageSource.outOfWorld)
-			return
-		}
+//		if (player == null) {
+//			setDead()
+//			onDeath(DamageSource.outOfWorld)
+//			return
+//		}
 		
-		if (Vector3.entityDistance(this, player) > 16.0) player = null
+		if (player != null && Vector3.entityDistance(this, player) > 16.0) player = null
 		if (player != null && PlayerHandler.getPlayerBaubles(player)[0]?.item === AlfheimItems.pixieAttractor && ManaItemHandler.requestManaExact(PlayerHandler.getPlayerBaubles(player)[0], player, 1, true)) {
 			val vec = player.getLook(1f)
 			motionX = (player.posX + vec.xCoord - posX) / 8f

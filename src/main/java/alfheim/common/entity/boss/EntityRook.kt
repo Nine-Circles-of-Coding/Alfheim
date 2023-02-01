@@ -6,13 +6,17 @@ import alfheim.api.boss.IBotaniaBossWithName
 import cpw.mods.fml.relauncher.*
 import net.minecraft.block.material.Material
 import net.minecraft.client.gui.ScaledResolution
-import net.minecraft.command.IEntitySelector
+import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.*
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.item.ItemPickaxe
 import net.minecraft.util.DamageSource
 import net.minecraft.world.World
 import vazkii.botania.client.core.handler.BossBarHandler
+import vazkii.botania.common.block.ModBlocks
+import vazkii.botania.common.core.helper.ItemNBTHelper
+import vazkii.botania.common.item.equipment.tool.terrasteel.ItemTerraPick
 import java.awt.Rectangle
 
 class EntityRook(world: World): EntityCreature(world), IBotaniaBossWithName { // EntityFlugel, EntityIronGolem, EntityWither
@@ -35,14 +39,14 @@ class EntityRook(world: World): EntityCreature(world), IBotaniaBossWithName { //
 		tasks.addTask(7, EntityAIWatchClosest(this, EntityPlayer::class.java, 6f))
 		tasks.addTask(8, EntityAILookIdle(this))
 		targetTasks.addTask(2, EntityAIHurtByTarget(this, false))
-		targetTasks.addTask(3, EntityAINearestAttackableTarget(this, EntityLiving::class.java, 0, false, true, IEntitySelector { e -> e is EntityLivingBase }))
+		targetTasks.addTask(3, EntityAINearestAttackableTarget(this, EntityLiving::class.java, 0, false, true) { e -> e is EntityLivingBase })
 	}
 	
 	override fun onLivingUpdate() {
 		super.onLivingUpdate()
 		
 		heal(0.1f)
-		tickAttackTimer()
+		--attackTimer
 		
 		if (motionX * motionX + motionZ * motionZ > 2.5E-7 && rand.nextInt(5) == 0) {
 			val i = posX.mfloor()
@@ -56,29 +60,49 @@ class EntityRook(world: World): EntityCreature(world), IBotaniaBossWithName { //
 	
 	/*	================================	AI and Data STUFF	================================	*/
 	
-	public override fun entityInit() {
+	override fun entityInit() {
 		super.entityInit()
 		dataWatcher.addObject(21, 0)    // Attack Timer
 	}
 	
-	public override fun applyEntityAttributes() {
+	override fun applyEntityAttributes() {
 		super.applyEntityAttributes()
 		getEntityAttribute(SharedMonsterAttributes.movementSpeed).baseValue = 0.2
 		getEntityAttribute(SharedMonsterAttributes.maxHealth).baseValue = MAX_HP
 		getEntityAttribute(SharedMonsterAttributes.knockbackResistance).baseValue = 1.0
 	}
 	
-	public override fun canDespawn() = false
-	public override fun isAIEnabled() = true
+	override fun canDespawn() = false
+	override fun isAIEnabled() = true
+	override fun decreaseAirSupply(air: Int) = air
 	
-	fun tickAttackTimer() {
-		var attackTimer = attackTimer
-		if (attackTimer > 0) dataWatcher.updateObject(21, --attackTimer)
+	override fun attackEntityFrom(source: DamageSource, dmg: Float): Boolean {
+		if (source.isUnblockable || (source.entity as? EntityPlayer)?.capabilities?.isCreativeMode == true) return super.attackEntityFrom(source, dmg)
+		
+		if (source.isMagicDamage) return false
+		val player = source.entity as? EntityPlayer ?: return false
+		if (!EntityFlugel.isTruePlayer(player)) return false
+		
+		var amount = 1f
+		val type = source.damageType
+		
+		if (type.contains("earth", true) || type.contains("rock", true) || type.contains("hammer", true) || type.contains("mortar", true)) {
+			amount = dmg
+		} else if (type == "player") run {
+			val item = player.heldItem?.item ?: return@run
+			if (item is ItemPickaxe) amount = item.func_150893_a(player.heldItem, ModBlocks.livingrock) + EnchantmentHelper.getEfficiencyModifier(player)
+			if (item is ItemTerraPick) {
+				val lvl = ItemTerraPick.getLevel(player.heldItem)
+				amount *= if (ItemNBTHelper.getBoolean(player.heldItem, "enabled", false) && lvl > 0) (lvl / 3f) else 1/3f
+			}
+		}
+		
+		if (source.isExplosion) amount = dmg * 2
+		
+		return super.attackEntityFrom(source, amount)
 	}
 	
-	public override fun decreaseAirSupply(air: Int) = air
-	
-	public override fun collideWithEntity(collided: Entity) {
+	override fun collideWithEntity(collided: Entity) {
 		super.collideWithEntity(collided)
 		
 		// if (rand.nextInt(20) != 0) return;
@@ -126,6 +150,7 @@ class EntityRook(world: World): EntityCreature(world), IBotaniaBossWithName { //
 	override fun getBossBarTextureRect(): Rectangle {
 		if (barRect == null)
 			barRect = Rectangle(0, 66, 185, 15)
+		
 		return barRect!!
 	}
 	
@@ -133,6 +158,7 @@ class EntityRook(world: World): EntityCreature(world), IBotaniaBossWithName { //
 	override fun getBossBarHPTextureRect(): Rectangle {
 		if (hpBarRect == null)
 			hpBarRect = Rectangle(0, barRect!!.y + barRect!!.height, 181, 7)
+		
 		return hpBarRect!!
 	}
 	
@@ -166,7 +192,7 @@ class EntityRook(world: World): EntityCreature(world), IBotaniaBossWithName { //
 			if (!world.isRemote) {
 				val rook = EntityRook(world)
 				rook.setPositionAndRotation(x.D, y.D, z.D, 0f, 0f)
-				world.spawnEntityInWorld(rook)
+				rook.spawn()
 			}
 		}
 		

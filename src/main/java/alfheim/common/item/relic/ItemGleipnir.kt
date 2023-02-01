@@ -16,7 +16,9 @@ import alexsocol.asjlib.render.ASJRenderHelper.setGlow
 import alexsocol.asjlib.render.ASJRenderHelper.setTwoside
 import alexsocol.asjlib.security.InteractionSecurity
 import alexsocol.patcher.event.RenderEntityPostEvent
+import alfheim.AlfheimCore
 import alfheim.api.ModInfo
+import alfheim.api.event.SpellCastEvent
 import alfheim.api.lib.LibResourceLocations
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.helper.ContributorsPrivacyHelper
@@ -24,14 +26,18 @@ import alfheim.common.core.util.AlfheimTab
 import alfheim.common.entity.EntityGleipnir
 import alfheim.common.item.relic.LeashingHandler.isLeashed
 import alfheim.common.item.relic.LeashingHandler.leashedTo
+import alfheim.common.network.MessageGleipnirLeash
+import alfheim.common.potion.PotionEternity
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.culling.ICamera
 import net.minecraft.entity.*
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.item.ItemStack
-import net.minecraft.potion.PotionEffect
+import net.minecraft.network.play.server.S12PacketEntityVelocity
+import net.minecraft.util.MovingObjectPosition
 import net.minecraft.world.World
 import net.minecraftforge.client.event.RenderLivingEvent
 import net.minecraftforge.event.entity.living.*
@@ -50,13 +56,12 @@ class ItemGleipnir: ItemRelic("Gleipnir") {
 	}
 	
 	override fun itemInteractionForEntity(stack: ItemStack, player: EntityPlayer, target: EntityLivingBase): Boolean {
-		if (target is EntityPlayer) return false // FIXME player handling is wrong, maybe send motion packets?
-		
-		if (player.isSneaking) return false
+		if (player.isSneaking || player.worldObj.isRemote) return false
 		
 		if (target.isLeashed) {
-			if (target.leashedTo === player)
+			if (target.leashedTo === player) {
 				target.leashedTo = null
+			}
 		} else {
 			// elite memes start
 			// unbindable
@@ -67,8 +72,8 @@ class ItemGleipnir: ItemRelic("Gleipnir") {
 			if (ContributorsPrivacyHelper.isCorrect(target.commandSenderName, "GedeonGrays") && !ContributorsPrivacyHelper.isCorrect(player.commandSenderName, "AlexSocol") && !ContributorsPrivacyHelper.isCorrect(player.commandSenderName, "KAIIIAK")) return false
 			// elite memes end
 			
-			target.leashedTo = player
 			stack.cooldown = 50
+			target.leashedTo = player
 		}
 		
 		return true
@@ -86,11 +91,21 @@ class ItemGleipnir: ItemRelic("Gleipnir") {
 			setLong(stack, TAG_RAND_SEED, player.rng.nextLong())
 		} else {
 			val mop = ASJUtilities.getMouseOver(player, 64.0, true) ?: return stack
+			
+			if (mop.typeOfHit === MovingObjectPosition.MovingObjectType.ENTITY &&
+				mop.entityHit != null &&
+				Vector3.entityDistance(player, mop.entityHit) <= if (ASJUtilities.isServer) (if (player is EntityPlayerMP)
+					player.theItemInWorldManager.blockReachDistance else 4.5)
+				else
+					mc.playerController.blockReachDistance.D)
+				
+				return stack
+			
 			val (x, y, z) = mop.hitVec
 			
 			// 15000 manacost
 			if (!world.isRemote)
-				world.spawnEntityInWorld(EntityGleipnir(world, player).apply { setPosition(x.D, y.D, z.D) })
+				EntityGleipnir(world, player).apply { setPosition(x.D, y.D, z.D) }.spawn()
 			
 			if (!player.capabilities.isCreativeMode)
 				stack.cooldown = 1500
@@ -107,26 +122,26 @@ class ItemGleipnir: ItemRelic("Gleipnir") {
 		val take = cd < 250
 		
 		if (cd >= 0 && (!take || ManaItemHandler.requestManaExact(stack, entity, 10, true)))
-			stack.cooldown = cd
+			stack.cooldown = if (entity.capabilities.isCreativeMode && !getBoolean(stack, TAG_ENTANGLED, false)) 0 else cd
 		
-		if (getBoolean(stack, TAG_ENTANGLED, false)) {
-			entity.addPotionEffect(PotionEffect(AlfheimConfigHandler.potionIDEternity, 2, 1, false))
-			
-			if (stack.cooldown in 250 until 260) {
-				val size = (260 - stack.cooldown) / 2.5
-				val list = world.getEntitiesWithinAABB(EntityLivingBase::class.java, entity.boundingBox(1).expand(size, 0.0, size)) as MutableList<EntityLivingBase>
-				list.remove(entity)
-				list.removeAll { InteractionSecurity.canHurtEntity(entity, it) }
-				list.forEach {
-					val punch = Vector3.fromEntity(entity).sub(Vector3.fromEntity(it)).normalize().mul(size)
-					it.knockBack(entity, 1f, punch.x, punch.z)
-				}
+		if (!getBoolean(stack, TAG_ENTANGLED, false)) return
+		entity.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDEternity, 2, PotionEternity.STUN or PotionEternity.IRREMOVABLE))
+		
+		if (stack.cooldown in 250 until 260) {
+			val size = (260 - stack.cooldown) / 2.5
+			val list = getEntitiesWithinAABB(world, EntityLivingBase::class.java, entity.boundingBox(1).expand(size, 0.0, size))
+			list.remove(entity)
+			list.removeAll { !InteractionSecurity.canHurtEntity(entity, it) }
+			list.forEach {
+				it.knockback(entity, 3f)
+				
+				if (it is EntityPlayerMP)
+					it.playerNetServerHandler.sendPacket(S12PacketEntityVelocity(it))
 			}
-			
-			if (take || !inHand)
-				setBoolean(stack, TAG_ENTANGLED, false)
-		} else if (entity.capabilities.isCreativeMode)
-			stack.cooldown = 0
+		}
+		
+		if (take || !inHand)
+			setBoolean(stack, TAG_ENTANGLED, false)
 	}
 	
 	companion object {
@@ -151,16 +166,20 @@ class ItemGleipnir: ItemRelic("Gleipnir") {
 		
 		@SubscribeEvent
 		fun onLivingAttack(e: LivingAttackEvent) {
-			if (isEntangled(e.entity)) {
-				e.isCanceled = true
-				
-				val attacker = e.source.entity as? EntityLivingBase ?: return
-				
-				val punch = Vector3.fromEntity(e.entity).sub(Vector3.fromEntity(attacker))
-				if (punch.length() > 3) return
-				punch.normalize()
-				attacker.knockBack(e.entity, 1f, punch.x, punch.z)
-			}
+			if (!isEntangled(e.entity)) return
+			e.isCanceled = true
+			
+			val attacker = e.source.entity as? EntityLivingBase ?: return
+			
+			val punch = Vector3.fromEntity(e.entity).sub(Vector3.fromEntity(attacker))
+			if (punch.length() > 3) return
+			punch.normalize()
+			attacker.knockBack(e.entity, 1f, punch.x, punch.z)
+		}
+		
+		@SubscribeEvent
+		fun onSpellPreCast(e: SpellCastEvent.Pre) {
+			e.isCanceled = isEntangled(e.caster)
 		}
 		
 		@SubscribeEvent
@@ -179,7 +198,7 @@ class ItemGleipnir: ItemRelic("Gleipnir") {
 			
 			val alpha = when {
 				timer > 490 -> (500 - timer) / 10
-				timer < 250 -> return
+				timer < 250 -> return glPopMatrix()
 				timer < 260 -> 1 - (260 - timer) / 10
 				else        -> 1.0
 			}
@@ -245,12 +264,19 @@ object LeashingHandler {
 	var EntityLivingBase.leashedTo: EntityPlayer?
 		get() =
 			worldObj.getPlayerEntityByName(entityData.getString(TAG_LEASHED))
-		// TODO maybe send packets to client for every change...
+
 		set(player) {
-			if (player == null)
+			if (player == null) {
 				entityData.removeTag(TAG_LEASHED)
-			else
+				
+				if (ASJUtilities.isServer)
+					AlfheimCore.network.sendToAll(MessageGleipnirLeash(entityId.toString(), ""))
+			} else {
 				entityData.setString(TAG_LEASHED, player.commandSenderName)
+				
+				if (ASJUtilities.isServer)
+					AlfheimCore.network.sendToAll(MessageGleipnirLeash(entityId.toString(), player.commandSenderName))
+			}
 		}
 	
 	init {
@@ -272,15 +298,19 @@ object LeashingHandler {
 		
 		if (f < 6) return
 		
+		val (x, y, z) = Vector3.fromEntity(player)
 		if (f < 10) {
-			val d0 = (player.posX - entity.posX) / f
-			val d1 = (player.posY - entity.posY) / f
-			val d2 = (player.posZ - entity.posZ) / f
+			val d0 = (x - entity.posX) / f
+			val d1 = (y - entity.posY) / f
+			val d2 = (z - entity.posZ) / f
 			entity.motionX += d0 * abs(d0) * 0.4
 			entity.motionY += d1 * abs(d1) * 0.4
 			entity.motionZ += d2 * abs(d2) * 0.4
+			
+			if (entity is EntityPlayerMP)
+				entity.playerNetServerHandler.sendPacket(S12PacketEntityVelocity(entity))
 		} else {
-			entity.setPosition(player)
+			entity.setPositionAndUpdate(x, y, z)
 		}
 	}
 	
@@ -359,12 +389,9 @@ object LeashingHandler {
 	// used in transformers
 	@SideOnly(Side.CLIENT)
 	fun isBoundInRender(flag: Boolean, entity: Entity, camera: ICamera): Boolean {
-		if (!flag && entity is EntityLivingBase) {
-			if (entity.isLeashed && entity.leashedTo != null) {
-				return camera.isBoundingBoxInFrustum(entity.leashedTo!!.boundingBox)
-			}
-		}
-		
-		return flag
+		if (flag || entity !is EntityLivingBase) return flag
+		return if (entity.isLeashed && entity.leashedTo != null)
+			camera.isBoundingBoxInFrustum(entity.leashedTo!!.boundingBox)
+		else false
 	}
 }

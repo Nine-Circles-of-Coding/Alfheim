@@ -2,7 +2,7 @@ package alfheim.common.item.block
 
 import alfheim.api.ModInfo
 import alfheim.common.block.AlfheimBlocks
-import alfheim.common.block.tile.TileEntityStar
+import alfheim.common.block.tile.TileStar
 import alfheim.common.item.*
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.passive.EntitySheep
@@ -84,20 +84,21 @@ class ItemStarPlacer: ItemMod("starPlacer") {
 		
 		val toPlace = ItemStack(AlfheimBlocks.starBlock)
 		val dir = ForgeDirection.getOrientation(direction)
-		if (world.getBlock(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ).isAir(world, x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ)) {
-			toPlace.tryPlaceItemIntoWorld(player, world, x, y, z, direction, par8, par9, par10)
-			if (toPlace.stackSize == 0) {
-				val tile = world.getTileEntity(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ)
-				if (tile is TileEntityStar) {
-					tile.starColor = getColor(stack)
-					tile.size = getSize(stack)
-				}
-				if (!player.capabilities.isCreativeMode) stack.stackSize--
-				
-				player.swingItem()
-			}
-			return true
+		if (!world.getBlock(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ).isAir(world, x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ))
+			return false
+		
+		toPlace.tryPlaceItemIntoWorld(player, world, x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, direction, par8, par9, par10)
+		if (toPlace.stackSize != 0) return true
+		
+		val tile = world.getTileEntity(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ)
+		if (tile is TileStar) {
+			tile.starColor = getColor(stack)
+			tile.size = getSize(stack)
 		}
-		return false
+		
+		if (!player.capabilities.isCreativeMode) stack.stackSize--
+		
+		player.swingItem()
+		return true
 	}
 }

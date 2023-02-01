@@ -25,36 +25,40 @@ class LensSmelt: Lens() {
 		
 		val block = world.getBlock(x, y, z)
 		val meta = world.getBlockMetadata(x, y, z)
-		
 		if (entity.thrower != null && InteractionSecurity.isBreakingBanned(entity.thrower, x, y, z, world, block, meta)) return false
 		
 		val harvestLevel: Int = ConfigHandler.harvestLevelBore
 		val tile = world.getTileEntity(x, y, z)
 		val hardness = block.getBlockHardness(world, x, y, z)
 		val neededHarvestLevel: Int = block.getHarvestLevel(meta)
-		val mana = burst.mana
 		val source = burst.burstSourceChunkCoordinates
 		
-		if (source == ChunkCoordinates(x, y, z) || tile is IManaBlock || neededHarvestLevel > harvestLevel || hardness == -1f || hardness >= 50f || !(burst.isFake || mana >= 24)) return isDead
+		val flag = source != ChunkCoordinates(x, y, z) && tile !is IManaBlock && neededHarvestLevel <= harvestLevel && hardness != -1f && hardness < 50f && burst.mana >= 40
+		if (!flag) return isDead
 		
 		if (burst.hasAlreadyCollidedAt(x, y, z)) return false
 		if (burst.isFake) return false
 		
-		val itemstack = FurnaceRecipes.smelting().getSmeltingResult(ItemStack(block, 1, meta))?.copy() ?: return false
+		val target = ItemStack(block, 1, meta)
+		if (target.item == null) return false
+		
+		val itemstack = FurnaceRecipes.smelting().getSmeltingResult(target)?.copy()
+		
+		if (itemstack?.item == null) return false
+		burst.mana -= 40
 		
 		if (!entity.worldObj.isRemote) {
 			val xp = FurnaceRecipes.smelting().func_151398_b(itemstack)
-			if (xp >= 1f)
-				entity.worldObj.getBlock(x, y, z).dropXpOnBlockBreak(entity.worldObj, x, y, z, xp.I)
+			if (xp >= 1f) entity.worldObj.getBlock(x, y, z).dropXpOnBlockBreak(entity.worldObj, x, y, z, xp.I)
 			
 			entity.worldObj.func_147480_a(x, y, z, false)
 			entity.entityDropItem(itemstack, 0f)
-		} else if (ConfigHandler.blockBreakParticles) {
+		} else {
+			if (!ConfigHandler.blockBreakParticles) return false
+			
 			world.playAuxSFX(2001, x, y, z, block.id + (meta shl 12))
 			for (i in 0..2) entity.worldObj.spawnParticle("flame", x + Math.random() - 0.5f, y + Math.random() - 0.5f, z + Math.random() - 0.5f, 0.0, 0.0, 0.0)
 		}
-		
-		burst.mana = mana - 40
 		
 		return false
 	}

@@ -21,7 +21,7 @@ class AIRays(flugel: EntityFlugel, task: AITask): AIBase(flugel, task) {
 		val more = if (flugel.isHardMode) 10 else 15
 		var i = 0
 		while (i < 360) {
-			flugel.worldObj.spawnEntityInWorld(getBurst(flugel, i))
+			getBurst(flugel, i).spawn()
 			i += more
 		}
 		flugel.playSoundAtEntity("botania:terraBlade", 0.4f, 1.4f)

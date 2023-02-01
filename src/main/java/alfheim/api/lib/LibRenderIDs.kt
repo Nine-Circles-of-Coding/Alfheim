@@ -8,13 +8,16 @@ object LibRenderIDs {
 	val idAniTorch = RenderingRegistry.getNextAvailableRenderId()
 	val idAnyavil = RenderingRegistry.getNextAvailableRenderId()
 	val idBarrel = RenderingRegistry.getNextAvailableRenderId()
+	val idDomainDoor = RenderingRegistry.getNextAvailableRenderId()
 	val idGrapeRedPlanted = RenderingRegistry.getNextAvailableRenderId()
 	val idGrapeWhite = RenderingRegistry.getNextAvailableRenderId()
 	val idHarvester = RenderingRegistry.getNextAvailableRenderId()
 	val idManaAccelerator = RenderingRegistry.getNextAvailableRenderId()
+	val idNiflheim = RenderingRegistry.getNextAvailableRenderId()
 	val idPowerStone = RenderingRegistry.getNextAvailableRenderId()
 	val idPylon = RenderingRegistry.getNextAvailableRenderId()
 	val idShrinePanel = RenderingRegistry.getNextAvailableRenderId()
+	val idSpire = RenderingRegistry.getNextAvailableRenderId()
 	
 	// Iridescence
 	val idDoubleFlower = RenderingRegistry.getNextAvailableRenderId()

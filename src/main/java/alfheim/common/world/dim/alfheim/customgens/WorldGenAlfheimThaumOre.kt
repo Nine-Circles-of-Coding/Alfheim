@@ -13,7 +13,7 @@ import thaumcraft.common.lib.world.biomes.BiomeHandler
 import vazkii.botania.common.block.ModBlocks
 import java.util.*
 
-class WorldGenAlfheimThaumOre: IWorldGenerator {
+object WorldGenAlfheimThaumOre: IWorldGenerator {
 	
 	override fun generate(random: Random, chunkX: Int, chunkZ: Int, world: World, chunkGenerator: IChunkProvider, chunkProvider: IChunkProvider) {
 		generateOres(world, random, chunkX, chunkZ)

@@ -15,8 +15,6 @@ object SpellJoin: SpellBase("join", EnumRace.IMP, 10000, 1800, 30) {
 		get() = emptyArray<Any>()
 	
 	override fun performCast(caster: EntityLivingBase): SpellCastResult {
-		if (caster !is EntityPlayer) return SpellCastResult.NOTARGET // TODO add targets for mobs
-		
 		val tg = CardinalSystem.TargetingSystem.getTarget(caster)
 		
 		val tgt: EntityLivingBase

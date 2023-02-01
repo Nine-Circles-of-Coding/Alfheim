@@ -1,5 +1,7 @@
 package alfheim.client.render.block
 
+import alexsocol.asjlib.glScaled
+import alexsocol.asjlib.render.ASJRenderHelper
 import alfheim.api.lib.LibRenderIDs
 import alfheim.common.block.tile.TileAnyavil
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler
@@ -13,8 +15,10 @@ object RenderBlockAnyavil: ISimpleBlockRenderingHandler {
 	
 	override fun renderInventoryBlock(block: Block, metadata: Int, modelID: Int, renderer: RenderBlocks) {
 		glPushMatrix()
-		glRotated(-90.0, 0.0, 1.0, 0.0)
-		glTranslated(-0.5, -0.6, -0.5)
+		glRotatef(-90f, 0f, 1f, 0f)
+		glTranslated(-0.45, -0.6, -0.45)
+		glScaled(0.95)
+		
 		TileEntityRendererDispatcher.instance.renderTileEntityAt(TileAnyavil(), 0.0, 0.0, 0.0, 0f)
 		glPopMatrix()
 	}

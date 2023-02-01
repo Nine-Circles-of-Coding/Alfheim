@@ -1,12 +1,11 @@
 package alfheim.client.render.particle
 
 import alexsocol.asjlib.*
-import alfheim.api.ModInfo
+import alfheim.api.lib.LibResourceLocations
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.particle.EntityFX
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.entity.RenderManager
-import net.minecraft.util.ResourceLocation
 import net.minecraft.world.World
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
@@ -42,9 +41,6 @@ class EntityFeatherFx(world: World, x: Double, y: Double, z: Double, colour: Int
 		particleGreen = green
 		particleBlue = blue
 		particleMaxAge = (50 * lifetime).I
-		motionX = (rand.nextDouble() - 0.5) * 0.01
-		motionZ = (rand.nextDouble() - 0.5) * 0.01
-		motionY = -0.03
 		rotationSpeed = 2.0f + rand.nextFloat()
 		rotationPitch = rand.nextFloat() * 20 - 10
 		if (rand.nextFloat() >= 0.5f) {
@@ -60,7 +56,6 @@ class EntityFeatherFx(world: World, x: Double, y: Double, z: Double, colour: Int
 		if (isCollidedVertically) {
 			rotationSpeed = 0f
 		}
-		motionY = -0.085
 		rotationPitch += rotationSpeed
 		if (rotationPitch > 360f) {
 			rotationPitch -= 360f
@@ -116,13 +111,12 @@ class EntityFeatherFx(world: World, x: Double, y: Double, z: Double, colour: Int
 	
 	companion object {
 		
-		val texture = ResourceLocation(ModInfo.MODID, "textures/misc/particles/feather.png")
 		val renderQueue: Queue<EntityFeatherFx> = ArrayDeque()
 		
 		fun renderQueue() {
 			glEnable(GL_BLEND)
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-			mc.renderEngine.bindTexture(texture)
+			mc.renderEngine.bindTexture(LibResourceLocations.feather)
 			for (featherFx in renderQueue) {
 				featherFx.postRender()
 			}

@@ -30,6 +30,12 @@ object MTHandlerSpells {
 	
 	@ZenMethod
 	@JvmStatic
+	fun setSpecial(name: String, isSpecial: Boolean) {
+		MineTweakerAPI.apply(Special(name, isSpecial))
+	}
+	
+	@ZenMethod
+	@JvmStatic
 	fun setParams(name: String, damage: Float, duration: Int, efficiency: Double, radius: Double) {
 		if (damage < 0 || duration < 0 || efficiency < 0 || radius < 0) throw IllegalArgumentException("Params for $name must not be negative")
 		MineTweakerAPI.apply(Params(name, damage, duration, efficiency, radius))
@@ -127,6 +133,28 @@ object MTHandlerSpells {
 		override fun describe() = "Setting damage [$damage], duration [$duration], efficiency [$efficiency], radius [$radius] for ${spell.name}"
 		
 		override fun describeUndo() = "Resetting damage, duration, efficiency, radius for ${spell.name} to old values (${oldVals.contentToString()})"
+		
+		override fun getOverrideKey() = null
+	}
+	
+	private class Special(name: String, private val newVal: Boolean): IUndoableAction {
+		
+		val spell = AlfheimAPI.getSpellInstance(name)!!
+		var oldVal = spell.hard
+		
+		override fun apply() {
+			spell.hard = newVal
+		}
+		
+		override fun canUndo() = true
+		
+		override fun undo() {
+			spell.hard = oldVal
+		}
+		
+		override fun describe() = "Setting Special status '$newVal' for ${spell.name}"
+		
+		override fun describeUndo() = "Resetting Special status for ${spell.name} to old value ($oldVal)"
 		
 		override fun getOverrideKey() = null
 	}

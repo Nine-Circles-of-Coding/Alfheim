@@ -22,7 +22,7 @@ class BlockElvenOre: BlockModMeta(Material.rock, 6, ModInfo.MODID, "ElvenOre", A
 	/**
 	 * Meta of dropped item
 	 */
-	val metas = arrayOf(9, 1, 5, 3, ElvenResourcesMetas.IffesalDust, 4)
+	val metas = arrayOf(9, 1, 5, 3, ElvenResourcesMetas.IffesalDust.I, 4)
 	val rand = Random()
 	
 	init {

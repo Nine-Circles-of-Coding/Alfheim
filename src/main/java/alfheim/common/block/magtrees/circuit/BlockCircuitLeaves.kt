@@ -6,6 +6,7 @@ import alfheim.common.block.base.BlockLeavesMod
 import alfheim.common.item.block.ItemBlockLeavesMod
 import alfheim.common.lexicon.AlfheimLexiconData
 import cpw.mods.fml.common.registry.GameRegistry
+import net.minecraft.block.Block
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.world.*
@@ -16,6 +17,18 @@ class BlockCircuitLeaves: BlockLeavesMod(), ICircuitBlock, ILexiconable {
 	
 	init {
 		setBlockName("circuitLeaves")
+	}
+	
+	override fun onBlockAdded(world: World, x: Int, y: Int, z: Int) {
+		val below = world.getBlock(x, y - 1, z)
+		if (below !is ICircuitBlock) return
+		
+		below.updateTick(world, x, y - 1, z, world.rand)
+	}
+	
+	override fun breakBlock(world: World, x: Int, y: Int, z: Int, block: Block?, meta: Int) {
+		super.breakBlock(world, x, y, z, block, meta)
+		onBlockAdded(world, x, y, z)
 	}
 	
 	override fun isInterpolated() = true
@@ -39,6 +52,7 @@ class BlockCircuitLeaves: BlockLeavesMod(), ICircuitBlock, ILexiconable {
 	override fun updateTick(world: World, x: Int, y: Int, z: Int, random: Random) {
 		super.updateTick(world, x, y, z, random)
 		world.notifyBlocksOfNeighborChange(x, y, z, this)
+		onBlockAdded(world, x, y, z)
 	}
 	
 	override fun getLightValue(world: IBlockAccess?, x: Int, y: Int, z: Int) = 8

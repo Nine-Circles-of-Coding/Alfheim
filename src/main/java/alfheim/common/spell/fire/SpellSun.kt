@@ -5,7 +5,7 @@ import alfheim.AlfheimCore
 import alfheim.api.entity.EnumRace
 import alfheim.api.spell.SpellBase
 import alfheim.common.network.Message3d
-import alfheim.common.network.Message3d.m3d
+import alfheim.common.network.Message3d.M3d
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.server.MinecraftServer
 
@@ -24,7 +24,7 @@ object SpellSun: SpellBase("sun", EnumRace.SALAMANDER, 30000, 6000, 50) {
 			world.worldInfo.rainTime = time
 			world.worldInfo.isThundering = false
 			world.worldInfo.thunderTime = time
-			AlfheimCore.network.sendToDimension(Message3d(m3d.WAETHER, 0.0, time.D, time.D), world.provider.dimensionId)
+			AlfheimCore.network.sendToDimension(Message3d(M3d.WEATHER, 0.0, time.D, time.D), world.provider.dimensionId)
 		}
 		
 		return result

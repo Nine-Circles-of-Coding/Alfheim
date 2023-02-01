@@ -52,21 +52,14 @@ class ItemTriquetrum: ItemMod("Triquetrum"), IDoubleBoundItem, IRotationDisplay 
 			first == null  -> setFirstPosition(stack, x, y, z)
 			
 			second == null -> {
-				val i = min(first.posX, x)
-				val j = min(first.posY, y)
-				val k = min(first.posZ, z)
+				val (i, j, k) = first
 				
-				val I = max(first.posX, x)
-				val J = max(first.posY, y)
-				val K = max(first.posZ, z)
-				
-				if (AlfheimConfigHandler.triquetrumMaxDiagonal != -1.0 && Vector3.pointDistanceSpace(i, j, k, I, J, K) > AlfheimConfigHandler.triquetrumMaxDiagonal) {
+				if (AlfheimConfigHandler.triquetrumMaxDiagonal != -1.0 && Vector3.pointDistanceSpace(i, j, k, x, y, z) > AlfheimConfigHandler.triquetrumMaxDiagonal) {
 					ASJUtilities.say(player, "item.Triquetrum.tooLarge", AlfheimConfigHandler.triquetrumMaxDiagonal)
 					return false
 				}
 				
-				setFirstPosition(stack, i, j, k)
-				setSecondPosition(stack, I, J, K)
+				setSecondPosition(stack, x, y, z)
 			}
 			
 			else           -> run {

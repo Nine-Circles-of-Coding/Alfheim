@@ -35,8 +35,7 @@ class ItemLootInterceptor: ItemMod("LootInterceptor"), IManaItem, IManaTooltipDi
 			
 			val slot = player.inventory[i] ?: continue
 			
-			val pos = ids.indexOf(slot.item.id)
-			if (pos == -1 || metas[pos] != slot.meta) continue
+			if (ids.indices.filter { slot.item.id == ids[it] }.none { metas[it] == slot.meta }) continue
 			
 			val size = slot.stackSize
 			player.inventory[i] = null

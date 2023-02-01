@@ -1,5 +1,6 @@
 package alfheim.common.spell.wind
 
+import alexsocol.asjlib.spawn
 import alfheim.api.entity.EnumRace
 import alfheim.api.spell.SpellBase
 import alfheim.common.entity.spell.EntitySpellFenrirStorm
@@ -15,7 +16,7 @@ object SpellFenrirStorm: SpellBase("fenrirstorm", EnumRace.SYLPH, 1000, 100, 5) 
 	
 	override fun performCast(caster: EntityLivingBase): SpellCastResult {
 		val result = checkCastOver(caster)
-		if (result == SpellCastResult.OK) caster.worldObj.spawnEntityInWorld(EntitySpellFenrirStorm(caster.worldObj, caster))
+		if (result == SpellCastResult.OK) EntitySpellFenrirStorm(caster.worldObj, caster).spawn()
 		return result
 	}
 }

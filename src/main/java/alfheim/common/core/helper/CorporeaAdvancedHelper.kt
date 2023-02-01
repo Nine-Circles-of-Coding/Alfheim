@@ -16,6 +16,7 @@ object CorporeaAdvancedHelper {
 	/**
 	 * @param spark Spark above current inventory to get connections from
 	 * @param stack Stack to put to connected network
+	 * @return rest of stack or null if all stack was inserted
 	 */
 	fun putToNetwork(spark: ICorporeaSpark, stack: ItemStack): ItemStack? {
 		val inventories = CorporeaHelper.getInventoriesOnNetwork(spark).filter { it !is TileCorporeaInjector }
@@ -81,8 +82,7 @@ object CorporeaAdvancedHelper {
 	}
 	
 	fun putOrDrop(tile: TileEntity, spark: ICorporeaSpark?, stack: ItemStack?, yOff: Int = 2) {
-		stack ?: return
-		tile.worldObj.spawnEntityInWorld(EntityItem(tile.worldObj, tile.xCoord + 0.5, tile.yCoord + 0.5 + yOff, tile.zCoord + 0.5, if (spark != null) putToNetwork(spark, stack) ?: return else stack).also { item -> item.setMotion(0.0) })
+		EntityItem(tile.worldObj, tile.xCoord + 0.5, tile.yCoord + 0.5 + yOff, tile.zCoord + 0.5, if (spark != null) putToNetwork(spark, stack ?: return) ?: return else stack ?: return).also { item -> item.setMotion(0.0) }.spawn()
 	}
 	
 	fun getFilters(tile: TileEntity): List<ItemStack> {
@@ -91,11 +91,9 @@ object CorporeaAdvancedHelper {
 		val orientationToDir = intArrayOf(3, 4, 2, 5)
 		
 		for (dir in LibMisc.CARDINAL_DIRECTIONS) {
-			val frames = tile.worldObj.getEntitiesWithinAABB(EntityItemFrame::class.java, tile.boundingBox().offset(dir.offsetX.D, dir.offsetY.D, dir.offsetZ.D)) as MutableList<EntityItemFrame>
-			for (frame in frames) {
+			getEntitiesWithinAABB(tile.worldObj, EntityItemFrame::class.java, tile.boundingBox().offset(dir.offsetX.D, dir.offsetY.D, dir.offsetZ.D)).forEach { frame ->
 				val orientation = frame.hangingDirection
-				if (orientationToDir[orientation] == dir.ordinal)
-					filter.add(frame.displayedItem)
+				if (orientationToDir[orientation] == dir.ordinal) filter.add(frame.displayedItem)
 			}
 		}
 		

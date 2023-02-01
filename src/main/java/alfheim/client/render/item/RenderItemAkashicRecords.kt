@@ -14,8 +14,8 @@ import net.minecraftforge.client.IItemRenderer
 import net.minecraftforge.client.model.AdvancedModelLoader
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL20
+import vazkii.botania.client.core.helper.ShaderHelper
 import vazkii.botania.common.Botania
-import vazkii.botania.common.core.handler.ConfigHandler
 import vazkii.botania.common.core.helper.ItemNBTHelper
 import kotlin.math.*
 
@@ -107,7 +107,7 @@ object RenderItemAkashicRecords: IItemRenderer {
 		}
 		glColor3f(1f, 1f, 1f)
 		
-		mc.renderEngine.bindTexture((if (ConfigHandler.useShaders) LibResourceLocations.akashicCube else LibResourceLocations.akashicCube_))
+		mc.renderEngine.bindTexture((if (ShaderHelper.useShaders()) LibResourceLocations.akashicCube else LibResourceLocations.akashicCube_))
 		
 		glDisable(GL_CULL_FACE)
 		for (i in -110..110 step 110) {
@@ -119,9 +119,9 @@ object RenderItemAkashicRecords: IItemRenderer {
 					if (j == 0 && k == 0) continue
 					
 					val f = max(0f, frame - 60) % 100 * 3.6
-					val v = Vector3(i, j, k).extend((frame - 50).coerceIn(0f, 10f) * 33).rotate(f, Vector3(1).rotate(f, Vector3.oY))
+					val v = Vector3(i, j, k).extend((frame - 50).coerceIn(0f, 10f) * 33).rotate(f, Vector3(1).rotateOY(f))
 					
-					if (ConfigHandler.useShaders) ASJShaderHelper.useShader(LibShaderIDs.idColor3d) {
+					if (ShaderHelper.useShaders()) ASJShaderHelper.useShader(LibShaderIDs.idColor3d) {
 						GL20.glUniform3f(GL20.glGetUniformLocation(it, "translation"), v.x.F, v.y.F + 50, v.z.F)
 					}
 					
@@ -134,7 +134,7 @@ object RenderItemAkashicRecords: IItemRenderer {
 			}
 		}
 		
-		if (ConfigHandler.useShaders) ASJShaderHelper.releaseShader()
+		if (ShaderHelper.useShaders()) ASJShaderHelper.releaseShader()
 		
 		glPushMatrix()
 		glDisable(GL_LIGHTING)

@@ -1,6 +1,6 @@
 package alfheim.common.potion
 
-import alexsocol.asjlib.ASJUtilities
+import alexsocol.asjlib.*
 import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.core.handler.AlfheimConfigHandler
 import cpw.mods.fml.common.eventhandler.*
@@ -8,17 +8,16 @@ import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.ai.attributes.BaseAttributeMap
 import net.minecraft.entity.player.*
 import net.minecraft.util.DamageSource
-import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.*
 import net.minecraftforge.event.entity.item.ItemTossEvent
 import net.minecraftforge.event.entity.living.LivingHealEvent
 import net.minecraftforge.event.entity.player.PlayerEvent.*
 import net.minecraftforge.event.world.BlockEvent.*
 
-class PotionLeftFlame: PotionAlfheim(AlfheimConfigHandler.potionIDLeftFlame, "leftFlame", false, 0x0) {
+object PotionLeftFlame: PotionAlfheim(AlfheimConfigHandler.potionIDLeftFlame, "leftFlame", false, 0x0) {
 	
 	init {
-		MinecraftForge.EVENT_BUS.register(this)
+		eventForge()
 	}
 	
 	override fun applyAttributesModifiersToEntity(target: EntityLivingBase?, attributes: BaseAttributeMap, ampl: Int) {
@@ -44,6 +43,8 @@ class PotionLeftFlame: PotionAlfheim(AlfheimConfigHandler.potionIDLeftFlame, "le
 			target.sendPlayerAbilities()
 			if (target is EntityPlayerMP) target.theItemInWorldManager.blockReachDistance = 5.0
 		}
+		
+		if (ampl != 0) return
 		
 		target?.let {
 			it.dataWatcher.updateObject(6, 0f)

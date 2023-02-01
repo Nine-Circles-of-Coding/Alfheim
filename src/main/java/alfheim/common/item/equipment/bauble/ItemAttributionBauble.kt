@@ -3,6 +3,7 @@ package alfheim.common.item.equipment.bauble
 import alexsocol.asjlib.*
 import alfheim.api.ModInfo
 import alfheim.client.core.helper.IconHelper
+import alfheim.common.core.handler.HilarityHandler.AttributionNameChecker.getCurrentNickname
 import alfheim.common.core.util.AlfheimTab
 import baubles.api.BaubleType
 import cpw.mods.fml.relauncher.*
@@ -101,7 +102,7 @@ class ItemAttributionBauble: ItemBauble("attributionBauble"), ICosmeticBauble {
 				glRotatef(-90F, 0F, 1F, 0F)
 				model.render()
 			} else {
-				if (name == "yrsegal" || name == "theLorist") {
+				if (name == getCurrentNickname("yrsegal") || name == "theLorist") {
 					// Render the Blueflare
 					mc.renderEngine.bindTexture(TextureMap.locationItemsTexture)
 					IBaubleRender.Helper.translateToHeadLevel(event.entityPlayer)
@@ -116,7 +117,7 @@ class ItemAttributionBauble: ItemBauble("attributionBauble"), ICosmeticBauble {
 					ShaderHelper.releaseShader()
 					glAlphaFunc(GL_ALWAYS, 1F)
 					glDisable(GL_BLEND)
-				} else if (name == "Tristaric") {
+				} else if (name == getCurrentNickname("Tristaric")) {
 					// Render the Ezic Star
 					mc.renderEngine.bindTexture(TextureMap.locationItemsTexture)
 					IBaubleRender.Helper.translateToHeadLevel(event.entityPlayer)
@@ -130,7 +131,7 @@ class ItemAttributionBauble: ItemBauble("attributionBauble"), ICosmeticBauble {
 			if (type == IBaubleRender.RenderType.BODY && stack.meta == 0) {
 				mc.renderEngine.bindTexture(TextureMap.locationItemsTexture)
 				IBaubleRender.Helper.rotateIfSneaking(event.entityPlayer)
-				if (name == "l0nekitsune") {
+				if (name == getCurrentNickname("l0nekitsune")) {
 					// Render a fox tail
 					chestTranslate()
 					glRotatef(-90F, 0F, 1F, 0F)
@@ -139,7 +140,7 @@ class ItemAttributionBauble: ItemBauble("attributionBauble"), ICosmeticBauble {
 					ItemRenderer.renderItemIn2D(Tessellator.instance, kitsuneIcon.maxU, kitsuneIcon.minV, kitsuneIcon.minU, kitsuneIcon.maxV, kitsuneIcon.iconWidth, kitsuneIcon.iconHeight, 1F / 32F)
 					glTranslatef(0F, 0F, 0.025F)
 					ItemRenderer.renderItemIn2D(Tessellator.instance, kitsuneIcon.maxU, kitsuneIcon.minV, kitsuneIcon.minU, kitsuneIcon.maxV, kitsuneIcon.iconWidth, kitsuneIcon.iconHeight, 1F / 32F)
-				} else if (name != "yrsegal" && name != "theLorist" && name != "Tristaric") {
+				} else if (name != getCurrentNickname("yrsegal") && name != "theLorist" && name != getCurrentNickname("Tristaric")) {
 					// Render the Holy Symbol
 					val armor = event.entityPlayer.getCurrentArmor(2) != null
 					glRotatef(180F, 1F, 0F, 0F)

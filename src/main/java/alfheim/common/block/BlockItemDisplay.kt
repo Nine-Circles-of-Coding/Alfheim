@@ -22,13 +22,11 @@ import net.minecraft.util.*
 import net.minecraft.world.World
 import vazkii.botania.api.lexicon.ILexiconable
 import java.util.*
-import kotlin.math.min
 
 class BlockItemDisplay: BlockMod(Material.wood), ILexiconable, ITileEntityProvider, IFuelHandler {
 	
-	val TYPES = 3
-	var icons: Array<IIcon?> = arrayOfNulls(TYPES)
-	var sideIcons: Array<IIcon?> = arrayOfNulls(TYPES)
+	lateinit var icons: Array<IIcon>
+	lateinit var sideIcons: Array<IIcon>
 	
 	init {
 		isBlockContainer = true
@@ -48,9 +46,8 @@ class BlockItemDisplay: BlockMod(Material.wood), ILexiconable, ITileEntityProvid
 	
 	override fun hasComparatorInputOverride() = true
 	
-	override fun getComparatorInputOverride(world: World?, x: Int, y: Int, z: Int, direction: Int): Int {
-		if (world == null) return 0
-		return Container.calcRedstoneFromInventory(world.getTileEntity(x, y, z)!! as TileItemDisplay)
+	override fun getComparatorInputOverride(world: World, x: Int, y: Int, z: Int, direction: Int): Int {
+		return Container.calcRedstoneFromInventory(world.getTileEntity(x, y, z) as? TileItemDisplay)
 	}
 	
 	override fun shouldRegisterInNameSet() = false
@@ -61,7 +58,7 @@ class BlockItemDisplay: BlockMod(Material.wood), ILexiconable, ITileEntityProvid
 	}
 	
 	internal fun register(name: String) {
-		GameRegistry.registerBlock(this, ItemUniqueSubtypedBlockMod::class.java, name, 3)
+		GameRegistry.registerBlock(this, ItemUniqueSubtypedBlockMod::class.java, name, TYPES)
 	}
 	
 	override fun addCollisionBoxesToList(world: World, x: Int, y: Int, z: Int, axis: AxisAlignedBB, bounds: MutableList<Any?>, entity: Entity?) {
@@ -70,26 +67,23 @@ class BlockItemDisplay: BlockMod(Material.wood), ILexiconable, ITileEntityProvid
 	}
 	
 	override fun registerBlockIcons(reg: IIconRegister) {
-		for (i in 0 until TYPES) {
-			icons[i] = IconHelper.forBlock(reg, this, i)
-			sideIcons[i] = IconHelper.forBlock(reg, this, "Side$i")
-		}
-		
+		icons = Array(TYPES) { IconHelper.forBlock(reg, this, it) }
+		sideIcons = Array(TYPES) { IconHelper.forBlock(reg, this, "Side$it") }
 	}
 	
 	override fun createNewTileEntity(world: World?, meta: Int) = TileItemDisplay()
 	
 	@SideOnly(Side.CLIENT)
 	override fun getIcon(side: Int, meta: Int) =
-		if (side == 1 || side == 0) icons[min(meta, TYPES - 1)]!! else sideIcons[min(meta, TYPES - 1)]!!
+		if (side == 1 || side == 0) icons[meta % TYPES] else sideIcons[meta % TYPES]
 	
-	override fun onBlockActivated(world: World?, x: Int, y: Int, z: Int, player: EntityPlayer?, meta: Int, hitX: Float, hitY: Float, hitZ: Float): Boolean {
-		if (world!!.isRemote || player == null) return true
+	override fun onBlockActivated(world: World, x: Int, y: Int, z: Int, player: EntityPlayer?, meta: Int, hitX: Float, hitY: Float, hitZ: Float): Boolean {
+		if (world.isRemote || player == null) return true
 		
 		val tileEntity = world.getTileEntity(x, y, z)
 		
 		if (tileEntity is TileItemDisplay) {
-			if (tileEntity.get(0) != null) {
+			if (tileEntity[0] != null) {
 				dropItemsAtEntity(world, x, y, z, player)
 				return true
 			}
@@ -97,7 +91,7 @@ class BlockItemDisplay: BlockMod(Material.wood), ILexiconable, ITileEntityProvid
 			if (player.currentEquippedItem != null) {
 				val item = player.currentEquippedItem.copy()
 				item.stackSize = 1
-				tileEntity.set(0, item)
+				tileEntity[0] = item
 				
 				--player.currentEquippedItem.stackSize
 				if (player.currentEquippedItem.stackSize == 0) {
@@ -116,11 +110,11 @@ class BlockItemDisplay: BlockMod(Material.wood), ILexiconable, ITileEntityProvid
 		val tileEntity = world.getTileEntity(x, y, z)
 		if (tileEntity is IInventory) {
 			for (i in 0 until tileEntity.sizeInventory) {
-				val item = tileEntity.get(i)
+				val item = tileEntity[i]
 				if (item != null && item.stackSize > 0) {
 					val entityItem = EntityItem(world, entity.posX, entity.posY + (entity.eyeHeight / 2f).D, entity.posZ, item.copy())
-					world.spawnEntityInWorld(entityItem)
-					tileEntity.set(i, null)
+					entityItem.spawn()
+					tileEntity[i] = null
 				}
 			}
 		}
@@ -131,7 +125,7 @@ class BlockItemDisplay: BlockMod(Material.wood), ILexiconable, ITileEntityProvid
 		return ItemStack(this, 1, meta)
 	}
 	
-	override fun damageDropped(par1: Int): Int = par1
+	override fun damageDropped(meta: Int): Int = meta
 	
 	override fun isOpaqueCube(): Boolean = false
 	
@@ -139,9 +133,9 @@ class BlockItemDisplay: BlockMod(Material.wood), ILexiconable, ITileEntityProvid
 	
 	override fun hasTileEntity(metadata: Int): Boolean = true
 	
-	override fun onBlockEventReceived(world: World?, x: Int, y: Int, z: Int, event: Int, eventArg: Int): Boolean {
+	override fun onBlockEventReceived(world: World, x: Int, y: Int, z: Int, event: Int, eventArg: Int): Boolean {
 		super.onBlockEventReceived(world, x, y, z, event, eventArg)
-		val tileentity = world!!.getTileEntity(x, y, z)
+		val tileentity = world.getTileEntity(x, y, z)
 		return tileentity?.receiveClientEvent(event, eventArg) ?: false
 	}
 	
@@ -150,10 +144,9 @@ class BlockItemDisplay: BlockMod(Material.wood), ILexiconable, ITileEntityProvid
 		val tileEntity = world.getTileEntity(x, y, z)
 		if (tileEntity is IInventory) {
 			for (i in 0 until tileEntity.sizeInventory) {
-				val item = tileEntity.get(i)
+				val item = tileEntity[i]
 				if (item != null && item.stackSize > 0) {
-					val entityItem = EntityItem(world, x.D, y.D, z.D, item.copy())
-					world.spawnEntityInWorld(entityItem)
+					EntityItem(world, x.D, y.D, z.D, item.copy()).spawn()
 				}
 			}
 		}
@@ -167,4 +160,8 @@ class BlockItemDisplay: BlockMod(Material.wood), ILexiconable, ITileEntityProvid
 		AlfheimLexiconData.itemDisplay
 	
 	override fun getBurnTime(fuel: ItemStack) = if (fuel.item === this.toItem()) 150 else 0
+	
+	companion object {
+		const val TYPES = 5
+	}
 }

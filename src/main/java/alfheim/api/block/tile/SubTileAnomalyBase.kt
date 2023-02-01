@@ -9,12 +9,10 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.AxisAlignedBB
 import net.minecraft.world.World
 import java.util.*
 
 // Used for anomalies - TileAnomaly
-@Suppress("UNCHECKED_CAST")
 abstract class SubTileAnomalyBase {
 	
 	val rand = Random()
@@ -24,17 +22,7 @@ abstract class SubTileAnomalyBase {
 	
 	abstract val targets: List<Any>
 	
-	abstract val rarity: EnumAnomalityRarity
-	
-	val frames = 32
-	
-	open val strip: Int
-		get() = 0
-	
-	open val color: Int
-		get() = 0xFFFFFF
-	
-	enum class EnumAnomalityRarity {
+	enum class EnumAnomalyRarity {
 		COMMON, RARE, EPIC
 	}
 	
@@ -79,9 +67,9 @@ abstract class SubTileAnomalyBase {
 	// ################################ SUPERTILE ################################
 	
 	val worldObj get() = superTile!!.worldObj!!
-	fun x(x: Double = 0.0) = superTile!!.xCoord + x.mfloor()
-	fun y(y: Double = 0.0) = superTile!!.yCoord + y.mfloor()
-	fun z(z: Double = 0.0) = superTile!!.zCoord + z.mfloor()
+	val x get() = superTile!!.xCoord
+	val y get() = superTile!!.yCoord
+	val z get() = superTile!!.zCoord
 	
 	// ################################ UTILS ################################
 	
@@ -122,11 +110,7 @@ abstract class SubTileAnomalyBase {
 		return entity1
 	}
 	
-	fun <E> allAround(clazz: Class<E>, radius: Double) =
-		worldObj.getEntitiesWithinAABB(clazz, AxisAlignedBB.getBoundingBox(x().D, y().D, z().D, x(1.0).D, y(1.0).D, z(1.0).D).expand(radius, radius, radius)) as MutableList<E>
-	
-	fun allAroundRaw(clazz: Class<*>, radius: Double) =
-		worldObj.getEntitiesWithinAABB(clazz, AxisAlignedBB.getBoundingBox(x().D, y().D, z().D, x(1.0).D, y(1.0).D, z(1.0).D).expand(radius, radius, radius)) as MutableList<Any>
+	fun <E: Any> allAround(clazz: Class<E>, radius: Double) = getEntitiesWithinAABB(worldObj, clazz, getBoundingBox(x, y, z, x + 1, y + 1, z + 1).expand(radius, radius, radius))
 	
 	fun inWG() = worldGen
 	
@@ -141,30 +125,30 @@ abstract class SubTileAnomalyBase {
 		const val TAG_TICKS = "ticks"
 		val EMPTY_LIST = ArrayList<Any>(0)
 		
-		/**	0b00000 - fully compatible, do not use this unless you know what you are doing*/
-		const val NONE = 0
+		/** fully compatible, do not use this unless you know what you are doing */
+		const val NONE = 0b00000
 		
-		/**	0b00001 - motion manipulation	- gravity */
-		const val MOTION = 1
+		/** motion manipulation		- gravity */
+		const val MOTION = 0b00001
 		
-		/**	0b00010 - health manipulation	- damaging */
-		const val HEALTH = 2
+		/** health manipulation		- damaging */
+		const val HEALTH = 0b00010
 		
-		/**	0b00100 - mana manipulation		- drain mana */
-		const val MANA = 4
+		/** mana manipulation		- drain mana */
+		const val MANA = 0b00100
 		
-		/**	0b01000 - ticks manipulation	- time speedup */
-		const val TIME = 8
+		/** ticks manipulation		- time speedup */
+		const val TIME = 0b01000
 		
-		/**	0b10001 - space manipulation	- teleportation		- also incompatible with motion */
-		const val SPACE = 17
+		/**	space manipulation		- teleportation		- also incompatible with motion */
+		const val SPACE = 0b10000 or MOTION
 		
-		/** 								- fully incompatible */
+		/** fully incompatible */
 		const val ALL = -0x1
 		
 		fun forName(name: String): SubTileAnomalyBase? {
 			return try {
-				AlfheimAPI.getAnomaly(name).newInstance()
+				AlfheimAPI.getAnomaly(name).subtileClass.newInstance()
 			} catch (e: Exception) {
 				ASJUtilities.error("Error while getting '$name' anomaly subtile: ${e.message}")
 				e.printStackTrace()

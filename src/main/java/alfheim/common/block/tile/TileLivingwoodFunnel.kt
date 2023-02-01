@@ -7,16 +7,16 @@ import net.minecraft.block.*
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.entity.RenderItem
-import net.minecraft.command.IEntitySelector
 import net.minecraft.entity.item.*
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.inventory.*
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.*
 import net.minecraft.tileentity.*
-import net.minecraft.util.*
+import net.minecraft.util.Facing
 import net.minecraft.world.World
 import org.lwjgl.opengl.GL11
+import vazkii.botania.common.core.helper.InventoryHelper
 import vazkii.botania.common.lib.LibMisc
 import kotlin.math.min
 
@@ -31,61 +31,35 @@ class TileLivingwoodFunnel: ASJTile(), IHopper {
 	override fun getStackInSlot(par1: Int) = inventory[par1]
 	
 	override fun updateEntity() {
-		if (worldObj != null && !worldObj.isRemote) {
-			--transferCooldown
-			
-			if (transferCooldown <= 0) {
-				transferCooldown = 0
-				if (worldObj != null && !worldObj.isRemote) {
-					if (transferCooldown <= 0 && BlockFunnel.getActiveStateFromMetadata(getBlockMetadata())) {
-						var flag = false
-						
-						if (!isEmpty()) {
-							flag = pushToAttachedInventory()
-						}
-						
-						if (!isFull()) {
-							flag = canHopperPull(this) || flag
-						}
-						
-						if (flag) {
-							transferCooldown = 8
-							markDirty()
-						}
-					}
-				}
-			}
+		if (worldObj == null || worldObj.isRemote) return
+		--transferCooldown
+		
+		if (transferCooldown > 0) return
+		transferCooldown = 0
+		if (worldObj == null || worldObj.isRemote) return
+		if (!BlockFunnel.getActiveStateFromMetadata(getBlockMetadata())) return
+		var flag = false
+		
+		if (!isEmpty()) {
+			flag = pushToAttachedInventory()
+		}
+		
+		if (!isFull()) {
+			flag = canHopperPull(this) || flag
+		}
+		
+		if (flag) {
+			transferCooldown = 8
+			markDirty()
 		}
 	}
 	
 	fun getInventoryAt(world: World, x: Double, y: Double, z: Double): IInventory? {
-		var iinventory: IInventory? = null
 		val i = x.mfloor()
 		val j = y.mfloor()
 		val k = z.mfloor()
-		val tileentity = world.getTileEntity(i, j, k)
 		
-		if (tileentity != null && tileentity is IInventory) {
-			iinventory = tileentity
-			
-			if (iinventory is TileEntityChest) {
-				val block = world.getBlock(i, j, k)
-				
-				if (block is BlockChest) {
-					iinventory = block.func_149951_m(world, i, j, k)
-				}
-			}
-		}
-		
-		if (iinventory == null) {
-			val list = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0, y + 1.0, z + 1.0), IEntitySelector.selectInventories)
-			
-			if (list != null && list.size > 0) {
-				iinventory = list[world.rand.nextInt(list.size)] as IInventory
-			}
-		}
-		
-		return iinventory
+		return InventoryHelper.getInventory(world, i, j, k) ?: getEntitiesWithinAABB(world, IInventory::class.java, getBoundingBox(x, y, z, x + 1, y + 1, z + 1)).random(world.rand)
 	}
 	
 	fun canHopperPull(funnel: IHopper): Boolean {
@@ -203,8 +177,8 @@ class TileLivingwoodFunnel: ASJTile(), IHopper {
 	
 	fun IInventory.addItemToSide(item: ItemStack?, side: Int): ItemStack? {
 		var stack = item
-		if (inventory is ISidedInventory && side > -1) {
-			val aint = (this as ISidedInventory).getAccessibleSlotsFromSide(side)
+		if (this is ISidedInventory && side > -1) {
+			val aint = this.getAccessibleSlotsFromSide(side)
 			
 			var l = 0
 			while (l < aint.size && stack != null && stack.stackSize > 0) {
@@ -295,8 +269,10 @@ class TileLivingwoodFunnel: ASJTile(), IHopper {
 	}
 	
 	fun entitiesOnFunnel(world: World, x: Double, y: Double, z: Double): EntityItem? {
-		val list = world.selectEntitiesWithinAABB(EntityItem::class.java, AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0, y + 1.0, z + 1.0), IEntitySelector.selectAnything)
-		return if (list.size > 0) list[0] as EntityItem else null
+		val list = selectEntitiesWithinAABB(world, EntityItem::class.java, getBoundingBox(x, y, z, x + 1, y + 1, z + 1)) {
+			it.isEntityAlive && it.entityItem?.let { i -> i.stackSize > 0 } == true
+		}
+		return if (list.size > 0) list[0] else null
 	}
 	
 	private fun pullItemIn(hopper: IHopper, inventory: IInventory, slot: Int, side: Int): Boolean {
@@ -323,12 +299,9 @@ class TileLivingwoodFunnel: ASJTile(), IHopper {
 	private fun ItemStack.itemInFrames(): Boolean {
 		val frameItems: MutableList<ItemStack> = arrayListOf()
 		for (i in LibMisc.CARDINAL_DIRECTIONS) {
-			val var21 = AxisAlignedBB.getBoundingBox((xCoord + i.offsetX).D, (yCoord + i.offsetY).D, (zCoord + i.offsetZ).D, (xCoord + i.offsetX + 1).D, (yCoord + i.offsetY + 1).D, (zCoord + i.offsetZ + 1).D)
-			val frames = worldObj.getEntitiesWithinAABB(EntityItemFrame::class.java, var21)
-			for (frame in frames) {
-				if (frame is EntityItemFrame)
-					if (frame.displayedItem != null)
-						frameItems.add(frame.displayedItem)
+			val var21 = getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1).offset(i.offsetX, i.offsetY, i.offsetZ)
+			getEntitiesWithinAABB(worldObj, EntityItemFrame::class.java, var21).forEach {
+				if (it.displayedItem != null) frameItems.add(it.displayedItem)
 			}
 		}
 		if (frameItems.isEmpty()) return true
@@ -358,101 +331,93 @@ class TileLivingwoodFunnel: ASJTile(), IHopper {
 	}
 	
 	fun renderHUD(mc: Minecraft, res: ScaledResolution) {
-		if (getStackInSlot(0) != null && getStackInSlot(0)!!.stackSize > 0) {
-			net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting()
-			
-			val xc = res.scaledWidth / 2.0
-			val yc = res.scaledHeight / 2.0
-			GL11.glTranslated(xc, yc, 0.0)
-			RenderItem.getInstance().renderItemIntoGUI(mc.fontRenderer, mc.renderEngine, getStackInSlot(0), 0, 0)
-			GL11.glTranslated(-xc, -yc, 0.0)
-			
-			net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting()
-		}
+		val stack = getStackInSlot(0) ?: return
+		if (stack.stackSize <= 0) return
+		
+		net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting()
+		
+		val xc = res.scaledWidth / 2.0
+		val yc = res.scaledHeight / 2.0
+		GL11.glTranslated(xc, yc, 0.0)
+		RenderItem.getInstance().renderItemIntoGUI(mc.fontRenderer, mc.renderEngine, stack, 0, 0)
+		GL11.glTranslated(-xc, -yc, 0.0)
+		
+		net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting()
 	}
 	
 	override fun decrStackSize(slot: Int, size: Int): ItemStack? {
-		if (inventory[slot] != null) {
-			
-			if (!worldObj.isRemote) {
-				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord)
-			}
-			
-			val itemstack: ItemStack
-			
-			if (inventory[slot]!!.stackSize <= size) {
-				itemstack = inventory[slot]!!
-				inventory[slot] = null
-				markDirty()
-				return itemstack
-			}
-			itemstack = inventory[slot]!!.splitStack(size)
-			if (inventory[slot]!!.stackSize == 0) {
-				inventory[slot] = null
-			}
-			
+		val inSlot = inventory[slot] ?: return null
+		
+		if (!worldObj.isRemote)
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord)
+		
+		if (inSlot.stackSize <= size) {
+			inventory[slot] = null
 			markDirty()
-			return itemstack
+			return inSlot
 		}
-		return null
-	}
-	
-	override fun getStackInSlotOnClosing(par1: Int): ItemStack? {
-		if (inventory[par1] != null) {
-			val itemstack = inventory[par1]
-			inventory[par1] = null
-			return itemstack
-		}
-		return null
-	}
-	
-	override fun setInventorySlotContents(par1: Int, par2ItemStack: ItemStack?) {
-		inventory[par1] = par2ItemStack
-		if (par2ItemStack != null && par2ItemStack.stackSize > inventoryStackLimit) {
-			par2ItemStack.stackSize = inventoryStackLimit
-		}
+		
+		val itemstack = inSlot.splitStack(size)
+		
+		if (inSlot.stackSize <= 0)
+			inventory[slot] = null
 		
 		markDirty()
-		if (!worldObj.isRemote) {
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord)
-		}
+		return itemstack
 		
+	}
+	
+	override fun getStackInSlotOnClosing(slot: Int): ItemStack? {
+		val inSlot = inventory[slot] ?: return null
+		inventory[slot] = null
+		return inSlot
+	}
+	
+	override fun setInventorySlotContents(slot: Int, stack: ItemStack?) {
+		inventory[slot] = stack
+		
+		if (stack != null && stack.stackSize > inventoryStackLimit)
+			stack.stackSize = inventoryStackLimit
+		
+		markDirty()
+		if (!worldObj.isRemote)
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord)
 	}
 	
 	override fun getInventoryName() = "container.livingwoodHopper"
 	
-	override fun isUseableByPlayer(player: EntityPlayer?) = true
+	override fun isUseableByPlayer(player: EntityPlayer?) = false
 	
 	override fun hasCustomInventoryName() = false
 	
 	override fun readCustomNBT(nbt: NBTTagCompound) {
-		val nbttaglist = nbt.getTagList("Items", 10)
+		val list = nbt.getTagList("Items", 10)
 		inventory = arrayOfNulls(sizeInventory)
 		
-		for (i in 0 until nbttaglist.tagCount()) {
-			val nbttagcompound1 = nbttaglist.getCompoundTagAt(i)
+		for (i in 0 until list.tagCount()) {
+			val nbti = list.getCompoundTagAt(i)
 			
-			val b0: Int = (nbttagcompound1.getByte("Slot")).I
+			val b0: Int = (nbti.getByte("Slot")).I
 			
 			if (b0 >= 0 && b0 < inventory.size) {
-				inventory[b0] = ItemStack.loadItemStackFromNBT(nbttagcompound1)
+				inventory[b0] = ItemStack.loadItemStackFromNBT(nbti)
 			}
 		}
 	}
 	
 	override fun writeCustomNBT(nbt: NBTTagCompound) {
-		val nbttaglist = NBTTagList()
+		val list = NBTTagList()
 		
 		for (i in inventory.indices) {
-			if (inventory[i] != null) {
-				val nbttagcompound1 = NBTTagCompound()
-				nbttagcompound1.setByte("Slot", i.toByte())
-				inventory[i]!!.writeToNBT(nbttagcompound1)
-				nbttaglist.appendTag(nbttagcompound1)
-			}
+			val stack = inventory[i] ?: continue
+			
+			val nbti = NBTTagCompound()
+			nbti.setByte("Slot", i.toByte())
+			stack.writeToNBT(nbti)
+			list.appendTag(nbti)
 		}
 		
-		nbt.setTag("Items", nbttaglist)
+		nbt.setTag("Items", list)
 	}
 	
 	override fun getXPos() = xCoord.D

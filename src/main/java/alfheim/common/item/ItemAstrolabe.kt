@@ -9,15 +9,14 @@ import net.minecraft.block.Block
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
-import net.minecraft.util.EnumFacing
 import net.minecraft.world.World
 import net.minecraftforge.common.util.ForgeDirection
 import vazkii.botania.api.item.IBlockProvider
 import vazkii.botania.api.mana.ManaItemHandler
+import vazkii.botania.common.core.handler.ConfigHandler
 import vazkii.botania.common.core.helper.ItemNBTHelper
 import vazkii.botania.common.item.equipment.tool.ToolCommons
 import vazkii.botania.common.item.rod.ItemExchangeRod
-import java.util.*
 import kotlin.math.floor
 
 class ItemAstrolabe: ItemMod("Astrolabe") {
@@ -55,9 +54,11 @@ class ItemAstrolabe: ItemMod("Astrolabe") {
 			val size = getSize(stack)
 			val newSize = if (size == 11) 3 else size + 2
 			setSize(stack, newSize)
-			ItemsRemainingRenderHandler[stack] = "${newSize}x$newSize"
 			
-			player.playSoundAtEntity("random.orb", 0.1f, 0.5f * ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7f + 1.8f))
+			if (world.isRemote && player === mc.thePlayer) {
+				ItemsRemainingRenderHandler.set(stack, "${newSize}x$newSize")
+				player.playSoundAtEntity("random.orb", 0.1f, 0.5f * ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7f + 1.8f))
+			}
 		}
 		
 		return stack
@@ -86,8 +87,10 @@ class ItemAstrolabe: ItemMod("Astrolabe") {
 		
 		if (InteractionSecurity.isPlacementBanned(player, x, y, z, world, block, meta)) return
 		
-		world.setBlock(x, y, z, block, meta, 3)
-		world.playAuxSFX(2001, x, y, z, block.id)
+		world.setBlock(x, y, z, block, meta, 3) // FIXME fire block place event and call all corresponding methods from block like onBlockPlacedBy etc.
+		
+		if (!world.isRemote && ConfigHandler.blockBreakParticles && ConfigHandler.blockBreakParticlesTool)
+			world.playAuxSFX(2001, x, y, z, block.id + (meta shl 12))
 		
 		if (player.capabilities.isCreativeMode) return
 		
@@ -121,7 +124,9 @@ class ItemAstrolabe: ItemMod("Astrolabe") {
 		val block = getBlock(stack)
 		val meta = getBlockMeta(stack)
 		val count = ItemExchangeRod.getInventoryItemCount(player, stack, block, meta)
-		if (!player.worldObj.isRemote) ItemsRemainingRenderHandler.set(ItemStack(block, 1, meta), count)
+		
+		if (player.worldObj.isRemote && player === mc.thePlayer)
+			ItemsRemainingRenderHandler.set(ItemStack(block, 1, meta), count)
 	}
 	
 	private fun setBlock(stack: ItemStack?, block: Block, meta: Int): Boolean {
@@ -197,12 +202,12 @@ class ItemAstrolabe: ItemMod("Astrolabe") {
 				
 				val dir = ForgeDirection.getOrientation(mop.sideHit)
 				val rot = floor(player.rotationYaw / 90.0 + 0.5).I and 3
-				val rotationDir = if (rot == 0) EnumFacing.SOUTH else if (rot == 1) EnumFacing.WEST else if (rot == 2) EnumFacing.NORTH else EnumFacing.EAST
+				val rotationDir = if (rot == 0) ForgeDirection.SOUTH else if (rot == 1) ForgeDirection.WEST else if (rot == 2) ForgeDirection.NORTH else ForgeDirection.EAST
 				
 				val pitchedVertically = player.rotationPitch > 60 || player.rotationPitch < -60
 				
-				val axisX = rotationDir == EnumFacing.WEST || rotationDir == EnumFacing.EAST
-				val axisZ = rotationDir == EnumFacing.NORTH || rotationDir == EnumFacing.SOUTH
+				val axisX = rotationDir == ForgeDirection.WEST || rotationDir == ForgeDirection.EAST
+				val axisZ = rotationDir == ForgeDirection.NORTH || rotationDir == ForgeDirection.SOUTH
 				
 				val xOff = if (axisZ || pitchedVertically) range else 0
 				val yOff = if (pitchedVertically) 0 else range

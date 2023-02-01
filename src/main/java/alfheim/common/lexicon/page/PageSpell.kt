@@ -1,6 +1,7 @@
 package alfheim.common.lexicon.page
 
 import alexsocol.asjlib.*
+import alexsocol.asjlib.render.ASJRenderHelper
 import alfheim.api.ModInfo
 import alfheim.api.entity.race
 import alfheim.api.lib.LibResourceLocations
@@ -35,9 +36,11 @@ class PageSpell(internal val spell: SpellBase): LexiconPage("${ModInfo.MODID}.pa
 		glTranslated((gui.width / 2 - 16).D, 8.0, 0.0)
 		GUISpells.drawRect(if (spell.hard) LibResourceLocations.spellFrameEpic else LibResourceLocations.spellFrame, 32)
 		glTranslated(8.0, 8.0, 0.0)
+		ASJRenderHelper.setBlend()
 		GUISpells.drawRect(LibResourceLocations.spell(spell.name), 16)
+		ASJRenderHelper.discard()
 		text = EnumChatFormatting.BOLD.toString() + StatCollector.translateToLocal("spell." + spell.name + ".name")
-		font.drawString(text, font.getStringWidth(text) / -2 + 8, 24, 0)
+		font.drawString(text, font.getStringWidth(text) / -2 + 9, 24, 0)
 		glColor4d(1.0, 1.0, 1.0, 1.0)
 		
 		glTranslated(-32.0, 0.0, 0.0)
@@ -67,7 +70,7 @@ class PageSpell(internal val spell: SpellBase): LexiconPage("${ModInfo.MODID}.pa
 			val y = yn + 115
 			if (mx > x + 1 && mx <= x + 101 && my > y - 52 && my <= y - 38) ratio = 1
 			
-			val cost = spell.getManaCost().times(if (spell.race == mc.thePlayer.race || spell.hard) 1.toByte() else AlfheimConfigHandler.raceManaMult).I
+			val cost = spell.getManaCost() * (if (spell.race == mc.thePlayer.race || spell.hard) 1.toByte() else AlfheimConfigHandler.raceManaMult).I
 			
 			if (AlfheimConfigHandler.numericalMana) {
 				font.drawString(StatCollector.translateToLocal("lexicon.mana"), xn + 16, y - 8, 0)

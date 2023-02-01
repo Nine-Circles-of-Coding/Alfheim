@@ -34,6 +34,7 @@ class PagePureDaisyRecipe(unlocalizedName: String, private val recipe: RecipePur
 		glDisable(GL_BLEND)
 		
 		var input = recipe.input as? Block
+		var meta = 0
 		if (input == null) run {
 			val name = recipe.input as? String
 			
@@ -42,8 +43,10 @@ class PagePureDaisyRecipe(unlocalizedName: String, private val recipe: RecipePur
 				return@run
 			}
 			
-			input = if (OreDictionary.doesOreNameExist(name)) {
-				OreDictionary.getOres(name).firstOrNull { it.item.toBlock() != null }?.item?.toBlock()
+			input = if (OreDictionary.doesOreNameExist(name)) run inner@ {
+				val ordict = OreDictionary.getOres(name).firstOrNull { it.item.toBlock() != null } ?: return@inner null
+				meta = ordict.meta
+				ordict.item.toBlock()
 			} else {
 				Blocks.fire
 			}
@@ -52,7 +55,7 @@ class PagePureDaisyRecipe(unlocalizedName: String, private val recipe: RecipePur
 		if (input == null)
 			input = Blocks.fire
 		
-		renderItemAtGridPos(gui, 1, 1, ItemStack(input), false)
+		renderItemAtGridPos(gui, 1, 1, ItemStack(input, 1, meta), false)
 		renderItemAtGridPos(gui, 2, 1, ItemBlockSpecialFlower.ofType(LibBlockNames.SUBTILE_PUREDAISY), false)
 		renderItemAtGridPos(gui, 3, 1, ItemStack(recipe.output), false)
 		

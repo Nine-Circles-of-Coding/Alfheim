@@ -6,7 +6,6 @@ import net.minecraft.block.material.Material
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.world.World
-import net.minecraftforge.client.event.sound.PlaySoundEvent17
 import vazkii.botania.api.lexicon.ILexiconable
 
 class BlockSealingPlanks: BlockMod(Material.wood), ILexiconable, ISoundSilencer {
@@ -21,9 +20,9 @@ class BlockSealingPlanks: BlockMod(Material.wood), ILexiconable, ISoundSilencer 
 		setBlockName(name)
 	}
 	
-	override fun canSilence(world: World, x: Int, y: Int, z: Int, dist: Double, soundEvent: PlaySoundEvent17) = dist <= 8
+	override fun canSilence(world: World, x: Int, y: Int, z: Int, dist: Double) = dist <= 8
 	
-	override fun getVolumeMultiplier(world: World, x: Int, y: Int, z: Int, dist: Double, soundEvent: PlaySoundEvent17) = 0.5f
+	override fun getVolumeMultiplier(world: World, x: Int, y: Int, z: Int, dist: Double) = 0.5f
 	
 	override fun isToolEffective(type: String?, metadata: Int) = (type != null && type == "axe")
 	

@@ -26,7 +26,7 @@ abstract class BlockSlabMod(val full: Boolean, val meta: Int, val source: Block,
 		}
 	}
 	
-	override fun getBlockHardness(world: World?, x: Int, y: Int, z: Int) =
+	override fun getBlockHardness(world: World, x: Int, y: Int, z: Int) =
 		source.getBlockHardness(world, x, y, z)
 	
 	@SideOnly(Side.CLIENT)

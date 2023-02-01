@@ -23,8 +23,7 @@ object SpellFirewall: SpellBase("firewall", EnumRace.SALAMANDER, 4000, 200, 15) 
 		// if (!WorldGuardCommons.canDoSomethingWithEntity(caster, wall)) return SpellCastResult.NOTALLOW
 		
 		val result = checkCastOver(caster)
-		if (result == SpellCastResult.OK)
-			caster.worldObj.spawnEntityInWorld(wall)
+		if (result == SpellCastResult.OK) wall.spawn()
 		
 		return result
 	}

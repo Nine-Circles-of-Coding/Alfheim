@@ -6,10 +6,9 @@ import net.minecraft.entity.player.EntityPlayer
 
 /**
  * Adequate interaction event
- * Liquid COUNTS as block
- * Entity NOT counts as any type of interactions
+ * Do not use ase class
  */
-abstract class PlayerInteractAdequateEvent(val player: EntityPlayer, val x: Int, val y: Int, val z: Int, val side: Int, val entity: Entity?): Event() {
+open class PlayerInteractAdequateEvent(val player: EntityPlayer, val x: Int, val y: Int, val z: Int, val side: Int, val entity: Entity?): Event() {
 	
 	class LeftClick(player: EntityPlayer, val action: Action, x: Int, y: Int, z: Int, side: Int, entity: Entity?): PlayerInteractAdequateEvent(player, x, y, z, side, entity) {
 		

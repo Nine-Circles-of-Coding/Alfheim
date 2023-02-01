@@ -2,17 +2,15 @@ package alfheim.common.spell.water
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
-import alfheim.AlfheimCore
 import alfheim.api.entity.EnumRace
 import alfheim.api.lib.LibResourceLocations
 import alfheim.api.spell.SpellBase
 import alfheim.client.render.world.VisualEffectHandlerClient.VisualEffects
 import alfheim.common.core.handler.CardinalSystem.PartySystem
 import alfheim.common.core.handler.VisualEffectHandler
-import alfheim.common.network.MessageEffect
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.entity.EntityLivingBase
-import net.minecraft.potion.*
+import net.minecraft.potion.Potion
 import org.lwjgl.opengl.GL11.*
 
 object SpellPurifyingSurface: SpellBase("purifyingsurface", EnumRace.UNDINE, 5000, 600, 20) {
@@ -29,16 +27,15 @@ object SpellPurifyingSurface: SpellBase("purifyingsurface", EnumRace.UNDINE, 500
 		
 		VisualEffectHandler.sendPacket(VisualEffects.PURE_AREA, caster)
 		
-		val list = caster.worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, caster.boundingBox.expand(radius)) as List<EntityLivingBase>
-		for (living in list) {
-			if (!PartySystem.mobsSameParty(caster, living) || Vector3.entityDistancePlane(living, caster) > radius) continue
+		val list = getEntitiesWithinAABB(caster.worldObj, EntityLivingBase::class.java, caster.boundingBox.expand(radius))
+		list.forEach {
+			if (!PartySystem.mobsSameParty(caster, it) || Vector3.entityDistancePlane(it, caster) > radius) return@forEach
 			
-			living.extinguish()
-			living.removePotionEffect(Potion.poison.id)
-			living.addPotionEffect(PotionEffect(Potion.fireResistance.id, duration, -1, true))
-			AlfheimCore.network.sendToAll(MessageEffect(living.entityId, Potion.fireResistance.id, duration, -1))
+			it.extinguish()
+			it.removePotionEffect(Potion.poison.id)
+			it.addPotionEffect(PotionEffectU(Potion.fireResistance.id, duration))
 			
-			VisualEffectHandler.sendPacket(VisualEffects.PURE, living)
+			VisualEffectHandler.sendPacket(VisualEffects.PURE, it)
 		}
 		return result
 	}

@@ -17,13 +17,7 @@ class SubTileManaVoid: SubTileAnomalyBase() {
 	internal val v = Vector3()
 	
 	override val targets: List<Any>
-		get() = if (inWG()) EMPTY_LIST else allAroundRaw(EntityPlayer::class.java, radius.D)
-	
-	override val strip: Int
-		get() = 3
-	
-	override val rarity: EnumAnomalityRarity
-		get() = EnumAnomalityRarity.COMMON
+		get() = if (inWG()) EMPTY_LIST else allAround(EntityPlayer::class.java, radius.D)
 	
 	public override fun update() {
 		if (mana >= 120000) {
@@ -33,9 +27,9 @@ class SubTileManaVoid: SubTileAnomalyBase() {
 			}
 			
 			radius = 10
-			worldObj.createExplosion(null, x().D, y().D, z().D, radius.F, false)
+			worldObj.createExplosion(null, x.D, y.D, z.D, radius.F, false)
 			
-			VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.MANABURST, worldObj.provider.dimensionId, x().D, y().D, z().D)
+			VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.MANABURST, worldObj.provider.dimensionId, x.D, y.D, z.D)
 			
 			mana = 0
 		}
@@ -48,7 +42,7 @@ class SubTileManaVoid: SubTileAnomalyBase() {
 		if (m > 0) {
 			mana += m
 			
-			if (!target.worldObj.isRemote) VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.MANAVOID, worldObj.provider.dimensionId, x().D, y().D, z().D, target.posX, target.posY + 1.0, target.posZ)
+			if (!target.worldObj.isRemote) VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.MANAVOID, worldObj.provider.dimensionId, x.D, y.D, z.D, target.posX, target.posY + 1.0, target.posZ)
 		}
 	}
 	

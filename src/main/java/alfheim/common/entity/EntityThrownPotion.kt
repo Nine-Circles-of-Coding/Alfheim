@@ -1,10 +1,10 @@
 package alfheim.common.entity
 
 import alexsocol.asjlib.*
+import alexsocol.asjlib.security.InteractionSecurity
 import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.core.handler.VisualEffectHandler
 import alfheim.common.item.*
-import alexsocol.asjlib.security.InteractionSecurity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.projectile.EntityThrowable
@@ -59,47 +59,37 @@ class EntityThrownPotion: EntityThrowable {
 	val peClear = PotionEffect(ModPotions.clear.id, 0, 0)
 	
 	override fun onImpact(movingObject: MovingObjectPosition?) {
-		if (!worldObj.isRemote && movingObject != null && effects.isNotEmpty()) {
-			val axisalignedbb = boundingBox.expand(5.0, 2.5, 5.0)
-			val list1 = worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, axisalignedbb)
+		if (worldObj.isRemote || movingObject == null || effects.isEmpty()) return setDead()
+		
+		VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.POTION, dimension, posX, posY, posZ, color.D, if (effects.contains(peClear)) 1.0 else 0.0)
+		
+		val list = getEntitiesWithinAABB(worldObj, EntityLivingBase::class.java, boundingBox.expand(5.0, 2.5, 5.0))
+		if (list.isEmpty()) return setDead()
+		list.forEach { living ->
+			val d0 = getDistanceSqToEntity(living)
 			
-			if (list1 != null && list1.isNotEmpty()) {
-				val iterator = list1.iterator()
-				
-				while (iterator.hasNext()) {
-					val living = iterator.next() as EntityLivingBase
-					val d0 = getDistanceSqToEntity(living)
-					
-					if (d0 < 16.0) {
-						var d1 = 1.0 - sqrt(d0) / 4.0
-						
-						if (living === movingObject.entityHit) {
-							d1 = 1.0
-						}
-						
-						if (effects.any { Potion.potionTypes[it.potionID].isBadEffect }) {
-							if (!InteractionSecurity.canHurtEntity(thrower ?: continue, living)) continue
-						} else {
-							if (!InteractionSecurity.canInteractWithEntity(thrower ?: continue, living)) continue
-						}
-						
-						for (e: PotionEffect in effects) {
-							
-							if (Potion.potionTypes[e.potionID].isInstant) {
-								Potion.potionTypes[e.potionID].affectEntity(thrower, living, e.amplifier, d1)
-							} else {
-								val j = (d1 * e.duration.D + 0.5).I
-								
-								if (j > 20) {
-									living.addPotionEffect(PotionEffect(e.potionID, j, e.amplifier))
-								}
-							}
-						}
-					}
-				}
+			if (d0 >= 16.0) return@forEach
+			var d1 = 1.0 - sqrt(d0) / 4.0
+			
+			if (living === movingObject.entityHit) d1 = 1.0
+			
+			if (effects.any { Potion.potionTypes[it.potionID].isBadEffect }) {
+				if (!InteractionSecurity.canHurtEntity(thrower ?: return@forEach, living)) return@forEach
+			} else {
+				if (!InteractionSecurity.canInteractWithEntity(thrower ?: return@forEach, living)) return@forEach
 			}
 			
-			VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.POTION, dimension, posX, posY, posZ, color.D, if (effects.contains(peClear)) 1.0 else 0.0, 0.0)
+			for (e: PotionEffect in effects) {
+				if (!Potion.potionTypes[e.potionID].isInstant) {
+					val j = (d1 * e.duration.D + 0.5).I
+					
+					if (j <= 20) continue
+					living.addPotionEffect(PotionEffect(e.potionID, j, e.amplifier))
+					continue
+				}
+				
+				Potion.potionTypes[e.potionID].affectEntity(thrower, living, e.amplifier, d1)
+			}
 		}
 		
 		setDead()

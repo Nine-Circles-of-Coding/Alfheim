@@ -27,8 +27,8 @@ class BlockGrapeRed(val stage: Int): BlockVine(), IGrowable, ILexiconable {
 	}
 	
 	override fun getItemDropped(meta: Int, random: Random?, fortune: Int) = AlfheimItems.elvenResource
-	override fun quantityDropped(rand: Random) = if (rand.nextInt(20) == 0) 1 else 0
-	override fun damageDropped(meta: Int) = ElvenResourcesMetas.GrapeLeaf
+	override fun quantityDropped(rand: Random) = if (rand.nextInt(2) == 0) 1 else 0
+	override fun damageDropped(meta: Int) = ElvenResourcesMetas.GrapeLeaf.I
 	
 	override fun setBlockName(name: String): Block {
 		GameRegistry.registerBlock(this, ItemBlockGrapeRed::class.java, name)
@@ -42,7 +42,7 @@ class BlockGrapeRed(val stage: Int): BlockVine(), IGrowable, ILexiconable {
 	
 	override fun onBlockActivated(world: World, x: Int, y: Int, z: Int, player: EntityPlayer, side: Int, hitX: Float, hitY: Float, hitZ: Float): Boolean {
 		if (!world.isRemote && stage == 2 && player.heldItem == null) {
-			player.dropPlayerItemWithRandomChoice(ItemStack(AlfheimItems.elvenFood, world.rand.nextInt(2) + 1, ElvenFoodMetas.RedGrapes), true)?.delayBeforeCanPickup = 0
+			player.dropPlayerItemWithRandomChoice(ElvenFoodMetas.RedGrapes.stack(world.rand.nextInt(2) + 1), true)?.delayBeforeCanPickup = 0
 			world.setBlock(x, y, z, AlfheimBlocks.grapesRed[0], world.getBlockMetadata(x, y, z), 3)
 			return true
 		}

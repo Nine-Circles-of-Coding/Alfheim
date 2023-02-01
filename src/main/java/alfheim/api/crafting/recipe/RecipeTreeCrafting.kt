@@ -3,12 +3,11 @@ package alfheim.api.crafting.recipe
 import alexsocol.asjlib.*
 import net.minecraft.item.ItemStack
 import vazkii.botania.api.recipe.RecipePetals
-import java.util.*
 
 /**
  * A recipe for the Dendric Suffuser.
  */
-class RecipeTreeCrafting(val manaUsage: Int, out: ItemStack, val outTileId: String?, val core: ItemStack, vararg inputs: Any): RecipePetals(out, *inputs) {
+class RecipeTreeCrafting(val manaUsage: Int, output: ItemStack, val outTileId: String?, val core: ItemStack, vararg inputs: Any): RecipePetals(output, *inputs) {
 	
 	var throttle = -1
 	
@@ -18,7 +17,7 @@ class RecipeTreeCrafting(val manaUsage: Int, out: ItemStack, val outTileId: Stri
 	
 	init {
 		if (inputs.size > 8) throw IllegalArgumentException("Maximal suffusion inputs size is 8")
-		if (out.block == null) throw IllegalArgumentException("Can't fetch block from output stack '$out'")
+		if (output.block == null) throw IllegalArgumentException("Can't fetch block from output stack '$output'")
 	}
 	
 	fun matches(items: List<ItemStack>, mid: ItemStack): Boolean {

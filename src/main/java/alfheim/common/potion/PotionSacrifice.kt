@@ -5,15 +5,13 @@ import alexsocol.asjlib.math.Vector3
 import alfheim.api.ModInfo
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.util.DamageSourceSpell
-import alexsocol.asjlib.security.InteractionSecurity
 import alfheim.common.spell.darkness.SpellSacrifice
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.ai.attributes.BaseAttributeMap
 import net.minecraft.entity.boss.IBossDisplayData
-import net.minecraft.util.DamageSource
 import vazkii.botania.common.Botania
 
-class PotionSacrifice: PotionAlfheim(AlfheimConfigHandler.potionIDSacrifice, "sacrifice", false, 0) {
+object PotionSacrifice: PotionAlfheim(AlfheimConfigHandler.potionIDSacrifice, "sacrifice", false, 0) {
 	
 	var timeQueued: Int = 0
 	
@@ -31,16 +29,13 @@ class PotionSacrifice: PotionAlfheim(AlfheimConfigHandler.potionIDSacrifice, "sa
 			particles(target, 32 - timeQueued)
 	}
 	
-	override fun removeAttributesModifiersFromEntity(target: EntityLivingBase?, attributes: BaseAttributeMap, ampl: Int) {
+	override fun removeAttributesModifiersFromEntity(target: EntityLivingBase, attributes: BaseAttributeMap, ampl: Int) {
 		super.removeAttributesModifiersFromEntity(target, attributes, ampl)
 		if (!AlfheimConfigHandler.enableMMO) return
-		val l = target!!.worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, target.boundingBox.copy().expand(SpellSacrifice.radius)) as List<EntityLivingBase>
-		var dmg: DamageSource
+		val l = getEntitiesWithinAABB(target.worldObj, EntityLivingBase::class.java, target.boundingBox.copy().expand(SpellSacrifice.radius))
 		for (e in l) {
 			if (e is IBossDisplayData && !AlfheimConfigHandler.superSpellBosses) continue
-			if (!InteractionSecurity.canHurtEntity(target, e)) continue
-			
-			dmg = if (e === target) DamageSourceSpell.sacrifice else DamageSourceSpell.sacrifice(target)
+			val dmg = if (e === target) DamageSourceSpell.sacrifice else DamageSourceSpell.sacrifice(target)
 			e.attackEntityFrom(dmg, SpellSacrifice.damage)
 		}
 	}

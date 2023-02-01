@@ -21,18 +21,18 @@ class ItemSpatiotemporalRing: ItemBauble("spatiotemporalRing") {
 	
 	override fun getBaubleType(p0: ItemStack?) = BaubleType.RING
 	
-	fun isActive(stack: ItemStack, player: EntityPlayer) = !(!ItemNBTHelper.getBoolean(stack, TAG_ALWAYS_ON, true) && player.isSneaking)
+	fun isActive(stack: ItemStack, player: EntityPlayer) = ItemNBTHelper.getBoolean(stack, TAG_ALWAYS_ON, true) || !player.isSneaking
 	
 	override fun onItemRightClick(stack: ItemStack, world: World, player: EntityPlayer): ItemStack {
-		if (player.isSneaking)
-			ItemNBTHelper.setBoolean(stack, TAG_ALWAYS_ON, !ItemNBTHelper.getBoolean(stack, TAG_ALWAYS_ON, true))
+		if (!player.isSneaking) return super.onItemRightClick(stack, world, player)
 		
-		return super.onItemRightClick(stack, world, player)
+		ItemNBTHelper.setBoolean(stack, TAG_ALWAYS_ON, !ItemNBTHelper.getBoolean(stack, TAG_ALWAYS_ON, true))
+		return stack
 	}
 	
 	override fun addHiddenTooltip(stack: ItemStack?, player: EntityPlayer?, list: MutableList<Any?>, adv: Boolean) {
 		super.addHiddenTooltip(stack, player, list, adv)
-		if (!ItemNBTHelper.getBoolean(stack, TAG_ALWAYS_ON, true)) list.add(StatCollector.translateToLocal("item.botania:spatiotemporalRing.desc"))
+		list.add(StatCollector.translateToLocal("item.botania:spatiotemporalRing.desc.${ItemNBTHelper.getBoolean(stack, TAG_ALWAYS_ON, true)}"))
 	}
 	
 	companion object {
@@ -41,7 +41,6 @@ class ItemSpatiotemporalRing: ItemBauble("spatiotemporalRing") {
 		
 		fun hasProtection(player: EntityLivingBase): Boolean {
 			if (player !is EntityPlayer) return false
-			// if (player.capabilities.isCreativeMode) return false
 			
 			for (i in 1..2) {
 				val stack = PlayerHandler.getPlayerBaubles(player)[i] ?: continue

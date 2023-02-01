@@ -51,7 +51,7 @@ object RenderEntityGravityTrap: Render() {
 			// glColor4d(1, 1, 1, chargeMul);
 		}
 		
-		override fun drawMesh(vararg data: Any?) {
+		override fun drawMesh(data: Array<out Any?>) {
 			val tes = Tessellator.instance
 			tes.startDrawingQuads()
 			tes.addVertexWithUV(-1.0, 0.0, -1.0, 0.0, 0.0)

@@ -52,8 +52,8 @@ object InfoLoader {
 			try {
 				val root = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(URL("https://bitbucket.org/AlexSocol/alfheim/raw/" + (if (ModInfo.DEV) "development" else "master") + "/news/" + MinecraftForge.MC_VERSION + ".xml").openStream()).documentElement
 				val latest = getNodeValue(root, "LATEST")
-				onlineVersion = Integer.parseInt(latest.split("-".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1])
-				outdated = onlineVersion > Integer.parseInt(AlfheimCore.meta.version.replace("\\D".toRegex(), ""))
+				onlineVersion = latest.split("-".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1].toInt()
+				outdated = onlineVersion > AlfheimCore.meta.version.replace("\\D".toRegex(), "").toInt()
 				if (outdated) info.add(StatCollector.translateToLocalFormatted("alfheimmisc.update", AlfheimCore.meta.version, latest))
 				var s: String? = getNodeValue(root, "UNIVERSAL")
 				info.addAll(listOf(*s!!.split("&".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()))

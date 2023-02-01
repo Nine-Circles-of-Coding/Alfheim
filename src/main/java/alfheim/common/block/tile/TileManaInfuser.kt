@@ -5,6 +5,7 @@ import alexsocol.asjlib.extendables.block.ASJTile
 import alexsocol.asjlib.math.Vector3
 import alfheim.api.AlfheimAPI
 import alfheim.common.block.AlfheimBlocks
+import alfheim.common.core.asm.hook.extender.SparkExtender.attachTile
 import net.minecraft.block.Block
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.entity.item.EntityItem
@@ -13,7 +14,6 @@ import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity
-import net.minecraft.util.AxisAlignedBB
 import net.minecraftforge.oredict.OreDictionary
 import vazkii.botania.api.lexicon.multiblock.*
 import vazkii.botania.api.mana.IManaPool
@@ -34,10 +34,10 @@ class TileManaInfuser: ASJTile(), ISparkAttachable {
 	val v = Vector3()
 	
 	val items: List<EntityItem>
-		get() = worldObj.getEntitiesWithinAABB(EntityItem::class.java, AxisAlignedBB.getBoundingBox(xCoord.D, (yCoord + 1).D, zCoord.D, (xCoord + 1).D, (yCoord + 2).D, (zCoord + 1).D)) as List<EntityItem>
+		get() = getEntitiesWithinAABB(worldObj, EntityItem::class.java, boundingBox().offset(0.0, 1.0, 0.0)).filter { !it.isDead && it.entityItem != null }
 	
 	val isReadyToKillGaia: Boolean
-		get() = checkPlatform(0, -2, 0, Blocks.beacon, 0) && checkAll(PYLONS, AlfheimBlocks.alfheimPylon, 2)
+		get() = checkPlatform(0, -2, 0, Blocks.beacon, 0) && checkPlatform(0, 3, 0, ModBlocks.brewery, 0) && checkAll(PYLONS, AlfheimBlocks.alfheimPylon, 2)
 	
 	var deGaiaingTime = 0
 	var soulParticlesTime = 0
@@ -137,7 +137,7 @@ class TileManaInfuser: ASJTile(), ISparkAttachable {
 		Botania.proxy.setSparkleFXNoClip(true)
 		for ((ci, c) in PYLONS.withIndex()) {
 			for (i in -1..83) {
-				v.set(0.0, 0.0, 0.1).rotate((-45 - 90 * ci).D, Vector3.oY).extend(i / 10.0).add(c[0].D, c[1].D, c[2].D)
+				v.set(0, 0, 0.1).rotateOY((-45 - 90 * ci).D).extend(i / 10.0).add(c[0].D, c[1].D, c[2].D)
 				Botania.proxy.sparkleFX(worldObj, xCoord.D + v.x + 0.5, yCoord.D + v.y + 0.65, zCoord.D + v.z + 0.5, 1f, 0.01f, 0.01f, 1f, 2)
 			}
 		}
@@ -156,9 +156,9 @@ class TileManaInfuser: ASJTile(), ISparkAttachable {
 				val r = Math.random().F * 0.3f
 				val g = 0.7f + Math.random().F * 0.3f
 				val b = 0.7f + Math.random().F * 0.3f
-				v.rotate(107.5, Vector3.oY)
+				v.rotateOY(107.5)
 				Botania.proxy.wispFX(worldObj, xCoord.D + c[0].D + 0.5, yCoord.D + c[1].D + 0.65, zCoord.D + c[2].D + 0.5, r, g, b, 0.5f, v.x.F, v.y.F, v.z.F, 0.5f)
-				v.rotate(-215.0, Vector3.oY)
+				v.rotateOY(-215)
 				Botania.proxy.wispFX(worldObj, xCoord.D + c[0].D + 0.5, yCoord.D + c[1].D + 0.65, zCoord.D + c[2].D + 0.5, r, g, b, 0.5f, v.x.F, v.y.F, v.z.F, 0.5f)
 			}
 	}
@@ -302,11 +302,11 @@ class TileManaInfuser: ASJTile(), ISparkAttachable {
 	
 	override fun canAttachSpark(stack: ItemStack) = true
 	
-	override fun attachSpark(entity: ISparkEntity) = Unit
-	
-	override fun getAttachedSpark(): ISparkEntity? {
-		return worldObj.getEntitiesWithinAABB(ISparkEntity::class.java, boundingBox().offset(0.0, 1.0, 0.0)).safeZeroGet(0) as? ISparkEntity
+	override fun attachSpark(entity: ISparkEntity?) {
+		entity.attachTile(this)
 	}
+	
+	override fun getAttachedSpark() = getEntitiesWithinAABB(worldObj, ISparkEntity::class.java, boundingBox().offset(0.0, 1.0, 0.0)).safeZeroGet(0)
 	
 	override fun areIncomingTranfersDone() = !hasValidPlatform() || !areItemsValid(items)
 	
@@ -338,7 +338,7 @@ class TileManaInfuser: ASJTile(), ISparkAttachable {
 	
 	companion object {
 		
-		const val DEBUG = false
+		val DEBUG = false
 		
 		const val MAX_MANA = TilePool.MAX_MANA * 8
 		
@@ -359,7 +359,6 @@ class TileManaInfuser: ASJTile(), ISparkAttachable {
 			mb.addComponent(0, 0, 0, Blocks.beacon, 0)
 			mb.addComponent(0, 2, 0, AlfheimBlocks.manaInfuser, 0)
 			mb.addComponent(0, 5, 0, ModBlocks.brewery, 0)
-			mb.setRenderOffset(0, 0, 0)
 			return mb.makeSet()
 		}
 		

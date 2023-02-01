@@ -6,8 +6,10 @@ import alexsocol.asjlib.render.ASJRenderHelper
 import alfheim.api.ModInfo
 import alfheim.api.entity.*
 import alfheim.api.lib.LibResourceLocations
+import alfheim.api.lib.LibResourceLocations.ResourceLocationIL
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.helper.*
+import baubles.common.lib.PlayerHandler
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.entity.player.EntityPlayer
@@ -15,13 +17,15 @@ import net.minecraft.potion.Potion
 import net.minecraft.util.ResourceLocation
 import org.lwjgl.opengl.GL11.*
 import vazkii.botania.api.item.IBaubleRender.Helper
+import vazkii.botania.api.item.IPhantomInkable
 import vazkii.botania.common.Botania
+import vazkii.botania.common.item.ModItems
 import java.awt.Color
 import kotlin.math.*
 
 object RenderWings {
 	
-	val textures: Map<String, ResourceLocation> by lazy { ContributorsPrivacyHelper.wings.map { (k, v) -> k to ResourceLocation(ModInfo.MODID, "textures/model/entity/wings/$v.png") }.toMap() }
+	val textures: Map<String, ResourceLocation> by lazy { ContributorsPrivacyHelper.wings.map { (k, v) -> k to ResourceLocationIL(ModInfo.MODID, "textures/model/entity/wings/$v.png") }.toMap() }
 	
 	@SideOnly(Side.CLIENT)
 	fun render(player: EntityPlayer) {
@@ -37,6 +41,9 @@ object RenderWings {
 		}
 		
 		if (player.isInvisible || player.isPotionActive(Potion.invisibility) || player.isInvisibleToPlayer(mc.thePlayer)) return
+		
+		val wings = PlayerHandler.getPlayerBaubles(player)[0]
+		if (wings?.item === ModItems.flightTiara!! && wings.meta != 0 && (wings.item as? IPhantomInkable)?.hasPhantomInk(wings) != true) return
 		
 		glPushMatrix()
 		glDisable(GL_CULL_FACE)

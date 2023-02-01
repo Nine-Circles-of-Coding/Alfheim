@@ -7,7 +7,7 @@ import alfheim.common.core.util.DamageSourceSpell
 import net.minecraft.entity.EntityLivingBase
 import kotlin.math.max
 
-class PotionBleeding: PotionAlfheim(AlfheimConfigHandler.potionIDBleeding, "bleeding", true, 0xFF0000) {
+object PotionBleeding: PotionAlfheim(AlfheimConfigHandler.potionIDBleeding, "bleeding", true, 0xFF0000) {
 	
 	override fun isReady(time: Int, ampl: Int) = time % (20 / max(1, ampl)) == 0
 	

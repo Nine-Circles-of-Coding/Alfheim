@@ -1,7 +1,7 @@
 package alfheim.common.block.mana
 
+import alexsocol.asjlib.*
 import alexsocol.asjlib.extendables.block.TileItemContainer
-import alexsocol.asjlib.mfloor
 import alfheim.api.lib.LibRenderIDs
 import alfheim.common.block.base.BlockContainerMod
 import alfheim.common.block.tile.TileManaAccelerator
@@ -42,10 +42,7 @@ class BlockManaAccelerator: BlockContainerMod(Material.rock), ILexiconable {
 		val stack = player.inventory.getCurrentItem()
 		if (player.isSneaking) return false
 		if (te.item != null) {
-			if (!world.isRemote) {
-				val entityitem = EntityItem(world, x + 0.5, y + 0.5, z + 0.5, te.item!!)
-				world.spawnEntityInWorld(entityitem)
-			}
+			if (!world.isRemote) EntityItem(world, x + 0.5, y + 0.5, z + 0.5, te.item!!).spawn()
 			te.item = null
 		}
 		if (stack != null && stack.stackSize == 1 && stack.item.isDamageable) {
@@ -68,7 +65,7 @@ class BlockManaAccelerator: BlockContainerMod(Material.rock), ILexiconable {
 		run {
 			val te = world.getTileEntity(x, y, z) as? TileItemContainer ?: return@run
 			if (te.item != null) {
-				world.spawnEntityInWorld(EntityItem(world, x + 0.5, y + 0.5, z + 0.5, te.item!!))
+				EntityItem(world, x + 0.5, y + 0.5, z + 0.5, te.item!!).spawn()
 				te.item = null
 			}
 		}

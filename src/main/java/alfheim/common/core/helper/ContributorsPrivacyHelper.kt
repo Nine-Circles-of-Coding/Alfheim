@@ -13,8 +13,6 @@ import java.nio.charset.Charset
 import java.security.*
 import java.util.*
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter
-import kotlin.collections.HashMap
-import kotlin.experimental.xor
 
 object ContributorsPrivacyHelper {
 	
@@ -27,7 +25,7 @@ object ContributorsPrivacyHelper {
 	val wings = HashMap<String, String>()
 	
 	init {
-		this.eventFML()
+		eventFML()
 		download()
 	}
 	
@@ -61,7 +59,7 @@ object ContributorsPrivacyHelper {
 		}
 	}
 	
-	private fun connect(file: String, action: List<String>.() -> Unit) {
+	fun connect(file: String, action: List<String>.() -> Unit) {
 		URL("https://bitbucket.org/AlexSocol/alfheim/raw/master/$file").openConnection().also { it.connectTimeout = 5000; it.readTimeout = 5000 }.getInputStream().bufferedReader().readLines().also { action(it) }
 	}
 	
@@ -101,7 +99,7 @@ object ContributorsPrivacyHelper {
 		
 		if (MinecraftServer.getServer()?.isSinglePlayer == true) return
 		
-		AlfheimCore.network.sendTo(MessageContributor(true), player)
+		AlfheimCore.network.sendTo(MessageContributor(isRequest = true), player)
 		
 		if (isRegistered(player.commandSenderName))
 			authTimeout[player.commandSenderName] = AlfheimConfigHandler.authTimeout
@@ -117,11 +115,11 @@ object ContributorsPrivacyHelper {
 
 object HashHelper {
 	
-	fun hash(str: String?): String {
+	fun hash(str: String?, salt: String = "soyeahthatsjustarandomuselesssecuritysaltthingsoyeah"): String {
 		if (str != null)
 			try {
 				val md = MessageDigest.getInstance("SHA-256")
-				return HexBinaryAdapter().marshal(md.digest(salt(str).toByteArray(Charset.forName("UTF-8"))))
+				return HexBinaryAdapter().marshal(md.digest(salt(str, salt).toByteArray(Charset.forName("UTF-8"))))
 			} catch (e: NoSuchAlgorithmException) {
 				e.printStackTrace()
 			}
@@ -130,22 +128,22 @@ object HashHelper {
 	}
 	
 	// Might as well be called sugar given it's not secure at all :D
-	fun salt(str: String): String {
-		val salt = str + "soyeahthatsjustarandomuselesssecuritysaltthingsoyeah"
-		val rand = Random(salt.length.toLong())
-		val l = salt.length
+	fun salt(str: String, salt: String): String {
+		val salted = str + salt
+		val rand = Random(salted.length.toLong())
+		val l = salted.length
 		val steps = rand.nextInt(l)
-		val chrs = salt.toCharArray()
+		val chars = salted.toCharArray()
 		for (i in 0 until steps) {
 			val indA = rand.nextInt(l)
 			var indB: Int
 			do {
 				indB = rand.nextInt(l)
 			} while (indB == indA)
-			val c = (chrs[indA].code xor chrs[indB].code).toChar()
-			chrs[indA] = c
+			val c = (chars[indA].code xor chars[indB].code).toChar()
+			chars[indA] = c
 		}
 		
-		return String(chrs)
+		return String(chars)
 	}
 }

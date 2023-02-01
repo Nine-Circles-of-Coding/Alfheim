@@ -1,8 +1,8 @@
 package alfheim
 
-import alexsocol.patcher.KotlinAdapter
+import alexsocol.patcher.*
 import alfheim.api.ModInfo.MODID
-import alfheim.common.core.asm.AlfheimModularLoader
+import alfheim.client.core.handler.PacketHandlerClient
 import alfheim.common.core.command.*
 import alfheim.common.core.handler.*
 import alfheim.common.core.handler.ragnarok.RagnarokHandler
@@ -25,15 +25,10 @@ import vazkii.botania.common.Botania
 import java.util.*
 
 @Suppress("UNUSED_PARAMETER")
-@Mod(modid = MODID, version = "BETA", dependencies = "required-after:Botania", useMetadata = true, guiFactory = "$MODID.client.gui.GUIFactory", modLanguageAdapter = KotlinAdapter.className)
+@Mod(modid = MODID, version = "RC", dependencies = "required-after:Botania", useMetadata = true, guiFactory = "$MODID.client.gui.GUIFactory", modLanguageAdapter = KotlinAdapter.className)
 object AlfheimCore {
 	
-	const val ENABLE_RAGNAROK = false
-	
-	@Instance(MODID)
-	lateinit var instance: AlfheimCore
-	
-	@field:SidedProxy(clientSide = "$MODID.client.core.proxy.ClientProxy", serverSide = "$MODID.common.core.proxy.CommonProxy")
+	@KotlinProxy(clientSide = "$MODID.client.core.proxy.ClientProxy", serverSide = "$MODID.common.core.proxy.CommonProxy")
 	lateinit var proxy: CommonProxy
 	
 	@Metadata(MODID)
@@ -54,29 +49,23 @@ object AlfheimCore {
 	
 	// do not reassign this unless you know what you are doing
 	var winter: Boolean
-	
-	/** Today's month */
-	val month: Int
-	
-	/** Today's day of month */
-	val date: Int
+		get() {
+			return when {
+				RagnarokHandler.winter -> true
+				RagnarokHandler.summer -> false
+				else                   -> field
+			}
+		}
 	
 	init {
 		AlfheimTab
 		
-		val calendar = Calendar.getInstance()
-		month = calendar[2] + 1
-		date = calendar[5]
-		
-		jingleTheBells = (month == 12 && date >= 16 || month == 1 && date <= 8)
-		winter = month in arrayOf(1, 2, 12)
+		jingleTheBells = (TimeHandler.month == 12 && TimeHandler.day >= 16 || TimeHandler.month == 1 && TimeHandler.day <= 8)
+		winter = TimeHandler.month in arrayOf(1, 2, 12, 13)
 	}
 	
 	@EventHandler
 	fun preInit(e: FMLPreInitializationEvent) {
-		if (AlfheimModularLoader.linkSpecified && !Loader.isModLoaded("alfmod"))
-			throw IllegalStateException("Alfheim Modular was not loaded, please, relaunch your game.")
-		
 		MineTweakerLoaded = Loader.isModLoaded("MineTweaker3")
 		NEILoaded = Loader.isModLoaded("NotEnoughItems")
 		TiCLoaded = Loader.isModLoaded("TConstruct")
@@ -118,45 +107,40 @@ object AlfheimCore {
 	@EventHandler
 	fun starting(e: FMLServerStartingEvent) {
 		save = e.server.entityWorld.saveHandler.worldDirectory.absolutePath
+		
 		if (AlfheimConfigHandler.enableElvenStory) AlfheimConfigHandler.initWorldCoordsForElvenStory(save)
 		AlfheimConfigHandler.syncConfig()
-		CardinalSystem.load(save)
-		if (ENABLE_RAGNAROK) RagnarokHandler.load(save)
 		e.registerServerCommand(CommandAlfheim)
+		e.registerServerCommand(CommandDebug)
 		if (MineTweakerLoaded) e.registerServerCommand(CommandMTSpellInfo)
 	}
 	
-	@EventHandler
-	fun stopping(e: FMLServerStoppingEvent) {
-		CardinalSystem.save(save)
-		if (ENABLE_RAGNAROK) RagnarokHandler.save(save)
-	}
-	
 	fun registerPackets() {
-		network.registerMessage(Message0dSHandler::class.java, Message0dS::class.java, nextPacketID++, Side.SERVER)
-		network.registerMessage(MessageHeimdallBlinkHandler::class.java, MessageHeimdallBlink::class.java, nextPacketID++, Side.SERVER)
-		network.registerMessage(MessageHotSpellSHandler::class.java, MessageHotSpellS::class.java, nextPacketID++, Side.SERVER)
-		network.registerMessage(MessageKeyBindHandler::class.java, MessageKeyBindS::class.java, nextPacketID++, Side.SERVER)
-		network.registerMessage(MessageRaceSelectionHandler::class.java, MessageRaceSelection::class.java, nextPacketID++, Side.SERVER)
+		network.registerMessage(PacketHandlerServer, Message0dS::class.java, nextPacketID++, Side.SERVER)
+		network.registerMessage(PacketHandlerServer, MessageContributor::class.java, nextPacketID++, Side.SERVER)
+		network.registerMessage(PacketHandlerServer, MessageHotSpellS::class.java, nextPacketID++, Side.SERVER)
+		network.registerMessage(PacketHandlerServer, MessageKeyBindS::class.java, nextPacketID++, Side.SERVER)
+		network.registerMessage(PacketHandlerServer, MessageRaceSelection::class.java, nextPacketID++, Side.SERVER)
+		network.registerMessage(PacketHandlerServer, MessageNI::class.java, nextPacketID++, Side.SERVER)
 		
-		network.registerMessage(MessageContributorHandler::class.java, MessageContributor::class.java, nextPacketID++, Side.SERVER)
-		network.registerMessage(MessageContributorHandler::class.java, MessageContributor::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, Message0dC::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, Message1d::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, Message1l::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, Message2d::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, Message3d::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, MessageNI::class.java, nextPacketID++, Side.CLIENT)
 		
-		network.registerMessage(Message0dCHandler::class.java, Message0dC::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(Message1dHandler::class.java, Message1d::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(Message1lHandler::class.java, Message1l::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(Message2dHandler::class.java, Message2d::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(Message3dHandler::class.java, Message3d::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(MessageNIHandler::class.java, MessageNI::class.java, nextPacketID++, Side.CLIENT)
-		
-		network.registerMessage(MessageEffectHandler::class.java, MessageEffect::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(MessageEffectLightningHandler::class.java, MessageEffectLightning::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(MessageHotSpellCHandler::class.java, MessageHotSpellC::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(MessagePartyHandler::class.java, MessageParty::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(MessageSkinInfoHandler::class.java, MessageSkinInfo::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(MessageSpellParamsHandler::class.java, MessageSpellParams::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(MessageTileItemHandler::class.java, MessageTileItem::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(MessageTimeStopHandler::class.java, MessageTimeStop::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(MessageVisualEffectHandler::class.java, MessageVisualEffect::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, MessageContributor::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, MessageEffect::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, MessageGleipnirLeash::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, MessageHotSpellC::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, MessageParty::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, MessageRaceInfo::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, MessageRedstoneSignalsSync::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, MessageSkinInfo::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, MessageSpellParams::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, MessageTileItem::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, MessageTimeStop::class.java, nextPacketID++, Side.CLIENT)
+		network.registerMessage(PacketHandlerClient, MessageVisualEffect::class.java, nextPacketID++, Side.CLIENT)
 	}
 }

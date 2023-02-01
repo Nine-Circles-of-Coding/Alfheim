@@ -2,6 +2,7 @@ package alfheim.common.item.equipment.bauble
 
 import alexsocol.asjlib.*
 import alfheim.api.lib.LibResourceLocations
+import alfheim.common.core.handler.EventHandler.isMagical
 import alfheim.common.core.util.AlfheimTab
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.renderer.texture.IIconRegister
@@ -27,35 +28,35 @@ class ItemBalanceCloak: ItemHolyCloak("BalanceCloak") {
 	}
 	
 	override fun effectOnDamage(event: LivingHurtEvent, player: EntityPlayer, stack: ItemStack?): Boolean {
-		if (!event.source.isMagicDamage) {
-			if (event.source.entity === player) return false
-			
-			event.ammount /= 2f
-			
-			event.source.entity?.attackEntityFrom(DamageSource.causeIndirectMagicDamage(player, player), event.ammount)
-			
-			if (event.ammount > player.health)
-				event.ammount = player.health - 1
-			
-			player.playSoundAtEntity("botania:holyCloak", 1f, 1f)
-			
-			for (i in 0..29) {
-				val x = player.posX + Math.random() * player.width.D * 2.0 - player.width
-				val y = player.posY + Math.random() * player.height
-				val z = player.posZ + Math.random() * player.width.D * 2.0 - player.width
-				val green = Math.random() > 0.5
-				Botania.proxy.sparkleFX(player.worldObj, x, y, z, 0.3f, if (green) 1f else 0.3f, if (green) 0.3f else 1f, 0.8f + Math.random().F * 0.4f, 3)
-			}
-			return true
+		if (event.source.isMagical)
+			return false
+		
+		if (event.source.entity === player) return false
+		
+		event.ammount /= 2f
+		
+		event.source.entity?.attackEntityFrom(DamageSource.causeIndirectMagicDamage(player, player), event.ammount)
+		
+		if (event.ammount > player.health)
+			event.ammount = player.health - 1
+		
+		player.playSoundAtEntity("botania:holyCloak", 1f, 1f)
+		
+		for (i in 0..29) {
+			val x = player.posX + Math.random() * player.width.D * 2.0 - player.width
+			val y = player.posY + Math.random() * player.height
+			val z = player.posZ + Math.random() * player.width.D * 2.0 - player.width
+			val green = Math.random() > 0.5
+			Botania.proxy.sparkleFX(player.worldObj, x, y, z, 0.3f, if (green) 1f else 0.3f, if (green) 0.3f else 1f, 0.8f + Math.random().F * 0.4f, 3)
 		}
 		
-		return false
+		return true
 	}
 	
 	@SideOnly(Side.CLIENT)
 	override fun getRenderTexture() = LibResourceLocations.cloakBalance
 	
-	override fun getIconFromDamage(meta: Int) = itemIcon
+	override fun getIconFromDamage(meta: Int) = itemIcon!!
 	
 	companion object {
 		

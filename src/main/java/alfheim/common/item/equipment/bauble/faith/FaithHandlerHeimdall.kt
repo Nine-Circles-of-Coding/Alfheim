@@ -5,17 +5,19 @@ import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.security.InteractionSecurity
 import alfheim.AlfheimCore
 import alfheim.api.item.ColorOverrideHelper
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.item.*
 import alfheim.common.item.equipment.bauble.*
 import alfheim.common.item.equipment.bauble.faith.IFaithHandler.FaithBauble.*
 import alfheim.common.item.relic.ItemHeimdallRing
-import alfheim.common.network.MessageHeimdallBlink
+import alfheim.common.network.Message0dS
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.potion.*
 import net.minecraftforge.event.entity.living.LivingHurtEvent
+import net.minecraftforge.fluids.IFluidBlock
 import vazkii.botania.api.mana.ManaItemHandler
 import vazkii.botania.common.Botania
 import vazkii.botania.common.block.ModBlocks
@@ -31,6 +33,8 @@ object FaithHandlerHeimdall: IFaithHandler {
 	}
 	
 	override fun onWornTick(stack: ItemStack, player: EntityPlayer, type: IFaithHandler.FaithBauble) {
+		if (RagnarokHandler.blockedPowers[4]) return
+		
 		when (type) {
 			EMBLEM -> onEmblemWornTick(stack, player)
 			CLOAK  -> onCloakWornTick(player)
@@ -44,7 +48,7 @@ object FaithHandlerHeimdall: IFaithHandler {
 		val nv = player.getActivePotionEffect(Potion.nightVision)
 		
 		if (!b && nv != null && nv.duration > 50) return
-		
+
 		if (!player.worldObj.isRemote && ManaItemHandler.requestManaExact(stack, player, 1, true)) {
 			player.addPotionEffect(PotionEffect(Potion.nightVision.id, 100, 0))
 			if (b) player.removePotionEffect(Potion.blindness.id)
@@ -52,36 +56,25 @@ object FaithHandlerHeimdall: IFaithHandler {
 	}
 	
 	fun onCloakWornTick(player: EntityPlayer) {
-		if (player.worldObj.isRemote && player.isSprinting && player.jumpTicks == 10) {
-			val look = player.lookVec
-			val dist = 6.0
-			val (x, y, z) = Vector3.fromEntity(player).add(Vector3(look).mul(dist))
-			
-			if (!player.worldObj.getBlock(x.I, y.I, z.I).isNormalCube && !player.worldObj.getBlock(x.I, y.I + 1, z.I).isNormalCube) {
-				player.isJumping = false
-				AlfheimCore.network.sendToServer(MessageHeimdallBlink())
-			}
-		}
-	}
-	
-	fun getMotionVec(e: Entity): Vector3 {
-		if (e is EntityPlayer) {
-			val last = Vector3(e.prevPosX, e.prevPosY, e.prevPosZ)
-			val vec = Vector3.fromEntity(e).sub(last)
-			if (vec.length() < 10)
-				return vec
-		}
+		if (!player.worldObj.isRemote || !player.isSprinting || player.jumpTicks != 10) return
 		
-		return Vector3(e.motionX, e.motionY, e.motionZ)
+		val look = player.lookVec
+		val dist = 6.0
+		val (x, y, z) = Vector3.fromEntity(player).add(Vector3(look).mul(dist))
+		
+		if (!player.worldObj.getBlock(x.I, y.I, z.I).isNormalCube && !player.worldObj.getBlock(x.I, y.I + 1, z.I).isNormalCube) {
+			player.isJumping = false
+			AlfheimCore.network.sendToServer(Message0dS(Message0dS.M0ds.HEIMBLINK))
+		}
 	}
 	
 	fun bifrostPlatform(player: EntityPlayer, emblem: ItemStack) {
-		if (player.capabilities.isFlying) return
+		if (RagnarokHandler.ragnarok || player.capabilities.isFlying) return
+		
 		val world = player.worldObj
 		if (world.isRemote) return
 		
 		if (player.heldItem?.item !== ModItems.rainbowRod) return
-		
 		if (!ManaItemHandler.requestManaExact(emblem, player, 10, false)) return
 		val motVec = getMotionVec(player)
 		val (x, y, z) = Vector3(player.posX + motVec.x, (player.posY + if (player.isSneaking) -2.99 else -0.99).mfloor(), player.posZ + motVec.z).mf()
@@ -96,8 +89,9 @@ object FaithHandlerHeimdall: IFaithHandler {
 					continue
 				
 				val block = world.getBlock(x + i, y, z + k)
+				if (block is IFluidBlock) continue
 				
-				if (block.isAir(world, x + i, y, z + k)) {
+				if (block.isAir(world, x + i, y, z + k) || block.isReplaceable(world, x + i, y, z + k)) {
 					world.setBlock(x + i, y, z + k, ModBlocks.bifrost)
 					
 					val tileBifrost = world.getTileEntity(x + i, y, z + k) as TileBifrost
@@ -116,8 +110,21 @@ object FaithHandlerHeimdall: IFaithHandler {
 			}
 	}
 	
+	fun getMotionVec(e: Entity): Vector3 {
+		if (e is EntityPlayer) {
+			val last = Vector3(e.prevPosX, e.prevPosY, e.prevPosZ)
+			val vec = Vector3.fromEntity(e).sub(last)
+			if (vec.length() < 10)
+				return vec
+		}
+		
+		return Vector3(e.motionX, e.motionY, e.motionZ)
+	}
+	
 	@SubscribeEvent
 	fun onLivingHurt(e: LivingHurtEvent) {
+		if (RagnarokHandler.blockedPowers[4]) return
+		
 		if (e.source.damageType != "player" || Math.random() > 0.1) return
 		val player = e.source.entity as? EntityPlayer ?: return
 		if (ItemPriestEmblem.getEmblem(4, player) == null) return
@@ -126,6 +133,8 @@ object FaithHandlerHeimdall: IFaithHandler {
 	}
 	
 	override fun getGodPowerLevel(player: EntityPlayer): Int {
+		if (RagnarokHandler.blockedPowers[4]) return 0
+		
 		var lvl = 0
 		
 		if (player.inventory.hasItemStack(ItemStack(AlfheimItems.gjallarhorn))) lvl += 4

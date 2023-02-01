@@ -3,13 +3,11 @@ package alfheim.common.spell.sound
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.security.InteractionSecurity
-import alfheim.AlfheimCore
 import alfheim.api.entity.EnumRace
 import alfheim.api.spell.SpellBase
 import alfheim.common.core.handler.CardinalSystem.PartySystem
-import alfheim.common.network.MessageEffect
 import net.minecraft.entity.EntityLivingBase
-import net.minecraft.potion.*
+import net.minecraft.potion.Potion
 
 object SpellDragonGrowl: SpellBase("dragongrowl", EnumRace.POOKA, 12000, 2400, 20) {
 	
@@ -21,24 +19,22 @@ object SpellDragonGrowl: SpellBase("dragongrowl", EnumRace.POOKA, 12000, 2400, 2
 		get() = arrayOf(duration, efficiency, radius)
 	
 	override fun performCast(caster: EntityLivingBase): SpellCastResult {
-		val list = caster.worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, caster.boundingBox.expand(radius)) as List<EntityLivingBase>
+		val list = getEntitiesWithinAABB(caster.worldObj, EntityLivingBase::class.java, caster.boundingBox.expand(radius))
 		
 		if (list.isEmpty()) return SpellCastResult.NOTARGET
 		
 		val result = checkCast(caster)
 		if (result != SpellCastResult.OK) return result
 		
-		for (living in list) {
-			if (PartySystem.mobsSameParty(caster, living) || Vector3.entityDistance(living, caster) > radius * 2) continue
-			if (!InteractionSecurity.canHurtEntity(caster, living)) continue
+		list.forEach {
+			if (PartySystem.mobsSameParty(caster, it) || Vector3.entityDistance(it, caster) > radius * 2) return@forEach
+			if (!InteractionSecurity.canHurtEntity(caster, it)) return@forEach
 			
-			living.addPotionEffect(PotionEffect(Potion.blindness.id, duration, 0, true))
-			AlfheimCore.network.sendToAll(MessageEffect(living.entityId, Potion.blindness.id, duration, 0))
-			living.addPotionEffect(PotionEffect(Potion.moveSlowdown.id, duration, (efficiency * 2.5).I, true))
-			AlfheimCore.network.sendToAll(MessageEffect(living.entityId, Potion.moveSlowdown.id, duration, (efficiency * 2.5).I))
-			living.addPotionEffect(PotionEffect(Potion.weakness.id, duration, efficiency.I, true))
-			AlfheimCore.network.sendToAll(MessageEffect(living.entityId, Potion.moveSlowdown.id, duration, efficiency.I))
+			it.addPotionEffect(PotionEffectU(Potion.blindness.id, duration))
+			it.addPotionEffect(PotionEffectU(Potion.moveSlowdown.id, duration, (efficiency * 2.5).I))
+			it.addPotionEffect(PotionEffectU(Potion.weakness.id, duration, efficiency.I))
 		}
+		
 		caster.worldObj.playSoundEffect(caster.posX, caster.posY, caster.posZ, "mob.enderdragon.growl", 100f, 0.8f + caster.worldObj.rand.nextFloat() * 0.2f)
 		return result
 	}

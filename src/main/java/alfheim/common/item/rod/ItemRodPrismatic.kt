@@ -3,7 +3,7 @@ package alfheim.common.item.rod
 import alexsocol.asjlib.*
 import alfheim.client.core.helper.IconHelper
 import alfheim.common.block.AlfheimBlocks
-import alfheim.common.block.tile.TileRainbowManaFlame
+import alfheim.common.block.tile.*
 import alfheim.common.item.*
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.renderer.texture.IIconRegister
@@ -47,22 +47,17 @@ class ItemRodPrismatic: ItemMod("rodRainbowLight"), IManaUsingItem, IPhantomInka
 			return true
 		}
 		val toPlace = ItemStack(AlfheimBlocks.rainbowFlame)
-		if (ManaItemHandler.requestManaExactForTool(stack, player, COST, false)) {
-			val dir = ForgeDirection.getOrientation(side)
-			if (world.getBlock(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ).isAir(world, x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ)) {
-				toPlace.tryPlaceItemIntoWorld(player, world, x, y, z, side, hitX, hitY, hitZ)
-				if (toPlace.stackSize == 0) {
-					world.playSoundEffect(x.D + 0.5, y.D + 0.5, z.D + 0.5, "fire.ignite", 0.3F, Math.random().F * 0.4F + 0.8F)
-					ManaItemHandler.requestManaExactForTool(stack, player, COST, true)
-					val tile = world.getTileEntity(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ)
-					if (tile is TileRainbowManaFlame) {
-						tile.invisible = hasPhantomInk(stack)
-					}
-				}
-				return true
-			}
-		}
-		return false
+		if (!ManaItemHandler.requestManaExactForTool(stack, player, COST, false)) return false
+		val dir = ForgeDirection.getOrientation(side)
+		if (!world.getBlock(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ).isAir(world, x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ)) return false
+		toPlace.tryPlaceItemIntoWorld(player, world, x, y, z, side, hitX, hitY, hitZ)
+		if (toPlace.stackSize != 0) return true
+		world.playSoundEffect(x.D + 0.5, y.D + 0.5, z.D + 0.5, "fire.ignite", 0.3F, Math.random().F * 0.4F + 0.8F)
+		ManaItemHandler.requestManaExactForTool(stack, player, COST, true)
+		val tile = world.getTileEntity(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ)
+		if (tile !is TileRainbowManaFlame) return true
+		tile.invisible = hasPhantomInk(stack)
+		return true
 	}
 	
 	fun addStringToTooltip(s: String, tooltip: MutableList<Any?>) {

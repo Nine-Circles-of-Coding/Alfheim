@@ -18,8 +18,7 @@ class EntitySpellHarp(world: World): Entity(world), ITimeStopSpecific {
 	
 	var caster: EntityLivingBase? = null
 	
-	override val isImmune: Boolean
-		get() = false
+	override val isImmune = false
 	
 	init {
 		setSize(0.1f, 0.1f)

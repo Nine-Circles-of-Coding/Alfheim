@@ -4,12 +4,13 @@ import alfheim.api.*
 import alfheim.api.crafting.recipe.RecipeManaInfuser
 import alfheim.common.integration.minetweaker.MinetweakerAlfheimConfig.getObjects
 import alfheim.common.integration.minetweaker.MinetweakerAlfheimConfig.getStack
-import alfheim.common.lexicon.page.PageManaInfusorRecipe
+import alfheim.common.lexicon.page.PageManaInfuserRecipe
 import minetweaker.*
 import minetweaker.api.item.*
 import net.minecraft.item.ItemStack
 import stanhebben.zenscript.annotations.*
 import vazkii.botania.api.BotaniaAPI
+import java.util.*
 
 @ZenClass("mods." + ModInfo.MODID + ".ManaInfuser")
 object MTHandlerManaInfuser {
@@ -28,10 +29,10 @@ object MTHandlerManaInfuser {
 	
 	@ZenMethod
 	@JvmStatic
-	fun addRecipePage(entryName: String, pageUnlocalizedName: String, pageIndex: Int, outputStack: ItemStack, recipeIndex: Int) {
+	fun addRecipePage(entryName: String, pageUnlocalizedName: String, pageIndex: Int, outputStack: IItemStack, recipeIndex: Int) {
 		val entry = BotaniaAPI.getAllEntries().first { it.unlocalizedName == entryName }
-		val recipe = AlfheimAPI.manaInfuserRecipes.filter { ItemStack.areItemStacksEqual(it.output, outputStack) }[recipeIndex]
-		val page = PageManaInfusorRecipe(pageUnlocalizedName, recipe)
+		val recipe = AlfheimAPI.manaInfuserRecipes.filter { ItemStack.areItemStacksEqual(it.output, getStack(outputStack)) }[recipeIndex]
+		val page = PageManaInfuserRecipe(pageUnlocalizedName, recipe)
 		entry.pages.add(pageIndex, page)
 		page.onPageAdded(entry, pageIndex)
 	}

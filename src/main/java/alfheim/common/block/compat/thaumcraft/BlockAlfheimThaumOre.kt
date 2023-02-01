@@ -1,6 +1,7 @@
 package alfheim.common.block.compat.thaumcraft
 
 import alfheim.common.integration.thaumcraft.ThaumcraftAlfheimModule
+import alfheim.common.lexicon.AlfheimLexiconData
 import cpw.mods.fml.relauncher.*
 import net.minecraft.block.Block
 import net.minecraft.block.material.Material
@@ -14,9 +15,10 @@ import net.minecraft.world.*
 import net.minecraftforge.common.util.ForgeDirection
 import thaumcraft.client.lib.UtilsFX
 import thaumcraft.common.config.ConfigItems
+import vazkii.botania.api.lexicon.*
 import java.util.*
 
-class BlockAlfheimThaumOre: Block(Material.rock) {
+class BlockAlfheimThaumOre: Block(Material.rock), ILexiconable {
 	
 	val rand = Random()
 	
@@ -50,14 +52,8 @@ class BlockAlfheimThaumOre: Block(Material.rock) {
 	
 	@SideOnly(Side.CLIENT)
 	override fun getSubBlocks(item: Item, tab: CreativeTabs?, subs: MutableList<Any?>) {
-		subs.add(ItemStack(item, 1, 0))
-		subs.add(ItemStack(item, 1, 1))
-		subs.add(ItemStack(item, 1, 2))
-		subs.add(ItemStack(item, 1, 3))
-		subs.add(ItemStack(item, 1, 4))
-		subs.add(ItemStack(item, 1, 5))
-		subs.add(ItemStack(item, 1, 6))
-		subs.add(ItemStack(item, 1, 7))
+		for (i in 0..7)
+			subs.add(ItemStack(item, 1, i))
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -103,6 +99,8 @@ class BlockAlfheimThaumOre: Block(Material.rock) {
 	override fun renderAsNormalBlock() = false
 	
 	override fun getRenderType() = ThaumcraftAlfheimModule.renderIDOre
+	
+	override fun getEntry(world: World?, x: Int, y: Int, z: Int, player: EntityPlayer?, lexicon: ItemStack?) = AlfheimLexiconData.ores
 	
 	companion object {
 		

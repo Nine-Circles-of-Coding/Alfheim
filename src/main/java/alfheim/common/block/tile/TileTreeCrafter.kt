@@ -5,6 +5,7 @@ import alexsocol.asjlib.extendables.block.ASJTile
 import alfheim.api.AlfheimAPI
 import alfheim.api.crafting.recipe.RecipeTreeCrafting
 import alfheim.common.block.AlfheimBlocks
+import alfheim.common.core.asm.hook.extender.SparkExtender.attachTile
 import alfheim.common.lexicon.MultiblockComponentRainbow
 import net.minecraft.block.Block
 import net.minecraft.client.Minecraft
@@ -23,7 +24,6 @@ import vazkii.botania.client.core.handler.HUDHandler
 import vazkii.botania.client.core.helper.RenderHelper
 import vazkii.botania.common.Botania
 import vazkii.botania.common.block.ModBlocks
-import java.util.*
 import kotlin.math.*
 
 class TileTreeCrafter: ASJTile(), ISparkAttachable {
@@ -389,9 +389,7 @@ class TileTreeCrafter: ASJTile(), ISparkAttachable {
 		worldObj.setTileEntity(xCoord, yCoord - 3, zCoord, tile)
 	}
 	
-	/**
-	 * ISparkAttachable overrides
-	 */
+	/* ISparkAttachable overrides */
 	
 	override fun canAttachSpark(p0: ItemStack?) = true
 	
@@ -413,9 +411,11 @@ class TileTreeCrafter: ASJTile(), ISparkAttachable {
 		this.mana = min(manaRequired, this.mana + mana)
 	}
 	
-	override fun attachSpark(entity: ISparkEntity) = Unit
+	override fun attachSpark(entity: ISparkEntity?) {
+		entity.attachTile(this)
+	}
 	
 	override fun getAttachedSpark(): ISparkEntity? {
-		return worldObj.getEntitiesWithinAABB(ISparkEntity::class.java, boundingBox().offset(0.0, 1.0, 0.0)).safeZeroGet(0) as? ISparkEntity
+		return getEntitiesWithinAABB(worldObj, ISparkEntity::class.java, boundingBox().offset(0.0, 1.0, 0.0)).safeZeroGet(0)
 	}
 }

@@ -1,11 +1,10 @@
 package alfheim.common.potion
 
-import alfheim.AlfheimCore
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.spell.water.SpellWellOLife
 import net.minecraft.entity.EntityLivingBase
 
-class PotionWellOLife: PotionAlfheim(AlfheimConfigHandler.potionIDWellOLife, "wellolife", false, 0x00FFFF) {
+object PotionWellOLife: PotionAlfheim(AlfheimConfigHandler.potionIDWellOLife, "wellolife", false, 0x00FFFF) {
 	
 	override fun isReady(time: Int, ampl: Int) = AlfheimConfigHandler.enableMMO && time % 10 == 0
 	

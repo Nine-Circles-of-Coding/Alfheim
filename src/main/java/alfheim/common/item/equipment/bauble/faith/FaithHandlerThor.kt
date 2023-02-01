@@ -5,6 +5,7 @@ import alexsocol.asjlib.math.Vector3
 import alfheim.api.item.ColorOverrideHelper
 import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.core.handler.*
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.item.AlfheimItems
 import alfheim.common.item.equipment.bauble.*
 import alfheim.common.item.equipment.bauble.faith.IFaithHandler.FaithBauble
@@ -41,25 +42,36 @@ object FaithHandlerThor: IFaithHandler {
 	}
 	
 	override fun onEquipped(stack: ItemStack, player: EntityPlayer, type: FaithBauble) {
-		if (type == EMBLEM) player.getEntityAttribute(SharedMonsterAttributes.movementSpeed).applyModifier(mod)
+		if (RagnarokHandler.blockedPowers[0]) return
+		
+		if (type == EMBLEM) {
+			player.getEntityAttribute(SharedMonsterAttributes.movementSpeed).removeModifier(mod)
+			player.getEntityAttribute(SharedMonsterAttributes.movementSpeed).applyModifier(mod)
+		}
 	}
 	
 	override fun onUnequipped(stack: ItemStack, player: EntityPlayer, type: FaithBauble) {
+		if (RagnarokHandler.blockedPowers[0]) return
+		
 		if (type == EMBLEM) player.getEntityAttribute(SharedMonsterAttributes.movementSpeed).removeModifier(mod)
 	}
 	
 	override fun onWornTick(stack: ItemStack, player: EntityPlayer, type: FaithBauble) {
+		if (RagnarokHandler.blockedPowers[0]) return
+		
 		if (stack.cooldown > 0 && ManaItemHandler.requestManaExact(stack, player, 1, true))
 			stack.cooldown--
 		
 		if (type == CLOAK && stack.cooldown <= 0 && player.health < (player.maxHealth * 0.5f)) {
-			player.addPotionEffect(PotionEffect(AlfheimConfigHandler.potionIDLightningShield, getGodPowerLevel(player) * 20))
+			player.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDLightningShield, getGodPowerLevel(player) * 20))
 			stack.cooldown = 1200
 		}
 	}
 	
 	@SubscribeEvent
 	fun powerhit(e: LivingHurtEvent) {
+		if (RagnarokHandler.blockedPowers[0]) return
+		
 		val player = e.source.entity as? EntityPlayer ?: return
 		if (player.heldItem?.item !is ItemAxe && player.heldItem?.item !== AlfheimItems.mjolnir) return
 		if (ItemPriestEmblem.getEmblem(0, player) == null) return
@@ -72,17 +84,22 @@ object FaithHandlerThor: IFaithHandler {
 	}
 	
 	fun traceLightning(from: Entity, to: Entity) {
-		if (ASJUtilities.isServer) {
-			val (x, y, z) = Vector3.fromEntityCenter(from)
-			val (x2, y2, z2) = Vector3.fromEntityCenter(to)
-			val color = if (from is EntityPlayer) ColorOverrideHelper.getColor(from, 0x0079C4) else 0x0079C4
-			val innerColor = Color(color).brighter().brighter().rgb
-			VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.LIGHTNING, from.dimension, x, y, z, x2, y2, z2, 1.0, color.D, innerColor.D)
-		}
+		if (RagnarokHandler.blockedPowers[0]) return
+		
+		if (!ASJUtilities.isServer) return
+		
+		val (x, y, z) = Vector3.fromEntityCenter(from)
+		val (x2, y2, z2) = Vector3.fromEntityCenter(to)
+		val color = if (from is EntityPlayer) ColorOverrideHelper.getColor(from, 0x0079C4) else 0x0079C4
+		val innerColor = Color(color).brighter().brighter().rgb
+		
+		VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.LIGHTNING, from.dimension, x, y, z, x2, y2, z2, 1.0, color.D, innerColor.D)
 	}
 	
 	@SubscribeEvent(receiveCanceled = true)
 	fun fallhit(e: LivingAttackEvent) {
+		if (RagnarokHandler.blockedPowers[0]) return
+		
 		if (e.source.damageType != DamageSource.fall.damageType) return
 		val player = e.entityLiving as? EntityPlayer ?: return
 		val cloak = ItemPriestCloak.getCloak(0, player) ?: return
@@ -90,7 +107,7 @@ object FaithHandlerThor: IFaithHandler {
 		
 		if (!ManaItemHandler.requestManaExact(cloak, player, e.ammount.I, true)) return
 		
-		val list = player.worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, getBoundingBox(player.posX, player.posY + 1, player.posZ).expand(5.0, 1.5, 5.0)) as MutableList<EntityLivingBase>
+		val list = getEntitiesWithinAABB(player.worldObj, EntityLivingBase::class.java, getBoundingBox(player.posX, player.posY + 1, player.posZ).expand(5.0, 1.5, 5.0))
 		list.remove(player)
 		val dmg = e.ammount / list.count { it.onGround }
 		for (t in list) if (t.onGround) t.attackEntityFrom(e.source, dmg)
@@ -98,6 +115,8 @@ object FaithHandlerThor: IFaithHandler {
 	}
 	
 	override fun getGodPowerLevel(player: EntityPlayer): Int {
+		if (RagnarokHandler.blockedPowers[0]) return 0
+		
 		var lvl = 0
 		
 		if (player.inventory.hasItemStack(ItemStack(AlfheimItems.mjolnir))) lvl += 4
@@ -114,13 +133,13 @@ object FaithHandlerThor: IFaithHandler {
 	}
 	
 	override fun doParticles(stack: ItemStack, player: EntityPlayer) {
-		if (player.ticksExisted % 10 == 0) {
-			val playerHead = Bector3.fromEntityCenter(player).add(0.0, 0.75, 0.0)
-			val (sx, sy, sz) = IFaithHandler.getHeadOrientation(player)
-			val playerShift = playerHead.copy().add(sx, sy, sz)
-			val color = ColorOverrideHelper.getColor(player, 0x0079C4)
-			
-			Botania.proxy.lightningFX(mc.theWorld, playerHead, playerShift, 2f, color, Color(color).brighter().brighter().rgb)
-		}
+		if (player.ticksExisted % 10 != 0) return
+		
+		val playerHead = Bector3.fromEntityCenter(player).add(0.0, 0.75, 0.0)
+		val (sx, sy, sz) = IFaithHandler.getHeadOrientation(player)
+		val playerShift = playerHead.copy().add(sx, sy, sz)
+		val color = ColorOverrideHelper.getColor(player, 0x0079C4)
+		
+		Botania.proxy.lightningFX(mc.theWorld, playerHead, playerShift, 2f, color, Color(color).brighter().brighter().rgb)
 	}
 }

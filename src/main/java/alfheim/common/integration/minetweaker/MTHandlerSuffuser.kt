@@ -10,6 +10,7 @@ import minetweaker.api.item.*
 import net.minecraft.item.ItemStack
 import stanhebben.zenscript.annotations.*
 import vazkii.botania.api.BotaniaAPI
+import java.util.*
 
 @ZenClass("mods." + ModInfo.MODID + ".Suffuser")
 object MTHandlerSuffuser {
@@ -30,9 +31,9 @@ object MTHandlerSuffuser {
 	
 	@ZenMethod
 	@JvmStatic
-	fun addRecipePage(entryName: String, pageUnlocalizedName: String, pageIndex: Int, outputStack: ItemStack) {
+	fun addRecipePage(entryName: String, pageUnlocalizedName: String, pageIndex: Int, outputStack: IItemStack) {
 		val entry = BotaniaAPI.getAllEntries().first { it.unlocalizedName == entryName }
-		val recipes = AlfheimAPI.treeRecipes.filter { ItemStack.areItemStacksEqual(it.output, outputStack) }
+		val recipes = AlfheimAPI.treeRecipes.filter { ItemStack.areItemStacksEqual(it.output, getStack(outputStack)) }
 		val page = if (recipes.size == 1) PageTreeCrafting(pageUnlocalizedName, recipes[0]) else PageTreeCrafting(pageUnlocalizedName, recipes)
 		entry.pages.add(pageIndex, page)
 		page.onPageAdded(entry, pageIndex)

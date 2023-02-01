@@ -1,6 +1,6 @@
 package alfheim.common.item
 
-import alexsocol.asjlib.ASJUtilities
+import alexsocol.asjlib.*
 import alfheim.client.core.helper.InterpolatedIconHelper
 import alfheim.common.entity.EntityThrowableItem
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
@@ -19,13 +19,10 @@ class ItemFireGrenade: ItemMod("fireGrenade") {
 			MinecraftForge.EVENT_BUS.register(this)
 	}
 	
-	override fun onItemRightClick(stack: ItemStack?, world: World?, player: EntityPlayer?): ItemStack? {
-		if (stack != null && world != null && player != null) {
-			if (!world.isRemote) {
-				val potion = EntityThrowableItem(player)
-				world.spawnEntityInWorld(potion)
-				stack.stackSize--
-			}
+	override fun onItemRightClick(stack: ItemStack, world: World, player: EntityPlayer): ItemStack? {
+		if (!world.isRemote) {
+			EntityThrowableItem(player).spawn()
+			stack.stackSize--
 		}
 		
 		return stack

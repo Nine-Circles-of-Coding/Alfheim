@@ -18,7 +18,7 @@ object RenderTilePowerStone: TileEntitySpecialRenderer() {
 	var forceMeta = 0
 	
 	override fun renderTileEntityAt(tile: TileEntity, x: Double, y: Double, z: Double, partialTicks: Float) {
-		if (tile !is TilePowerStone) return
+		if (tile !is TilePowerStone || model == null) return
 		
 		val meta = when {
 			tile.worldObj == null -> forceMeta
@@ -29,9 +29,7 @@ object RenderTilePowerStone: TileEntitySpecialRenderer() {
 		glPushMatrix()
 		glTranslated(x + 0.5, y, z + 0.5)
 		mc.renderEngine.bindTexture(LibResourceLocations.obelisk.safeGet(meta))
-		if (model == null) {
-			// FIXME cubic model
-		} else model.renderAll()
+		model.renderAll()
 		
 		glPopMatrix()
 	}

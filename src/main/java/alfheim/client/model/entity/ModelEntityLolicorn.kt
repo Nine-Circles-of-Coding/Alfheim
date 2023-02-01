@@ -219,7 +219,7 @@ object ModelEntityLolicorn: ModelBase() {
 		
 		if (onGround > -9990f) {
 			f6 = onGround
-			body.rotateAngleY = MathHelper.sin(MathHelper.sqrt_float(f6) * Math.PI.F * 2f) * 0.2f
+			body.rotateAngleY = MathHelper.sin(sqrt(f6) * Math.PI.F * 2f) * 0.2f
 			rightarm.rotationPointZ = MathHelper.sin(body.rotateAngleY) * 5f - 8f
 			rightarm.rotationPointX = -MathHelper.cos(body.rotateAngleY) * 5f
 			leftarm.rotationPointZ = -MathHelper.sin(body.rotateAngleY) * 5f - 8f

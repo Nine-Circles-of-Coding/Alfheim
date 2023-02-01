@@ -3,6 +3,7 @@ package alfheim.common.item.relic
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.security.InteractionSecurity
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.item.AlfheimItems
 import baubles.api.BaubleType
 import baubles.common.lib.PlayerHandler
@@ -13,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
 import net.minecraft.util.ChunkCoordinates
+import net.minecraft.world.biome.BiomeGenBase
 import net.minecraftforge.event.entity.living.LivingEvent
 import vazkii.botania.api.mana.ManaItemHandler
 import vazkii.botania.common.item.ModItems
@@ -26,6 +28,8 @@ class ItemSifRing: ItemRelicBauble("SifRing") {
 	
 	@SubscribeEvent
 	fun onPlayerTick(e: LivingEvent.LivingUpdateEvent) {
+		if (RagnarokHandler.blockedPowers[5]) return
+		
 		val player = e.entityLiving as? EntityPlayer ?: return
 		val ring = getSifRing(player) ?: return
 		
@@ -40,7 +44,6 @@ class ItemSifRing: ItemRelicBauble("SifRing") {
 		if (!ManaItemHandler.requestManaExact(stack, player, 20, true)) return
 		
 		val world = player.worldObj
-		
 		val (x, y, z) = Vector3.fromEntity(player).mf()
 		
 		for (i in -4..4)
@@ -73,16 +76,12 @@ class ItemSifRing: ItemRelicBauble("SifRing") {
 	}
 	
 	fun growAnimals(stack: ItemStack, player: EntityPlayer) {
-		val list = player.worldObj.getEntitiesWithinAABB(EntityAgeable::class.java, player.boundingBox(8)) as MutableList<EntityAgeable>
-		
-		for (e in list) {
-			if (!InteractionSecurity.canInteractWithEntity(player, e))
-				return
-			
-			if (!ManaItemHandler.requestManaExact(stack, player, 1, true))
-				return
-			
-			e.growingAge++
+		val list = getEntitiesWithinAABB(player.worldObj, EntityAgeable::class.java, player.boundingBox(8))
+		list.removeAll { !it.isChild }
+		list.forEach {
+			if (!InteractionSecurity.canInteractWithEntity(player, it)) return
+			if (!ManaItemHandler.requestManaExact(stack, player, 1, true)) return
+			it.growingAge++
 		}
 	}
 	

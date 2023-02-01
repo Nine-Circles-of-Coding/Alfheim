@@ -1,14 +1,16 @@
 package alfheim.client.render.entity
 
 import alexsocol.asjlib.*
-import alexsocol.asjlib.render.*
+import alexsocol.asjlib.render.ASJRenderHelper
 import alfheim.api.ModInfo
 import alfheim.api.lib.LibResourceLocations
+import alfheim.api.lib.LibResourceLocations.ResourceLocationIL
 import alfheim.client.model.entity.*
+import alfheim.client.model.item.ModelAkashicBox
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.helper.ContributorsPrivacyHelper
 import alfheim.common.item.material.ItemElvenResource
-import net.minecraft.client.model.ModelBook
+import baubles.common.lib.PlayerHandler
 import net.minecraft.client.renderer.*
 import net.minecraft.client.renderer.texture.TextureMap
 import net.minecraft.entity.player.EntityPlayer
@@ -20,7 +22,6 @@ import net.minecraftforge.client.model.AdvancedModelLoader
 import org.lwjgl.opengl.GL11.*
 import vazkii.botania.api.item.IBaubleRender
 import vazkii.botania.api.item.IBaubleRender.Helper
-import vazkii.botania.client.core.helper.ShaderHelper
 import vazkii.botania.common.Botania
 import vazkii.botania.common.item.ModItems
 import vazkii.botania.common.item.equipment.bauble.ItemFlightTiara
@@ -29,34 +30,9 @@ import kotlin.math.sin
 
 object RenderContributors {
 	
-	val auraTextures: Map<String, ResourceLocation> by lazy { ContributorsPrivacyHelper.auras.map { (k, v) -> k to ResourceLocation(ModInfo.MODID, "textures/model/entity/auras/$v.png") }.toMap() }
+	val auraTextures: Map<String, ResourceLocation> by lazy { ContributorsPrivacyHelper.auras.map { (k, v) -> k to ResourceLocationIL(ModInfo.MODID, "textures/model/entity/auras/$v.png") }.toMap() }
 	val book = if (AlfheimConfigHandler.minimalGraphics) null else AdvancedModelLoader.loadModel(ResourceLocation(ModInfo.MODID, "model/mudrbook.obj"))
-	
-	val so: ShadedObject = object: ShadedObject(ShaderHelper.halo, RenderPostShaders.nextAvailableRenderObjectMaterialID, LibResourceLocations.babylon) {
-		
-		override fun preRender() {
-			glEnable(GL_BLEND)
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-			glDisable(GL_CULL_FACE)
-			glShadeModel(GL_SMOOTH)
-		}
-		
-		override fun drawMesh(vararg data: Any?) {
-			val tes = Tessellator.instance
-			tes.startDrawingQuads()
-			tes.addVertexWithUV(-1.0, 0.0, -1.0, 0.0, 0.0)
-			tes.addVertexWithUV(-1.0, 0.0, 1.0, 0.0, 1.0)
-			tes.addVertexWithUV(1.0, 0.0, 1.0, 1.0, 1.0)
-			tes.addVertexWithUV(1.0, 0.0, -1.0, 1.0, 0.0)
-			tes.draw()
-		}
-		
-		override fun postRender() {
-			glShadeModel(GL_FLAT)
-			glEnable(GL_CULL_FACE)
-			glDisable(GL_BLEND)
-		}
-	}
+	val so = ShadedObjectHaloPlane(LibResourceLocations.babylon)
 	
 	fun render(e: RenderPlayerEvent.Specials.Post, player: EntityPlayer) {
 		if (player.isInvisible || player.isInvisibleToPlayer(mc.thePlayer) || player.isPotionActive(Potion.invisibility)) return
@@ -65,34 +41,16 @@ object RenderContributors {
 		glColor4f(1f, 1f, 1f, 1f)
 		
 		if (ContributorsPrivacyHelper.isCorrect(player, "AlexSocol")) {
-			//run {
-			//	// jojo's mask
-			//	if (PlayerHandler.getPlayerBaubles(player)?.get(0)?.item !== AlfheimItems.mask) {
-			//		val yaw = player.prevRotationYawHead + (player.rotationYawHead - player.prevRotationYawHead) * e.partialRenderTick
-			//		val yawOffset = player.prevRenderYawOffset + (player.renderYawOffset - player.prevRenderYawOffset) * e.partialRenderTick
-			//		val pitch = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * e.partialRenderTick
-			//
-			//		glPushMatrix()
-			//		glRotatef(yawOffset, 0f, -1f, 0f)
-			//		glRotatef(yaw - 270, 0f, 1f, 0f)
-			//		glRotatef(pitch, 0f, 0f, 1f)
-			//		glColor4f(0.375f, 0f, 0f, 1f)
-			//		val mask = ItemStack(AlfheimItems.mask)
-			//		mask.setStackDisplayName("kono dio da")
-			//		(AlfheimItems.mask as ItemTankMask).onPlayerBaubleRender(mask, e, IBaubleRender.RenderType.HEAD)
-			//
-			//		glPopMatrix()
-			//	}
-			//}
+			val wings = PlayerHandler.getPlayerBaubles(player)[0]?.item !== ModItems.flightTiara
 			
-			run {
-				// devil wings
+			run { // devil wings
+				if (!wings) return@run
+				
 				glDisable(GL_CULL_FACE)
 				(ModItems.flightTiara as ItemFlightTiara).onPlayerBaubleRender(ItemStack(ModItems.flightTiara, 1, 6), e, IBaubleRender.RenderType.BODY)
 			}
 			
-			run {
-				// babylon circle
+			run { // babylon circle
 				glPushMatrix()
 				glRotated(90.0, 1.0, 0.0, 0.0)
 				Helper.rotateIfSneaking(player)
@@ -105,8 +63,9 @@ object RenderContributors {
 				glPopMatrix()
 			}
 			
-			run {
-				// wings
+			run { // wings
+				if (!wings) return@run
+				
 				val icon = ItemElvenResource.wing
 				mc.renderEngine.bindTexture(TextureMap.locationItemsTexture)
 				
@@ -173,8 +132,7 @@ object RenderContributors {
 			glRotated(-90.0, 0.0, 1.0, 0.0)
 			glRotated(60.0, 0.0, 0.0, 1.0)
 			mc.renderEngine.bindTexture(LibResourceLocations.lexica)
-			val model = ModelBook()
-			model.render(null, 0f, 0.075f + (t * 0.025).F, 0.925f - (t * 0.025).F, 1f, 0f, 0.0625f)
+			ModelAkashicBox.bookModel.render(null, 0f, 0.075f + (t * 0.025).F, 0.925f - (t * 0.025).F, 1f, 0f, 0.0625f)
 			glPopMatrix()
 		}
 		

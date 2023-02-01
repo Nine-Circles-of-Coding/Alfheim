@@ -1,12 +1,11 @@
 package alfheim.common.block.tile
 
-import alexsocol.asjlib.ASJUtilities
+import alexsocol.asjlib.*
 import alexsocol.asjlib.extendables.block.TileImmobile
 import alfheim.api.spell.SpellBase
 import alfheim.common.core.handler.AlfheimConfigHandler
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.potion.PotionEffect
 import kotlin.math.max
 
 class TilePowerStone: TileImmobile() {
@@ -47,7 +46,7 @@ class TilePowerStone: TileImmobile() {
 	// +20% DMG, -20% HP
 	fun makePlayerBerserk(player: EntityPlayer): Boolean {
 		if (!player.isPotionActive(AlfheimConfigHandler.potionIDOvermage) && !player.isPotionActive(AlfheimConfigHandler.potionIDTank) && !player.isPotionActive(AlfheimConfigHandler.potionIDNinja)) {
-			player.addPotionEffect(PotionEffect(AlfheimConfigHandler.potionIDBerserk, 72000, 0))
+			player.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDBerserk, 72000, 0))
 			return true
 		}
 		return false
@@ -56,7 +55,7 @@ class TilePowerStone: TileImmobile() {
 	// +20% Spell DMG, +20% Spell Cost
 	fun makePlayerOvermage(player: EntityPlayer): Boolean {
 		if (!player.isPotionActive(AlfheimConfigHandler.potionIDBerserk) && !player.isPotionActive(AlfheimConfigHandler.potionIDTank) && !player.isPotionActive(AlfheimConfigHandler.potionIDNinja)) {
-			player.addPotionEffect(PotionEffect(AlfheimConfigHandler.potionIDOvermage, 72000, 0))
+			player.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDOvermage, 72000, 0))
 			return true
 		}
 		return false
@@ -65,7 +64,7 @@ class TilePowerStone: TileImmobile() {
 	// +20% Resistance, -20% Speed
 	fun makePlayerTank(player: EntityPlayer): Boolean {
 		if (!player.isPotionActive(AlfheimConfigHandler.potionIDOvermage) && !player.isPotionActive(AlfheimConfigHandler.potionIDBerserk) && !player.isPotionActive(AlfheimConfigHandler.potionIDNinja)) {
-			player.addPotionEffect(PotionEffect(AlfheimConfigHandler.potionIDTank, 72000, 0))
+			player.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDTank, 72000, 0))
 			return true
 		}
 		return false
@@ -74,7 +73,7 @@ class TilePowerStone: TileImmobile() {
 	// +20% Speed, -20% DMG
 	fun makePlayerNinja(player: EntityPlayer): Boolean {
 		if (!player.isPotionActive(AlfheimConfigHandler.potionIDOvermage) && !player.isPotionActive(AlfheimConfigHandler.potionIDTank) && !player.isPotionActive(AlfheimConfigHandler.potionIDBerserk)) {
-			player.addPotionEffect(PotionEffect(AlfheimConfigHandler.potionIDNinja, 72000, 0))
+			player.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDNinja, 72000, 0))
 			return true
 		}
 		return false

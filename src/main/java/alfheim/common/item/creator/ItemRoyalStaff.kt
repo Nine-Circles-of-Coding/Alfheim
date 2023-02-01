@@ -1,6 +1,6 @@
 package alfheim.common.item.creator
 
-import alexsocol.asjlib.ASJUtilities
+import alexsocol.asjlib.*
 import alfheim.client.core.helper.*
 import alfheim.common.core.helper.ContributorsPrivacyHelper
 import alfheim.common.item.*
@@ -33,7 +33,7 @@ class ItemRoyalStaff: ItemMod("RoyalStaff") {
 	override fun onUpdate(stack: ItemStack, world: World, entity: Entity, slot: Int, equiped: Boolean) {
 		if (!ContributorsPrivacyHelper.isCorrect(entity.commandSenderName, "AlexSocol")) {
 			if (entity is EntityPlayer)
-				while (entity.inventory.consumeInventoryItem(this));
+				while (entity.inventory.consumeInventoryItem(this)) Unit
 			else
 				stack.stackSize = 0
 		}
@@ -45,17 +45,15 @@ class ItemRoyalStaff: ItemMod("RoyalStaff") {
 	
 	override fun onItemRightClick(stack: ItemStack, world: World, player: EntityPlayer): ItemStack {
 		if (!ContributorsPrivacyHelper.isCorrect(player, "AlexSocol")) {
-			while (player.inventory.consumeInventoryItem(this));
+			while (player.inventory.consumeInventoryItem(this)) Unit
 			return stack
 		}
 		
 		if (!player.isSneaking)
 			player.setItemInUse(stack, getMaxItemUseDuration(stack))
-		else {
-			if (!world.isRemote) {
-				world.spawnEntityInWorld(EntityFireworkRocket(world, player.posX, player.posY, player.posZ, (ItemLens.getLens(ItemLens.FIREWORK) as LensFirework).generateFirework(ItemIridescent.rainbowColor())))
-			}
-		}
+		else if (!world.isRemote)
+			EntityFireworkRocket(world, player.posX, player.posY, player.posZ, (ItemLens.getLens(ItemLens.FIREWORK) as LensFirework).generateFirework(ItemIridescent.rainbowColor())).spawn()
+		
 		return stack
 	}
 	

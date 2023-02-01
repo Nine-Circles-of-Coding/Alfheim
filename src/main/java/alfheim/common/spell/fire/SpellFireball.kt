@@ -29,10 +29,10 @@ object SpellFireball: SpellBase("fireball", EnumRace.SALAMANDER, 1000, 50, 5) {
 		if (result == SpellCastResult.OK) {
 			val fireball = EntitySpellFireball(caster.worldObj, caster)
 			fireball.target = target
-			caster.worldObj.spawnEntityInWorld(fireball)
+			fireball.spawn()
 			
 			if (fireball.target != null)
-				AlfheimCore.network.sendToDimension(Message2d(Message2d.m2d.FIREBALLSYNC, fireball.entityId.D, fireball.target!!.entityId.D), caster.dimension)
+				AlfheimCore.network.sendToDimension(Message2d(Message2d.M2d.FIREBALLSYNC, fireball.entityId.D, fireball.target!!.entityId.D), caster.dimension)
 		}
 		
 		return result

@@ -6,11 +6,11 @@ import alfheim.AlfheimCore
 import alfheim.api.ModInfo
 import alfheim.api.entity.*
 import alfheim.common.core.handler.AlfheimConfigHandler
-import alfheim.common.core.handler.CardinalSystem.ElvenSkinSystem
-import alfheim.common.network.MessageSkinInfo
+import alfheim.common.core.handler.CardinalSystem.ElvenStoryModeSystem
+import alfheim.common.network.*
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.util.*
+import net.minecraft.util.ChunkCoordinates
 
 class TileRaceSelector: ASJTile() {
 	
@@ -22,9 +22,10 @@ class TileRaceSelector: ASJTile() {
 		selectRace(player, race)
 		
 		if (ASJUtilities.isServer) {
-			ElvenSkinSystem.setGender(player, female)
-			ElvenSkinSystem.setCustomSkin(player, custom)
+			ElvenStoryModeSystem.setGender(player, female)
+			ElvenStoryModeSystem.setCustomSkin(player, custom)
 			
+			AlfheimCore.network.sendToAll(MessageRaceInfo(player.commandSenderName, rotation + 1))
 			AlfheimCore.network.sendToAll(MessageSkinInfo(player.commandSenderName, female, custom))
 		}
 		
@@ -39,13 +40,19 @@ class TileRaceSelector: ASJTile() {
 	}
 	
 	fun selectRace(player: EntityPlayer, race: EnumRace) {
-		EnumRace[player] = race
+		player.race = race
 		player.capabilities.allowFlying = true
 		player.sendPlayerAbilities()
+		teleport(player)
+	}
+	
+	fun teleport(player: EntityPlayer) {
+		val id = player.race.ordinal - 1
+		if (id !in AlfheimConfigHandler.zones.indices) return
 		
-		val (x, y, z) = AlfheimConfigHandler.zones[race.ordinal - 1]
-		player.setSpawnChunk(ChunkCoordinates(x.mfloor(), y.mfloor(), z.mfloor()), true, AlfheimConfigHandler.dimensionIDAlfheim)
-		ASJUtilities.sendToDimensionWithoutPortal(player, AlfheimConfigHandler.dimensionIDAlfheim, x, y, z)
+		val (x, y, z) = AlfheimConfigHandler.zones[id].I
+		player.setSpawnChunk(ChunkCoordinates(x, y, z), true, AlfheimConfigHandler.dimensionIDAlfheim)
+		ASJUtilities.sendToDimensionWithoutPortal(player, AlfheimConfigHandler.dimensionIDAlfheim, x + 0.5, y + 0.5, z + 0.5)
 	}
 	
 	var timer = 0
@@ -81,7 +88,7 @@ class TileRaceSelector: ASJTile() {
 		// if (getBlockMetadata() != 1) worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 1, 3)
 	}
 	
-	override fun getRenderBoundingBox() = AxisAlignedBB.getBoundingBox(xCoord - 3.0, yCoord.D, zCoord - 6.0, xCoord + 4.0, yCoord + 2.0, zCoord + 1.0)!!
+	override fun getRenderBoundingBox() = getBoundingBox(xCoord - 3, yCoord, zCoord - 6, xCoord + 4, yCoord + 2, zCoord + 1)
 	
 	val TAG_TIMER = "timer"
 	val TAG_GENDER = "gender"

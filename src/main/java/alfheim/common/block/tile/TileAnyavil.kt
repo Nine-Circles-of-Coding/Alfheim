@@ -32,18 +32,16 @@ class TileAnyavil: TileItemContainer(), ISidedInventory {
 		val item = item
 		if (burst.isFake) return
 		if (item == null || !item.item.isRepairable) return
-		if (GameRegistry.findUniqueIdentifierFor(item.item)?.toString() ?: "null:null" in AlfheimConfigHandler.anyavilBlackList) return
+		if (GameRegistry.findUniqueIdentifierFor(item.item)?.toString() in AlfheimConfigHandler.repairBlackList) return
 		if (burst.color != -0xd7f5a) return
 		
-		val eitems = world.getEntitiesWithinAABB(EntityItem::class.java, boundingBox(3))
-		for (eitem in eitems) {
-			eitem as EntityItem
-			if (eitem.isDead) continue
-			val stack = eitem.entityItem
+		getEntitiesWithinAABB(world, EntityItem::class.java, boundingBox(3)).forEach {
+			if (it.isDead) return@forEach
+			val stack = it.entityItem
 			val pinkness = AlfheimAPI.getPinkness(stack)
 			if (pinkness > 0) {
 				pinkCharge += pinkness * stack.stackSize
-				eitem.setDead()
+				it.setDead()
 			}
 		}
 		
@@ -95,7 +93,7 @@ class TileAnyavil: TileItemContainer(), ISidedInventory {
 		nbt.setInteger(TAG_MANA, pinkCharge)
 		nbt.setInteger(TAG_MANA_CAP, MAX_PINK_CHARGE)
 		nbt.setInteger(TAG_METADATA, blockMetadata)
-		// nbt.setInteger(TAG_KNOWN_MANA, knownMana)
+		nbt.setInteger(TAG_KNOWN_MANA, knownMana)
 	}
 	
 	override fun readCustomNBT(nbt: NBTTagCompound) {
@@ -158,18 +156,16 @@ class TileAnyavil: TileItemContainer(), ISidedInventory {
 		return 1
 	}
 	
-	override fun isUseableByPlayer(player: EntityPlayer): Boolean {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) === this && player.getDistanceSq(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5) <= 64.0
-	}
+	override fun isUseableByPlayer(player: EntityPlayer) = false
 	
-	override fun openInventory() {}
+	override fun openInventory() = Unit
 	
-	override fun closeInventory() {}
+	override fun closeInventory() = Unit
 	
 	override fun isItemValidForSlot(slot: Int, stack: ItemStack): Boolean {
-		if (GameRegistry.findUniqueIdentifierFor(stack.item).toString() in AlfheimConfigHandler.anyavilBlackList) return false
+		if (GameRegistry.findUniqueIdentifierFor(stack.item)?.toString() in AlfheimConfigHandler.repairBlackList) return false
 		
-		return stack.stackSize == 1 && stack.item.isDamageable
+		return stack.stackSize == 1 && stack.item.isRepairable
 	}
 	
 	override fun getAccessibleSlotsFromSide(side: Int): IntArray {
@@ -177,8 +173,6 @@ class TileAnyavil: TileItemContainer(), ISidedInventory {
 	}
 	
 	override fun canInsertItem(slot: Int, stack: ItemStack, side: Int): Boolean {
-		if (GameRegistry.findUniqueIdentifierFor(stack.item).toString() in AlfheimConfigHandler.anyavilBlackList) return false
-		
 		return side == 1 && isItemValidForSlot(slot, stack)
 	}
 	

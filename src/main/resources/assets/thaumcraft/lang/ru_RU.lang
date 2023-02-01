@@ -61,10 +61,10 @@ tc.research_name.ROD_alfheimSpiritual_staff=Ядро посоха Гайи
 tc.research_text.ROD_alfheimSpiritual_staff=[ALF] Радужный регенератор
 tc.research_page.ROD_alfheimSpiritual_staff.1=После победы над Стражем Гайи его дух был сконцентрирован в материальной форме. Эксперименты с этим духом дали неожиданные результаты - использование его для создания ядра посоха приведёт к тому, что это ядро будет собирать всю близлежащую ману и каким-то образом превращать её в Вис.<BR>Такое ядро может хранить до 85 Вис любого типа. Вам кажется, что этот объём может быть даже выше, но у Вас нет идей, как его увеличить.
 
-tc.research_name.alfheimTransElementium=Трансмутация элементия
-tc.research_text.alfheimTransElementium=Превращение металлов в элементий
-tc.research_page.alfheimTransElementium.1=Вы обнаружили способ получать бесплатный элементий путём смешивания в тигеле аспекта §5Metallum§0, собранного с других металлических предметов и элементиевых самородков.
+tc.research_name.alfheimTRANSELEMENTIUM=Трансмутация элементия
+tc.research_text.alfheimTRANSELEMENTIUM=Превращение металлов в элементий
+tc.research_page.alfheimTRANSELEMENTIUM.1=Вы обнаружили способ получать бесплатный элементий путём смешивания в тигеле аспекта §5Metallum§0, собранного с других металлических предметов и элементиевых самородков.
 
-tc.research_name.alfheimPureElementium=Очистка элементия
-tc.research_text.alfheimPureElementium=Очистка элементия в кластеры
-tc.research_page.alfheimPureElementium.1=Кластеры - редчайшие сконцентрированные чистые металлы. Вы открыли способ очистки руды элементия и превращения её в кластер.<BR>При переплавке кластеры дают вдвое больше слитков элементия.
+tc.research_name.alfheimPUREELEMENTIUM=Очистка элементия
+tc.research_text.alfheimPUREELEMENTIUM=Очистка элементия в кластеры
+tc.research_page.alfheimPUREELEMENTIUM.1=Кластеры - редчайшие сконцентрированные чистые металлы. Вы открыли способ очистки руды элементия и превращения её в кластер.<BR>При переплавке кластеры дают вдвое больше слитков элементия.

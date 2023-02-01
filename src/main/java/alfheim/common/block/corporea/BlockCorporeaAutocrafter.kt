@@ -1,42 +1,35 @@
 package alfheim.common.block.corporea
 
 import alexsocol.asjlib.*
-import alfheim.client.core.helper.IconHelper
+import alfheim.common.block.AlfheimBlocks
 import alfheim.common.block.base.BlockContainerMod
 import alfheim.common.block.tile.corporea.TileCorporeaAutocrafter
 import alfheim.common.lexicon.AlfheimLexiconData
+import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import net.minecraft.block.Block
 import net.minecraft.block.material.Material
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.*
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.client.renderer.entity.RenderItem
-import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.util.*
 import net.minecraft.world.*
+import net.minecraftforge.event.world.BlockEvent
 import org.lwjgl.opengl.*
 import vazkii.botania.api.lexicon.ILexiconable
 import vazkii.botania.api.wand.*
+import vazkii.botania.common.item.ModItems
 import kotlin.math.max
 
 class BlockCorporeaAutocrafter: BlockContainerMod(Material.iron), ILexiconable, IWandable, IWandHUD {
-	
-	lateinit var iconSide: IIcon
 	
 	init {
 		setBlockName("CorporeaAutocrafter")
 		setHardness(5.5f)
 		setStepSound(Block.soundTypeMetal)
 	}
-	
-	override fun registerBlockIcons(reg: IIconRegister) {
-		super.registerBlockIcons(reg)
-		iconSide = IconHelper.forBlock(reg, this, "Side")
-	}
-	
-	override fun getIcon(side: Int, meta: Int) = if (side < 2) blockIcon!! else iconSide
 	
 	override fun breakBlock(world: World, x: Int, y: Int, z: Int, block: Block?, meta: Int) {
 		onUsedByWand(null, null, world, x, y, z, 0)
@@ -184,4 +177,18 @@ class BlockCorporeaAutocrafter: BlockContainerMod(Material.iron), ILexiconable, 
 	}
 	
 	override fun getEntry(world: World?, x: Int, y: Int, z: Int, player: EntityPlayer?, lexicon: ItemStack?) = AlfheimLexiconData.corpSeq
+	
+	companion object {
+		
+		init {
+			eventForge()
+		}
+		
+		@SubscribeEvent
+		fun onBreak(e: BlockEvent.BreakEvent) {
+			if (!e.player.capabilities.isCreativeMode || e.block !== AlfheimBlocks.corporeaAutocrafter || e.player.heldItem?.item !== ModItems.twigWand) return
+			e.block.onBlockClicked(e.world, e.x, e.y, e.z, e.player)
+			e.isCanceled = true
+		}
+	}
 }

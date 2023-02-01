@@ -25,25 +25,16 @@ class ItemSplashPotion: ItemMod("splashPotion"), IBrewItem, IBrewContainer {
 		maxStackSize = 1
 	}
 	
-	override fun getSubItems(item: Item?, tab: CreativeTabs?, list: MutableList<Any?>?) {
-		if (item != null && list != null) {
-			for (brew in BotaniaAPI.brewMap.keys) {
-				val brewStack = getItemForBrew(BotaniaAPI.brewMap[brew] as Brew, ItemStack(this))
-				if (brewStack != null) {
-					list.add(brewStack)
-				}
-			}
-		}
+	override fun getSubItems(item: Item, tab: CreativeTabs?, list: MutableList<Any?>) {
+		for (brew in BotaniaAPI.brewMap.keys)
+			list.add(getItemForBrew(BotaniaAPI.brewMap[brew] as Brew, ItemStack(this)))
 	}
 	
-	override fun onItemRightClick(stack: ItemStack?, world: World?, player: EntityPlayer?): ItemStack? {
-		if (stack != null && world != null && player != null) {
-			if (!world.isRemote) {
-				val potion = EntityThrownPotion(player, stack)
-				world.spawnEntityInWorld(potion)
-				
-				stack.stackSize--
-			}
+	override fun onItemRightClick(stack: ItemStack, world: World, player: EntityPlayer): ItemStack {
+		if (!world.isRemote) {
+			EntityThrownPotion(player, stack).spawn(world)
+			
+			stack.stackSize--
 		}
 		
 		return stack
@@ -73,20 +64,18 @@ class ItemSplashPotion: ItemMod("splashPotion"), IBrewItem, IBrewContainer {
 		itemIconFluid = IconHelper.forName(reg, "vial" + "1_0")
 	}
 	
-	override fun addInformation(stack: ItemStack?, player: EntityPlayer?, list: MutableList<Any?>?, adv: Boolean) {
-		if (stack != null && list != null) {
-			val brew = getBrew(stack)
-			addStringToTooltip("${EnumChatFormatting.DARK_PURPLE}${StatCollector.translateToLocalFormatted("botaniamisc.brewOf", StatCollector.translateToLocal(brew.getUnlocalizedName(stack)))}", list)
-			
-			for (effect in brew.getPotionEffects(stack)) {
-				val potion = Potion.potionTypes[effect.potionID]
-				val format = if (potion.isBadEffect) EnumChatFormatting.RED else EnumChatFormatting.GRAY
-				addStringToTooltip("" + format + StatCollector.translateToLocal(effect.effectName) + (if (effect.amplifier == 0) "" else " " + StatCollector.translateToLocal("botania.roman" + (effect.amplifier + 1))) + EnumChatFormatting.GRAY + (if (potion.isInstant) "" else " (" + Potion.getDurationString(effect) + ")"), list)
-			}
+	override fun addInformation(stack: ItemStack, player: EntityPlayer?, list: MutableList<Any?>, adv: Boolean) {
+		val brew = getBrew(stack)
+		addStringToTooltip("${EnumChatFormatting.DARK_PURPLE}${StatCollector.translateToLocalFormatted("botaniamisc.brewOf", StatCollector.translateToLocal(brew.getUnlocalizedName(stack)))}", list)
+		
+		for (effect in brew.getPotionEffects(stack)) {
+			val potion = Potion.potionTypes[effect.potionID]
+			val format = if (potion.isBadEffect) EnumChatFormatting.RED else EnumChatFormatting.GRAY
+			addStringToTooltip("" + format + StatCollector.translateToLocal(effect.effectName) + (if (effect.amplifier == 0) "" else " " + StatCollector.translateToLocal("botania.roman" + (effect.amplifier + 1))) + EnumChatFormatting.GRAY + (if (potion.isInstant) "" else " (" + Potion.getDurationString(effect) + ")"), list)
 		}
 	}
 	
-	override fun getItemForBrew(brew: Brew, stack: ItemStack?): ItemStack? {
+	override fun getItemForBrew(brew: Brew, stack: ItemStack?): ItemStack {
 		val brewStack = ItemStack(this)
 		setBrew(brewStack, brew)
 		return brewStack

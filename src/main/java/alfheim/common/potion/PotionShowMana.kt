@@ -6,7 +6,7 @@ import alfheim.common.core.handler.AlfheimConfigHandler
 import net.minecraft.entity.EntityLivingBase
 import kotlin.math.sqrt
 
-class PotionShowMana: PotionAlfheim(AlfheimConfigHandler.potionIDShowMana, "showMana", false, 0x0000DD) {
+object PotionShowMana: PotionAlfheim(AlfheimConfigHandler.potionIDShowMana, "showMana", false, 0x0000DD) {
 	
 	override fun isReady(time: Int, ampl: Int) = true
 	
@@ -23,9 +23,8 @@ class PotionShowMana: PotionAlfheim(AlfheimConfigHandler.potionIDShowMana, "show
 		--pe.amplifier
 		
 		if (ASJUtilities.isClient) {
-			var i = 0
+			var i = 0 // looks like this "i < VALUE" is fine
 			while (i < sqrt(sqrt(sqrt(pe.duration.D)))) {
-				// looks like this "i < VALUE" is fine
 				VisualEffectHandlerClient.spawnMana(living, i.D * 0.5)
 				i++
 			}

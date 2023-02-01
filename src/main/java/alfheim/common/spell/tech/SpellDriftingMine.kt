@@ -1,5 +1,6 @@
 package alfheim.common.spell.tech
 
+import alexsocol.asjlib.spawn
 import alfheim.api.entity.EnumRace
 import alfheim.api.spell.SpellBase
 import alfheim.common.entity.spell.EntitySpellDriftingMine
@@ -17,7 +18,7 @@ object SpellDriftingMine: SpellBase("driftingmine", EnumRace.LEPRECHAUN, 6000, 1
 	
 	override fun performCast(caster: EntityLivingBase): SpellCastResult {
 		val result = checkCastOver(caster)
-		if (result == SpellCastResult.OK) caster.worldObj.spawnEntityInWorld(EntitySpellDriftingMine(caster.worldObj, caster))
+		if (result == SpellCastResult.OK) EntitySpellDriftingMine(caster.worldObj, caster).spawn()
 		return result
 	}
 }

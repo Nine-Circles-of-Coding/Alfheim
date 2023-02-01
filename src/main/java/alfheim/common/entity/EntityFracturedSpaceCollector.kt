@@ -1,7 +1,8 @@
 package alfheim.common.entity
 
 import alexsocol.asjlib.*
-import alfheim.common.item.rod.ItemBlackHoleRod
+import alfheim.common.item.AlfheimItems
+import alfheim.common.item.rod.ItemRodBlackHole
 import net.minecraft.entity.Entity
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.entity.player.EntityPlayer
@@ -11,7 +12,7 @@ import net.minecraft.world.World
 import net.minecraftforge.common.util.ForgeDirection
 import vazkii.botania.api.mana.ManaItemHandler
 import vazkii.botania.common.Botania
-import vazkii.botania.common.block.tile.TileOpenCrate
+import vazkii.botania.common.block.tile.*
 import vazkii.botania.common.core.helper.MathHelper
 import java.util.*
 import kotlin.math.*
@@ -23,11 +24,11 @@ class EntityFracturedSpaceCollector(world: World): Entity(world) {
 	var z = 0
 	var ownerUUID: UUID? = null
 	
-	constructor(world: World, toX: Int, toY: Int, toZ: Int, player: EntityPlayer): this(world) {
+	constructor(world: World, toX: Int, toY: Int, toZ: Int, player: EntityPlayer?): this(world) {
 		x = toX
 		y = toY
 		z = toZ
-		ownerUUID = player.uniqueID
+		ownerUUID = player?.uniqueID
 	}
 	
 	override fun entityInit() {
@@ -46,7 +47,7 @@ class EntityFracturedSpaceCollector(world: World): Entity(world) {
 			doSparkles(age)
 		} else {
 			if (age > AGE_SPECIAL_START) {
-				val nearbyItemEnts = worldObj.getEntitiesWithinAABB(EntityItem::class.java, boundingBox().expand(RADIUS, 1.0, RADIUS)) as MutableList<EntityItem>
+				val nearbyItemEnts = getEntitiesWithinAABB(worldObj, EntityItem::class.java, boundingBox().expand(RADIUS, 1.0, RADIUS))
 				
 				nearbyItemEnts.removeAll {
 					MathHelper.pointDistancePlane(it.posX, it.posZ, posX, posZ) > RADIUS ||
@@ -65,18 +66,30 @@ class EntityFracturedSpaceCollector(world: World): Entity(world) {
 					ent.motionZ += zDifference * .3
 					ent.velocityChanged = true
 				}
+				
 				if (age >= MAX_AGE) {
 					//Transport the items
 					//first figure out who to take the mana from
-					if (ownerUUID == null) {
-						setDead()
-						return
-					}
+					val player = worldObj.func_152378_a(ownerUUID ?: DUMMY_UUID)
+					var avatar: TileAvatar? = null
 					
-					val player = worldObj.func_152378_a(ownerUUID)
 					if (player == null) {
-						setDead()
-						return
+						for (dir in ForgeDirection.VALID_DIRECTIONS) {
+							if (dir == ForgeDirection.UP || dir == ForgeDirection.DOWN)
+								continue
+							
+							avatar = worldObj.getTileEntity(this, x = dir.offsetX * 2, z = dir.offsetZ * 2) as? TileAvatar ?: continue
+							if (avatar[0]?.item !== AlfheimItems.rodBlackHole && avatar[0]?.item !== AlfheimItems.rodClicker) {
+								avatar = null
+								continue
+							} else
+								break
+						}
+						
+						if (avatar == null) {
+							setDead()
+							return
+						}
 					}
 					
 					//fuckit let's just load the chunk
@@ -84,13 +97,20 @@ class EntityFracturedSpaceCollector(world: World): Entity(world) {
 					if (tile is TileOpenCrate && tile.canEject()) {
 						//delete all the items and emit them from the crate
 						for (ent in nearbyItemEnts) {
-							val stack = ent.entityItem // ?: continue removed above
-							val count = stack.stackSize
-//							if (count <= 0) continue // removed above
-							val cost = count * MANA_COST_PER_ITEM
-							if (ManaItemHandler.requestManaExact(TOOL_STACK, player, cost, false)) {
-								//(item stacks aren't sorted by size so don't break on a failed mana extraction)
+							val stack = ent.entityItem
+							val cost = stack.stackSize * MANA_COST_PER_ITEM
+							
+							val can = if (player != null) {
 								ManaItemHandler.requestManaExact(TOOL_STACK, player, cost, true)
+							} else {
+								val can = avatar!!.currentMana >= cost
+								if (can)
+									avatar.recieveMana(-cost)
+								can
+							}
+							
+							if (can) {
+								//(item stacks aren't sorted by size so don't break on a failed mana extraction)
 								tile.fakeCrateEject(stack)
 								// dupe prevention
 								ent.setEntityItemStack(null)
@@ -135,9 +155,9 @@ class EntityFracturedSpaceCollector(world: World): Entity(world) {
 	}
 	
 	override fun writeEntityToNBT(nbt: NBTTagCompound) {
-		nbt.setInteger(ItemBlackHoleRod.TAG_X, x)
-		nbt.setInteger(ItemBlackHoleRod.TAG_Y, y)
-		nbt.setInteger(ItemBlackHoleRod.TAG_Z, z)
+		nbt.setInteger(ItemRodBlackHole.TAG_X, x)
+		nbt.setInteger(ItemRodBlackHole.TAG_Y, y)
+		nbt.setInteger(ItemRodBlackHole.TAG_Z, z)
 		
 		(ownerUUID ?: UUID(0, 0)).apply {
 			nbt.setLong(TAG_OWNER_MOST, mostSignificantBits)
@@ -146,9 +166,9 @@ class EntityFracturedSpaceCollector(world: World): Entity(world) {
 	}
 	
 	override fun readEntityFromNBT(nbt: NBTTagCompound) {
-		x = nbt.getInteger(ItemBlackHoleRod.TAG_X)
-		y = nbt.getInteger(ItemBlackHoleRod.TAG_Y)
-		z = nbt.getInteger(ItemBlackHoleRod.TAG_Z)
+		x = nbt.getInteger(ItemRodBlackHole.TAG_X)
+		y = nbt.getInteger(ItemRodBlackHole.TAG_Y)
+		z = nbt.getInteger(ItemRodBlackHole.TAG_Z)
 		
 		ownerUUID = UUID(nbt.getLong(TAG_OWNER_MOST), nbt.getLong(TAG_OWNER_LEAST))
 	}
@@ -163,10 +183,10 @@ class EntityFracturedSpaceCollector(world: World): Entity(world) {
 		const val RADIUS = 2.0
 		const val MAX_AGE = 30
 		const val AGE_SPECIAL_START = MAX_AGE * 3f / 4f
-		const val MANA_COST_PER_ITEM = 5 //TODO balance this?
+		const val MANA_COST_PER_ITEM = 10
 		const val PARTICLE_COUNT = 12
 		
-		val TOOL_STACK: ItemStack? = ItemStack(alfheim.common.item.AlfheimItems.rodBlackHole)
+		val TOOL_STACK = ItemStack(AlfheimItems.rodBlackHole)
 		
 		fun TileOpenCrate.isPowered(): Boolean {
 			//Uses the exact same logic open crates do to check if they're powered!
@@ -186,7 +206,9 @@ class EntityFracturedSpaceCollector(world: World): Entity(world) {
 			newEnt.motionY = 0.0
 			newEnt.motionZ = 0.0
 			if (isPowered()) newEnt.age = -200
-			worldObj.spawnEntityInWorld(newEnt)
+			newEnt.spawn()
 		}
 	}
 }
+
+private val DUMMY_UUID = UUID(0L, 0L)

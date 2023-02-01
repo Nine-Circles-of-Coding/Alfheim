@@ -1,11 +1,11 @@
 package alfheim.common.core.registry
 
 import alexsocol.asjlib.ASJUtilities.registerEntity
-import alfheim.AlfheimCore
+import alfheim.api.*
 import alfheim.api.AlfheimAPI.addPink
 import alfheim.api.AlfheimAPI.registerAnomaly
 import alfheim.api.AlfheimAPI.registerSpell
-import alfheim.api.ModInfo
+import alfheim.api.block.tile.SubTileAnomalyBase.EnumAnomalyRarity.*
 import alfheim.common.block.*
 import alfheim.common.block.tile.*
 import alfheim.common.block.tile.corporea.*
@@ -13,9 +13,10 @@ import alfheim.common.block.tile.sub.anomaly.*
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.entity.*
 import alfheim.common.entity.boss.*
+import alfheim.common.entity.boss.primal.*
 import alfheim.common.entity.item.*
 import alfheim.common.entity.spell.*
-import alfheim.common.item.AlfheimItems
+import alfheim.common.item.*
 import alfheim.common.item.material.ElvenResourcesMetas
 import alfheim.common.potion.*
 import alfheim.common.spell.darkness.*
@@ -27,10 +28,9 @@ import alfheim.common.spell.sound.*
 import alfheim.common.spell.tech.*
 import alfheim.common.spell.water.*
 import alfheim.common.spell.wind.*
-import alfheim.common.world.dim.alfheim.customgens.WorldGenAlfheim
 import cpw.mods.fml.common.registry.EntityRegistry
-import cpw.mods.fml.common.registry.GameRegistry.*
-import net.minecraft.entity.EnumCreatureType
+import cpw.mods.fml.common.registry.GameRegistry.registerTileEntity
+import net.minecraft.entity.*
 import net.minecraft.init.*
 import net.minecraft.item.ItemStack
 import net.minecraft.tileentity.TileEntity
@@ -42,7 +42,6 @@ import vazkii.botania.common.item.ModItems
 import vazkii.botania.common.item.block.ItemBlockSpecialFlower
 import vazkii.botania.common.lib.LibBlockNames
 
-// TODO decentralize
 object AlfheimRegistry {
 	
 	fun preInit() {
@@ -52,7 +51,6 @@ object AlfheimRegistry {
 	}
 	
 	fun init() {
-		registerWorldGenerator(WorldGenAlfheim, 1)
 		registerSpells()
 		loadAllPinkStuff()
 	}
@@ -67,78 +65,118 @@ object AlfheimRegistry {
 			if (i != null && !AlfheimConfigHandler.voidCreepBiomeBlackList.contains(i.biomeID))
 				EntityRegistry.addSpawn(EntityVoidCreeper::class.java, w, n, x, EnumCreatureType.monster, i)
 		}
+		
+		registerEnderOres()
 	}
 	
-	fun registerPotions() {
-		PotionBerserk()
-		PotionBleeding()
-		PotionButterShield()
-		PotionDeathMark()
+	private fun registerPotions() {
+		PotionBeastWithin
+		PotionBerserk
+		PotionBleeding
+		PotionButterShield
+		PotionDeathMark
 		PotionAlfheim(AlfheimConfigHandler.potionIDDecay, "decay", true, 0x553355)
-		PotionEternity()
-		PotionGoldRush()
+		PotionEternity
+		PotionGoldRush
 		PotionAlfheim(AlfheimConfigHandler.potionIDIceLens, "icelens", false, 0xDDFFFF)
-		PotionLeftFlame()
-		PotionLightningShield()
-		PotionManaVoid()
+		PotionLeftFlame
+		PotionLightningShield
+		PotionManaVoid
 		PotionAlfheim(AlfheimConfigHandler.potionIDNineLifes, "nineLifes", false, 0xDD2222)
-		PotionNinja()
-		PotionNoclip()
+		PotionNinja
+		PotionNoclip
 		PotionAlfheim(AlfheimConfigHandler.potionIDOvermage, "overmage", false, 0x88FFFF)
 		PotionAlfheim(AlfheimConfigHandler.potionIDPossession, "possession", true, 0xCC0000)
-		PotionQuadDamage()
-		PotionSacrifice()
-		PotionShowMana()
-		PotionSoulburn()
+		PotionQuadDamage
+		PotionSacrifice
+		PotionShowMana
+		PotionSoulburn
 		PotionAlfheim(AlfheimConfigHandler.potionIDStoneSkin, "stoneSkin", false, 0x593C1F)
-		PotionTank()
-		PotionThrow()
-		PotionWellOLife()
+		PotionTank
+		PotionThrow
+		PotionWellOLife
+		PotionAlfheim(AlfheimConfigHandler.potionIDWisdom, "wisdom", false, 0xFFC880)
 	}
 	
-	var id = 0
-		get() = field.also { field++ }
+	var nextEntityID = 0
+		get() = field++
 	
 	private fun registerEntities() {
-		registerEntity(EntityAlfheimPixie::class.java, "Pixie", id)
-		registerEntity(EntityButterfly::class.java, "Butterfly", id)
-		registerEntity(EntityCharge::class.java, "Charge", id)
-		registerEntity(EntityElf::class.java, "Elf", id)
-		registerEntity(EntityFenrir::class.java, "Fenrir", id)
-		registerEntity(EntityFireAura::class.java, "FireAura", id)
-		registerEntity(EntityFlugel::class.java, "Flugel", id)
-		registerEntity(EntityFracturedSpaceCollector::class.java, "FracturedSpaceCollector", id)
-		registerEntity(EntityItemImmortal::class.java, "ImmortalItem", id)
-		registerEntity(EntityItemImmortalRelic::class.java, "ImmortalRelicItem", id)
-		registerEntity(EntityLightningMark::class.java, "LightningMark", id)
-		registerEntity(EntityLolicorn::class.java, "Lolicorn", id)
-		registerEntity(EntityRook::class.java, "Rook", id)
+		registerEntity(EntityButterfly::class.java, "Butterfly", nextEntityID, 0, -1)
+		registerEntity(EntityDedMoroz::class.java, "DedMoroz", nextEntityID)
+		registerEntity(EntityElf::class.java, "Elf", nextEntityID, 0x1A660A, 0x4D3422)
+		registerEntity(EntityFireSpirit::class.java, "FireSpirit", nextEntityID)
+		registerEntity(EntityFenrir::class.java, "Fenrir", nextEntityID)
+		registerEntity(EntityFlugel::class.java, "Flugel", nextEntityID)
+		registerEntity(EntityGrieferCreeper::class.java, "GrieferCreeper", nextEntityID, 0xFFFFFF, 0)
+		registerEntity(EntityJellyfish::class.java, "Jellyfish", nextEntityID, 0xFFFFFF, -1)
+		registerEntity(EntityLolicorn::class.java, "Lolicorn", nextEntityID)
+		registerEntity(EntityMuspelson::class.java, "Muspelson", nextEntityID, 0x3E1900, 0xD05D14)
+		registerEntity(EntityAlfheimPixie::class.java, "Pixie", nextEntityID, 0xFF76D6, 0xFFE3FF)
+		registerEntity(EntityRollingMelon::class.java, "RollingMelon", nextEntityID, 0xBECB25, 0x5B751A)
+		registerEntity(EntityRook::class.java, "Rook", nextEntityID)
+		registerEntity(EntitySnowSprite::class.java, "SnowSprite", nextEntityID, 0xEEFFFF, 0xE3F3F3)
+		registerEntity(EntitySurtr::class.java, "Surtr", nextEntityID)
+		registerEntity(EntityThrym::class.java, "Thrym", nextEntityID)
+		registerEntity(EntityVoidCreeper::class.java, "VoidCreeper", nextEntityID, 0xcc11d3, 0xfb9bff)
 		
-		registerEntity(EntityGrieferCreeper::class.java, "GrieferCreeper", id)
-		registerEntity(EntityVoidCreeper::class.java, "VoidCreeper", id)
+		registerEntity(EntityBlackBolt::class.java, "BlackBolt", nextEntityID)
+		registerEntity(EntityCharge::class.java, "Charge", nextEntityID)
+		registerEntity(EntityEarthquake::class.java, "Earthquake", nextEntityID)
+		registerEntity(EntityEarthquakeFracture::class.java, "EarthquakeFracture", nextEntityID)
+		registerEntity(EntityFireAura::class.java, "FireAura", nextEntityID)
+		registerEntity(EntityFireTornado::class.java, "FireTornado", nextEntityID)
+		registerEntity(EntityFracturedSpaceCollector::class.java, "FracturedSpaceCollector", nextEntityID)
+		registerEntity(EntityIcicle::class.java, "Icicle", nextEntityID)
+		registerEntity(EntityItemImmortal::class.java, "ImmortalItem", nextEntityID)
+		registerEntity(EntityItemImmortalRelic::class.java, "ImmortalRelicItem", nextEntityID)
+		registerEntity(EntityLightningMark::class.java, "LightningMark", nextEntityID)
+		registerEntity(EntityMeteor::class.java, "Meteor", nextEntityID)
+		registerEntity(EntityMuspelheimSun::class.java, "MuspelheimSun", nextEntityID)
+		registerEntity(EntityMuspelheimSunSlash::class.java, "MuspelheimSunSlash", nextEntityID)
+		registerEntity(EntityPrimalBossChunkAttack::class.java, "ChunkAttack", nextEntityID)
+		registerEntity(EntityPrimalMark::class.java, "PrimalMark", nextEntityID)
+		registerEntity(EntitySniceBall::class.java, "SniceBall", nextEntityID)
+		registerEntity(EntityThrowableItem::class.java, "ThrownItem", nextEntityID)
+		registerEntity(EntityThrownPotion::class.java, "ThrownPotion", nextEntityID)
+		registerEntity(EntityThunderChakram::class.java, "ThunderChakram", nextEntityID)
 		
-		registerEntity(EntityThrowableItem::class.java, "ThrownItem", id)
-		registerEntity(EntityThrownPotion::class.java, "ThrownPotion", id)
+		registerEntity(EntityGleipnir::class.java, "Gleipnir", nextEntityID)
+		registerEntity(EntityMjolnir::class.java, "Mjolnir", nextEntityID)
 		
-		registerEntity(EntityGleipnir::class.java, "Gleipnir", id)
-		registerEntity(EntityMjolnir::class.java, "Mjolnir", id)
+		registerEntity(EntityMagicArrow::class.java, "MagicArrow", nextEntityID)
+		registerEntity(EntitySubspace::class.java, "Subspace", nextEntityID)
+		registerEntity(EntitySubspaceSpear::class.java, "SubspaceSpear", nextEntityID)
+		registerEntity(FakeLightning::class.java, "FakeLightning", nextEntityID)
 		
-		registerEntity(EntityMagicArrow::class.java, "MagicArrow", id)
-		registerEntity(EntitySubspace::class.java, "Subspace", id)
-		registerEntity(EntitySubspaceSpear::class.java, "SubspaceSpear", id)
-		registerEntity(FakeLightning::class.java, "FakeLightning", id)
-		
-		registerEntity(EntitySpellAcidMyst::class.java, "SpellAcidMyst", id)
-		registerEntity(EntitySpellAquaStream::class.java, "SpellAquaStream", id)
-		registerEntity(EntitySpellDriftingMine::class.java, "SpellDriftingMine", id)
-		registerEntity(EntitySpellFenrirStorm::class.java, "SpellFenrirStorm", id)
-		registerEntity(EntitySpellFireball::class.java, "SpellFireball", id)
-		registerEntity(EntitySpellFirewall::class.java, "SpellFirewall", id)
-		registerEntity(EntitySpellGravityTrap::class.java, "SpellGravityTrap", id)
-		registerEntity(EntitySpellHarp::class.java, "SpellHarp", id)
-		registerEntity(EntitySpellIsaacMissile::class.java, "SpellIsaacMissile", id)
-		registerEntity(EntitySpellMortar::class.java, "SpellMortar", id)
-		registerEntity(EntitySpellWindBlade::class.java, "SpellWindBlade", id)
+		registerEntity(EntitySpellAcidMyst::class.java, "SpellAcidMyst", nextEntityID)
+		registerEntity(EntitySpellAquaStream::class.java, "SpellAquaStream", nextEntityID)
+		registerEntity(EntitySpellDarkness::class.java, "SpellDarkness", nextEntityID)
+		registerEntity(EntitySpellDriftingMine::class.java, "SpellDriftingMine", nextEntityID)
+		registerEntity(EntitySpellFenrirStorm::class.java, "SpellFenrirStorm", nextEntityID)
+		registerEntity(EntitySpellFireball::class.java, "SpellFireball", nextEntityID)
+		registerEntity(EntitySpellFirestar::class.java, "SpellFirestar", nextEntityID)
+		registerEntity(EntitySpellFirewall::class.java, "SpellFirewall", nextEntityID)
+		registerEntity(EntitySpellGravityTrap::class.java, "SpellGravityTrap", nextEntityID)
+		registerEntity(EntitySpellHarp::class.java, "SpellHarp", nextEntityID)
+		registerEntity(EntitySpellLeafStorm::class.java, "SpellLeafStorm", nextEntityID)
+		registerEntity(EntitySpellIsaacMissile::class.java, "SpellIsaacMissile", nextEntityID)
+		registerEntity(EntitySpellMortar::class.java, "SpellMortar", nextEntityID)
+		registerEntity(EntitySpellNoteshot::class.java, "SpellNoteshot", nextEntityID)
+		registerEntity(EntitySpellWindBlade::class.java, "SpellWindBlade", nextEntityID)
+	}
+	
+	/**
+	 * Registers new entity with egg. -1 color is rainbow color
+	 * @param entityClass Entity's class file
+	 * @param name The name of this entity
+	 * @param id Mod-specific entity id
+	 * @param color1 Egg color
+	 * @param color2 Dots color
+	 */
+	fun registerEntity(entityClass: Class<out Entity>, name: String, id: Int, color1: Int, color2: Int) {
+		ItemSpawnEgg.addMapping(entityClass, color1, color2)
+		registerEntity(entityClass, name, id)
 	}
 	
 	private fun registerTileEntities() {
@@ -151,25 +189,32 @@ object AlfheimRegistry {
 		registerTile(TileBarrel::class.java, "Barrel")
 		registerTile(TileCorporeaAutocrafter::class.java, "CorporeaAutocrafter")
 		registerTile(TileCorporeaInjector::class.java, "CorporeaInjector")
+		registerTile(TileCorporeaRat::class.java, "CorporeaRat")
+		registerTile(TileCorporeaSparkBase::class.java, "CorporeaSparkBase")
+		registerTile(TileDomainLobby::class.java, "DomainLobby")
 		registerTile(TileEnderActuator::class.java, "EnderActuator")
+		registerTile(TileFloatingFlowerRainbow::class.java, "miniIslandRainbow")
 		registerTile(TileHeadFlugel::class.java, "HeadFlugel")
 		registerTile(TileHeadMiku::class.java, "HeadMiku")
 		registerTile(TileManaAccelerator::class.java, "ItemHolder")
 		registerTile(TileManaInfuser::class.java, "ManaInfuser")
 		registerTile(TilePowerStone::class.java, "PowerStone")
 		registerTile(TileRaceSelector::class.java, "RaceSelector")
-		if (AlfheimCore.ENABLE_RAGNAROK) registerTile(TileRagnarokCore::class.java, "RagnarokCore")
+		registerTile(TileRealityAnchor::class.java, "RealityAnchor")
+		registerTile(TileRift::class.java, "Rift")
+		registerTile(TileSpire::class.java, "Spire")
 		registerTile(TileTradePortal::class.java, "TradePortal")
+		registerTile(TileVafthrudnirSoul::class.java, "VafthrudnirSoul")
+		registerTile(TileYggFlower::class.java, "YggFlower")
 		
 		registerAnomalies()
 		
 		registerTile(TileCracklingStar::class.java, "StarPlacer2")
-		registerTile(TileEntityStar::class.java, "StarPlacer")
-		registerTile(TileInvisibleManaFlame::class.java, "ManaInvisibleFlame")
+		registerTile(TileStar::class.java, "StarPlacer")
 		registerTile(TileItemDisplay::class.java, "ItemDisplay")
 		registerTile(TileLightningRod::class.java, "RodLightning")
 		registerTile(TileLivingwoodFunnel::class.java, "LivingwoodFunnel")
-		registerTile(TileRainbowManaFlame::class.java, "ManaRainbowFlame")
+		registerTile(TileRainbowManaFlame::class.java, "ManaFlame")
 		registerTile(TileSchemaController::class.java, "SchemaController")
 		registerTile(TileSchemaAnnihilator::class.java, "SchemaAnnihilator")
 		registerTile(TileTreeCook::class.java, "TreeCook")
@@ -181,13 +226,14 @@ object AlfheimRegistry {
 	}
 	
 	private fun registerAnomalies() {
-		registerAnomaly("Antigrav", SubTileAntigrav::class.java)
-		registerAnomaly("Gravity", SubTileGravity::class.java)
-		registerAnomaly("Lightning", SubTileLightning::class.java)
-		registerAnomaly("ManaTornado", SubTileManaTornado::class.java)
-		registerAnomaly("ManaVoid", SubTileManaVoid::class.java)
-		registerAnomaly("SpeedUp", SubTileSpeedUp::class.java)
-		registerAnomaly("Warp", SubTileWarp::class.java)
+		registerAnomaly("Antigrav", SubTileAntigrav::class.java, COMMON, 7)
+		registerAnomaly("Gravity", SubTileGravity::class.java, COMMON, 0)
+		registerAnomaly("Killer", SubTileKiller::class.java, EPIC, 5)
+		registerAnomaly("Lightning", SubTileLightning::class.java, COMMON, 1)
+		registerAnomaly("ManaTornado", SubTileManaTornado::class.java, RARE, 2)
+		registerAnomaly("ManaVoid", SubTileManaVoid::class.java, COMMON, 3)
+		registerAnomaly("SpeedUp", SubTileSpeedUp::class.java, EPIC, 4)
+		registerAnomaly("Warp", SubTileWarp::class.java, RARE, 6)
 	}
 	
 	private fun registerSpells() {
@@ -195,12 +241,14 @@ object AlfheimRegistry {
 		registerSpell(SpellAquaBind)
 		registerSpell(SpellAquaStream)
 		registerSpell(SpellBattleHorn)
+		registerSpell(SpellBeastWithin)
 		registerSpell(SpellBlink)
 		registerSpell(SpellBunnyHop)
 		registerSpell(SpellButterflyShield)
 		registerSpell(SpellCall)
 		registerSpell(SpellConfusion)
 		registerSpell(SpellDay)
+		registerSpell(SpellDarkness)
 		registerSpell(SpellDeathMark)
 		registerSpell(SpellDecay)
 		registerSpell(SpellDispel)
@@ -209,6 +257,7 @@ object AlfheimRegistry {
 		registerSpell(SpellEcho)
 		registerSpell(SpellFenrirStorm)
 		registerSpell(SpellFireball)
+		registerSpell(SpellFirestar)
 		registerSpell(SpellFirewall)
 		registerSpell(SpellGravityTrap)
 		registerSpell(SpellGoldRush)
@@ -220,16 +269,20 @@ object AlfheimRegistry {
 		registerSpell(SpellIgnition)
 		registerSpell(SpellIsaacStorm)
 		registerSpell(SpellJoin)
+		registerSpell(SpellLeafStorm)
 		registerSpell(SpellLiquification)
 		registerSpell(SpellMortar)
 		registerSpell(SpellNight)
 		registerSpell(SpellNightVision)
 		registerSpell(SpellNineLifes)
 		registerSpell(SpellNoclip)
+		registerSpell(SpellNoteshot)
 		registerSpell(SpellOutdare)
 		registerSpell(SpellPoisonRoots)
 		registerSpell(SpellPurifyingSurface)
 		registerSpell(SpellRain)
+		registerSpell(SpellRefresh)
+		registerSpell(SpellRepair)
 		registerSpell(SpellResurrect)
 		registerSpell(SpellSacrifice)
 		registerSpell(SpellShadowVortex)
@@ -251,7 +304,7 @@ object AlfheimRegistry {
 		registerSpell(SpellWindBlades)
 	}
 	
-	fun loadAllPinkStuff() {
+	private fun loadAllPinkStuff() {
 		addPink(ItemStack(Blocks.wool, 1, 6), 1)
 		addPink(ItemStack(Blocks.red_flower, 1, 7), 1)
 		addPink(ItemStack(Blocks.stained_hardened_clay, 1, 6), 1)
@@ -367,9 +420,8 @@ object AlfheimRegistry {
 		addPink(ItemStack(AlfheimItems.elementalHelmet), 45)
 		if (Botania.thaumcraftLoaded) addPink(ItemStack(AlfheimItems.elementalHelmetRevealing), 45)
 		addPink(ItemStack(AlfheimItems.elementalLeggings), 63)
-		addPink(ItemStack(AlfheimItems.elementiumHoe), 18)
-		addPink(ItemStack(AlfheimItems.elvenResource, 1, ElvenResourcesMetas.ManaInfusionCore), 9)
-		addPink(ItemStack(AlfheimItems.elvenResource, 1, ElvenResourcesMetas.ElvenWeed), 8)
+		addPink(ElvenResourcesMetas.ManaInfusionCore.stack, 9)
+		addPink(ElvenResourcesMetas.ElvenWeed.stack, 8)
 		addPink(ItemStack(AlfheimItems.flugelDisc), 13)
 		addPink(ItemStack(AlfheimItems.flugelHead), 5)
 		for (i in 0..6) addPink(ItemStack(AlfheimItems.hyperBucket, 1, i), 27)
@@ -385,5 +437,59 @@ object AlfheimRegistry {
 		addPink(ItemStack(AlfheimItems.spatiotemporalRing), 54)
 		addPink(ItemStack(AlfheimItems.trisDagger), 36)
 		addPink(ItemStack(AlfheimItems.wireAxe), 81)
+	}
+	
+	private fun registerEnderOres() {
+		AlfheimConfigHandler.enderOreWeights.forEach {
+			val (name, weight) = it.split(':')
+			AlfheimAPI.addOreWeightEnd(name, weight.toInt())
+		}
+		
+//		// Vanilla
+//		AlfheimAPI.addOreWeightEnd("oreEndCoal", 9000)
+//		AlfheimAPI.addOreWeightEnd("oreEndDiamond", 500)
+//		AlfheimAPI.addOreWeightEnd("oreEndEmerald", 500)
+//		AlfheimAPI.addOreWeightEnd("oreEndGold", 3635)
+//		AlfheimAPI.addOreWeightEnd("oreEndIron", 5790)
+//		AlfheimAPI.addOreWeightEnd("oreEndLapis", 3250)
+//		AlfheimAPI.addOreWeightEnd("oreEndRedstone", 5600)
+//
+//		// Common tech ores
+//		AlfheimAPI.addOreWeightEnd("oreEndCopper", 4700)
+//		AlfheimAPI.addOreWeightEnd("oreEndTin", 3750)
+//		AlfheimAPI.addOreWeightEnd("oreEndLead", 2790)
+//		AlfheimAPI.addOreWeightEnd("oreEndNickel", 1790)
+//		AlfheimAPI.addOreWeightEnd("oreEndPlatinum", 350)
+//		AlfheimAPI.addOreWeightEnd("oreEndSilver", 1550)
+//		AlfheimAPI.addOreWeightEnd("oreEndSteel", 1690)
+//		AlfheimAPI.addOreWeightEnd("oreEndMithril", 1000)
+//		AlfheimAPI.addOreWeightEnd("oreEndUranium", 2000)
+//		AlfheimAPI.addOreWeightEnd("oreEndOsmium", 1000)
+//		AlfheimAPI.addOreWeightEnd("oreEndIridium", 850)
+//
+//		// Tinker's Construct
+//		AlfheimAPI.addOreWeightEnd("oreEndArdite", 1000)
+//		AlfheimAPI.addOreWeightEnd("oreEndCobalt", 1000)
+//
+//		// Applied Energistics
+//		AlfheimAPI.addOreWeightEnd("oreEndCertusQuartz", 2000)
+//		AlfheimAPI.addOreWeightEnd("oreEndChargedCertusQuartz", 950)
+//
+//		// idk
+//		AlfheimAPI.addOreWeightEnd("oreEndYellorite", 3000)
+//		AlfheimAPI.addOreWeightEnd("oreClathrateEnder", 800)
+//		AlfheimAPI.addOreWeightEnd("oreEndProsperity", 200)
+//		AlfheimAPI.addOreWeightEnd("oreEndInferium", 500)
+//		AlfheimAPI.addOreWeightEnd("oreEndBiotite", 500) // OreDictionary.registerOre("oreEndBiotite", Biotite.biotite_ore)
+//
+//		// Draconic Evolution
+//		AlfheimAPI.addOreWeightEnd("oreDraconium", 200)
+//
+//		// Hardcore Ender Expansion (WRONG WEIGHTS)
+//		AlfheimAPI.addOreWeightEnd("oreHeeStardust", 200)
+//		AlfheimAPI.addOreWeightEnd("oreHeeInstabilityOrb", 200)
+//		AlfheimAPI.addOreWeightEnd("oreHeeEndium", 200)
+//		AlfheimAPI.addOreWeightEnd("oreHeeIgneousRock", 200)
+//		AlfheimAPI.addOreWeightEnd("oreHeeEndPowder", 200)
 	}
 }

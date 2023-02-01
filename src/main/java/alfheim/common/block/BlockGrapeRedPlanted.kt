@@ -3,7 +3,6 @@ package alfheim.common.block
 import alexsocol.asjlib.*
 import alexsocol.asjlib.extendables.block.BlockModFence
 import alfheim.api.lib.LibRenderIDs
-import alfheim.common.item.AlfheimItems
 import alfheim.common.item.material.ElvenFoodMetas
 import alfheim.common.lexicon.AlfheimLexiconData
 import net.minecraft.block.IGrowable
@@ -24,7 +23,7 @@ import kotlin.math.*
 class BlockGrapeRedPlanted: BlockModFence("planks_oak", Material.wood, null), IGrowable, ILexiconable {
 	
 	init {
-		setBlockName("GrapeRedPlanted")
+		setBlockName("RedGrapePlanted")
 		setHardness(2.0F)
 		setLightOpacity(0)
 		setResistance(5.0F)
@@ -91,7 +90,7 @@ class BlockGrapeRedPlanted: BlockModFence("planks_oak", Material.wood, null), IG
 		if (world.getBlockMetadata(x, y, z) < 4) return false
 		if (world.isRemote || player.heldItem != null) return false
 		
-		player.dropPlayerItemWithRandomChoice(ItemStack(AlfheimItems.elvenFood, world.rand.nextInt(2) + 1, ElvenFoodMetas.RedGrapes), true)?.delayBeforeCanPickup = 0
+		player.dropPlayerItemWithRandomChoice(ElvenFoodMetas.RedGrapes.stack(world.rand.nextInt(2) + 1), true)?.delayBeforeCanPickup = 0
 		world.setBlockMetadataWithNotify(x, y, z, 2, 3)
 		
 		world.markBlockRangeForRenderUpdate(x, y, z, x, y, z)

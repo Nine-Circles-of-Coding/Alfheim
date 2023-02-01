@@ -18,10 +18,7 @@ class EntityGrieferCreeper(world: World): EntityCreeper(world) {
 	override fun writeEntityToNBT(tag: NBTTagCompound) {
 		super.writeEntityToNBT(tag)
 		
-		if (dataWatcher.getWatchableObjectByte(17).I == 1) {
-			tag.setBoolean("powered", true)
-		}
-		
+		tag.setBoolean("powered", getFlag(6))
 		tag.setInteger("Fuse", fuseTime)
 		tag.setBoolean("ignited", func_146078_ca())
 	}
@@ -31,7 +28,7 @@ class EntityGrieferCreeper(world: World): EntityCreeper(world) {
 	 */
 	override fun readEntityFromNBT(tag: NBTTagCompound) {
 		super.readEntityFromNBT(tag)
-		dataWatcher.updateObject(17, java.lang.Byte.valueOf((if (tag.getBoolean("powered")) 1 else 0).toByte()))
+		setFlag(6, tag.getBoolean("powered"))
 		
 		if (tag.hasKey("Fuse", 99)) {
 			fuseTime = tag.getInteger("Fuse")
@@ -71,18 +68,18 @@ class EntityGrieferCreeper(world: World): EntityCreeper(world) {
 	}
 	
 	private fun creeperGoBoom() {
-		if (!worldObj.isRemote) {
-			val flag = worldObj.gameRules.getGameRuleBooleanValue("mobGriefing")
-			
-			if (this.powered) {
-				val storm = EntityManaStorm(worldObj)
-				storm.setPosition(posX + 0.5, posY + 0.5, posZ + 0.5)
-				worldObj.spawnEntityInWorld(storm)
-			} else {
-				worldObj.createExplosion(this, posX, posY, posZ, (this.explosionRadius).F, flag)
-			}
-			
-			setDead()
+		if (worldObj.isRemote) return
+		
+		val flag = worldObj.gameRules.getGameRuleBooleanValue("mobGriefing")
+		
+		if (this.powered) {
+			val storm = EntityManaStorm(worldObj)
+			storm.setPosition(posX + 0.5, posY + 0.5, posZ + 0.5)
+			storm.spawn()
+		} else {
+			worldObj.createExplosion(this, posX, posY, posZ, (this.explosionRadius).F, flag)
 		}
+		
+		setDead()
 	}
 }

@@ -4,7 +4,6 @@ import alexsocol.asjlib.*
 import alfheim.api.lib.LibRenderIDs
 import alfheim.common.block.base.BlockContainerMod
 import alfheim.common.block.tile.TileBarrel
-import alfheim.common.item.AlfheimItems
 import alfheim.common.item.material.*
 import alfheim.common.lexicon.AlfheimLexiconData
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
@@ -57,7 +56,7 @@ class BlockBarrel: BlockContainerMod(Material.wood), ILexiconable {
 			
 			when (tile.wineStage) {
 				0                           -> { // nothing
-					if (stack.item is ItemElvenFood && stack.meta == ElvenFoodMetas.WhiteGrapes || stack.meta == ElvenFoodMetas.RedGrapes) {
+					if (stack.item is ItemElvenFood && stack.meta == ElvenFoodMetas.WhiteGrapes.I || stack.meta == ElvenFoodMetas.RedGrapes.I) {
 						tile.wineStage = TileBarrel.WINE_STAGE_GRAPE
 						tile.wineType = stack.meta
 						tile.wineLevel++
@@ -73,7 +72,7 @@ class BlockBarrel: BlockContainerMod(Material.wood), ILexiconable {
 				}
 				
 				TileBarrel.WINE_STAGE_MASH  -> {
-					if (stack.item is ItemElvenFood && stack.meta == ElvenFoodMetas.Nectar) {
+					if (stack.item is ItemElvenFood && stack.meta == ElvenFoodMetas.Nectar.I) {
 						tile.wineStage = TileBarrel.WINE_STAGE_LIQUID
 						tile.timer = TileBarrel.FERMENTATION_TIME
 						stack.stackSize--
@@ -81,10 +80,10 @@ class BlockBarrel: BlockContainerMod(Material.wood), ILexiconable {
 				}
 				
 				TileBarrel.WINE_STAGE_READY -> {
-					if (stack.item is ItemElvenResource && stack.meta == ElvenResourcesMetas.Jug && tile.wineLevel >= 4) {
+					if (stack.item is ItemElvenResource && stack.meta == ElvenResourcesMetas.Jug.I && tile.wineLevel >= 4) {
 						--stack.stackSize
 						
-						val jug = ItemStack(AlfheimItems.elvenFood, 1, if (tile.wineType == TileBarrel.WINE_TYPE_RED) ElvenFoodMetas.RedWine else ElvenFoodMetas.WhiteWine)
+						val jug = if (tile.wineType == TileBarrel.WINE_TYPE_RED) ElvenFoodMetas.RedWine.stack else ElvenFoodMetas.WhiteWine.stack
 						if (player.inventory.addItemStackToInventory(jug)) {
 							player.dropPlayerItemWithRandomChoice(jug, true)
 						}
@@ -149,7 +148,7 @@ class BlockBarrel: BlockContainerMod(Material.wood), ILexiconable {
 	companion object {
 		
 		init {
-			this.eventForge()
+			eventForge()
 		}
 		
 		@SubscribeEvent

@@ -2,25 +2,23 @@ package alfheim.common.entity.spell
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
+import alexsocol.asjlib.security.InteractionSecurity
 import alfheim.api.spell.*
 import alfheim.client.render.world.VisualEffectHandlerClient.VisualEffects
 import alfheim.common.core.handler.*
 import alfheim.common.core.handler.CardinalSystem.PartySystem
 import alfheim.common.core.util.DamageSourceSpell
-import alexsocol.asjlib.security.InteractionSecurity
 import alfheim.common.spell.tech.SpellGravityTrap
 import cpw.mods.fml.relauncher.*
 import net.minecraft.entity.*
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.util.AxisAlignedBB
 import net.minecraft.world.World
 import java.util.*
 
 class EntitySpellGravityTrap @JvmOverloads constructor(world: World, var caster: EntityLivingBase? = null, x: Double = 0.0, y: Double = 0.0, z: Double = 0.0): Entity(world), ITimeStopSpecific {
 	
-	override val isImmune: Boolean
-		get() = false
+	override val isImmune = false
 	
 	init {
 		setPosition(x, y, z)
@@ -41,22 +39,24 @@ class EntitySpellGravityTrap @JvmOverloads constructor(world: World, var caster:
 		}
 		if (isDead || ticksExisted < 20 || ASJUtilities.isClient || caster == null) return
 		
-		val l = worldObj.getEntitiesWithinAABB(Entity::class.java, AxisAlignedBB.getBoundingBox(posX, posY + 8, posZ, posX, posY + 8, posZ).expand(SpellGravityTrap.radius, 9.0, SpellGravityTrap.radius)) as List<Entity>
-		for (e in l) {
-			if (e === this || e === caster || e is EntityLivingBase && PartySystem.mobsSameParty(caster, e) && !AlfheimConfigHandler.frienldyFire || e is EntityPlayer && e.capabilities.isCreativeMode) continue
-			if (!InteractionSecurity.canInteractWithEntity(caster ?: continue, e)) continue
+		getEntitiesWithinAABB(worldObj, Entity::class.java, getBoundingBox(posX, posY + 8, posZ, posX, posY + 8, posZ).expand(SpellGravityTrap.radius, 9.0, SpellGravityTrap.radius)).forEach {
+			if (it === this || it === caster || it is EntityLivingBase && PartySystem.mobsSameParty(caster, it) && !AlfheimConfigHandler.frienldyFire || it is EntityPlayer && it.capabilities.isCreativeMode) return@forEach
 			
-			val dist = Vector3.fromEntity(e).sub(Vector3.fromEntity(this))
-			if (Vector3.entityDistancePlane(e, this) <= SpellGravityTrap.radius) {
-				e.motionY -= 1.0
-				e.motionX -= dist.x / 5
-				e.motionZ -= dist.z / 5
-				e.attackEntityFrom(DamageSourceSpell.gravity(this, caster), SpellBase.over(caster, SpellGravityTrap.damage.D))
+			if (Vector3.entityDistancePlane(it, this) <= SpellGravityTrap.radius) {
+				it.attackEntityFrom(DamageSourceSpell.gravity(this, caster), SpellBase.over(caster, SpellGravityTrap.damage.D))
+				
+				if (!InteractionSecurity.canInteractWithEntity(caster ?: return@forEach, it)) return@forEach
+				
+				val dist = Vector3.fromEntity(it).sub(this)
+				
+				it.motionY -= 1.0
+				it.motionX -= dist.x / 5
+				it.motionZ -= dist.z / 5
 			}
 		}
 		
 		if (worldObj.rand.nextBoolean()) {
-			val p = Vector3(posX, posY, posZ).add(Math.random() * 8.0 - 4.0, Math.random() * 3.5, Math.random() * 8.0 - 4.0)
+			val p = Vector3().rand().sub(0.5).normalize().mul(Math.random() * 4).add(this)
 			val m = Vector3.fromEntity(this).sub(p).mul(0.05)
 			VisualEffectHandler.sendPacket(VisualEffects.GRAVITY, dimension, p.x, p.y, p.z, m.x, m.y, m.z)
 		}

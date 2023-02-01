@@ -10,7 +10,7 @@ import net.minecraft.util.StatCollector
 
 open class ItemIridescentBlockMod(par2Block: Block): ItemBlockWithMetadata(par2Block, par2Block) {
 	
-	override fun getMetadata(meta: Int): Int {
+	override fun getMetadata(meta: Int): Int { // used in bifrost leaves
 		if (field_150939_a is BlockLeavesMod) return meta or (field_150939_a as BlockLeavesMod).decayBit()
 		return meta
 	}
@@ -41,7 +41,7 @@ class ItemIridescentWoodMod(par2Block: Block): ItemIridescentBlockMod(par2Block)
 
 class ItemIridescentLeavesMod(par2Block: Block): ItemIridescentBlockMod(par2Block) {
 	
-	override fun getMetadata(meta: Int): Int {
+	override fun getMetadata(meta: Int): Int { // used for colored leaves... only. But let the check just be there
 		if (field_150939_a is BlockLeavesMod) return meta or (field_150939_a as BlockLeavesMod).decayBit()
 		return meta
 	}

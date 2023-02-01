@@ -6,15 +6,14 @@ import alfheim.api.event.SpellCastEvent
 import alfheim.common.core.handler.AlfheimConfigHandler
 import cpw.mods.fml.relauncher.*
 import net.minecraft.entity.EntityLivingBase
-import net.minecraft.entity.player.*
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
-import net.minecraft.util.*
+import net.minecraft.util.MathHelper
 import net.minecraftforge.common.MinecraftForge
 import vazkii.botania.api.mana.ManaItemHandler
-import kotlin.math.*
 
-abstract class SpellBase @JvmOverloads constructor(val name: String, val race: EnumRace, protected var mana: Int, protected var cldn: Int, protected var cast: Int, val hard: Boolean = false) {
+abstract class SpellBase @JvmOverloads constructor(val name: String, val race: EnumRace, protected var mana: Int, protected var cldn: Int, protected var cast: Int, var hard: Boolean = false) {
 	
 	/**
 	 * Mana checking and consumption call here
@@ -94,11 +93,11 @@ abstract class SpellBase @JvmOverloads constructor(val name: String, val race: E
 		fun consumeMana(player: EntityPlayer, mana: Int, req: Boolean, forSpell: SpellBase? = null) =
 			(if (forSpell?.hard == true) ManaItemHandler::requestManaExact else ManaItemHandler::requestManaExactForTool)(ItemStack(Blocks.stone), player, mana, req)
 		
-		fun say(caster: EntityPlayerMP, spell: SpellBase) {
-			val l = caster.worldObj.getEntitiesWithinAABB(EntityPlayerMP::class.java, AxisAlignedBB.getBoundingBox(caster.posX, caster.posY, caster.posZ, caster.posX, caster.posY, caster.posZ).expand(40.0, 40.0, 40.0)) as List<EntityPlayerMP>
-			l
-				.filter { sqrt((caster.posX - it.posX).pow(2.0) + (caster.posY - it.posY).pow(2.0) + (caster.posZ - it.posZ).pow(2.0)) < 40 }
-				.forEach { it.addChatMessage(ChatComponentText(EnumChatFormatting.UNDERLINE.toString() + "* " + caster.commandSenderName + ' '.toString() + StatCollector.translateToLocal("spell.cast") + EnumChatFormatting.RESET + ": " + StatCollector.translateToLocal("spell." + spell.name + ".words"))) }
-		}
+//		fun say(caster: EntityPlayerMP, spell: SpellBase) {
+//			val l = caster.worldObj.getEntitiesWithinAABB(EntityPlayerMP::class.java, AxisAlignedBB.getBoundingBox(caster.posX, caster.posY, caster.posZ, caster.posX, caster.posY, caster.posZ).expand(40.0, 40.0, 40.0)) as List<EntityPlayerMP>
+//			l
+//				.filter { sqrt((caster.posX - it.posX).pow(2.0) + (caster.posY - it.posY).pow(2.0) + (caster.posZ - it.posZ).pow(2.0)) < 40 }
+//				.forEach { ASJUtilities.say(it, "${EnumChatFormatting.UNDERLINE}* ${caster.commandSenderName} ${StatCollector.translateToLocal("spell.cast")}${EnumChatFormatting.RESET}: ${StatCollector.translateToLocal("spell." + spell.name + ".words")}") }
+//		}
 	}
 }

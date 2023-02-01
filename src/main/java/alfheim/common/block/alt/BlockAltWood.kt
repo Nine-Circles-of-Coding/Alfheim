@@ -14,12 +14,14 @@ import net.minecraft.block.Block
 import net.minecraft.block.material.Material
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.creativetab.CreativeTabs
+import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.*
 import net.minecraft.util.IIcon
 import net.minecraft.world.*
 import net.minecraftforge.client.event.TextureStitchEvent
 import net.minecraftforge.common.MinecraftForge
+import net.minecraftforge.common.util.ForgeDirection
 import vazkii.botania.api.lexicon.LexiconEntry
 import java.util.*
 
@@ -37,11 +39,27 @@ class BlockAltWood(val set: Int): BlockModRotatedPillar(Material.wood), IFuelHan
 		GameRegistry.registerFuelHandler(this)
 	}
 	
-	override fun getBlockHardness(world: World, x: Int, y: Int, z: Int) = if (set == 1 && world.getBlockMetadata(x, y, z) % 4 == 2) -1f else super.getBlockHardness(world, x, y, z)
+	override fun getExplosionResistance(entity: Entity?, world: World, x: Int, y: Int, z: Int, explosionX: Double, explosionY: Double, explosionZ: Double) =
+		if (set == 1 && world.getBlockMetadata(x, y, z) % 4 == 2)
+			Float.MAX_VALUE
+		else
+			super.getExplosionResistance(entity, world, x, y, z, explosionX, explosionY, explosionZ)
+	
+	override fun getBlockHardness(world: World, x: Int, y: Int, z: Int) =
+		if (set == 1 && world.getBlockMetadata(x, y, z) % 4 == 2)
+			-1f
+		else
+			super.getBlockHardness(world, x, y, z)
 	
 	override fun canSustainLeaves(world: IBlockAccess, x: Int, y: Int, z: Int) = !(set == 1 && world.getBlockMetadata(x, y, z) % 4 == 2)
 	
 	override fun isWood(world: IBlockAccess, x: Int, y: Int, z: Int) = !(set == 1 && world.getBlockMetadata(x, y, z) % 4 == 2)
+	
+	override fun getFlammability(world: IBlockAccess, x: Int, y: Int, z: Int, face: ForgeDirection?) =
+		if (set == 1 && world.getBlockMetadata(x, y, z) % 4 == 2) 0 else super.getFlammability(world, x, y, z, face)
+	
+	override fun getFireSpreadSpeed(world: IBlockAccess, x: Int, y: Int, z: Int, face: ForgeDirection?) =
+		if (set == 1 && world.getBlockMetadata(x, y, z) % 4 == 2) 0 else super.getFireSpreadSpeed(world, x, y, z, face)
 	
 	override fun breakBlock(world: World, x: Int, y: Int, z: Int, block: Block, fortune: Int) {
 		val meta = world.getBlockMetadata(x, y, z)

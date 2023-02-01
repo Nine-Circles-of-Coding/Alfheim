@@ -7,16 +7,10 @@ import cpw.mods.fml.relauncher.*
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.util.StatCollector
-import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent
-import net.minecraftforge.event.entity.living.LivingFallEvent
+import net.minecraftforge.event.entity.living.*
 import vazkii.botania.api.mana.ManaItemHandler
 
 class ItemElementalAirBoots: ElementalArmor(3, "ElementalAirBoots") {
-	
-	init {
-		MinecraftForge.EVENT_BUS.register(this)
-	}
 	
 	override fun getPixieChance(stack: ItemStack): Float {
 		return 0.09f
@@ -28,27 +22,37 @@ class ItemElementalAirBoots: ElementalArmor(3, "ElementalAirBoots") {
 		super.addInformation(stack, player, list, b)
 	}
 	
-	@SubscribeEvent
-	fun onEntityJump(event: LivingJumpEvent) {
-		if (armorType == 3 && event.entityLiving is EntityPlayer && (event.entityLiving as EntityPlayer).getCurrentArmor(0) != null && (event.entityLiving as EntityPlayer).getCurrentArmor(0).item === AlfheimItems.elementalBoots && ManaItemHandler.requestManaExact((event.entityLiving as EntityPlayer).getCurrentArmor(0), event.entityLiving as EntityPlayer, ONEBLOCKCOST * 10, true)) {
-			event.entityLiving.motionY += 0.5
-		}
-	}
-	
-	@SubscribeEvent
-	fun onEntityFall(event: LivingFallEvent) {
-		if (armorType == 3 && event.entityLiving is EntityPlayer && (event.entityLiving as EntityPlayer).getCurrentArmor(0) != null && (event.entityLiving as EntityPlayer).getCurrentArmor(0).item === AlfheimItems.elementalBoots) {
-			if (event.distance < 4.5063215) event.distance = 0f
-			
-			if (event.distance >= 4.5063215) {
-				val decrease = ManaItemHandler.requestMana((event.entityLiving as EntityPlayer).getCurrentArmor(0), event.entityLiving as EntityPlayer, event.distance.mfloor() * ONEBLOCKCOST, true)
-				event.distance -= (decrease / ONEBLOCKCOST).F
-			}
-		}
-	}
-	
 	companion object {
 		
 		const val ONEBLOCKCOST = 10
+		
+		init {
+			eventForge()
+		}
+		
+		@SubscribeEvent
+		fun onEntityJump(event: LivingEvent.LivingJumpEvent) {
+			val player = event.entityLiving as? EntityPlayer ?: return
+			
+			val boots = player.getCurrentArmor(0) ?: return
+			if (boots.item !== AlfheimItems.elementalBoots || !ManaItemHandler.requestManaExact(boots, player, ONEBLOCKCOST * 10, !player.worldObj.isRemote)) return
+			
+			event.entityLiving.motionY += 0.5
+		}
+		
+		@SubscribeEvent
+		fun onEntityFall(event: LivingFallEvent) {
+			val player = event.entityLiving as? EntityPlayer ?: return
+			
+			val boots = player.getCurrentArmor(0) ?: return
+			if (boots.item !== AlfheimItems.elementalBoots) return
+			
+			if (event.distance < 4.5) {
+				event.distance = 0f
+				return
+			}
+			
+			event.distance -= ManaItemHandler.requestMana((event.entityLiving as EntityPlayer).getCurrentArmor(0), event.entityLiving as EntityPlayer, (event.distance * ONEBLOCKCOST).I, true)
+		}
 	}
 }

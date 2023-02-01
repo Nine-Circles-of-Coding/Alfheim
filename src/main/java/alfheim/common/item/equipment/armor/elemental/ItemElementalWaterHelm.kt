@@ -1,11 +1,11 @@
 package alfheim.common.item.equipment.armor.elemental
 
-import alexsocol.asjlib.mfloor
+import alexsocol.asjlib.*
 import cpw.mods.fml.relauncher.*
 import net.minecraft.block.material.Material
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
-import net.minecraft.potion.*
+import net.minecraft.potion.Potion
 import net.minecraft.util.StatCollector
 import net.minecraft.world.World
 import vazkii.botania.api.mana.*
@@ -23,12 +23,12 @@ open class ItemElementalWaterHelm: ElementalArmor, IManaDiscountArmor {
 		return if (hasArmorSet(player)) 0.1f else 0f
 	}
 	
-	override fun onArmorTick(world: World, player: EntityPlayer, stack: ItemStack?) {
-		if (!world.isRemote && armorType == 0 && player.getCurrentArmor(3) != null && player.getCurrentArmor(3).item === this) {
-			if (world.getBlock(player.posX.mfloor(), player.posY.mfloor() + 1, player.posZ.mfloor()).material == Material.water && ManaItemHandler.requestManaExact(player.getCurrentArmor(3), player, 1, !world.isRemote)) {
-				player.addPotionEffect(PotionEffect(Potion.waterBreathing.id, 5, -1))
-				player.addPotionEffect(PotionEffect(Potion.nightVision.id, 5, -1))
-			}
+	override fun onArmorTick(world: World, player: EntityPlayer, stack: ItemStack) {
+		if (world.isRemote) return
+		
+		if (world.getBlock(player, y = 1).material == Material.water && ManaItemHandler.requestManaExact(stack, player, 1, !world.isRemote)) {
+			player.addPotionEffect(PotionEffectU(Potion.waterBreathing.id, 5, -1))
+			player.addPotionEffect(PotionEffectU(Potion.nightVision.id, 5, -1))
 		}
 	}
 	

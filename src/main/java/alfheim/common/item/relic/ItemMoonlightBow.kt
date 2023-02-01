@@ -21,6 +21,7 @@ import net.minecraft.item.*
 import net.minecraft.stats.Achievement
 import net.minecraft.util.*
 import net.minecraft.world.World
+import net.minecraftforge.common.util.ForgeDirection
 import vazkii.botania.api.BotaniaAPI
 import vazkii.botania.api.item.IRelic
 import vazkii.botania.api.mana.ManaItemHandler
@@ -68,32 +69,29 @@ class ItemMoonlightBow: ItemBow(), IRelic {
 	override fun getItemUseAction(stack: ItemStack) = EnumAction.bow
 	
 	override fun onUsingTick(stack: ItemStack, player: EntityPlayer, count: Int) {
-		if (player.worldObj.isRemote) {
-			val v = Vector3()
-			val l = player.lookVec
-			val look = Vector3()
-			val p = Vector3.fromEntity(player).add(0, 1.62, 0)
-			val ds = arrayOf(0.3, 0.8)
-			val moon = isLookingAtMoon(player.entityWorld, player, mc.timer.renderPartialTicks, false)
-			var r = 0.1f * if (moon) 3 else 1
-			var g = 0.85f
-			var b = if (moon) g else 0.1f
-			
-			if (!moon && stack.displayName.lowercase().trim() == "i'm a banana") {
-				r = 0.95f
-				g = 0.95f
-				b = 0.1f
-			}
-			
-			for (d in ds) {
-				for (i in 1..36) {
-					v.set(0.0, d, 0.0)
-					v.rotate(i * 10.0, Vector3.oZ)
-					v.rotate(player.rotationPitch.D, Vector3.oX)
-					v.rotate(-player.rotationYaw.D, Vector3.oY)
-					v.add(look.set(l).mul(if (d == 0.3) 1.75 else 1.0)).add(p)
-					Botania.proxy.wispFX(player.worldObj, v.x, v.y, v.z, r, g, b, if (d == 0.3) 0.1f else 0.25f, 0f, 0.1f)
-				}
+		if (!player.worldObj.isRemote) return
+		val v = Vector3()
+		val l = player.lookVec
+		val look = Vector3()
+		val p = Vector3.fromEntity(player).add(0, 1.62, 0)
+		val ds = arrayOf(0.3, 0.8)
+		val moon = isLookingAtMoon(player.entityWorld, player, mc.timer.renderPartialTicks, false)
+		var r = 0.1f * if (moon) 3 else 1
+		var g = 0.85f
+		var b = if (moon) g else 0.1f
+		
+		if (!moon && stack.displayName.lowercase().trim() == "i'm a banana") {
+			r = 0.95f
+			g = 0.95f
+			b = 0.1f
+		}
+		
+		for (d in ds) {
+			for (i in 1..36) {
+				v.set(0.0, d, 0.0)
+				v.rotate(i * 10.0, Vector3.oZ).rotate(player.rotationPitch, Vector3.oX).rotate(-player.rotationYaw, Vector3.oY)
+				v.add(look.set(l).mul(if (d == 0.3) 1.75 else 1.0)).add(p)
+				Botania.proxy.wispFX(player.worldObj, v.x, v.y, v.z, r, g, b, if (d == 0.3) 0.1f else 0.25f, 0f, 0.1f)
 			}
 		}
 	}
@@ -134,7 +132,7 @@ class ItemMoonlightBow: ItemBow(), IRelic {
 			arrow.life = life
 			
 			if (!world.isRemote)
-				world.spawnEntityInWorld(arrow)
+				arrow.spawn()
 			
 			player.playSoundAtEntity("random.bow", 1f, 1f / (Item.itemRand.nextFloat() * 0.4f + 1.2f) + 0.5f)
 		}
@@ -231,7 +229,7 @@ class ItemMoonlightBow: ItemBow(), IRelic {
 			}
 			
 			if (!isRightPlayer(player, stack) && player.ticksExisted % 10 == 0 && (stack.item !is ItemRelic || (stack.item as ItemRelic).shouldDamageWrongPlayer())) {
-				player.attackEntityFrom(damageSource(), 2f)
+				player.attackEntityFrom(ItemRelic.damageSource(), 2f)
 			}
 		}
 	}
@@ -247,8 +245,6 @@ class ItemMoonlightBow: ItemBow(), IRelic {
 	fun isRightPlayer(player: EntityPlayer, stack: ItemStack?) = isRightPlayer(player.commandSenderName, stack)
 	
 	fun isRightPlayer(player: String, stack: ItemStack?) = getSoulbindUsernameS(stack) == player
-	
-	fun damageSource() = DamageSource("botania-relic")
 	
 	override fun bindToUsername(playerName: String, stack: ItemStack) {
 		bindToUsernameS(playerName, stack)
@@ -422,22 +418,22 @@ private object ShootHelper {
 				d5 = -1.0E-4
 			}
 			
-			val enumfacing: EnumFacing
+			val facing: ForgeDirection
 			
 			if (d3 < d4 && d3 < d5) {
-				enumfacing = if (i > l) EnumFacing.WEST else EnumFacing.EAST
+				facing = if (i > l) ForgeDirection.WEST else ForgeDirection.EAST
 				vec3d = Vec3.createVectorHelper(d0, vec3d.yCoord + d7 * d3, vec3d.zCoord + d8 * d3)
 			} else if (d4 < d5) {
-				enumfacing = if (j > i1) EnumFacing.DOWN else EnumFacing.UP
+				facing = if (j > i1) ForgeDirection.DOWN else ForgeDirection.UP
 				vec3d = Vec3.createVectorHelper(vec3d.xCoord + d6 * d4, d1, vec3d.zCoord + d8 * d4)
 			} else {
-				enumfacing = if (k > j1) EnumFacing.NORTH else EnumFacing.SOUTH
+				facing = if (k > j1) ForgeDirection.NORTH else ForgeDirection.SOUTH
 				vec3d = Vec3.createVectorHelper(vec3d.xCoord + d6 * d5, vec3d.yCoord + d7 * d5, d2)
 			}
 			
-			l = vec3d.xCoord.mfloor() - if (enumfacing == EnumFacing.EAST) 1 else 0
-			i1 = vec3d.yCoord.mfloor() - if (enumfacing == EnumFacing.UP) 1 else 0
-			j1 = vec3d.zCoord.mfloor() - if (enumfacing == EnumFacing.SOUTH) 1 else 0
+			l = vec3d.xCoord.mfloor() - if (facing == ForgeDirection.EAST) 1 else 0
+			i1 = vec3d.yCoord.mfloor() - if (facing == ForgeDirection.UP) 1 else 0
+			j1 = vec3d.zCoord.mfloor() - if (facing == ForgeDirection.SOUTH) 1 else 0
 			
 			val block1 = world.getBlock(l, i1, j1)
 			val meta1 = world.getBlockMetadata(l, i1, j1)

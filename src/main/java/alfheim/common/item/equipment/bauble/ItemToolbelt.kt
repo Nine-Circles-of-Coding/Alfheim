@@ -1,5 +1,6 @@
 package alfheim.common.item.equipment.bauble
 
+//import alexsocol.asjlib.render.ASJRenderHelper
 //import alfheim.AlfheimCore
 //import alfheim.api.ModInfo
 //import alfheim.api.item.IToolbeltBlacklisted
@@ -42,7 +43,7 @@ package alfheim.common.item.equipment.bauble
 //	// ItemToolbelt will not become an IManaItem. That's... a bit excessivly OP, imo. Store those in your Bauble Case, or keep them in your inventory.
 //	companion object {
 //
-//		val glowTexture = ResourceLocation("${ModInfo.MODID}:textures/misc/toolbelt.png")
+//		val glowTexture = ResourceLocation("${ModInfo.MODID}:textures/misc/glow.png")
 //		val beltTexture = ResourceLocation("${ModInfo.MODID}:textures/model/entity/toolbelt.png")
 //
 //		@SideOnly(Side.CLIENT)
@@ -421,6 +422,7 @@ package alfheim.common.item.equipment.bauble
 //			val item = stack.item as ItemToolbelt
 //			GL11.glEnable(GL11.GL_BLEND)
 //			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+//          ASJRenderHelper.glColor1u(0xFF9F7F62u)
 //			mc.renderEngine.bindTexture(item.getGlowResource())
 //			tess.startDrawingQuads()
 //			for (i in 0 until segAngles) {

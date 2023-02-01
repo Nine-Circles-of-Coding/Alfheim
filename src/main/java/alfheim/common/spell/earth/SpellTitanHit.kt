@@ -71,6 +71,7 @@ object SpellTitanHit: SpellBase("titanhit", EnumRace.GNOME, 1, 1, 1) {
 		if (InteractionSecurity.isBreakingBanned(player, x, y, z, world, block, meta)) return 0
 		
 		var mana = 0
+		
 		val mat = world.getBlock(x, y, z).material
 		if (!(!world.isRemote || !remove && draw) || block == null || block.isAir(world, x, y, z) || !(block.getPlayerRelativeBlockHardness(player, world, x, y, z) > 0 || player.capabilities.isCreativeMode)) return mana
 		if (!player.capabilities.isCreativeMode && (!block.canHarvestBlock(player, meta) || !ToolCommons.isRightMaterial(mat, materialsListing))) return 0
@@ -129,7 +130,7 @@ object SpellTitanHit: SpellBase("titanhit", EnumRace.GNOME, 1, 1, 1) {
 	}
 	
 	override fun render(caster: EntityLivingBase) {
-		val dist = (caster as? EntityPlayerMP)?.theItemInWorldManager?.blockReachDistance ?: 5.0
+		val dist = mc.playerController.blockReachDistance.D
 		val mop = ASJUtilities.getSelectedBlock(caster, dist, false)
 		if (mop == null || mop.typeOfHit != MovingObjectType.BLOCK || mop.sideHit == -1) return
 		

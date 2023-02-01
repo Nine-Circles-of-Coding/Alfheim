@@ -4,6 +4,8 @@ import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.render.ASJRenderHelper
 import alfheim.api.block.tile.SubTileAnomalyBase
+import alfheim.common.core.asm.*
+import alfheim.common.core.asm.hook.AlfheimHookHandler
 import net.minecraft.item.ItemStack
 import vazkii.botania.common.Botania
 import vazkii.botania.common.entity.EntityManaBurst
@@ -21,12 +23,6 @@ class SubTileManaTornado: SubTileAnomalyBase() {
 			
 			return EMPTY_LIST
 		}
-	
-	override val strip: Int
-		get() = 2
-	
-	override val rarity: EnumAnomalityRarity
-		get() = EnumAnomalityRarity.RARE
 	
 	public override fun update() {
 		if (inWG()) return
@@ -48,8 +44,10 @@ class SubTileManaTornado: SubTileAnomalyBase() {
 		burst.manaLossPerTick = 1f
 		burst.gravity = 0f
 		
-		var meta = worldObj.rand.nextInt(ItemLens.SUBTYPES + 1)
-		if (meta == ItemLens.SUBTYPES) meta = ItemLens.STORM
+		val lenses = ItemLens.SUBTYPES + AlfheimClassTransformer.moreLenses
+		
+		var meta = worldObj.rand.nextInt(lenses + 1)
+		if (meta == lenses) meta = ItemLens.STORM
 		
 		val lens = ItemStack(ModItems.lens, 1, meta)
 		burst.sourceLens = lens
@@ -63,7 +61,7 @@ class SubTileManaTornado: SubTileAnomalyBase() {
 	}
 	
 	override fun performEffect(target: Any) {
-		if (target is EntityManaBurst) worldObj.spawnEntityInWorld(target)
+		if (target is EntityManaBurst) target.spawn(worldObj)
 	}
 	
 	override fun typeBits() = ALL

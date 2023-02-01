@@ -16,8 +16,8 @@ object SpellWallWarp: SpellBase("wallwarp", EnumRace.GNOME, 4000, 600, 5) {
 	override val usableParams: Array<Any>
 		get() = arrayOf(radius)
 	
-	override// This spell is slightly changed version of item from thKaguya's mod
-	fun performCast(caster: EntityLivingBase): SpellCastResult {
+	// This spell is slightly changed version of item from thKaguya's mod
+	override fun performCast(caster: EntityLivingBase): SpellCastResult {
 		val result: SpellCastResult
 		
 		val dist = (caster as? EntityPlayerMP)?.theItemInWorldManager?.blockReachDistance ?: 5.0
@@ -33,30 +33,14 @@ object SpellWallWarp: SpellBase("wallwarp", EnumRace.GNOME, 4000, 600, 5) {
 			2    -> pz = 1
 			3    -> pz = -1
 			4    -> px = 1
-			else -> px = -1
+			5    -> px = -1
 		}
 		
 		for (i in 0..radius.I) {
 			if (InteractionSecurity.isInteractionBanned(caster, mop.blockX, mop.blockY, mop.blockZ)) return SpellCastResult.NOTALLOW
 			
 			if (caster.worldObj.isAirBlock(mop.blockX, mop.blockY, mop.blockZ)) {
-				if (caster.worldObj.isAirBlock(mop.blockX, mop.blockY + 1, mop.blockZ)) {
-					result = checkCast(caster)
-					if (result != SpellCastResult.OK) return result
-					
-					caster.playSoundAtEntity("random.fizz", 0.5f, 1f)
-					caster.posX = mop.blockX + 0.5
-					caster.posY = (mop.blockY + caster.yOffset).D
-					caster.posZ = mop.blockZ + 0.5
-					caster.motionZ = 0.0
-					caster.motionY = caster.motionZ
-					caster.motionX = caster.motionY
-					if (caster is EntityPlayerMP)
-						caster.playerNetServerHandler.setPlayerLocation(mop.blockX + 0.5, (mop.blockY + caster.yOffset).D, mop.blockZ + 0.5, caster.rotationYaw, caster.rotationPitch)
-					else
-						caster.setPosition(mop.blockX + 0.5, (mop.blockY + caster.yOffset).D, mop.blockZ + 0.5)
-					return result
-				} else if (caster.worldObj.isAirBlock(mop.blockX, mop.blockY - 1, mop.blockZ)) {
+				if (caster.worldObj.isAirBlock(mop.blockX, mop.blockY - 1, mop.blockZ)) {
 					result = checkCast(caster)
 					if (result != SpellCastResult.OK) return result
 					
@@ -71,6 +55,22 @@ object SpellWallWarp: SpellBase("wallwarp", EnumRace.GNOME, 4000, 600, 5) {
 						caster.playerNetServerHandler.setPlayerLocation(mop.blockX + 0.5, (mop.blockY + caster.yOffset - 1).D, mop.blockZ + 0.5, caster.rotationYaw, caster.rotationPitch)
 					else
 						caster.setPosition(mop.blockX + 0.5, (mop.blockY + caster.yOffset - 1).D, mop.blockZ + 0.5)
+					return result
+				} else if (caster.worldObj.isAirBlock(mop.blockX, mop.blockY + 1, mop.blockZ)) {
+					result = checkCast(caster)
+					if (result != SpellCastResult.OK) return result
+					
+					caster.playSoundAtEntity("random.fizz", 0.5f, 1f)
+					caster.posX = mop.blockX + 0.5
+					caster.posY = (mop.blockY + caster.yOffset).D
+					caster.posZ = mop.blockZ + 0.5
+					caster.motionZ = 0.0
+					caster.motionY = caster.motionZ
+					caster.motionX = caster.motionY
+					if (caster is EntityPlayerMP)
+						caster.playerNetServerHandler.setPlayerLocation(mop.blockX + 0.5, (mop.blockY + caster.yOffset).D, mop.blockZ + 0.5, caster.rotationYaw, caster.rotationPitch)
+					else
+						caster.setPosition(mop.blockX + 0.5, (mop.blockY + caster.yOffset).D, mop.blockZ + 0.5)
 					return result
 				}
 			}

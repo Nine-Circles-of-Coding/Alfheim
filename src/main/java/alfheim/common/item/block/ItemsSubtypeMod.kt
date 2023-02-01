@@ -2,7 +2,7 @@ package alfheim.common.item.block
 
 import alexsocol.asjlib.meta
 import alfheim.api.ModInfo
-import alfheim.common.block.base.*
+import alfheim.common.block.base.BlockLeavesMod
 import net.minecraft.block.Block
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.*
@@ -10,7 +10,7 @@ import net.minecraft.util.StatCollector
 
 open class ItemSubtypedBlockMod(block: Block): ItemBlockWithMetadata(block, block) {
 	
-	override fun getMetadata(meta: Int): Int {
+	override fun getMetadata(meta: Int): Int { // used for base leaves
 		if (field_150939_a is BlockLeavesMod) return meta or (field_150939_a as BlockLeavesMod).decayBit()
 		return meta
 	}
@@ -30,6 +30,11 @@ open class ItemSubtypedBlockMod(block: Block): ItemBlockWithMetadata(block, bloc
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN") // fucking reflection
 class ItemUniqueSubtypedBlockMod(block: Block, val subtypes: Integer): ItemBlockWithMetadata(block, block) {
+
+	override fun getMetadata(meta: Int): Int { // used for Alt leaves
+		if (field_150939_a is BlockLeavesMod) return meta or (field_150939_a as BlockLeavesMod).decayBit()
+		return meta
+	}
 	
 	override fun getUnlocalizedNameInefficiently(stack: ItemStack) =
 		super.getUnlocalizedNameInefficiently(stack).replace("tile.", "tile.${ModInfo.MODID}:") + stack.meta % subtypes.toInt()

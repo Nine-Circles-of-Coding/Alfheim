@@ -10,6 +10,7 @@ import alfheim.client.render.entity.RenderEntityFlugel
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.entity.boss.EntityFlugel
 import alfheim.common.item.material.ItemElvenResource
+import alfheim.common.core.handler.HELLISH_VACATION
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.renderer.*
 import net.minecraft.client.renderer.texture.TextureMap
@@ -27,11 +28,17 @@ object ModelEntityFlugel: ModelBipedNew() {
 	
 	override fun render(entity: Entity, time: Float, amplitude: Float, ticksExisted: Float, yawHead: Float, pitchHead: Float, size: Float) {
 		if (entity.dataWatcher?.getWatchableObjectString(10) == "Hatsune Miku") {
+			chest.showModel = !HELLISH_VACATION
+			rightglove.showModel = !HELLISH_VACATION
+			leftglove.showModel = !HELLISH_VACATION
+			rightboot.showModel = !HELLISH_VACATION
+			leftboot.showModel = !HELLISH_VACATION
+			
 			val font = mc.fontRenderer
 			glEnable(GL_BLEND)
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 			
-			if (model1 != null) {
+			if (model1 != null && !HELLISH_VACATION) {
 				glPushMatrix()
 				glRotated(180.0, 1.0, 0.0, 0.0)
 				glTranslated(0.0, -1.5, 0.0)
@@ -91,7 +98,7 @@ object ModelEntityFlugel: ModelBipedNew() {
 			renderWings(entity, mc.timer.renderPartialTicks, color)
 			
 			if (!mc.isGamePaused)
-				spawnParticales(entity, time)
+				spawnParticles(entity, time)
 		}
 		
 		renderHalo(entity, mc.timer.renderPartialTicks)
@@ -198,14 +205,14 @@ object ModelEntityFlugel: ModelBipedNew() {
 		glPopMatrix()
 	}
 	
-	fun spawnParticales(flugel: EntityFlugel, partialTicks: Float) {
+	fun spawnParticles(flugel: EntityFlugel, partialTicks: Float) {
 		val angle = 5 + ((sin((flugel.ticksExisted + partialTicks) * 0.05) + 0.5) * 5)
 		
 		if (flugel.worldObj.rand.nextInt(40) == 0) {
 			val mod = if (flugel.worldObj.rand.nextBoolean()) -1 else 1
-			val v = Vector3((Math.random() * 5 + 1) * mod, 0.5, -0.75).rotate(angle * mod - flugel.renderYawOffset, Vector3.oY).add(flugel)
+			val v = Vector3((Math.random() * 5 + 1) * mod, 0.5, -0.75).rotateOY(angle * mod - flugel.renderYawOffset).add(flugel)
 			
-			AlfheimCore.proxy.featherFX(flugel.worldObj, v.x, v.y, v.z, 0x240935, 5f, (Math.random() * 0.5 + 1).F, 64f)
+			AlfheimCore.proxy.featherFX(flugel.worldObj, v.x, v.y, v.z, 0x240935, 5f, (Math.random() * 0.5 + 1).F, 64f, false, (flugel.rng.nextDouble() - 0.5) * 0.01, -0.085, (flugel.rng.nextDouble() - 0.5) * 0.01)
 		}
 	}
 }

@@ -3,7 +3,7 @@ alfheim.category.Divinity=Divinity
 
 alfheim.entry.alfheim=Alfheim
 alfheim.tagline.alfheim=New Horizons!
-alfheim.page.alfheim0=&oAlfheim... A beautiful world where magic lives forever... These lands were given to the light alvs, also called elves. But who are they? Creatures similar to humans living for so long that they deserve to be considered immortal, they were created by the first Æsir. The very same world is filled with special magic, which made the world so beautiful.&0
+alfheim.page.alfheim0=&oAlfheim... A beautiful world where magic lives forever... These lands were given to the light alfar, also called elves. But who are they? Creatures similar to humans living for so long that they deserve to be considered immortal, they were created by the first aesir. The very same world is filled with special magic, which made the world so beautiful.&0
 alfheim.page.alfheim1=&oBut it also has terrible characteristics: time. Even the time itself in this place is distorted. Many legends go about this place: those who once came to Alfheim, returned from it after decades, although for them the days passed... Those that the travelers knew happened to have been in Helheim or Walhall for a long time... Oh, let the heavenly light shines upon the souls of the dead!&0
 
 alfheim.entry.anomaly=Anomalies
@@ -22,16 +22,23 @@ alfheim.page.anomalyLightning.du=Attacks by electrical discharges all living thi
 alfheim.page.anomalyLightning.d=Attacks by electrical discharges all living things that are within reach, and the closer an object is found, the stronger the hit it receives. In practice, used to create &4Anti-pylons&0
 alfheim.page.anomalyManaTornado.t=&1Mana Thunder&0
 alfheim.page.anomalyManaTornado.d=Every few seconds, shoots randomly directed &1Mana burst&0 with a random effect. Sometimes this can even lead to an explosion at the point where the burst hits the surface.
+alfheim.page.anomalyKiller.t=&1Eye of Death&0
+alfheim.page.anomalyKiller.d=This anomaly will kill you in instant on contact, so keep your distance.
 alfheim.page.anomalyGravity.t=&1Gravity Vortex&0
 alfheim.page.anomalyGravity.d=The field of alternating gravity, dragging all the objects to it. If you got into the zone of its action, then your only way to get out is to run in the opposite direction, otherwise you can stay there forever. Does not act on the blocks.
 
 alfheim.entry.elves=Elves
 alfheim.tagline.elves=Native inhabitants
-alfheim.page.elves0=As it was said before, elves are beautiful creatures, spellfully wielding magic, which the first &4Æsir&0 settled in &4Alfheim&0. A great sorcerer and Alfheim-born &6Mastray&0 was the only one who knew the temporary anomalies of his own world as his five fingers.
+alfheim.page.elves0=As it was said before, elves are beautiful creatures, spellfully wielding magic, which the first &4aesir&0 settled in &4Alfheim&0. A great sorcerer and Alfheim-born &6Mastray&0 was the only one who knew the temporary anomalies of his own world as his five fingers.
 alfheim.page.elves1=His greatest invention was the portal to &4Midgard&0, the middle world of the world tree &4Yggdrasil&0. This world was not like &4Alfheim&0. He studied this world for a week on the &4Midgard&0 calendar, and during this time met humans. Those only heard about the elven kingdom, but now they are eager to get there...
-alfheim.page.elves2=&6Mastray&0 warned them about the time jump that they will have to endure, and almost everyone listened to his warnings... 30 years passed on &4Midgard&0, on &4Alfhem&0 - only 7 hours. But they were warned, what is their punishment from themselves!
-alfheim.page.elves3=After this incident, the elves sought the most stable lands in their kingdom. In those, when one second passes in &4Alfhem&0, a little more than an hour passes in &4Midgard&0. So then the great cooperation of elves and humans began!
+alfheim.page.elves2=&6Mastray&0 warned them about the time jump that they will have to endure, and almost everyone listened to his warnings... 30 years passed on &4Midgard&0, on &4Alfheim&0 - only 7 hours. But they were warned, what is their punishment from themselves!
+alfheim.page.elves3=After this incident, the elves sought the most stable lands in their kingdom. In those, when one second passes in &4Alfheim&0, a little more than an hour passes in &4Midgard&0. So then the great cooperation of elves and humans began!
 alfheim.page.elves4=Among the humans there were mages who comprehended their craft through flowers. This magic was something similar to elven one. Having studied the precious component of &4Midgard&0 ores (iron, diamonds and similar jewelry) elves understood that bargaining with humans is profitable. However, their world is not filled with mana like &4Alfheim&0. Therefore, they concluded a trade union, which is still valid today.
+
+alfheim.entry.temperature=Cold and hot places
+alfheim.tagline.temperature=Watch your temperature!
+alfheim.page.temperature0=&oMuspelheim and Niflheim are the sources of the most powerful primal energies of fire and ice. And so powerful that they affect all living beings that are not the indigenous inhabitants of these worlds. And the longer the being is under the influence of these energies, the more terrible the consequences, from psychological disorders to fatal outcome.
+alfheim.page.temperature1=In the game, these effects are displayed as a strip of the corresponding color above your hotbar. From the methods of protection, one can single out static ones, like warm and cold blocks, and portable ones, like protection pendants and special armor.
 
 alfheim.entry.pylons=New pylons
 alfheim.tagline.pylons=I will command the parade
@@ -41,7 +48,7 @@ alfheim.page.pylons2=Creating &1Gaia Pylon&0
 
 alfheim.entry.portal=Portal to Alfheim
 alfheim.tagline.portal=We need to go even more deeper!
-alfheim.page.portal0=&6Mastray&0... He was a native of &4Alfheim&0 and created the first portal to &4Midgard&0, which laid the foundation for a great alliance. However, the portal itself was given to him with great difficulty. To build a portal there, some resources of &4Midgard&0 were needed... How ironic... It's good that &6Freyr&0 himself lived in &4Alfheim&0, because he was a race of &4Vanir&0, another kind of gods...
+alfheim.page.portal0=&6Mastray&0... He was a native of &4Alfheim&0 and created the first portal to &4Midgard&0, which laid the foundation for a great alliance. However, the portal itself was given to him with great difficulty. To build a portal there, some resources of &4Midgard&0 were needed... How ironic... It's good that &6Freyr&0 himself lived in &4Alfheim&0, because he was a race of &4vanir&0, another kind of gods...
 alfheim.page.portal1=He understood &6Mastray&0, and brought him &1Terrasteel&0 - the great alloy of &4Midgard&0. After that he quickly finished the portal and activated it. Apparently, if you build it in &4Midgard&0, it will also work...
 alfheim.page.portal2=At the heart of the portal is &4Bifröst&0 - the legendary rainbow bridge that connects &4Asgard&0 to other worlds.
 alfheim.page.portal3=Creating &1Alfheim Portal Core&0
@@ -49,19 +56,18 @@ alfheim.page.portal4=The next thing you need is a link that can set up the perfe
 alfheim.page.portal5=Creating &1Interdimensional Gateway Core&0
 alfheim.page.portal6=Portal to Alfheim
 alfheim.page.portal7=To activate the portal, you only need to use the &1Core&0 on the portal, and operating principle is identical to the portal of livingwood. The only difference is that in &4Alfheim&0 it doesn't require &4Mana&0 sources, since it takes energy from the world itself.
-alfheim.page.portal8=Unfortunately, it was impossible to create a stable and fully functioning portal even for &6Mastray&0. This version can no longer pass the inanimate objects, only beings mentally connected with higher creatures - players. But it successfully compensates temporal anomalies of &4Alfheim&0 at the price of its integrity if it is not in the center of the world.
-alfheim.page.portal8s=Unfortunately, it was impossible to create a stable and fully functioning portal even for &6Mastray&0. This version can no longer pass the inanimate objects, only beings mentally connected with higher creatures - players. But it successfully compensates temporal anomalies of &4Alfheim&0.
+alfheim.page.portal8=Unfortunately, it was impossible to create a stable and fully functioning portal even for &6Mastray&0. This version can no longer pass the inanimate objects, only beings mentally connected with higher creatures - players. But it successfully compensates temporal anomalies of &4Alfheim&0.
 
 alfheim.entry.worldgen=Worldgen
 alfheim.tagline.worldgen=More strange stuff!
-alfheim.page.worldgen0=Alfheim itself is striking in its beauty, if we forget the hazardous properties of its time... <br>Specific trees from which you can obtain dreamwood by cleaning it in the same way as ordinary trees to get livingwood; and their leaves glow in the dark and shatters to glowstone dust when interacting with the dragon stone.
-alfheim.page.worldgen0u=Alfheim itself is striking in its beauty, if we forget the hazardous properties of its time... <br>Specific trees from which you can obtain dreamwood by cleaning it in the same way as ordinary trees to get livingwood; and their leaves glow in the dark and somehow strangely react to the dragon stone...
+alfheim.page.worldgen0=Alfheim itself is striking in its beauty, if we forget the hazardous properties of its time... <br>Specific trees from which you can obtain dreamwood by cleaning it in the same way as ordinary trees to get livingwood; and their leaves glowing in the dark with bunches of berries.
 alfheim.page.worldgen1=Purifying &1Dreamwood&0
 alfheim.page.worldgen2=Creating &1Glowstone Dust&0
 alfheim.page.worldgen3=Also in the world you can find ruins, for example, places of battles with the Guardian of Gaia, that's how the elves received his essences... <br>The sand of this world is not like the sand of Midgard... Perhaps it can be used to make something interesting.
 alfheim.page.worldgen4=Creating &1Livingcobble&0
 alfheim.page.worldgen5=Creating &1Livingrock pickaxe&0
 alfheim.page.worldgen6=Creating &1Furnace&0
+alfheim.page.worldgen7=Creating &1Living Petal Apothecary&0
 
 alfheim.entry.shrines=Shrines of Power
 alfheim.tagline.shrines=Praise the Sun!
@@ -108,6 +114,12 @@ alfheim.entry.mobs=Mobs
 alfheim.tagline.mobs=Finally, life!
 alfheim.page.mobs0=Alfheim, unlike Midgard, is not such a forgotten world. After all, there still live indigenous people - elves! It's good that they haven't lost their mind, otherwise we know the former natives of Midgard - zombies. Elves are the greatest sorcerers, and they are revered by everyone. They were, it until they got infected with that terrible virus... But somehow they are not inclined to talk with you...
 alfheim.page.mobs1=Also in the world can fly special little purple creatures, which are called pixies, otherwise - fairies. Kind - yes. Valuable - yes, because their dust is used in various crafting recipes. Elves used this ingredient to trade it for manapearls...
+alfheim.page.mobs2=Other flying creatures that inhabit the fields and meadows of the elven world are butterflies. These wondrous creatures decorate the skies with shimmers of all colors, bringing joy and tranquility to every traveler. They are a source of valuable nectar as well as floral powder.
+alfheim.page.mobs3=Another representative of the fauna of Alfheim turned out to be very beautiful river jellyfish. These are not very fast creatures, but quite dangerous. As far as one can judge, now it is the only waterfowl representative of the animal world of elves. At least the only one found.
+alfheim.page.mobs4=Back in Midgard, you were told about amazing underwater inhabitants endowed with intelligence and coexisting with jellyfish and other inhabitants of the oceans. Even as a child, it's hard to believe in fire under water, houses made of iron buckets and chests, and jellyfish jelly farms seem completely unrealistic.
+alfheim.page.mobs5=Could anyone think of milking jellyfish? It sounds ridiculous and... everyone does it. They milk jellyfish with ordinary bottles. In certain regions, this would clearly be considered abnormal. And what do you care about all this? Enjoy new jellyfish jelly treats.
+alfheim.page.mobs6=Tasty!
+alfheim.page.mobs7=Tasty?
 
 alfheim.entry.pixie=Pixie Attaractor
 alfheim.tagline.pixie=Get over here!
@@ -133,7 +145,7 @@ alfheim.entry.rodClick=Rod of the High Will
 alfheim.tagline.rodClick=Artificial interaction wand
 alfheim.page.rodClick0=The &1Rod of the High Will&0 was created to simulate the LMB and RMB clicks that the player makes when interacting with any devices and creatures. The wand does not have any functionality that could be used directly by the player, so a &1Livingwood Avatar&0 is required for its work.
 alfheim.page.rodClick1=An avatar can interact with anything through the block in front of him and to the block below. To interact with items, the avatar needs any block underneath that is an inventory. To simulate the pressed Shift key, any block must be placed above the avatar.
-alfheim.page.rodClick2=The delay between uses is inversely proportional to the level of the redstone signal applied to it - the higher the signal level, the lower the delay. Of course, for each of its actions, the avatar consumes a certain amount of &4mana&0.
+alfheim.page.rodClick2=Interaction will take place each tick the avatar is powered with redstone signal. Of course, for each of its actions, the avatar consumes a certain amount of &4mana&0. Hit/Use mode is changed by right-clicking.
 alfheim.page.rodClick3=Everything is in his hands
 
 alfheim.entry.lootInt=Loot Interceptor
@@ -160,20 +172,27 @@ alfheim.page.anomaRing1=&oI hate portals...&0
 alfheim.entry.triquetrum=Worldshaper's Triquetrum
 alfheim.tagline.triquetrum=Just take and move
 alfheim.page.triquetrum0=&1Worldshaper's Triquetrum&0 - a novelty created by Midgard craftsmen for unsuccessful architects. This tool is designed to transfer your buildings from place to place for a certain amount of &4Mana&0.<br>To select a portable area, select two blocks that denote two diametrically opposite angles of the cuboid.
-alfheim.page.triquetrum1=Next, select the area in which your building will be located, a marker in the world will tell you the direction in which your structure will spread. You can rotate it by rightclick. Sneak to enable "Safe Mode", which will not carry the block if the target position is not air.<br>&l&4WARNING&r&0! Areas must not overlap
+alfheim.page.triquetrum1=Next, select the area in which your building will be located, a marker in the world will tell you the direction in which your structure will spread. You can rotate it by right-click. Sneak to enable "Safe Mode", which will not carry the block if the target position is not air.<br>&l&4WARNING&r&0! Areas must not overlap
 alfheim.page.triquetrum2=Creating &1Triquetrum&0
 
 alfheim.entry.corpSeq=Corporea Sequencer
 alfheim.tagline.corpSeq=Requests the creation of items when needed
 alfheim.page.corpSeq0=The &1Corporea Sequencer&0 is designed to move items from one inventory to another, which opens up many useful applications.
 alfheim.page.corpSeq1=First of all, the Sequencer must be connected to the &4Corporea network&0 using the &1Corporea spark&0. The request template is placed in the inventory above the Sequencer, and the requested item is placed in a frame on the Sequencer as a filter. Items from the template are placed in the inventory located two blocks below the Sequencer.
-alfheim.page.corpSeq2=For use in crafting automation, the number of items created per request is configured by clicking LMB and Shift-LMB. Pressing RMB with the staff of the forest on the Sequencer will reset the current request, and giving a redstone pulse will repeat the request for the expected item.
+alfheim.page.corpSeq2=For use in crafting automation, the number of items created per request is configured by clicking LMB and Shift-LMB. Pressing RMB with the wand on the Sequencer will reset the current request, and giving a redstone pulse will repeat the request for the expected item.
 alfheim.page.corpSeq3=Keep the order!
 
 alfheim.entry.corpInj=Corporea Injector
 alfheim.tagline.corpInj=Places items in the material system
 alfheim.page.corpInj0=The &1Corporea Injector&0 is designed for one simple purpose - automating the injection and sorting of your belongings in a &4Corporea Network&0. He will try to put the item first in a partially filled slot, and then in an empty one. If there are none, it will throw the item below.
 alfheim.page.corpInj1=Finally, sorting!
+
+alfheim.entry.corpQuandex=Corporea Quantizator
+alfheim.tagline.corpQuandex=Incorporeal corporea access
+alfheim.page.corpQuandex0=A &1Corporea Quantizator&0 is similar in function to a &1Corporea Index&0, but differs in only one feature: it allows you to send the requested items, even if the request came from a completely different dimension. Of course, it would be nice to somehow contact the Quantizator so as not to feel stupid, shouting requests into the void, being thousands of blocks from the corporea network.
+alfheim.page.corpQuandex1=For this purpose &1Corporea Quandex&0 can be used, which acts as a receiver for the requested items. Just right-click on the quantizer with the Quantizator to establish a connection. But be careful, the process of transferring items over long distances and through dimensions consumes a decent amount of mana from the player's personal storages.
+alfheim.page.corpQuandex2=Faster than pigeon mail
+alfheim.page.corpQuandex3=Contactless delivery
 
 alfheim.entry.endAct=Ender Actuator
 alfheim.tagline.endAct=Expanded access to the Ender Chest
@@ -186,7 +205,7 @@ alfheim.page.infuser0=Basic filling with mana is the basis of all botanical magi
 alfheim.page.infuser1=Nevertheless, this required the most valuable dust - the Iffesal. It doesn't just symbolize power - it IS power, but in a crystallized form. What about pixies dust? It is the basis of what was called the core of the mana-infuser.
 alfheim.page.infuser2=Creating &1Mana-infuser Core&0
 alfheim.page.infuser3=Creating &1Mana-infuser&0
-alfheim.page.infuser4=It turned out perfectly, but it is not enough. Now we need to put this cherished bloc in the world and build on its basis a structure! It is worth trying to use different blocks of Alfheim materials...<br>The infuser is ready. It will be a continuation of botania studying and will be useful in various advanced crafting.
+alfheim.page.infuser4=It turned out perfectly, but it is not enough. Now we need to put this cherished block in the world and build on its basis a structure! It is worth trying to use different blocks of Alfheim materials...<br>The infuser is ready. It will be a continuation of botania studying and will be useful in various advanced crafting.
 alfheim.page.infuser5=Mana-infuser
 alfheim.page.infuser5u=§oApproximate structure§r
 
@@ -194,7 +213,6 @@ alfheim.entry.elvorium=Elvorium
 alfheim.tagline.elvorium=Better than terrasteel
 alfheim.page.elvorium0=Elves had learned the recipe of the terrasteel, the one that Mastray had borrowed from Freyr. However, long before that, elves had a similar method of making an alloy woven from the power of Alfheim's resources. By properties, it is similar to terrasteel, but stronger... Elementium ingot, piece of dragonstone, pixie dust and some mana. Here it is, the cherished alloy! Elvorium!
 alfheim.page.elvorium1=Creating &1Elvorium&0
-
 alfheim.entry.trade=Reverse Exchange
 alfheim.tagline.trade=Well, how else?
 alfheim.page.trade0=Alfheim sometimes impresses with its anomalies, but precisely because of them it is possible to create a portal into this world. The trading gate used by the traders of Midgard is built in Alfheim in a different way, because of those anomalies not allowing the work of a scheme that operates in Overworld. But Mastray did not lose it.
@@ -221,7 +239,6 @@ alfheim.page.runes1=Creating &1new runes&0
 alfheim.page.runes2=The new runes of Muspelheim and Niflheim contain in themselves their original energy, which makes it possible to create powerful weapons of fire and ice... May the sleeping giants of both worlds awake!
 alfheim.page.runes3=But besides the runes of these worlds, there is one more. The rune of five elements: air, fire, water, earth and magic, also called the &5Primordial Rune&0. Such a rune contains the power of the original energy, which was before the time of these two worlds. Wait a second, was there really a time when Muspelheim and Niflheim did not exist? Who knows...
 alfheim.page.runes4=Creating &5Primal Rune&0
-
 alfheim.entry.elvenSet=Elvorium Armor
 alfheim.tagline.elvenSet=Armor at new level!
 alfheim.page.elvenSet0=The sorcerers of Midgard used the powers given by nature to achieve their goals. They created terrasteel and runes, for what? For the sake of the perfect armor the of nature, the Terrasteel armor. Elves took their achievements and improved them with the help of elvorium, receiving armor, which was used only by elite royal guardians.
@@ -241,18 +258,20 @@ alfheim.page.elemSet4=&eAir&0
 alfheim.entry.advMana=Mana-stones
 alfheim.tagline.advMana=New word in storing mana
 alfheim.page.advMana0=As we know, the core of a simple mana store included either mana-diamond or mana-pearl. But elves had none of them. But they had their own ways of pocket mana storage.
-alfheim.page.advMana1=As it turned out, the dragonstone can absorb mana, but it quickly loses it. The elves strengthened this stone with the valuable Iffesal dust, and created a mana-stone that allows you to store mana four times more than that stone tablet. And with the discovery of the essences of the primal worlds, the elven magicians strengthened it even more. The result is an improved storage of mana.
+alfheim.page.advMana1=As it turned out, the dragonstone can absorb mana, but it quickly loses it. The elves strengthened this stone with the valuable Iffesal dust, and created a mana-stone that allows you to store mana six times more than that stone tablet. And with the discovery of the essences of the primal worlds, the elven magicians strengthened it even more. The result is an improved storage of mana.
 alfheim.page.advMana2=Creating &1Mana-stone&0
-alfheim.page.advMana3=&cImproving &1Mana-stone&0
+alfheim.page.advMana3=Improving &1Mana-stone&0
 alfheim.page.advMana4=And what if you apply elvorium or mauftrim as perfect mana-conductor? We get rings that look beautiful on the finger and are handy sources of mana, which is always at hand. Pure beauty and functionality!
-alfheim.page.advMana5=Creating &1Elvorium ring&0
-alfheim.page.advMana6=Creating &1Mauftrium ring&0
+alfheim.page.advMana5=Simple storage
+alfheim.page.advMana6=Creating &1Elvorium ring&0
+alfheim.page.advMana7=Creating &1Mauftrium ring&0
 
 alfheim.entry.auraAlf=Bands of Aura
 alfheim.tagline.auraAlf=Everything needs an upgrade
 alfheim.page.auraAlf0=Of course, the usual and terra-reinforced &1Bands of Aura&0 should be enough for anyone versed in botanical magic. However, a fool is one who refuses even greater power, bestowed by the magical superiority of the elves and the incomparable power of the primal worlds. In addition, the new bands are incredibly comfortable and look amazing on your finger.
-alfheim.page.auraAlf1=Upgading to &1Elven Aura Ring&0
-alfheim.page.auraAlf2=Upgading to &1God's Aura Ring&0
+alfheim.page.auraAlf1=Creating &1Pixie Band of Aura&0
+alfheim.page.auraAlf2=Upgrading to &1Elven Band of Aura&0
+alfheim.page.auraAlf3=Upgrading to &1God's Band of Aura&0
 
 alfheim.entry.ruling=Power of other worlds
 alfheim.tagline.ruling=I'm Bruce Almighty
@@ -306,7 +325,7 @@ alfheim.page.soul0=The one who win the Flügel will receive the highest reward -
 alfheim.page.soul1=However, some heroes began to run out of resources, which they managed to get from a limited number of opponents, so they asked omniscient Mastray for help. The sage spent several days in the library, studying archival records of past years, and exploring the structure of the soul. Finally, he returned the souls to the travelers and told one story:
 alfheim.page.soul2=&oA few millennia ago, the Great War raged in the world, in which the nations of all worlds fought. Among them were Flügels, ideal killing machines, especially for those creatures whose power went beyond the understanding of human and elven explorers. However, something even more terrible happened closer to the end of the war: The Shattering.&r
 alfheim.page.soul3=&oJudging by the records at my disposal, the reason for this was the penetration through the fabric of reality of something alien, terrifying the gaze and mind of the one who looks at it... &4&oGinnungagap&0&o, the pristine abyss that could not resist the birth of the universe, striving only to reverse everything existing into true nothing.&r
-alfheim.page.soul4=&oIt is not known how, but it took control of the Flügels, using their powers in it's desire for universal annihilation. Fortunately for us, although &4&oGinnungagap&0&o was strong, it was also ignorant of the laws of the universe, which gave the Alves and Vanir alliance an advantage in the battle with the Abyss puppets.&r
+alfheim.page.soul4=&oIt is not known how, but it took control of the Flügels, using their powers in it's desire for universal annihilation. Fortunately for us, although &4&oGinnungagap&0&o was strong, it was also ignorant of the laws of the universe, which gave the alfar and vanir alliance an advantage in the battle with the Abyss puppets.&r
 alfheim.page.soul5=&oBut there was another problem: due to the distortions generated by &4&oGinnungagap&0&o, anomalous zones began to appear in the world that did not yield to logic. And one of those zones were formed in the places of death of the Flügels that were under the control of the Abyss. Chaotic clumps of black energy attacking everything that comes close to them.&r
 alfheim.page.soul6=&oOnly recently I managed to establish their nature - they were souls, unable to leave the world and crashed into the fabric of the universe forever. However, those souls are so dark that even the great magicians are not eager to poke them, not to mention attempts to use.&r
 alfheim.page.soul7=&oFurther research has shown that nature's powerful source of energy can help you enclose the energy that is raging inside these anomalies. And if you manage to carry out its further purification by sacrificing the higher forces of nature, then it may happen that the souls in your hands will be restored by it...&r
@@ -326,9 +345,9 @@ alfheim.entry.mask=Mysterious Mask
 alfheim.tagline.mask=I've already seen this somewhere...
 alfheim.page.mask0=Fury and danger emanates from this mask. When you try to put it on you, nothing comes out, and it just falls from your face. However, if you are on the verge of death, it materializes on you from your in your inventory, giving you unparalleled strength and endurance. But do not abuse it, otherwise the dark spirit will consume you...
 
-alfheim.entry.excaliber=Holly Sword Excaliber
+alfheim.entry.excaliber=Holy Sword Excaliber
 alfheim.tagline.excaliber=Not fake! Promise!
-alfheim.page.excaliber0=Lost long ago, &1Holly Sword Excaliber&0 was finally found. As the legends say, this sword is unbreakable and can shoot a mana ray on every swing, that will look for nearest hostile target and deal as much damage, as regular attack. Also you feel strange lightness while holding the sword, so you can run a little bit faster.
+alfheim.page.excaliber0=Lost long ago, &1Holy Sword Excaliber&0 was finally found. As the legends say, this sword is unbreakable and can shoot a mana ray on every swing, that will look for nearest hostile target and deal as much damage, as regular attack. Also you feel strange lightness while holding the sword, so you can run a little bit faster.
 
 alfheim.entry.stories=Token of Banter
 alfheim.tagline.stories=Yet knowledge can be bought
@@ -354,6 +373,44 @@ alfheim.page.winery11=Now, thanks to the artisans of Midgard, jugs made of baked
 alfheim.page.winery12=Creating &1Barrel&0
 alfheim.page.winery13=Creating &1Jug&0
 
+alfheim.entry.fracturedSpace=Rod of the Fractured Space
+alfheim.tagline.fracturedSpace=Bulk Transport Rod
+alfheim.page.fracturedSpace0=The &1Black Hole Talisman&0 is a powerful magical artifact, the core of which is represented by a particle of the emptiness itself. Unfortunately, the all-absorbing energy of the talisman constantly wants to rid the surrounding space of unwanted objects, lying here and there.
+alfheim.page.fracturedSpace1=Fortunately, even such a tempting prospect as getting rid of all things will not make you give up trying to control spatial movements. The result of these attempts is a fairly stable spatial rift rod, capable of moving items lying on the ground through the void. The only unresolved problem remains the end point - the place where objects are supposed to arrive.
+alfheim.page.fracturedSpace2=You're unlikely to be happy if everything you send is left in the world's abyss forever. Oddly enough, a normal &1open crate&0 seems like a suitable "anchor" for sent items. Simply press the right-click wand on the crate to indicate the destination and then next to the items lying on the ground.
+alfheim.page.fracturedSpace3=Void Elf
+
+alfheim.entry.terraHarvester=Terra Harvester
+alfheim.tagline.terraHarvester=Hoe of huge agricultural potential
+alfheim.page.terraHarvester0=The &1Terra Harvester&0 is the ultimate gardening tool, with all the features of a regular hoe, but with the added benefits. First of all, the reaper has a significantly larger plowing area, namely 5x5 blocks.
+alfheim.page.terraHarvester1=An additional bonus is Terrasteel's special nature affinity, allowing you not only to automatically plant any seeds from your inventory in a 3x3 block area, but also to grow crops at high speed, as if you were holding bonemeal in your hand, and then harvest them.
+alfheim.page.terraHarvester2=Easiest behavior on farmland
+
+alfheim.entry.deathSeed=Death Seed
+alfheim.tagline.deathSeed=Get back your drops in no time
+alfheim.page.deathSeed0=The Seed of Death is an unusual artifact that aspires to the player's last place of death, even through dimensions. The reason for this phenomenon is simple: the seed absorbs a piece of the player's soul at the moment of death.<br>To return to the place of death, simply right-click with the seed in your hand. The move will be instantaneous and, fortunately, safe, but only for a few seconds.
+alfheim.page.deathSeed1=Second chance?
+
+alfheim.entry.legends=Legends of the Nine Worlds
+alfheim.tagline.legends=Fiction or reality?
+alfheim.page.legends0=&oThe world tree Yggdrasil is the foundation of the entire universe and extends from Helheim to Asgard, uniting the nine worlds into a single whole. Normally it is invisible in these worlds, but because of the shifts that occurred during the Shattering, it was imprinted in the space of Alfheim and now its top and trunk are in the center of the world.
+alfheim.page.legends1=&oLegend has it that somewhere in its branches is hidden from prying eyes the only flower that blooms on the World Tree, producing a miraculous fruit that is able to remove curses...
+alfheim.page.legends2=&oVafthrudnir was one of the wisest giants who ever lived in the shadow of Yggdrasil. However, he lost the argument with Odin by not being wise enough, for which he paid with his life.
+alfheim.page.legends3=&oThey say his soul is imprisoned in the depths of Helheim, somewhere in the north. And who knows, perhaps his wisdom could serve current generations, only if there would be a way to get to Helheim and return from there...
+alfheim.page.legends4=&oHelheim is the world where most of the souls of the dead go and stay forever. The only exceptions are entities endowed with the gift of immortality, capable of being reborn again after death in their beds, as if death were only a dream. Though things aren't so smooth for them either, as their proximity to the dark forces can draw attention to them as well.
+alfheim.page.legends5=&oAnd, though for some the giantess Hel who rules there makes exceptions to her whim, allowing them to leave her realm by treading on the bones, sooner or later everyone will have to pay the price. And who knows how long the grace of the blue and white goddess will last...
+
+alfheim.entry.rodRedstone=Rod of the Red Control
+alfheim.tagline.rodRedstone=Redstone debug online
+alfheim.page.rodRedstone0=The &1Rod of the Red Control&0 is a handy tool to every redstone engineer. Using it on any block will cause it to become a source of &4strong redstone signal&0 for a brief moment, powering itself and any blocks around it.
+alfheim.page.rodRedstone1=If the wielder of the rod is equipped with the &1Manaseer Monocle&0, all powered blocks nearby will become visible through walls while the wearer is sneaking. Bright frames will indicate &4strong&0 powering and darker frames - &4weak&0. The &4power level&0 of the signal will also be displayed on the block you are currently looking on.
+alfheim.page.rodRedstone2=Show yourself!
+
+alfheim.entry.thunderChakram=Thunder Chakram
+alfheim.tagline.thunderChakram=An electrified Thorn Chakram
+alfheim.page.thunderChakram0=This is another variant of common &1Thorn Chakram&0. By adding some of &1Thunderous Splinters&0 and a &1Pixie Dust&0 to the said weapon one can infuse it with the power of lightning, transforming it into &1Thunder Chakram&0, that deals less damage, but in a bigger range, and even can pierce through armor.
+alfheim.page.thunderChakram1=Mjölnir for kids
+
 ################################################################ DIVINITY ################################################################
 
 alfheim.entry.divinity_intro=Divine Faith
@@ -362,11 +419,11 @@ alfheim.page.divinity_intro0=Traces of divine work are evident in this world. &4
 alfheim.page.divinity_intro1=The &1Holy Symbol&0 is the needed artifact for this connection, with what seems to be a wild storm of unrealized potential. Although crafted of simple materials, it has a ready acceptance of other magic. This is the gate to the &3Divine&0, and can be used to forge direct connections in the form of a &1Priestly Emblem&0. Wearing one will grant you more knowledge in this section.
 alfheim.page.divinity_intro2=A key to the zodiac
 alfheim.page.divinity_intro3=The connection the &1Priestly Emblems&0 give you are strong, but don't contain the full power you can harness. Additional set of items containing &1Priestly Cloak&0, special Rod, God's Ring and a relic is required to get maximum output for connection. More items you have - more power you get.
-alfheim.page.divinity_intro4=Lastly, there is a way to channel with all gods at the same time by creating aspects of &4Æsir&0 - Cloak, Emblem and Ring. But you still need to take all the rods and relics with you.
+alfheim.page.divinity_intro4=Lastly, there is a way to channel with all gods at the same time by creating aspects of &4aesir&0 - Cloak, Emblem and Ring. But you still need to take all the rods and relics with you.
 
 alfheim.entry.thor=Faith in Thor
 alfheim.tagline.thor=Thunder, strength, and wrath
-alfheim.page.thor0=The &4Æsir&0 god of the sky, &3Thor&0, seems like a powerful god to ally with. Wielding his aspect of the &3Divine&0 makes your body swift, similar to the &1Soujourner's Sash&0. When using axes, the closest thing you could find to a hammer, &3Thor&0 will add force to your hit, slowing down whatever poor mob is stricken.
+alfheim.page.thor0=The &4aesir&0 god of the sky, &3Thor&0, seems like a powerful god to ally with. Wielding his aspect of the &3Divine&0 makes your body swift, similar to the &1Soujourner's Sash&0. When using axes, the closest thing you could find to a hammer, &3Thor&0 will add force to your hit, slowing down whatever poor mob is stricken.
 alfheim.page.thor1=In anger smite the earth
 
 alfheim.entry.garb_thor=Priestly Fashion - Thor
@@ -374,7 +431,7 @@ alfheim.tagline.garb_thor=Smashy smashy
 alfheim.page.garb_thor0=No priest would be caught dead without a ceremonial robe, although robes aren't actually required to pay allegiance to a divinity.<br>These robes, beyond being fashionable, provide a tangible benefit. Thor's robes shield their wearer from the brunt of fall damage, instead spreading it to anything around. If you health falls below 50% you also gain a shield of lightning.
 alfheim.page.garb_thor1=Superhero landing!
 
-botania.page.thorRing0n=One of the six mythic rings of the &4Aesir&0, the &1Ring of Thor&0, when worn, bestows upon the wearer the might of the Thunder God &4Thor&0. This power drastically increases the strength of area of effect mining with a &1Terra Shatterer&0.<br>This ring can be combined with the other five rings of the &4Aesir&0 in a crafting table to create the ultimate ring.
+botania.page.thorRing0n=One of the six mythic rings of the &4aesir&0, the &1Ring of Thor&0, when worn, bestows upon the wearer the might of the Thunder God &4Thor&0. This power drastically increases the strength of area of effect mining with a &1Terra Shatterer&0.<br>This ring can be combined with the other five rings of the &4aesir&0 in a crafting table to create the ultimate ring.
 
 alfheim.entry.rod_thor=Rod of the Thundering Peaks
 alfheim.tagline.rod_thor=Stike fear and thunder into your foes
@@ -382,13 +439,13 @@ alfheim.page.rod_thor0=The &1Rod of the Thundering Peaks&0, much like its sword 
 alfheim.page.rod_thor1=The experimental results are shocking
 alfheim.page.rod_thor2=It appears that connecting your soul to the ancient god of lightning, &4Thor&0, can increase your proficiency with the power of thunder. It seems that &4Manatide Prowess&0 has a similar effect upon the rod.<br>There appear to be even further power trapped within the rod, but it would take a god to get it out.
 
-alfheim.entry.mjolnir=Mjolnir
+alfheim.entry.mjolnir=Mjölnir
 alfheim.tagline.mjolnir=Thunderstruck
 alfheim.page.mjolnir0=The hammer of the lightning god Thor, &1Mjölnir&0, is believed to be one of the most fearsome weapons in existence. Wielding this sign of power, one can summon lightning on every hit while sneaking or strike multiple targets with chain lightning. When used on ground, it can create a shockwave, damaging everyone standing within it's range. Or just be thrown at enemy.
 
 alfheim.entry.sif=Faith in Sif
 alfheim.tagline.sif=Life, spring, and immortality
-alfheim.page.sif0=The &4Æsir&0 god of the living elements, &3Sif&0, seems like a good choice to declare yourself for. Wielding her aspect of the &3Divine&0 makes your body naturally catalytic to the growth of trees, giving saplings around you an effect similar to &1Bonemeal&0. You can manually apply this affect by sneak-clicking with an empty hand on a plant or on grass to grow a &1Mystical Flower&0.
+alfheim.page.sif0=The &4aesir&0 god of the living elements, &3Sif&0, seems like a good choice to declare yourself for. Wielding her aspect of the &3Divine&0 makes your body naturally catalytic to the growth of trees, giving saplings around you an effect similar to &1Bonemeal&0. You can manually apply this affect by sneak-clicking with an empty hand on a plant or on grass to grow a &1Mystical Flower&0.
 alfheim.page.sif1=Welcome now, and take the crystal cup
 
 alfheim.entry.garb_sif=Priestly Fashion - Sif
@@ -398,7 +455,7 @@ alfheim.page.garb_sif1=Bring it on! I &olive&0 for this!
 
 alfheim.entry.ring_sif=Ring of Sif
 alfheim.tagline.ring_sif=Staying alive
-alfheim.page.ring_sif0=One of the six mythic rings of the &4Aesir&0, the &1Ring of Sif&0 expands the area of &1Terra Truncator&0, &1Rod of the Terra Firma&0, &1Rod of Green Hills&0 and of all of &1Iridescent Seeds&0. It also keeps one vineball in your inventory if you hold &1Livingwood Slingshot&0. Finally, your life-giving aura revives dead bushes, turning them into cacti. Used to craft ultimate ring.
+alfheim.page.ring_sif0=One of the six mythic rings of the &4aesir&0, the &1Ring of Sif&0 expands the area of &1Terra Truncator&0, &1Rod of the Terra Firma&0, &1Rod of Green Hills&0 and of all of &1Iridescent Seeds&0. It also keeps one vineball in your inventory if you hold &1Livingwood Slingshot&0. Finally, your life-giving aura revives dead bushes, turning them into cacti. Used to craft ultimate ring.
 
 alfheim.entry.rod_sif=Rod of the Vibrant Plains
 alfheim.tagline.rod_sif=Rainbow dirt made from thin air space
@@ -408,7 +465,7 @@ alfheim.page.rod_sif2=It appears that connecting your soul to the ancient god of
 
 alfheim.entry.njord=Faith in Njord
 alfheim.tagline.njord=Wind, sea, and sky
-alfheim.page.njord0=The &4Vanir&0 god of the fluid elements, &3Njord&0, seems like a worthy choice for your faith. Wielding his aspect of the &3Divine&0 makes your body hydrophobic, rising above any kind of fluid. You also gain attacks with the force of the wind, barreling your foes back with your every hit. Rightclick on the air to step on wind and move a little bit forward. You can also biuld on water.
+alfheim.page.njord0=The &4vanir&0 god of the fluid elements, &3Njord&0, seems like a worthy choice for your faith. Wielding his aspect of the &3Divine&0 makes your body hydrophobic, rising above any kind of fluid. You also gain attacks with the force of the wind, barreling your foes back with your every hit. Right-click the air to step on wind and move a little bit forward. You can also biuld on water.
 alfheim.page.njord1=At the doom of men he will come back
 
 alfheim.entry.garb_njord=Priestly Fashion - Njord
@@ -418,13 +475,22 @@ alfheim.page.garb_njord1=Worked for Belkar
 
 alfheim.entry.ring_njord=Ring of Njord
 alfheim.tagline.ring_njord=Expert Navigation
-alfheim.page.ring_njord0=One of the six mythic rings of the &4Aesir&0, the &1Ring of Njord&0 allows you to become truly affine with water. Your movement speed is noticeably increased, both on your own and in boat, which now won't crash on collision. Your regeneration while you in water is also increased. Final increase is to luck on your fishing rod. Used to craft ultimate ring.
+alfheim.page.ring_njord0=One of the six mythic rings of the &4aesir&0, the &1Ring of Njord&0 allows you to become truly affine with water. Your movement speed is noticeably increased, both on your own and in boat, which now won't crash on collision. Your regeneration while you in water is also increased. Final increase is to luck on your fishing rod. Used to craft ultimate ring.
 
 alfheim.entry.rod_njord=Rod of the Stormy Sea
 alfheim.tagline.rod_njord=Push enemies out of your persona
 alfheim.page.rod_njord0=The &1Rod of the Stormy Sea&0 is one for those who don't like people in their personal space. Using it will seal the area around you, creating a sphere of force where other living beings cannot tread, and projectiles cannot pass. Whenever something tries to break this seal, &4Mana&0 is consumed to repel it.
 alfheim.page.rod_njord1=Really not feelin up to it right now
 alfheim.page.rod_njord2=It appears that connecting your soul to the ancient god of wind, &4Njord&0, can increase your proficiency with the power of air and the force you exert with this rod will become much greater. It seems that &4Manatide Prowess&0 has a similar, but weaker effect upon the rod.
+
+alfheim.entry.daolos=Daolos
+alfheim.tagline.daolos=Divine Axe of Lord of Seas
+alfheim.page.daolos0=Daolos - the mysterious axe of the god of the seas and a fair wind, Njord. The true name of this battle axe is one of the greatest secrets. There is one short story, told among the wisest of the line of elves:
+alfheim.page.daolos1=&oOnce Loki, the god of fire, tried to trick Njord, the god of winds and seas, and steal his battle axe by asking him for the runic name of the relic. But Njord had heard of Loki's nature and was smart enough to spot the cunning sparks in the eyes of god of lies, and refused him.
+alfheim.page.daolos2=&oTo protect his relic, Njord whispered the following runic words: "And don't tell your name to anyone, no one will understand it anyway. Except... Except children. Children can hear it. Sometimes. If they have good hearts, and the stars will align, the children can hear your name. But no one else. No one ever."
+alfheim.page.daolos3=Many relic seekers ask the same question: "Is this story a fiction or was it real?". Well, one immortal and rather eccentric doctor has an excellent answer: "All the stories told actually happened, and they are considered fiction when they are forgotten".
+alfheim.page.daolos4=Of course, Daolos is not only an interesting story, but also very useful abilities. Although the axe is of battle type, it can cut down trees, and when it rains it works even better. It also has water type of damage, and even can put out fires by sneak-rightclicking.
+alfheim.page.daolos5=Daolos also has a direct impact on the water itself: its strikes on the water cause damage to all creatures that are in it, in a small radius. And the water surface itself will help you travel with a breeze in your hair, you just need to hold down the RMB.
 
 alfheim.entry.loki=Faith in Loki
 alfheim.tagline.loki=Tricks, traps, and fire
@@ -436,9 +502,8 @@ alfheim.tagline.garb_loki=Sneaking past your defenses
 alfheim.page.garb_loki0=No priest would be caught dead without a ceremonial robe, although robes aren't actually required to pay allegiance to a divinity.<br>These robes, beyond being fashionable, provide a tangible benefit. Loki's robes make their wearer unable to be tricked with Loki's typical tricks, like fire and explosives. In addition you gain +10% buff to agility to dodge an attack.
 alfheim.page.garb_loki1=Made with quality dwarven rocks
 
-botania.page.lokiRing0n=One of the six mythic rings of the &4Aesir&0, the &1Ring of Loki&0 allows for the wearer to tap upon the Trickster God &4Loki&0 to effectively be in multiple places at once.<br>The setup for this ability requires, first and foremost, an empty hand. Shift-right clicking on a block with said empty hand while having the &1Ring of Loki&0 equipped begins the procedure.
-botania.page.lokiRing3n=Such a power does not come for free of course. Utilizing this ability costs &4Mana&0 from the user's inventory per each block placed. It's to note that the more blocks that are selected, the more expensive &4each placed block&0 becomes.<br>Lastly, this ring can be combined with the other five rings of the &4Aesir&0 in a crafting table to create the ultimate ring.
-
+botania.page.lokiRing0n=One of the six mythic rings of the &4aesir&0, the &1Ring of Loki&0 allows for the wearer to tap upon the Trickster God &4Loki&0 to effectively be in multiple places at once.<br>The setup for this ability requires, first and foremost, an empty hand. Sneak-right clicking on a block with said empty hand while having the &1Ring of Loki&0 equipped begins the procedure.
+botania.page.lokiRing3n=Such a power does not come for free of course. Utilizing this ability costs &4Mana&0 from the user's inventory per each block placed. It's to note that the more blocks that are selected, the more expensive &4each placed block&0 becomes.<br>Lastly, this ring can be combined with the other five rings of the &4aesir&0 in a crafting table to create the ultimate ring.
 alfheim.entry.rod_loki=Rod of the Tricky Flame
 alfheim.tagline.rod_loki=Pinpoint flamethrower
 alfheim.page.rod_loki0=The ability of the &1Rod of the Tricky Flame&0 is to set fire to anyone it is pointed at. Also it will deal a small amount of fire damage to anyone in the area of effect, centered in the fire star.
@@ -451,7 +516,7 @@ alfheim.page.gleipnir0=Made of six impossible things, thin as a silken ribbon, &
 
 alfheim.entry.heimdall=Faith in Heimdall
 alfheim.tagline.heimdall=Fate, travel, and color
-alfheim.page.heimdall0=The &4Æsir&0 god of the Bifrost, &3Heimdall&0, seems like an interesting god to channel. Wielding his aspect of the &3Divine&0 makes your eyes see more vibrantly, seeing light even in the shadow. When carrying a &1Rod of the Bifrost&0, you leave a trail of rainbow &4Bifrost&0 below you, allowing you to run in the sky. With his all-seeing eyes you also can detect target's weak spots.
+alfheim.page.heimdall0=The &4aesir&0 god of the Bifrost, &3Heimdall&0, seems like an interesting god to channel. Wielding his aspect of the &3Divine&0 makes your eyes see more vibrantly, seeing light even in the shadow. When carrying a &1Rod of the Bifrost&0, you leave a trail of rainbow &4Bifrost&0 below you, allowing you to run in the sky. With his all-seeing eyes you also can detect target's weak spots.
 alfheim.page.heimdall1=The warder of heaven
 
 alfheim.entry.garb_heimdall=Priestly Fashion - Heimdall
@@ -461,11 +526,11 @@ alfheim.page.garb_heimdall1=Ever get that feeling of déjà vu?
 
 alfheim.entry.ring_heimdall=Ring of Heimdall
 alfheim.tagline.ring_heimdall=The end of the rainbow
-alfheim.page.ring_heimdall0=One of the six mythic rings of the &4Aesir&0, the &1Ring of Heimdall&0 grants you ability to spot position of every living being around you, even is they are behind walls or in caves - no more sudden creepers or endermans, bacause their teleportation is also blocked near you. Holding ender eye in your hand will show you the way to the nearest dungeon. Used to craft ultimate ring.
+alfheim.page.ring_heimdall0=One of the six mythic rings of the &4aesir&0, the &1Ring of Heimdall&0 grants you ability to spot position of every living being around you, even is they are behind walls or in caves - no more sudden creepers or endermans, bacause their teleportation is also blocked near you. Holding ender eye in your hand will show you the way to the nearest dungeon. Used to craft ultimate ring.
 
 alfheim.entry.odin=Faith in Odin
 alfheim.tagline.odin=Wisdom, power and sorcery
-alfheim.page.odin0=The &4Æsir&0 highest god, &3Odin&0, seems like the wisest god to be allied with. Wielding his aspect of the &3Divine&0 reduces the player's need for food for four times. The less health the player has, the more powerful his strikes would be.
+alfheim.page.odin0=The &4aesir&0 highest god, &3Odin&0, seems like the wisest god to be allied with. Wielding his aspect of the &3Divine&0 reduces the player's need for food for four times. The less health the player has, the more powerful his strikes would be.
 alfheim.page.odin1=Open your second wind
 
 alfheim.entry.garb_odin=Priestly Fashion - Odin
@@ -473,8 +538,7 @@ alfheim.tagline.garb_odin=Out of sight...
 alfheim.page.garb_odin0=No priest would be caught dead without a ceremonial robe, although robes aren't actually required to pay allegiance to a divinity.<br>These robes, beyond being fashionable, provide a tangible benefit. Odin's robes make their wearer invisible for almost every mob, grants knockback resistance and disintegrates all potions thrown by enemy.
 alfheim.page.garb_odin1=More useful than the Invisibility Cloak
 
-botania.page.odinRing0n=One of the six mythic rings of the &4Aesir&0, the &1Ring of Odin&0 grants its wearer the vitality and resistance of the Elder God &4Odin&0. As well as the addition of ten extra hearts of health, the &1Ring of Odin&0 protects the wearer from various kinds of elemental damage such as drowning, suffocation, fire or starvation. The ring can also be combined with the other five rings of the &4Aesir&0 in a crafting table to create the ultimate ring.
-
+botania.page.odinRing0n=One of the six mythic rings of the &4aesir&0, the &1Ring of Odin&0 grants its wearer the vitality and resistance of the Elder God &4Odin&0. As well as the addition of ten extra hearts of health, the &1Ring of Odin&0 protects the wearer from various kinds of elemental damage such as drowning, suffocation, fire or starvation. The ring can also be combined with the other five rings of the &4aesir&0 in a crafting table to create the ultimate ring.
 alfheim.entry.rod_odin=Rod of the Einstein-Rosen bridge
 alfheim.tagline.rod_odin=Rod for interdimensional travel
 alfheim.page.rod_odin0=Moving between worlds is not always easy... Sometimes you have to spend more than one hour in search of a special portal, at other times - to fight with a strong god-like creature. One way or another, each option comes with difficulties or wasted time.
@@ -484,11 +548,72 @@ alfheim.page.rod_odin3=It appears that connecting your soul to the ancient highe
 
 alfheim.entry.gungnir=Gungnir
 alfheim.tagline.gungnir=I am gar for Lancer
-alfheim.page.gungnir0=Unbreakable, unstopable, unmissable - three &oun&0 to describe the great Odin's spear &1Gungnir&0. Just rightclick on any target no matter how far it is and it will be stricken with enormous amount of piercing damage. You can also throw it forward to drill through enemy crowds.
+alfheim.page.gungnir0=Unbreakable, unstopable, unmissable - three &oun&0 to describe the great Odin's spear &1Gungnir&0. Just right-click any target no matter how far it is and it will be stricken with enormous amount of piercing damage. You can also throw it forward to drill through enemy crowds.
+
+alfheim.entry.soulSword=Soul Sword
+alfheim.tagline.soulSword=As good as Muramasa's blade
+alfheim.page.soulSword0=Terra Blade is an excellent weapon, sharp and durable, but it has a big drawback... It limits the natural gift of living beings for self-development. Fortunately, the divine essence can radically transform the main material of a Terra Blade - terrasteel, giving birth to a weapon of infinite potential.
+alfheim.page.soulSword1=The fusion of terrasteel - a metal symbolizing the original Midgard, and Gaia Spirit Ingot - the essence of great power, gives rise to a blade that absorbs the souls of the victims and is strengthened by them.
+alfheim.page.soulSword2=Creating &1Soul Sword&0
+
+alfheim.entry.goddessCharm=Benevolent Goddess' Charm
+alfheim.tagline.goddessCharm=Prevents explosions from damaging the world
+alfheim.page.goddessCharm0=The Benevolent Goddess' Charm is a defensive Bauble that's worn in the Amulet slot. When worn, it uses Mana to prevent explosions in its wearer's vicinity from damaging any blocks in the world.
+alfheim.page.goddessCharm1=Keep TNT away from children!
+
+alfheim.entry.bud=Bud of Yggdrasil
+alfheim.tagline.bud=Where we aren't
+alfheim.page.bud0=There is one rumor that in those places where there are no elves or humans, time completely stops, and the world freezes in anticipation. Let's leave all these incomprehensible phrases like "quantum entanglement" and "observer effect" to mad scientists, fruitlessly delving into their theories. We are interested in the practical aspect!
+alfheim.page.bud1=&1Yggdrasil&0 doesn't just connect worlds into one whole. It literally defines the laws of being that oppose chaos. Laws that can be reinforced in a certain territory, so that time can flow. The &1Bud of Yggdrasil&0 absorbs the energy of the World Tree to keep the surrounding territory active. Alas, the power of the flower extends to a single chunk, so your farms will have to squeeze!
+alfheim.page.bud2=No Chickens here!
+
+alfheim.entry.gjallarhorn=Gjallarhorn
+alfheim.tagline.gjallarhorn=Heralds victory (or end?)
+alfheim.page.gjallarhorn0=This horn belongs to Heimdall, the guardian of the gods who guards the Bifrost from enemies. As the legends say, on the day of Ragnarök, he will blow the Gjallarhorn, and its sound will sweep through all the Nine Worlds, marking the beginning of the end of the world and calling all the warriors to protect the aesir.
+alfheim.page.gjallarhorn1=Once in the hands of mortals, the magic horn will call into military service one Einheri, once a mortal warrior, whose valor and merit opened the gates of Valhalla for him. In difficult times, five great warriors can be summoned at once.
+
+alfheim.entry.aesir=Emblem of Aesir
+alfheim.entry.abyss=Contract Breaker
+alfheim.tagline.abyss=Spin the black circle
+alfheim.page.abyss0=&oSpin the crackling circle from the waking &1&oaether&0&o of &3&oHeimdall&0&o, colorful as the bridge he guards. Spin it through the waking &1&oseas&0&o of &3&oNjord&0&o, blue as the deepest oceans. Spin it under the waking &1&oskies&0&o of &3&oThor&0&o, yellow as the brightest sun.
+alfheim.page.abyss1=&oSpin it with the waking &1&oflames&0&o of &3&oLoki&0&o, red as the blood from which they're born. Spin it over the waking &1&oland&0&o of &3&oSif&0&o, green as the grass of plains. Spin it to the waking &1&opalace&0&o of &3&oOdin&0&o, white as his wise beard, and back to your beginning.
+alfheim.page.abyss2u=&oConnect their spirits, and empower a token, and may you see the &3&onew beginning&0&o.
+alfheim.page.abyss2=&oOffer their souls, and burn forth a token, and may ye see the &4&oend&0&o.
+alfheim.page.abyss3u=&oThis page seems to be empty
+alfheim.page.abyss3=&oTo the North of the World Tree of Yggdrasil lies the world of Niflheim - eternally frozen domain of ice and snow...<br>&oProve your strength to the gods by defeating the lord of Niflheim, the frost giant Thrym.
+alfheim.page.abyss4u=&oThis page seems to be empty
+alfheim.page.abyss4=&oDue to the death of the guardian of Niflheim, the forces of ice and cold, unrestrained by anyone, broke out into other worlds. But do not worry, Surtr the lord of Muspelheim is preparing all his might to seal back the rampaging forces of Niflheim.
+alfheim.page.abyss5u=&oThis page seems to be empty
+alfheim.page.abyss5=&oSurtr and his tribe have always been distinguished by malice and cunning. Fury is their sword, flame is their armor. And therefore, as the fire giants believe, they must dominate the entire universe. Human, alfar, aesir, vanir, dwarves... They will all be under the oppression of the fiery monsters if the army of Surtr is not stopped.
+alfheim.page.abyss6u=&oThis page seems to be empty
+alfheim.page.abyss6=&oThe Six Great Ones will choose their emblem-bearing priests as harbingers of their will. The chosen ones will judge you through battles, from now on they are your executioners. Only by defeating them, you can prove your strength to each of the Six, and only in this way will you receive deserved rewards and blessings. Use the &1Soul Sword&0 in your battle as sign of your determination.
+
+alfheim.entry.vafthrudnir=Wise knowledge
+alfheim.tagline.vafthrudnir=Stop attacking! Immediately!
+alfheim.page.vafthrudnir0=The magicians who study Ginnungagap unanimously assert that this place is an ocean of absolute chaos and lawlessness, where the Nine Worlds are nothing more than islands of order. And so, wounds appear in the universe, through which the all-consuming Gaping Abyss seeps.
+alfheim.page.vafthrudnir1=In such a case, a &1Anchor of Reality&0 can help, which will fortify the surrounding world in a radius of over three hundred blocks, consuming large amounts of mana. Between the rainbow shell and the anchor itself there must be &4liquid mana&0, which exists on its own, not in pools. Alas, it can only protect a portion of existence and cannot stop the end of the world entirely. But is that really all we can do?
+alfheim.page.vafthrudnir2=Creating &1Anchor of Reality Core&0
+alfheim.page.vafthrudnir3=Anchor of Reality
+alfheim.page.vafthrudnir4=We all remember well this world creation myth: originally there was &4Ginnungagap&0, and &4Muspelheim&0 and &4Niflheim&0 were the two realms from which all things came, that they gave birth to &4Ymir&0, who was killed later by the gods and from whom &4Midgard&0 was created... What good can this knowledge do us in these dark days?
+alfheim.page.vafthrudnir5=In order to repair the universe, one must understand the following: The Abyss is a cursed chaos without law. And Ymir was not born because of a mere accident, but because of the union of the two primal elements. And afterward there was a murder, which ordered existence. So the law appeared where there was no law, in the gaping void.
+alfheim.page.vafthrudnir6=So we need access to the two primal worlds in order to draw the necessary energies from them. This task is performed by &1realm power collectors&0, who then focus it into a single point.
+alfheim.page.vafthrudnir7=At this point, one should place a &1pylon of creation&0 that unites the two primal elements into a single whole. The resulting power of creation will be channeled into two &1yawning spires&0 that transform it into the &4energy of order&0. In turn, the spires will direct it upward, stitching the wounds of reality like spokes knitting the fabric of the universe.
+alfheim.page.vafthrudnir8=The &1empty rift shards&0 are items that collect the fabric of reality that once made up the world, but is becoming more chaotic because of the reality rift. That fabric is still somewhat ordered, but has acquired the traits of Ginnungagap, so they can be used in the creation and manipulation of objects.
+alfheim.page.vafthrudnir9=The fabric of reality can be collected in three ways: by interacting with the rifts that appear directly in the world, by absorbing the icy power of Niflheim from the coldest of its rivers, and by absorbing the power of fire from the deepest blazing lakes of Muspelheim.
+alfheim.page.vafthrudnir10=Creating &1Empty Rift Shard&0
+alfheim.page.vafthrudnir11=Creating &1Realm Power Collector Cores&0
+alfheim.page.vafthrudnir12=Creating &1Realm Power Collector Frames&0
+alfheim.page.vafthrudnir13=Creating &1Yawning Spire&0
+alfheim.page.vafthrudnir14=Creating &1Pylon of Creation&0
+alfheim.page.vafthrudnir15=Cosmogonic Act
+alfheim.page.vafthrudnir16=&oPave your soul through a thousand steps on Bifrost, 'til the aether radiates your sins, for the sake of Heimdal.<br>&oWash your soul in the coldest river of Niflheim, 'til the water wipes your sins, for the sake of Njord.<br>&oStrike your soul with the mightiest lightnings from the skies, 'til the thunder purges your sins, for the sake of Thor.
+alfheim.page.vafthrudnir17=&oBurn your soul in the hottest lakes of Muspelheim, 'til the lava cinders your sins, for the sake of Loki.<br>&oBury your soul in the fertiliest earth of Midgard, 'til the ground absorbs your sins, for the sake of Sif.<br>&oRaise your soul to the top of Yggdrasil, 'til the sun absolves your sins, for the sake of Odin.
 
 ################################################################ BACKPORT ################################################################
 
 botania.page.cosmeticBaubles34=Really makes you think
+
+botania.page.pool15=Infusing &1Dreamwood Twig&0
 
 botania.page.lens38=The &1Messenger Lens&0 massively decreases the amount of &4Mana&0 a &4Mana Burst&0 carries, and also drastically increases the burst's speed and maximum distance.<br>This can be very useful for interactions with blocks such as the &1Mana Detector&0, &1Drum of the Wild&0, &1Animated Torch&0, among others.
 botania.page.lens39=Messenger Lens
@@ -496,17 +621,29 @@ botania.page.lens39=Messenger Lens
 botania.page.lens40=&1Push Lens&0 will enable Mana Burst to force the first entity it collide to move with it.
 botania.page.lens41=Push Lens
 
-botania.page.lens42=&1Smelt Lens&0 is like a furnace, it will enable Mana Burst to smelt the block ti collide.
+botania.page.lens42=&1Smelt Lens&0 is like a furnace, it will enable Mana Burst to smelt the block it collide.
 botania.page.lens43=Smelt Lens
 
-botania.page.lens44=&1Superconductor Lens&0 can make mana transfer become much more efficient, while making the mana beam become really dangerous to players.<br>The mana beam will deal high damage to only players.
-botania.page.lens45=Superconductor Lens
-
-botania.page.lens46=&1Track Lens&0 will enable Mana Burst to locate the first entity within 3 meters and keep tracking until either is dead.
-botania.page.lens47=Track Lens
+botania.page.lens44=&1Track Lens&0 will enable Mana Burst to locate the first entity within 3 meters and keep tracking until either is dead.
+botania.page.lens45=Track Lens
 
 botania.page.elvenLenses11=The &1Tripwire Lens&0 is another &4Control Lens&0.<br>A spreader that has it attached will only be allowed to fire if there is one or more mobs, or players, in the path described by the &4mana burst&0 that the spreader would shoot.
 botania.page.elvenLenses12=Tripwire Lens
+
+botania.page.elvenLenses13=&1Superconductor Lens&0 can make mana transfer become much more efficient, while making the mana beam become really dangerous to players.<br>The mana beam will deal high damage to only players.
+botania.page.elvenLenses14=Superconductor Lens
+
+botania.page.elvenLenses15=&1Purification Lens&0 grants mana burst the ability to purify blocks into their natural counterparts, similar to a pure daisy, but instantly. It is also capable to dissolve mana infused into items.
+botania.page.elvenLenses16=Purification Lens
+
+botania.page.luminizerTransport7=Adding a &4Lever&0 to a &1Luminizer&0 turns it into a &1Toggle Luminizer&0, which accepts a &4redstone signal&0. When powered with Redstone signal, a Toggle Luminizer will drop anything passing through. It works normally when unpowered.
+botania.page.luminizerTransport8=Signal in
+botania.page.luminizerTransport9=A &1Luminizer&0 and an &1Animated Torch&0 yield a &1Fork Luminizer&0. These will react to an Animated Torch placed up to two blocks above or below it. Any incoming entities will be sent to a Luminizer in the direction that the Torch is pointing towards.
+botania.page.luminizerTransport10=The Fork Luminizer can still be bound like any other style of Luminizer, but it'll only use its binding if no Animated Torch is available to tell it where to go (or if there aren't any Luminizers in the direction the Torch points).
+botania.page.luminizerTransport11=One way or another
+
+botania.page.arcanerose0a=&4Experience Points&0 are a form of magic of sorts. The &1Rosa Arcana&0 can tap into it and absorb the experience of players on the ground around it or absorb raw experience orbs from the floor, turning into &1Mana&0.
+botania.page.overgrowthSeed2=It can also be used on floating flower to give the island properties of &1Enchanted Soil&0.
 
 alfheim.entry.amulCirs=Cirrus Amulet
 alfheim.tagline.amulCirs=Gives you double jump
@@ -525,16 +662,21 @@ alfheim.page.mitten1=Only today discounts on mana up to 50%!
 
 alfheim.entry.aniTorch=Animated Torch
 alfheim.tagline.aniTorch=Compact systems with a floating redstone torch
-alfheim.page.aniTorch0=The &1Animated Torch&0 is no more than a floating &1Redstone Torch&0 with a spark of magical autonomy.<br>The torch, when placed, will face a horizontal direction, providing power towards that direction. Shift-right clicking it will rotate the torch 90 degrees, changing the power to the new direction instead.
+alfheim.page.aniTorch0=The &1Animated Torch&0 is no more than a floating &1Redstone Torch&0 with a spark of magical autonomy.<br>The torch, when placed, will face a horizontal direction, providing power towards that direction. Sneak-right clicking it will rotate the torch 90 degrees, changing the power to the new direction instead.
 alfheim.page.aniTorch1=By default, whenever the torch is triggered, it'll turn 180 degrees, serving as a T-Flip-Flop Latch.<br>To trigger the torch one can either have a &4mana burst&0 collide with it, or have an adjacent &1Hovering Hourglass&0 turn. Either way will have the torch do its specified rotation.
 alfheim.page.aniTorch2=Using a &1Wand of the Forest&0 on the torch will change its mode. The default mode is &4Toggle&0, which was explained in the previous page.<br>The other two modes are &4Rotate&0, which will have the torch do a 90 degree spin every time, and &4Random&0, which will have the torch rotate towards a random direction.
 alfheim.page.aniTorch3=It's fallen and it can't get up
 
 alfheim.entry.astrolab=Worldshaper's Astrolabe
 alfheim.tagline.astrolab=A tool to help create planes
-alfheim.page.astrolab0=The &1Worldshaper's Astrolabe&0 is a handy tool to place down blocks, a lot of them, really quick.<br>To start off, shift-right click the astrolabe on a block in the world. This will set the block that will be placed.<br>Shift-right clicking with the astrolabe on the air will change how many blocks will get placed.
-alfheim.page.astrolab1=When looking at a block with the astrolabe in hand, a quick preview will show up, of what blocks will be placed upon right click.<br>To create the wall or floor displayed, alongside &4Mana&0, the respective blocks will be taken from the user's inventory, or items that can provide blocks to items such as the &1Rod of the Shifting Crust&0. (e.g. &1Rod of the Depths&0, &1Hand of Ender&0).
+alfheim.page.astrolab0=The &1Worldshaper's Astrolabe&0 is a handy tool to place down blocks, a lot of them, really quick.<br>To start off, sneak-right click the astrolabe on a block in the world. This will set the block that will be placed.<br>Sneak-right clicking with the astrolabe on the air will change how many blocks will get placed.
+alfheim.page.astrolab1=When looking at a block with the astrolabe in hand, a quick preview will show up, of what blocks will be placed upon right-click.<br>To create the wall or floor displayed, alongside &4Mana&0, the respective blocks will be taken from the user's inventory, or items that can provide blocks to items such as the &1Rod of the Shifting Crust&0. (e.g. &1Rod of the Depths&0, &1Hand of Ender&0).
 alfheim.page.astrolab2=Builds walls, creates worlds
+
+alfheim.entry.armilla=Worldshaper's Armilla
+alfheim.tagline.armilla=Spheres in Minecraft. Again?
+alfheim.page.armilla0=The &1Worldshaper's Armilla&0 is quite similar to the &1Worldshaper's Sextant&0 except for one major difference - it works in three dimensions, allowing you to project a 3D circle, namely a sphere.
+alfheim.page.armilla1=Build your own Laputa!
 
 alfheim.entry.cloakInv=Invisibility Cloak
 alfheim.tagline.cloakInv=Exactly what it says on the tin
@@ -569,6 +711,16 @@ alfheim.page.ration1=Strength before weakness
 botania.page.judgementCloaks1n=The &1Cloak of Virtue&0 will, when active, block the full extent of a piece of damage taken.<br>The &1Cloak of Sin&0 will damage all nearby hostile mobs for the same amount of damage that was taken.<br>The &1Cloak of Balance&0 will evenly split the damage between the attacker and the target. It also prevents the target from dying.
 botania.page.judgementCloaks4=Pain split
 
+alfheim.entry.aquapanthus=Aquapanthus
+alfheim.tagline.aquapanthus=Fills containers to the brim
+alfheim.page.aquapanthus0=The &1Aquapanthus&0 uses a very small amount of mana to fill nearby cauldrons and petal apothecaries with water. It can also fill some other fluid containers that are mostly unknown to the average botanist.
+alfheim.page.aquapanthus1=Leaking this
+
+alfheim.entry.aconite=Wither Aconite
+alfheim.tagline.aconite=Mana from the stars
+alfheim.page.aconite0=The &1Wither Aconite&0 uses up nether stars dropped on it to create mana from them. If the wither aconite can't use up the nether star after 5 minutes, it will despawn like any other item.
+alfheim.page.aconite1=No blocks tho
+
 ################################################################ EBT ################################################################
 
 alfheim.entry.subspear=Spear of Subspace
@@ -582,7 +734,7 @@ alfheim.page.moonbow0=The &1Phoebus Catastrophe&0 uses &4Mana&0 to shoot magic a
 
 alfheim.entry.dasGold=Das Rheingold
 alfheim.tagline.dasGold=Relic Unbinder
-alfheim.page.dasGold0=&1Das Rheingold&0 can empty the binding of a relic, just crafting the relic with it. If you want to bind the relic to a specific person, hold the Das Rheingold and right-click him, then the crafting will make the relic bind to him.
+alfheim.page.dasGold0=&1Das Rheingold&0 can empty the binding of a relic, just crafting the relic with it. If you want to bind the relic to a specific player, use right-click on it holding the Das Rheingold, and the crafting will make the relic bind to it.
 alfheim.page.dasGold1=We need more gold
 
 alfheim.entry.multbaub=Ring of Elven King
@@ -602,7 +754,7 @@ alfheim.page.races0=Even &4Hel&0 herself hadn't destroyed the intelligent life i
 alfheim.page.races1=Each of them has a unique color, a shape of the wings and an icon; also some passive abilities, which, if desired, can be turned off by pressing the [M] button. And all of them can fly.
 alfheim.page.races2=By default, the flight is activated by the [F] key, and if you want to fly even faster, then press the acceleration button to increase the speed by 25%! If suddenly you are surrounded by enemies, press the jump button with the [ALT] pressed to fly straight up. But keep in mind: the flight time is limited and the faster you move, the less time you have.
 alfheim.page.races3=Abilities<br>Salamander: With a chance they can weaken some debuffs (poison, nausea, blindness).<br>Sylphs: 20% faster flight and its restoration.<br>Cait Sith: Know how to tame any animals with their bare hands, getting additional health for it.
-alfheim.page.races4=Pookas: Can imitate the meowing of cats, scaring away creepers. Also restore health&hunger while standing still.<br>Gnomes: Can sense ores within a radius of eight blocks (only active while sneaking).<br>Leprechauns: Deal 10% more damage im melee combat.
+alfheim.page.races4=Pookas: Can imitate the meowing of cats, scaring away creepers. Also restore health and hunger while standing still.<br>Gnomes: Can sense ores within a radius of eight blocks (only active while sneaking).<br>Leprechauns: Deal 10% more damage im melee combat.
 alfheim.page.races5=Spriggans: Perfect night vision and immunity to blindness.<br>Undines: Endless waterbreathing and manaregen in water.<br>Imps: Mana cost reduced by 20% for repairing armor and tools, as well as for using wands.
 
 ################################################################ MMO ################################################################
@@ -626,11 +778,13 @@ alfheim.page.acidmyst=Sprays acid, causing continuous minor poison damage to cre
 alfheim.page.aquabind=Binds all creatures in a region with a diameter of 7 blocks, imposing slowness.
 alfheim.page.aquastream=Releases a stream of water in the direction of sight, causing minor water damage. Interrupts if you move.
 alfheim.page.battlehorn=Adds courage to allies, imposing acceleration, boost and resistance.
+alfheim.page.beastwithin=Grants massive speed boost to a target and makes it inflict bleeding to enemy on hit.
 alfheim.page.blink=Allows you to teleport forward up to 8 blocks.
 alfheim.page.bunnyhop=Imposes a high jump effect on the target.
 alfheim.page.butterflyshield=Grants the target three complete absorptions against magic and the absorption of half the other types of damage.
 alfheim.page.call=Teleports selected party member to you, ignoring dimensions if member is another player.
 alfheim.page.confusion=Imposes a nausea effect on the target.
+alfheim.page.darkness=Creates an area of absolute darkness, that makes non-spriggans see nothing and greatly slows them. Spriggans in this area get a high speed boost, regeneration, and damage boost.
 alfheim.page.day=Sets the time of day to day.
 alfheim.page.deathmark=Imposes a mark on the target that inflicts tremendous curse damage if it wasn't removed in time.
 alfheim.page.decay=Significantly weakens the immunity of the target, so any injury will result in bleeding.
@@ -640,6 +794,7 @@ alfheim.page.driftingmine=Launches (with pressed [Shift] sets) a mine that explo
 alfheim.page.echo=Allows you to detect items and living creatures in a radius of 16 blocks.
 alfheim.page.fenrirstorm=Deals high lightning damage to targets standing on the line of sight at a distance of up to 16 blocks.
 alfheim.page.fireball=Launches a ball of fire that does average fire damage over a 2-block radius area.
+alfheim.page.firestar=Creates a star, that makes allies immune to fire, and slowly heals them; sets on fire enemies, damaging them.
 alfheim.page.firewall=Sets a wall of fire in front of the caster that restrains and sets opponents on fire, inflicting minor fire damage.
 alfheim.page.goldrush=Grants the party increased digging speed and luck when mining ore.
 alfheim.page.gravitytrap=Creates a gravity trap, which draws in everything within a radius of 4 blocks and at a height of up to 16 blocks; and causing minor gravity damage.
@@ -649,18 +804,22 @@ alfheim.page.healing=Grants average healing and little saturation to all party m
 alfheim.page.hollowbody=Imposes an invisibility effect on target.
 alfheim.page.icelens=Allows the caster to see 10 times better through an ice lens.
 alfheim.page.ignition=Ignites the selected block at a distance of up to 16 blocks.
-alfheim.page.isaacstorm=Launches a swarm of magic missiles, each of which pursues selected target (exact that if sneaking, same type otherwise; or randomly chosen if none) and, when hit, causes high damage to it.<br>                                   "Kill you 3000"
+alfheim.page.isaacstorm=Launches a swarm of magic missiles, each of which pursues selected target (exact if sneaking, same type otherwise; or randomly chosen if none) and, when hit, causes high damage.<br>      "Kill you 3000"
 alfheim.page.join=Allows you to join your party member in their adventures, sending you even through dimensions.
+alfheim.page.leafstorm=Creates an area of whirling leaves, that deals damage to enemies and gives a speed boost to allies.
 alfheim.page.liquification=Places water source at a distance of up to 16 blocks. Can also refill apothecary.
 alfheim.page.mortar=Launches a rock, causing great falling block damage on the target of direct hit, additionally breaking its armor, and medium earth damage over an 2-blocks radius area.
 alfheim.page.night=Sets the time of day to night.
 alfheim.page.nightvision=Imposes a night vision effect on a party.
 alfheim.page.ninelifes=Imposes on the target an effect which allows once to survive a death by falling, drowning, withering (with a 50% chance), burning or poisoning, and after giving a temporary invulnerability to these types of damage.
 alfheim.page.noclip=Imposes an effect on the target, allowing it to pass through walls. To operate, it need to be able to fly and be in the air.
+alfheim.page.noteshot=Shoots a note, which deals damage to the enemy and makes it stunned.
 alfheim.page.outdare=Caster challenges the surrounding enemies within a radius of 32 blocks, making himself the primary target for attack.
 alfheim.page.poisonroots=Distributes negative effects from the party to opponents within a radius of 16 blocks, further slowing them down.
 alfheim.page.purifyingsurface=Removes poison effect from allies within 5 blocks, extinguishes and gives immunity to fire.
 alfheim.page.rain=Causes rain/calms thunderstorm.
+alfheim.page.refresh=Refreshes cooldown of all spells of party members.
+alfheim.page.repair=Repairs held item for certain amount.
 alfheim.page.resurrect=Allows for some time to resurrect an ally on the spot of his death, restoring 10 health points.
 alfheim.page.sacrifice=You sacrifice yourself to Darkness, causing tremendous darkness damage to everyone within a radius of 32 blocks, including allies, and then you die too<br>        "EXPLOSION"
 alfheim.page.shadowvortex=Teleports every living being in close range around you to random position, dealing average damage with dark energy.
@@ -672,7 +831,7 @@ alfheim.page.thor=Summons lightning on distance up to 32 blocks under the sky.
 alfheim.page.throw=Launches the caster forward, additionally inflicting average standard damage on anyone in the way.
 alfheim.page.thunder=Causes a thunderstorm/increases rain.
 alfheim.page.timestop=Stops time in a radius of 16 blocks<br><br><br>         "ZA WARUDO"
-alfheim.page.titanhit=Breaks blocks in the area of 3x3, consuming the more mana, the harder were the blocks.
+alfheim.page.titanhit=Breaks blocks in the area of 3x3, consuming the more mana, the harder were the blocks. Uses the equipped tool (or your hand) without damaging it.
 alfheim.page.truesight=Allows you to find out approximately how much mana the target has - the brighter and higher the "flame" - the more mana.
 alfheim.page.uphealth=Imposes a health increasement on the target.
 alfheim.page.wallwarp=Allows you to move through not very thick walls.
@@ -683,7 +842,7 @@ alfheim.page.windblades=Launches air discs, causing average air damage to enemie
 
 alfheim.entry.targets= Targeting
 alfheim.tagline.targets=You can't hide from me
-alfheim.page.targets0=For more convenient use of &1Spells&0 there is also a system of &1Targeting&0. To select an enemy, hover the cursor on it and hold down selection button ([R] by default). Now you can use spells on it that require a target.
+alfheim.page.targets0=For more convenient use of &1Spells&0 there is also a system of &1Targeting&0. To select an enemy, hover the cursor on it and hold down selection button ([R] by default). Now you can use spells on it that require a target. [CTRL]+[R] to clear selection.
 alfheim.page.targets1=To select a party member, simply press [T]. The selection will cycle through and the name of the selected member will be highlighted in green. Clicking on [R] won't allow you to select a member so not to accidentally attack him. Tracking range is 128 blocks for bosses and 32 for everyone else.
 
 lexicon.time=Cast: %.2f
@@ -781,7 +940,7 @@ alfheim.page.treeCrafting0=Affecting life is much harder than making or destroyi
 alfheim.page.treeCrafting1=When a &1Wand of the Forest&0 is used on the apex plank of the structure, it will complete it. For a tree to be made, you must plant a lifeless &1Iridescent Sapling&0 on the dirt below, and pump &4Mana&0 into the apex block. The components must be placed on the &1Item Platforms&0, and the crafting will begin on its own.
 alfheim.page.treeCrafting2=The Dendric Suffuser
 
-alfheim.page.irisSeeds0=If &1Bone Meal&0 is used on &1Iridescent Dirt&0, it will grow &1Iridescent Grass&0 instead of &1Tall Grass&0. When this &1Iridescent Grass&0 is thrown into a &4Mana Pool&0, you get out something quite like the &1Pasture Seed&0. It will transmute &1Grass&0 and &1Dirt&0 into &1Iridescent Dirt&0, with a simple right click.
+alfheim.page.irisSeeds0=If &1Bone Meal&0 is used on &1Iridescent Dirt&0, it will grow &1Iridescent Grass&0 instead of &1Tall Grass&0. When this &1Iridescent Grass&0 is thrown into a &4Mana Pool&0, you get out something quite like the &1Pasture Seed&0. It will transmute &1Grass&0 and &1Dirt&0 into &1Iridescent Dirt&0, with a simple right-click.
 alfheim.page.irisSeeds1=/etc/sudoers
 alfheim.page.irisSeeds2=Tiger Orchid monoculture
 
@@ -801,7 +960,7 @@ alfheim.page.kindling1=Stop drop and roll
 alfheim.page.livingwoodFunnel0=For some people, the &1Hopper&0 is too lax. It allows items through when it shouldn't, and sometimes moves them too fast. The &1Livingwood Funnel&0 is far, far stricter. It only allows one item through at a time, and can be filtered by placing an &1Item Frame&0 on one of its sides.
 alfheim.page.livingwoodFunnel1=One at a time, please
 
-alfheim.page.itemDisplay0=The &1Item Platform&0 is a neat way to display an item without having it despawn. Giving it an item via right click or hopper will show it floating above the platform. It's a neat way to show off your piles of resources.
+alfheim.page.itemDisplay0=The &1Item Platform&0 is a neat way to display an item without having it despawn. Giving it an item via right-click or hopper will show it floating above the platform. It's a neat way to show off your piles of resources.
 alfheim.page.itemDisplay1=Terrasteel makes you look rich
 
 alfheim.page.lightningSapling0=The &1Thunderous Oak&0 is a tree that acts like a lightning rod. It absorbs lightning from the surrounding area and redirects it to itself. The process of drawing in the lightning can sometimes damage items and creatures, and light terrain on fire where the lightning was. The effect is reduced by the existence of the Oak, though.
@@ -876,3 +1035,15 @@ alfheim.page.shimmer1=Wire's scraping the bottom of the barrel here
 
 alfheim.page.throwablePotions0=By applying &1Gunpowder&0 effect to any &1Vial&0 one can make it explodable on contact with the ground or entities. By reducing the number of uses the speed and size of the AoE are increased.
 alfheim.page.throwablePotions1=Incoming!
+alfheim.page.throwablePotions2=By combining a &1Managlass Vial&0 with a &4fireball&0 and &4gunpowder&0, you can create a fiery projectile that explodes on contact with the ground or creatures. Since only gunpowder and a fireball are used in the manufacture of the projectile, the flight range is significantly increased compared to potions.
+alfheim.page.throwablePotions3=I love the smell of napalm in the morning!
+
+alfheim.entry.fenrir=Fenrir
+alfheim.tagline.fenrir=Break thy bonds
+alfheim.page.fenrir0=The legends says that this violent son of Loki was bound by Gods and caged deep underground, in the hidden cave near the roots of Yggdrasil. No foolish mortal dares to challenge this terrifying beast. Until now..?
+alfheim.page.fenrir1=The gear created with the fur of &4Fenrir Wolf&0 encourages you to fight where others falter, surpassing your own limitations to cut &1Gleipnir&0. The &4Direwolf&0, the special ability of the armor set, strengthens you and strikes past armor when bare-handed. The claws of &4Fenrir&0, &1Nightscourge the Ravager&0, will also strike through armor, and can block attacks like a shield.
+alfheim.page.fenrir2=Odinsbane
+alfheim.page.fenrir3=The &1Helm of Fenrir&0
+alfheim.page.fenrir4=The &1Chestplate of Fenrir&0
+alfheim.page.fenrir5=The &1Platelegs of Fenrir&0
+alfheim.page.fenrir6=The &1Greaves of Fenrir&0

@@ -193,7 +193,6 @@ tile.alfheim:SnowGrass.name=雪地
 tile.alfheim:SnowLayer.name=积雪
 tile.botania:spreader4.name=始源魂灵魔力发射器
 tile.alfheim:TradePortal.name=尘世之门核心
-tile.Transferer.name=传送器
 
 ##########################################################___ITEMS___###########################################################
 
@@ -302,23 +301,17 @@ item.RealitySword.DIE=%s 得到了创世神之剑并遭到了创世神的惩罚
 item.alfheim:RoyalStaff.name=皇家侍卫
 item.alfheim:SoulHorn.name=灵魂号角
 item.botania:spatiotemporalRing.name=时空锚定之戒
-item.botania:spatiotemporalRing.desc=下蹲以停止保护
+item.botania:spatiotemporalRing.desc.false=下蹲以停止保护
 item.botania:SpearSubspace.name=亚空之矛
 item.alfheim:splashPotion.name=喷溅型 精灵之酿
 item.alfheim:starPlacer2.name=裂纹星
-item.alfheim:StoryToken.name=Token of Banter
-item.StoryToken.story.1=[御灵水晶]
-item.StoryToken.story.2=[圣刃启示者]
-item.StoryToken.story.3=[叛魂之匕]
-item.StoryToken.story.4=[Moonshot]
 item.botania:TankMask.name=诡秘之面
 item.TankMask.active=清醒
-item.TankMask.inactive=沉睡 (SHIFT+RMB)
+item.TankMask.inactive=沉睡
 item.alfheim:TheRodOfTheDebug.name=dev.TheRodOfTheDebug.null
 item.botania:ThinkingHand.name=思考之手
 item.alfheim:ThunderwoodSplinters.name=雷霆碎片
 item.alfheim:ThunderwoodTwig.name=雷击木树枝
-item.Transferer.name=Destructurizer
 item.alfheim:Triquetrum.name=世界塑造者的三角仪
 item.Triquetrum.blocks=选择了 %s 个方块
 item.Triquetrum.rotation=逆时针旋转 %s degrees 度
@@ -326,35 +319,34 @@ item.Triquetrum.tooLarge=选取区域过大. 最大对角线长度 - %s
 
 ##########################################################___OTHER___###########################################################
 
-achievement.akashic=最好的魔法指导者
-achievement.akashic.desc=执掌魔发的权柄
-achievement.alfheim=新世界
-achievement.alfheim.desc=欢迎来到艾尔夫海姆
-achievement.divineMarksman=好枪法
-achievement.divineMarksman.desc=战斗专精
-achievement.excaliber=流动之心
-achievement.excaliber.desc=荣耀与胜利
+achievement.alfheim:akashic=最好的魔法指导者
+achievement.alfheim:akashic.desc=执掌魔发的权柄
+achievement.alfheim:alfheim=新世界
+achievement.alfheim:alfheim.desc=欢迎来到艾尔夫海姆
+achievement.alfheim:divineMarksman=好枪法
+achievement.alfheim:divineMarksman.desc=战斗专精
+achievement.alfheim:excaliber=流动之心
+achievement.alfheim:excaliber.desc=荣耀与胜利
 # firework
 # don't translate
-achievement.flugelSoul=神圣之魂
-achievement.flugelSoul.desc=永世不朽之魂
-achievement.flugelKill=弑神者
-achievement.flugelKill.desc=战胜不朽
-achievement.infuser=魔力注入器
-achievement.infuser.desc=探索精灵的魔力注入科技
-achievement.mask=势不可挡
-achievement.mask.desc=诡异的....."面具"
-achievement.moonlightBow=直至月球
-achievement.moonlightBow.desc=执掌太阳神的权柄
-achievement.newChance=新的机会
-achievement.newChance.desc=重启人生
-achievement.outstander=领头者
-achievement.outstander.desc=证明你的意志比顽石还要坚韧
-achievement.rosaBomb=残忍的血玫瑰
-achievement.rosaBomb.desc=杀戮
-achievement.subspace=夜空之光
-achievement.subspace.desc=撕碎空间的壁垒
-Hussaurs.desc=冲下山脊
+achievement.alfheim:flugelSoul=神圣之魂
+achievement.alfheim:flugelSoul.desc=永世不朽之魂
+achievement.alfheim:flugelKill=弑神者
+achievement.alfheim:flugelKill.desc=战胜不朽
+achievement.alfheim:infuser=魔力注入器
+achievement.alfheim:infuser.desc=探索精灵的魔力注入科技
+achievement.alfheim:mask=势不可挡
+achievement.alfheim:mask.desc=诡异的....."面具"
+achievement.alfheim:moonlightBow=直至月球
+achievement.alfheim:moonlightBow.desc=执掌太阳神的权柄
+achievement.alfheim:newChance=新的机会
+achievement.alfheim:newChance.desc=重启人生
+achievement.alfheim:outstander=领头者
+achievement.alfheim:outstander.desc=证明你的意志比顽石还要坚韧
+achievement.alfheim:rosaBomb=残忍的血玫瑰
+achievement.alfheim:rosaBomb.desc=杀戮
+achievement.alfheim:subspace=夜空之光
+achievement.alfheim:subspace.desc=撕碎空间的壁垒
 # winged hussars
 # don't translate
 
@@ -365,17 +357,8 @@ alfheim.armorset.elvorium.desc1=法杖内潜藏着更加强大的力量
 alfheim.armorset.elvorium.desc2=Vis减免: 20% 
 alfheim.armorset.elvorium.desc3=符文护盾 +8
 
-alfheim.commands.alfheim.done=%s 将艾尔夫海姆模式改为 [%sESM%s|%sMMO%s]
-alfheim.commands.alfheim.usage=用于模式配置
-alfheim.commands.alfheim.wrong=/alfheim <command>
-
-alfheim.commands.mtspell.usage=关于法术选择的信息
+alfheim.commands.setmode.done=%s 将艾尔夫海姆模式改为 [%sESM%s|%sMMO%s]
 alfheim.commands.mtspell.wrong=MMO 模式已关闭
-
-alfheim.commands.tpdim.usage=用于跨世界的传送
-alfheim.commands.tpdim.wrong=tpdim <ID>
-alfheim.commands.tpdim.worlderr=维度初始化异常
-alfheim.commands.tpdim.wrongid=错误的维度 ID
 
 alfheim.nei.manainfusion=魔力注入器
 alfheim.nei.tradeportal=尘世之门
@@ -449,7 +432,7 @@ alfheimmisc.cast.notready=法术还未准备完毕
 alfheimmisc.cast.notseeing=目标不在目视范围内
 alfheimmisc.cast.obstruct=目标被挡住了
 alfheimmisc.cast.wrongtgt=错误的目标
-alfheimmisc.cast.momana=魔力不足
+alfheimmisc.cast.nomana=魔力不足
 alfheimmisc.cast.notallow=你无法在此处施法
 
 alfheimmisc.modular.available=提供模块化的更新.
@@ -487,7 +470,7 @@ death.attack.soulburn=%s 的灵魂燃烧殆尽
 death.attack.darkness_FF=%s 被 %s 献祭献祭召唤出的暗黑之力杀死
 death.attack.firewall=%s 因为试图穿过 %s 的火墙而被烧死
 death.attack.hammerfall=%s 被 %s 的重锤杀死
-death.attack.lightning=%s 被 %s 的雷电劈死
+death.attack.indirectLightning=%s 被 %s 的雷电劈死
 death.attack.missile=%s 被 %s 的导弹炸成了碎末
 death.attack.mortar=%s 被 %s 召唤出的冲击波撕成了碎片
 death.attack.shadow=%s 被 %s 用暗能量杀死
@@ -551,7 +534,6 @@ item.HoloProjector.select=Shift+鼠标右键 - 选择种族
 
 itemGroup.Alfheim=艾尔夫海姆
 
-lang.name=zh_CN
 #######################################################___RELIC POEMS___########################################################
 
 item.AkashicRecords.poem0= 
@@ -800,7 +782,7 @@ misc.alfheim.color.15=黑
 misc.alfheim.color.16=虹彩
 misc.alfheim.color.17=霞光
 
-misc.alfheim.customSize=范围: %1$s 格
+misc.alfheim.customSize=范围: %1$s
 
 tc.aspect.tincturem=虹彩色
 tc.aspect.help.tincturem=彩虹般的颜色
@@ -1059,3 +1041,48 @@ general.elvenstory=精灵传说
 general.elvenstory.mmo=MMO
 general.elvenstory.mmo.hud=HUD
 general.elvenstory.mmo.potions=药水
+
+
+
+################
+#### ALFMOD ####
+################
+
+
+
+tile.AiryVirus0.name=艾利病毒
+tile.AiryVirus1.name=艾利病毒解药
+
+item.alfheim:SnowRelic.name=冰霜遗物
+item.botania:SnowSword.name=冰霜武士刀
+item.botania:SnowHelmet.name=冰霜头盔
+item.botania:SnowHelmetRevealing.name=冰霜揭示头盔
+item.botania:SnowChest.name=冰霜胸甲
+item.botania:SnowLeggings.name=冰霜护腿
+item.botania:SnowBoots.name=冰霜靴子
+
+entity.alfheim:DedMoroz.name=冬将军
+entity.alfheim:SnowSprite.name=血精灵
+entity.alfheim:SniceBall.name=小雪球
+
+death.attack.frost=%s 被 %s 用冰寒刺骨的冷气杀死
+
+itemGroup.AlfheimModular=艾尔夫海姆-传闻记
+
+alfheim.armorset.snow.name=冬将军装甲
+alfheim.armorset.snow.desc=使用法杖和工具时增加20%的魔力消耗
+
+alfheimmisc.ded.awakening=§b你唤起了复仇的凛冬之魂
+alfheimmisc.ded.icebound=你感觉冬将军冰冷的目光将你冻在地上动弹不得
+
+alfheimmisc.WIP=&4[WIP]&7 未来可能会添加新东西,请至少保留一件
+
+################ LEXICON ################
+
+alfheim.category.events=艾尔夫海姆-传闻记
+
+alfheim.entry.WOTW=凛冬之怒
+alfheim.tagline.WOTW=寒冬将至(美好世界)
+alfheim.page.WOTW0=寒冬...一方面,这是孩子们 在雪地里玩游戏和堆雪人的 绝佳时机,但是另一方面,暴 风雪会摧毁不够坚固的建筑 和作物,并带来刺骨的霜冻
+alfheim.page.WOTW1=也许每个人,无论是人还是精 灵,一生中至少堆过一个雪人 尽管对精灵来说那是一个长 着翅膀的雪球. 但是仍有少数经验丰富的探 险家,他们仍然有着无畏的精 神,他们梦想着战胜残酷的凛 冬
+alfheim.page.WOTW2=但不幸的是,有关冬将军所有 的传闻和故事都会让所有人 对此望而却步. 尽管,,,没有人知道,凛冬的 怒火随时可能降临到不 对寒冬生物"雪精灵"保持敬 畏的人身上. <br><br><br>和真!你在干什么呀和真!!

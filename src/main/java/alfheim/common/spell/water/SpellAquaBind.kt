@@ -3,14 +3,12 @@ package alfheim.common.spell.water
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.security.InteractionSecurity
-import alfheim.AlfheimCore
 import alfheim.api.entity.EnumRace
 import alfheim.api.lib.LibResourceLocations
 import alfheim.api.spell.SpellBase
 import alfheim.client.render.world.VisualEffectHandlerClient.VisualEffects
 import alfheim.common.core.handler.CardinalSystem.PartySystem
 import alfheim.common.core.handler.VisualEffectHandler
-import alfheim.common.network.MessageEffect
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.potion.*
@@ -38,17 +36,15 @@ object SpellAquaBind: SpellBase("aquabind", EnumRace.UNDINE, 4000, 600, 15) {
 		val result = checkCast(caster)
 		if (result != SpellCastResult.OK) return result
 		
-		val l = caster.worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, getBoundingBox(hit.x, hit.y, hit.z).expand(radius, 0.5, radius)) as List<EntityLivingBase>
-		for (e in l) {
-			if (PartySystem.mobsSameParty(caster, e)) continue
-			val mob = Vector3.fromEntityCenter(e)
+		val l = getEntitiesWithinAABB(caster.worldObj, EntityLivingBase::class.java, getBoundingBox(hit.x, hit.y, hit.z).expand(radius, 0.5, radius))
+		l.forEach {
+			if (PartySystem.mobsSameParty(caster, it)) return@forEach
+			val mob = Vector3.fromEntityCenter(it)
 			mob.y = hit.y
-			if (hit.copy().sub(mob).length() <= radius) {
-				if (!InteractionSecurity.canHurtEntity(caster, e)) continue
-				
-				e.addPotionEffect(PotionEffect(Potion.moveSlowdown.id, duration, efficiency.I, true))
-				AlfheimCore.network.sendToAll(MessageEffect(e.entityId, Potion.moveSlowdown.id, duration, efficiency.I))
-			}
+			if (hit.copy().sub(mob).length() > radius) return@forEach
+			if (!InteractionSecurity.canHurtEntity(caster, it)) return@forEach
+			
+			it.addPotionEffect(PotionEffect(Potion.moveSlowdown.id, duration, efficiency.I))
 		}
 		
 		VisualEffectHandler.sendPacket(VisualEffects.AQUABIND, caster.dimension, hit.x, hit.y, hit.z)

@@ -1,9 +1,10 @@
 package alfheim.common.lexicon
 
-import alexsocol.asjlib.mc
-import net.minecraft.block.Block
+import alexsocol.asjlib.*
 import net.minecraft.item.*
+import net.minecraft.stats.Achievement
 import vazkii.botania.api.BotaniaAPI
+import vazkii.botania.api.item.IRelic
 import vazkii.botania.api.lexicon.LexiconCategory
 
 /**
@@ -12,15 +13,24 @@ import vazkii.botania.api.lexicon.LexiconCategory
  */
 class AlfheimRelicLexiconEntry: AlfheimLexiconEntry {
 	
-	constructor(unlocalizedName: String, category: LexiconCategory, stack: ItemStack): super(unlocalizedName, category, stack)
-	
-	constructor(unlocalizedName: String, category: LexiconCategory, block: Block): super(unlocalizedName, category, block)
-	
-	constructor(unlocalizedName: String, category: LexiconCategory, item: Item): super(unlocalizedName, category, item)
+	val achievement: Achievement?
 	
 	init {
 		knowledgeType = BotaniaAPI.relicKnowledge
 	}
 	
-	override fun isVisible(): Boolean = mc.thePlayer.capabilities.isCreativeMode || mc.thePlayer.inventory.hasItem(icon.item)
+	constructor(unlocalizedName: String, category: LexiconCategory): super(unlocalizedName, category) {
+		achievement = null
+	}
+	
+	constructor(unlocalizedName: String, category: LexiconCategory, a: Achievement): super(unlocalizedName, category) {
+		achievement = a
+	}
+	
+	constructor(unlocalizedName: String, category: LexiconCategory, item: Item): super(unlocalizedName, category, item) {
+		achievement = if (item is IRelic) item.bindAchievement else null
+		setIcon(item)
+	}
+	
+	override fun isVisible(): Boolean = mc.thePlayer.capabilities.isCreativeMode || if (achievement != null) mc.thePlayer.hasAchievement(achievement) else mc.thePlayer.inventory.hasItem(icon.item)
 }

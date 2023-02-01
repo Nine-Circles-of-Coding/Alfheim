@@ -2,11 +2,10 @@ package alfheim.common.item.equipment.bauble.faith
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
-import alexsocol.asjlib.security.InteractionSecurity
-import alfheim.AlfheimCore
 import alfheim.api.event.PlayerInteractAdequateEvent.RightClick
 import alfheim.api.event.PlayerInteractAdequateEvent.RightClick.Action.*
 import alfheim.api.item.ColorOverrideHelper
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.item.AlfheimItems
 import alfheim.common.item.equipment.bauble.*
 import alfheim.common.item.relic.ItemNjordRing
@@ -33,15 +32,16 @@ object FaithHandlerNjord: IFaithHandler {
 	}
 	
 	override fun onWornTick(stack: ItemStack, player: EntityPlayer, type: IFaithHandler.FaithBauble) {
+		if (RagnarokHandler.blockedPowers[2]) return
+		
 		if (type == IFaithHandler.FaithBauble.CLOAK) onCloakWornTick(player)
 		if (type == IFaithHandler.FaithBauble.EMBLEM)
 			if (stack.cooldown > 0) --stack.cooldown
 	}
 	
 	fun onCloakWornTick(player: EntityPlayer) {
-//		if (!player.capabilities.isFlying && !player.onGround && !player.isSneaking && !player.isInWater)
-//			player.motionY += 0.05
-//
+		if (RagnarokHandler.blockedPowers[2]) return
+
 		val min = -0.0784000015258789
 		val slowfall = 2.0
 		if (!player.isSneaking && player.motionY < min && player.fallDistance >= 2.9) {
@@ -52,6 +52,8 @@ object FaithHandlerNjord: IFaithHandler {
 	
 	@SubscribeEvent
 	fun onPlayerClickLiquid(e: RightClick) {
+		if (RagnarokHandler.blockedPowers[2]) return
+		
 		if (e.action != RIGHT_CLICK_LIQUID) return
 		
 		val player = e.player
@@ -60,10 +62,9 @@ object FaithHandlerNjord: IFaithHandler {
 		if (getGodPowerLevel(player) < 3) return
 		if (player.isSneaking || !player.isInsideOfMaterial(Material.air)) return
 		
+		val block = player.worldObj.getBlock(e.x, e.y, e.z)
 		
-		val state = player.worldObj.getBlock(e.x, e.y, e.z)
-		
-		if (!state.material.isLiquid) return
+		if (!block.material.isLiquid) return
 		val originalStack = player.heldItem?.copy() ?: return
 		val result = player.heldItem.tryPlaceItemIntoWorld(player, player.worldObj, e.x, e.y, e.z, e.side, 0f, 0f, 0f)
 		
@@ -80,6 +81,8 @@ object FaithHandlerNjord: IFaithHandler {
 	
 	@SubscribeEvent
 	fun onPlayerClickAir(e: RightClick) {
+		if (RagnarokHandler.blockedPowers[2]) return
+		
 		if (e.action != RIGHT_CLICK_AIR) return
 		val player = e.player
 		
@@ -107,24 +110,25 @@ object FaithHandlerNjord: IFaithHandler {
 	// knowback entities
 	@SubscribeEvent
 	fun onPlayerAttack(e: AttackEntityEvent) {
+		if (RagnarokHandler.blockedPowers[2]) return
+		
 		val player = e.entityPlayer
-		var emblem = ItemPriestEmblem.getEmblem(2, player)
-		if (emblem == null) if (AlfheimCore.ENABLE_RAGNAROK) emblem = ItemRagnarokEmblem.getEmblem(player, 2) ?: return else return
+		val emblem = ItemPriestEmblem.getEmblem(2, player) ?: ItemRagnarokEmblem.getEmblem(player, 2) ?: return
 		
 		val entity = e.target
 		if (entity is EntityLivingBase)
 			if (ManaItemHandler.requestManaExact(emblem, e.entityPlayer, 20, true)) {
 				
 				for (i in 0..(if (getGodPowerLevel(player) >= 6) 1 else 0))
-					entity.knockBack(e.entityPlayer, -1f,
-									 sin(e.entityPlayer.rotationYaw * Math.PI / 180),
-									 -cos(e.entityPlayer.rotationYaw * Math.PI / 180))
+					entity.knockback(e.entityPlayer, 0f)
 			}
 	}
 	
 	// minimize/prevent falldamage
 	@SubscribeEvent
 	fun onPlayerFall(e: LivingHurtEvent) {
+		if (RagnarokHandler.blockedPowers[2]) return
+		
 		val player = e.entityLiving as? EntityPlayer ?: return
 		val emblem = ItemPriestEmblem.getEmblem(2, player) ?: return
 		
@@ -137,6 +141,8 @@ object FaithHandlerNjord: IFaithHandler {
 	}
 	
 	override fun getGodPowerLevel(player: EntityPlayer): Int {
+		if (RagnarokHandler.blockedPowers[2]) return 0
+		
 		var lvl = 0
 		
 		if (ItemPriestCloak.getCloak(2, player) != null) lvl += 3
@@ -148,18 +154,18 @@ object FaithHandlerNjord: IFaithHandler {
 	}
 	
 	override fun doParticles(stack: ItemStack, player: EntityPlayer) {
-		if (player.ticksExisted % 10 == 0) {
-			for (i in 0..6) {
-				val vec = IFaithHandler.getHeadOrientation(player).mul(0.52)
-				val color = Color(ColorOverrideHelper.getColor(player, 0x0101FF))
-				val r = color.red.F / 255F
-				val g = color.green.F / 255F
-				val b = color.blue.F / 255F
-				
-				val (x, y, z) = Vector3.fromEntity(player)
-				
-				Botania.proxy.sparkleFX(mc.theWorld, x + vec.x, y + vec.y + 1.62, z + vec.z, r, g, b, 1f, 5)
-			}
+		if (player.ticksExisted % 10 != 0) return
+		
+		for (i in 0..6) {
+			val vec = IFaithHandler.getHeadOrientation(player).mul(0.52)
+			val color = Color(ColorOverrideHelper.getColor(player, 0x0101FF))
+			val r = color.red.F / 255F
+			val g = color.green.F / 255F
+			val b = color.blue.F / 255F
+			
+			val (x, y, z) = Vector3.fromEntity(player)
+			
+			Botania.proxy.sparkleFX(mc.theWorld, x + vec.x, y + vec.y + 1.62, z + vec.z, r, g, b, 1f, 5)
 		}
 	}
 	

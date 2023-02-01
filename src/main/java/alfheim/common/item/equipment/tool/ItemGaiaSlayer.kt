@@ -30,6 +30,7 @@ class ItemGaiaSlayer: ItemMod("GaiaSlayer") {
 			target.onDeath(DamageSource.outOfWorld)
 			target.setDead()
 		}
+		
 		return super.hitEntity(stack, target, attacker)
 	}
 	

@@ -2,20 +2,26 @@ package alfheim.client.render.entity
 
 import alexsocol.asjlib.F
 import alexsocol.asjlib.math.Vector3
-import alfheim.common.item.AlfheimItems
+import alfheim.common.entity.EntityMjolnir
 import net.minecraft.client.renderer.entity.*
 import net.minecraft.client.renderer.texture.TextureMap
 import net.minecraft.entity.Entity
 import net.minecraft.entity.item.EntityItem
-import net.minecraft.item.ItemStack
 import net.minecraft.util.ResourceLocation
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL12
+import vazkii.botania.common.Botania
 import kotlin.math.*
+import vazkii.botania.common.core.helper.Vector3 as Bector3
 
-class RenderEntityMjolnir: Render() {
+object RenderEntityMjolnir: Render() {
 	
 	override fun doRender(entity: Entity, x: Double, y: Double, z: Double, yawOld: Float, ticks: Float) {
+		entity as EntityMjolnir
+		
+		val pink = entity.stack.displayName.trim().lowercase().let { it == "gloryhammer" || it == "glory hammer" }
+		Botania.proxy.lightningFX(entity.worldObj, Bector3.fromEntity(entity), Bector3.fromEntity(entity).sub(Bector3(entity.motionX, entity.motionY, entity.motionZ).multiply(1.25)), 1f, if (pink) EntityMjolnir.colorP else EntityMjolnir.color, if (pink) EntityMjolnir.colorBP else EntityMjolnir.colorB)
+		
 		glPushMatrix()
 		glTranslated(x, y, z)
 		glEnable(GL12.GL_RESCALE_NORMAL)
@@ -33,7 +39,7 @@ class RenderEntityMjolnir: Render() {
 		
 		glDisable(GL_CULL_FACE)
 		RenderItem.renderInFrame = true
-		RenderManager.instance.renderEntityWithPosYaw(EntityItem(entity.worldObj, 0.0, 0.0, 0.0, ItemStack(AlfheimItems.mjolnir)).also { it.hoverStart = 0f }, 0.0, -0.2501, 0.0, 0f, 0f)
+		RenderManager.instance.renderEntityWithPosYaw(EntityItem(entity.worldObj, 0.0, 0.0, 0.0, entity.stack).also { it.hoverStart = 0f }, 0.0, -0.2501, 0.0, 0f, 0f)
 		RenderItem.renderInFrame = false
 		glEnable(GL_CULL_FACE)
 		

@@ -1,16 +1,17 @@
 package alfheim.common.potion
 
-import alexsocol.asjlib.expand
+import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.handler.CardinalSystem.PartySystem
 import alfheim.common.core.handler.CardinalSystem.PartySystem.Party
-import alexsocol.asjlib.security.InteractionSecurity
+import alfheim.common.core.helper.*
 import alfheim.common.spell.wind.SpellThrow
 import net.minecraft.entity.EntityLivingBase
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.DamageSource
 
-class PotionThrow: PotionAlfheim(AlfheimConfigHandler.potionIDThrow, "throw", false, 0xAAFFFF) {
+object PotionThrow: PotionAlfheim(AlfheimConfigHandler.potionIDThrow, "throw", false, 0xAAFFFF) {
 	
 	override fun isReady(time: Int, mod: Int) = AlfheimConfigHandler.enableMMO
 	
@@ -25,8 +26,8 @@ class PotionThrow: PotionAlfheim(AlfheimConfigHandler.potionIDThrow, "throw", fa
 		var pt = PartySystem.getMobParty(target)
 		if (pt == null) pt = Party()
 		
-		val l = target.worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, target.boundingBox.copy().expand(SpellThrow.radius)) as MutableList<EntityLivingBase>
+		val l = getEntitiesWithinAABB(target.worldObj, EntityLivingBase::class.java, target.boundingBox.copy().expand(SpellThrow.radius))
 		l.remove(target)
-		for (e in l) if (!pt.isMember(e) && InteractionSecurity.canHurtEntity(target, e)) e.attackEntityFrom(DamageSource.causeMobDamage(target), SpellThrow.damage)
+		for (e in l) if (!pt.isMember(e)) e.attackEntityFrom((if (target is EntityPlayer) DamageSource.causePlayerDamage(target) else DamageSource.causeMobDamage(target)).setTo(ElementalDamage.AIR), SpellThrow.damage)
 	}
 }

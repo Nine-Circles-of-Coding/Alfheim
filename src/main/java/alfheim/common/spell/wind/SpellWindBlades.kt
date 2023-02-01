@@ -1,5 +1,6 @@
 package alfheim.common.spell.wind
 
+import alexsocol.asjlib.spawn
 import alfheim.api.entity.EnumRace
 import alfheim.api.spell.SpellBase
 import alfheim.common.entity.spell.EntitySpellWindBlade
@@ -17,9 +18,9 @@ object SpellWindBlades: SpellBase("windblades", EnumRace.SYLPH, 8000, 120, 10) {
 	override fun performCast(caster: EntityLivingBase): SpellCastResult {
 		val result = checkCastOver(caster)
 		if (result == SpellCastResult.OK) {
-			caster.worldObj.spawnEntityInWorld(EntitySpellWindBlade(caster.worldObj, caster, -1.0))
-			caster.worldObj.spawnEntityInWorld(EntitySpellWindBlade(caster.worldObj, caster))
-			caster.worldObj.spawnEntityInWorld(EntitySpellWindBlade(caster.worldObj, caster, 1.0))
+			EntitySpellWindBlade(caster.worldObj, caster, -1.0).spawn()
+			EntitySpellWindBlade(caster.worldObj, caster).spawn()
+			EntitySpellWindBlade(caster.worldObj, caster, 1.0).spawn()
 		}
 		return result
 	}

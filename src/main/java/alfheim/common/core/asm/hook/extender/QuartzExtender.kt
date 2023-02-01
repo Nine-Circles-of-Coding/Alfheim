@@ -6,11 +6,9 @@ import gloomyfolken.hooklib.asm.Hook
 import gloomyfolken.hooklib.asm.Hook.ReturnValue
 import gloomyfolken.hooklib.asm.ReturnCondition.*
 import net.minecraft.block.BlockQuartz
-import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.item.*
 import net.minecraft.util.IIcon
-import vazkii.botania.client.lib.LibResources
 import vazkii.botania.common.block.decor.quartz.BlockSpecialQuartz
 import vazkii.botania.common.item.block.ItemBlockSpecialQuartz
 import vazkii.botania.common.lib.LibBlockNames
@@ -23,30 +21,12 @@ object QuartzExtender {
 	fun `BlockQuartz$init`(block: BlockQuartz) {
 		BlockQuartz.field_150191_a += arrayOf("lines", "lines", "insert", "smooth")
 		BlockQuartz.field_150189_b += arrayOf("insert", "smooth")
-		
 	}
 	
-	lateinit var iconInsertNether: IIcon
-	lateinit var iconSmoothNether: IIcon
-	
-	@SideOnly(Side.CLIENT)
-	@JvmStatic
-	@Hook(injectOnExit = true)
-	fun registerBlockIcons(block: BlockQuartz, reg: IIconRegister) {
-		iconInsertNether = reg.registerIcon("${LibResources.PREFIX_MOD}decor/blockInsertNetherQuartz")
-		iconSmoothNether = reg.registerIcon("${LibResources.PREFIX_MOD}decor/blockSmoothNetherQuartz")
-	}
-	
-	@SideOnly(Side.CLIENT)
+		@SideOnly(Side.CLIENT)
 	@JvmStatic
 	@Hook(returnCondition = ON_NOT_NULL)
-	fun getIcon(block: BlockQuartz, side: Int, meta: Int): IIcon? {
-		return when (meta) {
-			5    -> iconInsertNether
-			6    -> iconSmoothNether
-			else -> null
-		}
-	}
+	fun getIcon(block: BlockQuartz, side: Int, meta: Int) = if (meta in 5..6) block.field_150192_M[meta] else null
 	
 	@SideOnly(Side.CLIENT)
 	@JvmStatic

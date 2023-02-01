@@ -1,12 +1,11 @@
 package alfheim.client.render.particle
 
 import alexsocol.asjlib.*
-import alfheim.api.ModInfo
+import alfheim.api.lib.LibResourceLocations
 import net.minecraft.block.BlockLiquid
 import net.minecraft.client.particle.EntityFX
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.entity.RenderManager
-import net.minecraft.util.ResourceLocation
 import net.minecraft.world.World
 import org.lwjgl.opengl.GL11.*
 import java.util.*
@@ -92,16 +91,14 @@ open class EntityBloodFx(world: World, x: Double, y: Double, z: Double, size: Fl
 	
 	companion object {
 		
-		val texture = ResourceLocation(ModInfo.MODID, "textures/misc/particles/blood.png")
-		val textureDrop = ResourceLocation(ModInfo.MODID, "textures/misc/particles/bloodDrop.png")
 		val renderQueue: Queue<EntityBloodFx> = ArrayDeque()
 		
 		fun renderQueue() {
 			glEnable(GL_BLEND)
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-			mc.renderEngine.bindTexture(texture)
+			mc.renderEngine.bindTexture(LibResourceLocations.blood)
 			renderQueue.forEach { if (!it.onGround) it.postRender() }
-			mc.renderEngine.bindTexture(textureDrop)
+			mc.renderEngine.bindTexture(LibResourceLocations.bloodDrop)
 			glDisable(GL_CULL_FACE)
 			renderQueue.forEach { if (it.onGround) it.postRender() }
 			glEnable(GL_CULL_FACE)

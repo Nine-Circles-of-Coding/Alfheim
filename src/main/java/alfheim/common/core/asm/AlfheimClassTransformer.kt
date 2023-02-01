@@ -6,172 +6,115 @@ import net.minecraft.launchwrapper.IClassTransformer
 import org.lwjgl.opengl.GL11
 import org.objectweb.asm.*
 import org.objectweb.asm.Opcodes.*
+import org.objectweb.asm.tree.*
 import vazkii.botania.api.subtile.SubTileEntity
 
-@Suppress("NAME_SHADOWING", "ClassName", "unused")
+@Suppress("NAME_SHADOWING", "ClassName", "unused", "LocalVariableName", "PrivatePropertyName", "MayBeConstant")
 class AlfheimClassTransformer: IClassTransformer {
 	
+	val additionalInterfaces = mapOf(
+		"alfheim/common/core/helper/IElementalEntity" to setOf(
+			"net.minecraft.entity.monster.EntityCreeper",
+			"thaumcraft.common.entities.monster.EntityWisp"
+															  )
+									)
+	
+	var transformedName = ""
+	var basicClass = byteArrayOf()
+	
 	override fun transform(name: String, transformedName: String, basicClass: ByteArray?): ByteArray? {
+		@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "KotlinConstantConditions")
+		transformedName as java.lang.String // fix of java.lang.ClassCircularityError: kotlin/text/StringsKt
+		
+		if (transformedName.startsWith("kotlin") || transformedName.startsWith("gloomyfolken")) return basicClass
+		
 		if (basicClass == null || basicClass.isEmpty()) return basicClass
 		
-		return when (transformedName) {
-			"net.minecraft.client.renderer.RenderGlobal"                    -> {
-				println("Transforming $transformedName")
-				val cr = ClassReader(basicClass)
-				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
-				val ct = `RenderGlobal$ClassVisitor`(cw)
-				cr.accept(ct, ClassReader.EXPAND_FRAMES)
-				cw.toByteArray()
-			}
+		this.transformedName = transformedName
+		this.basicClass = basicClass
+		
+		additionalInterfaces[transformedName]?.let { iface ->
+			println("Appending interface(s) $iface to $transformedName")
+			val cr = ClassReader(basicClass)
+			val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
 			
-			"net.minecraft.entity.EntityTrackerEntry"                       -> {
-				println("Transforming $transformedName")
-				val cr = ClassReader(basicClass)
-				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
-				val ct = `EntityTrackerEntry$ClassVisitor`(cw)
-				cr.accept(ct, ClassReader.EXPAND_FRAMES)
-				cw.toByteArray()
-			}
+			val cn = ClassNode()
+			cr.accept(cn, ClassReader.EXPAND_FRAMES)
 			
-			"net.minecraft.potion.Potion"                                   -> {
-				println("Transforming $transformedName")
-				val cr = ClassReader(basicClass)
-				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
-				val ct = `Potion$ClassVisitor`(cw)
-				cr.accept(ct, ClassReader.EXPAND_FRAMES)
-				cw.toByteArray()
-			}
+			cn.interfaces.addAll(iface)
 			
-			"thaumcraft.common.items.ItemNugget"                            -> {
-				println("Transforming $transformedName")
-				val cr = ClassReader(basicClass)
-				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
-				val ct = `ItemNugget$ClassVisitor`(cw)
-				cr.accept(ct, ClassReader.SKIP_FRAMES)
-				cw.toByteArray()
-			}
-			
-			"vazkii.botania.client.core.handler.BaubleRenderHandler"        -> {
-				println("Transforming $transformedName")
-				val cr = ClassReader(basicClass)
-				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
-				val ct = `BaubleRenderHandler$ClassVisitor`(cw)
-				cr.accept(ct, ClassReader.SKIP_FRAMES)
-				cw.toByteArray()
-			}
-			
-			"vazkii.botania.client.core.handler.LightningHandler"           -> {
-				println("Transforming $transformedName")
-				val cr = ClassReader(basicClass)
-				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
-				val ct = `LightningHandler$ClassVisitor`(cw)
-				cr.accept(ct, ClassReader.SKIP_FRAMES)
-				cw.toByteArray()
-			}
-			
-			"vazkii.botania.client.render.tile.RenderTileFloatingFlower"    -> {
-				println("Transforming $transformedName")
-				val cr = ClassReader(basicClass)
-				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
-				val ct = `RenderTileFloatingFlower$ClassVisitor`(cw)
-				cr.accept(ct, ClassReader.SKIP_FRAMES)
-				cw.toByteArray()
-			}
-			
-			"vazkii.botania.common.block.decor.IFloatingFlower\$IslandType" -> {
-				println("Transforming $transformedName")
-				if (OBF) {
-					val cr = ClassReader(basicClass)
-					val cw = ClassWriter(cr, ClassWriter.COMPUTE_MAXS)
-					val cv = object: ClassVisitor(ASM5, cw) {}
-					cr.accept(cv, ASM5)
-					
-					val mw = cw.visitMethod(ACC_PUBLIC, "getColor", "()I", null, null)
-					mw.visitLdcInsn(Integer(16777215))
-					mw.visitInsn(IRETURN)
-					mw.visitMaxs(0, 0)
-					mw.visitEnd()
-					
-					cw.toByteArray()
-				} else basicClass
-			}
-			
-			"vazkii.botania.common.block.tile.TileSpecialFlower"            -> {
-				println("Transforming $transformedName")
-				val cr = ClassReader(basicClass)
-				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
-				val ct = `TileSpecialFlower$ClassVisitor`(cw)
-				cr.accept(ct, ClassReader.SKIP_FRAMES)
-				cw.toByteArray()
-			}
-			
-			"vazkii.botania.common.entity.EntityDoppleganger"               -> {
-				println("Transforming $transformedName")
-				val cr = ClassReader(basicClass)
-				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
-				val ct = `EntityDoppleganger$ClassVisitor`(cw)
-				cr.accept(ct, ClassReader.SKIP_FRAMES)
-				cw.toByteArray()
-			}
-			
-			"vazkii.botania.common.item.equipment.bauble.ItemMiningRing",
-			"vazkii.botania.common.item.equipment.bauble.ItemWaterRing",
-			-> {
-				println("Transforming $transformedName")
-				val cr = ClassReader(basicClass)
-				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
-				val ct = `ItemInfiniEffect$ClassVisitor`(transformedName.split("\\.".toRegex())[6], cw)
-				cr.accept(ct, ClassReader.SKIP_FRAMES)
-				cw.toByteArray()
-			}
-			
-			"vazkii.botania.common.item.lens.ItemLens"                      -> {
-				println("Transforming $transformedName")
-				val cr = ClassReader(basicClass)
-				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
-				val ct = `ItemLens$ClassVisitor`(cw)
-				cr.accept(ct, ClassReader.SKIP_FRAMES)
-				cw.toByteArray()
-			}
-			
-			"vazkii.botania.common.item.relic.ItemAesirRing"                -> {
-				println("Transforming $transformedName")
-				val cr = ClassReader(basicClass)
-				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
-				val ct = `ItemAesirRing$ClassVisitor`(cw)
-				cr.accept(ct, ClassReader.SKIP_FRAMES)
-				cw.toByteArray()
-			}
-			
-			"vazkii.botania.common.item.rod.ItemTerraformRod"               -> {
-				println("Transforming $transformedName")
-				val cr = ClassReader(basicClass)
-				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
-				val ct = `ItemTerraformRod$ClassVisitor`(cw)
-				cr.accept(ct, ClassReader.SKIP_FRAMES)
-				cw.toByteArray()
-			}
-			
-			"vazkii.botania.common.lib.LibItemNames"                        -> {
-				println("Transforming $transformedName")
-				val cr = ClassReader(basicClass)
-				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
-				val ct = `LibItemNames$ClassVisitor`(cw)
-				cr.accept(ct, ClassReader.SKIP_FRAMES)
-				cw.toByteArray()
-			}
-			
-			"com.emoniph.witchery.client.ClientEvents\$GUIOverlay"          -> {
-				println("Transforming $transformedName")
-				val cr = ClassReader(basicClass)
-				val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
-				val ct = `ClientEvents$GUIOverlay$ClassVisitor`(cw)
-				cr.accept(ct, ClassReader.SKIP_FRAMES)
-				cw.toByteArray()
-			}
-			
-			else                                                            -> basicClass
+			cn.accept(cw)
+			return cw.toByteArray()
 		}
+		
+		return when (transformedName) {
+			"net.minecraft.client.renderer.RenderGlobal"                       -> core { `RenderGlobal$ClassVisitor`(it) }
+			"net.minecraft.entity.EntityLivingBase"                            -> core { `EntityLivingBase$ClassVisitor`(it) }
+			"net.minecraft.entity.EntityTrackerEntry"                          -> core { `EntityTrackerEntry$ClassVisitor`(it) }
+			"net.minecraft.potion.Potion"                                      -> core { `Potion$ClassVisitor`(it) }
+			"thaumcraft.common.items.ItemNugget"                               -> core { `ItemNugget$ClassVisitor`(it) }
+			"thaumcraft.common.entities.monster.boss.EntityEldritchWarden"     -> tree {
+				// for elemental damage hook
+				val mn = MethodNode(ACC_PUBLIC, if (OBF) "func_70652_k" else "attackEntityAsMob", "(Lnet/minecraft/entity/Entity;)Z", null, null)
+				mn.instructions.add(VarInsnNode(ALOAD, 0))
+				mn.instructions.add(VarInsnNode(ALOAD, 1))
+				mn.instructions.add(MethodInsnNode(INVOKESPECIAL, "net/minecraft/entity/monster/EntityMob", if (OBF) "func_70652_k" else "attackEntityAsMob", "(Lnet/minecraft/entity/Entity;)Z", false))
+				mn.instructions.add(InsnNode(IRETURN))
+				it.methods.add(mn)
+			}
+			
+			"vazkii.botania.client.core.handler.BaubleRenderHandler"           -> core { `BaubleRenderHandler$ClassVisitor`(it) }
+			"vazkii.botania.client.core.handler.LightningHandler"              -> core { `LightningHandler$ClassVisitor`(it) }
+			"vazkii.botania.client.core.handler.TooltipAdditionDisplayHandler" -> core { `TooltipAdditionDisplayHandler$ClassVisitor`(it) }
+			"vazkii.botania.client.render.tile.RenderTileFloatingFlower"       -> core { `RenderTileFloatingFlower$ClassVisitor`(it) }
+			
+			"vazkii.botania.common.block.decor.IFloatingFlower\$IslandType"    -> tree {
+				if (OBF || it.methods.any { m -> m.name == "getColor" && m.desc == "()I"}) return@tree
+				println("Transforming $transformedName")
+				
+				val mn = MethodNode(ACC_PUBLIC, "getColor", "()I", null, null)
+				mn.instructions.add(LdcInsnNode(Integer(16777215)))
+				mn.instructions.add(InsnNode(IRETURN))
+				it.methods.add(mn)
+			}
+			
+			"vazkii.botania.common.block.tile.TileManaFlame"                   -> core { `TileManaFlame$ClassVisitor`(it) }
+			"vazkii.botania.common.block.tile.TileSpecialFlower"               -> core { `TileSpecialFlower$ClassVisitor`(it) }
+			"vazkii.botania.common.entity.EntityDoppleganger"                  -> core(ClassReader.SKIP_FRAMES) { `EntityDoppleganger$ClassVisitor`(it) }
+			"vazkii.botania.common.item.ItemFlowerBag"                         -> core { `ItemFlowerBag$ClassVisitor`(it) }
+			"vazkii.botania.common.item.equipment.bauble.ItemMiningRing",
+			"vazkii.botania.common.item.equipment.bauble.ItemWaterRing"        -> core { `ItemInfiniEffect$ClassVisitor`(transformedName.split("\\.".toRegex())[6], it) }
+			"vazkii.botania.common.item.lens.ItemLens"                         -> core { `ItemLens$ClassVisitor`(it) }
+			"vazkii.botania.common.item.relic.ItemAesirRing"                   -> core { `ItemAesirRing$ClassVisitor`(it) }
+			"vazkii.botania.common.item.rod.ItemTerraformRod"                  -> core { `ItemTerraformRod$ClassVisitor`(it) }
+			"vazkii.botania.common.lib.LibItemNames"                           -> core { `LibItemNames$ClassVisitor`(it) }
+			// fixes for stupid coders:
+			"cofh.thermalfoundation.fluid.TFFluids"                            -> core { `TFFluids$ClassVisitor`(it) }
+			"com.emoniph.witchery.client.ClientEvents\$GUIOverlay"             -> core { `ClientEvents$GUIOverlay$ClassVisitor`(it) }
+			else                                                               -> basicClass
+		}
+	}
+	
+	inline fun core(frames: Int = ClassReader.EXPAND_FRAMES, lambda: (ClassVisitor) -> ClassVisitor): ByteArray {
+		println("Transforming $transformedName")
+		val cr = ClassReader(basicClass)
+		val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
+		val transformer = lambda(cw)
+		cr.accept(transformer, frames)
+		return cw.toByteArray()
+	}
+	
+	inline fun tree(lambda: (ClassNode) -> Unit): ByteArray {
+		println("Transforming $transformedName")
+		val cr = ClassReader(basicClass)
+		val it = ClassWriter(ClassWriter.COMPUTE_MAXS)
+		val cn = ClassNode()
+		cr.accept(cn, ClassReader.EXPAND_FRAMES)
+		
+		lambda(cn)
+		
+		cn.accept(it)
+		return it.toByteArray()
 	}
 	
 	// Gleipnir hook
@@ -202,6 +145,29 @@ class AlfheimClassTransformer: IClassTransformer {
 					mv.visitMethodInsn(INVOKEVIRTUAL, "alfheim/common/item/relic/LeashingHandler", "isBoundInRender", if (OBF) "(ZLsa;Lbmv;)Z" else "(ZLnet/minecraft/entity/Entity;Lnet/minecraft/client/renderer/culling/ICamera;)Z", false)
 					mv.visitVarInsn(ISTORE, 21)
 				}
+			}
+		}
+	}
+	
+	internal class `EntityLivingBase$ClassVisitor`(cv: ClassVisitor): ClassVisitor(ASM5, cv) {
+		
+		override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor {
+			if (name == (if (OBF) "e" else "moveEntityWithHeading") && desc == "(FF)V") {
+				println("Visiting EntityLivingBase#moveEntityWithHeading: $name$desc")
+				return `EntityLivingBase$moveEntityWithHeading$MethodVisitor`(super.visitMethod(access, name, desc, signature, exceptions))
+			}
+			return super.visitMethod(access, name, desc, signature, exceptions)
+		}
+		
+		internal class `EntityLivingBase$moveEntityWithHeading$MethodVisitor`(mv: MethodVisitor): MethodVisitor(ASM5, mv) {
+			
+			override fun visitFieldInsn(opcode: Int, owner: String?, name: String?, desc: String?) {
+				if (opcode == GETFIELD && owner == (if (OBF) "aji" else "net/minecraft/block/Block") && name == (if (OBF) "K" else "slipperiness") && desc == "F") {
+					mv.visitVarInsn(ALOAD, 0)
+					mv.visitTypeInsn(CHECKCAST, if (OBF) "sa" else "net/minecraft/entity/Entity")
+					mv.visitMethodInsn(INVOKEVIRTUAL, if (OBF) "aji" else "net/minecraft/block/Block", "getRelativeSlipperiness", if (OBF) "(Lsa;)F" else "(Lnet/minecraft/entity/Entity;)F", false)
+				} else
+					super.visitFieldInsn(opcode, owner, name, desc)
 			}
 		}
 	}
@@ -339,6 +305,39 @@ class AlfheimClassTransformer: IClassTransformer {
 		}
 	}
 	
+	internal class `TooltipAdditionDisplayHandler$ClassVisitor`(cv: ClassVisitor): ClassVisitor(ASM5, cv) {
+		
+		override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor {
+			if (name == "render") {
+				println("Visiting TooltipAdditionDisplayHandler#render: $name$desc")
+				return `TooltipAdditionDisplayHandler$render$MethodVisitor`(super.visitMethod(access, name, desc, signature, exceptions))
+			}
+			return super.visitMethod(access, name, desc, signature, exceptions)
+		}
+		
+		internal class `TooltipAdditionDisplayHandler$render$MethodVisitor`(mv: MethodVisitor): MethodVisitor(ASM5, mv) {
+			
+			var gets = 0
+			
+			override fun visitFieldInsn(opcode: Int, owner: String?, name: String?, desc: String?) {
+				if (opcode == GETFIELD && name == "entry" && ++gets == 2) return
+				super.visitFieldInsn(opcode, owner, name, desc)
+			}
+			
+			override fun visitMethodInsn(opcode: Int, owner: String?, name: String?, desc: String?, itf: Boolean) {
+				var newName = name
+				var newDesc = desc
+				
+				if (name == "setEntryToOpen") {
+					newName = "setEntryDataToOpen"
+					newDesc = "(Lvazkii/botania/api/lexicon/LexiconRecipeMappings\$EntryData;)V"
+				}
+				
+				super.visitMethodInsn(opcode, owner, newName, newDesc, itf)
+			}
+		}
+	}
+	
 	internal class `BaubleRenderHandler$ClassVisitor`(cv: ClassVisitor): ClassVisitor(ASM5, cv) {
 		
 		override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor {
@@ -416,22 +415,41 @@ class AlfheimClassTransformer: IClassTransformer {
 		}
 	}
 	
-	internal class `TileSpecialFlower$ClassVisitor`(cv: ClassVisitor): ClassVisitor(ASM5, cv) {
+	internal class `TileManaFlame$ClassVisitor`(cv: ClassVisitor): ClassVisitor(ASM5, cv) {
 		
+		override fun visitMethod(access: Int, name: String?, desc: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor {
+			val mv = super.visitMethod(access, name, desc, signature, exceptions)
+			return if (name != "getColor" && name != "writeCustomNBT") `TileManaFlame$MethodVisitor`(mv) else mv
+		}
+		
+		// Вазки ты еблан :з
+		internal class `TileManaFlame$MethodVisitor`(mv: MethodVisitor): MethodVisitor(ASM5, mv) {
+			
+			override fun visitFieldInsn(opcode: Int, owner: String?, name: String?, desc: String?) {
+				if (opcode == GETFIELD && name == "color")
+					super.visitMethodInsn(INVOKEVIRTUAL, "vazkii/botania/common/block/tile/TileManaFlame", "getColor", "()I", false)
+				else
+					super.visitFieldInsn(opcode, owner, name, desc)
+			}
+		}
+	}
+	
+	internal class `TileSpecialFlower$ClassVisitor`(cv: ClassVisitor): ClassVisitor(ASM5, cv) {
+
 		override fun visitField(access: Int, name: String?, desc: String?, signature: String?, value: Any?): FieldVisitor {
 			val newVal = if (value == "subTileName") SubTileEntity.TAG_TYPE else value
 			return super.visitField(access, name, desc, signature, newVal)
 		}
-		
+
 		override fun visitMethod(access: Int, name: String?, desc: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor {
 			return `TileSpecialFlower$MethodVisitor`(super.visitMethod(access, name, desc, signature, exceptions))
 		}
-		
+
 		internal class `TileSpecialFlower$MethodVisitor`(mv: MethodVisitor): MethodVisitor(ASM5, mv) {
-			
+
 			override fun visitLdcInsn(cst: Any?) {
 				val newCst = if (cst == "subTileName") SubTileEntity.TAG_TYPE else cst
-				
+
 				super.visitLdcInsn(newCst)
 			}
 		}
@@ -645,6 +663,25 @@ class AlfheimClassTransformer: IClassTransformer {
 		}
 	}
 	
+	internal class `ItemFlowerBag$ClassVisitor`(cv: ClassVisitor): ClassVisitor(ASM5, cv) {
+		
+		override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor {
+			if (name == "loadStacks") {
+				println("Visiting ItemFlowerBag#loadStacks: $name$desc")
+				return `ItemFlowerBag$loadStacks$MethodVisitor`(super.visitMethod(access, name, desc, signature, exceptions))
+			}
+			return super.visitMethod(access, name, desc, signature, exceptions)
+		}
+		
+		internal class `ItemFlowerBag$loadStacks$MethodVisitor`(mv: MethodVisitor): MethodVisitor(ASM5, mv) {
+			
+			override fun visitIntInsn(opcode: Int, operand: Int) {
+				val oper = if (opcode == BIPUSH && operand == 16) 34 else operand
+				super.visitIntInsn(opcode, oper)
+			}
+		}
+	}
+	
 	internal class `ItemInfiniEffect$ClassVisitor`(val className: String, cv: ClassVisitor): ClassVisitor(ASM5, cv) {
 		
 		override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor {
@@ -753,48 +790,12 @@ class AlfheimClassTransformer: IClassTransformer {
 	internal class `ItemTerraformRod$ClassVisitor`(cv: ClassVisitor): ClassVisitor(ASM5, cv) {
 		
 		override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor {
-			if (name == "<clinit>") {
-				println("Visiting ItemTerraformRod#<clinit>: $name$desc")
-				return `ItemTerraformRod$clinit$MethodVisitor`(super.visitMethod(access, name, desc, signature, exceptions))
-			}
-			
 			if (name == "terraform") {
 				println("Visiting ItemTerraformRod#terraform: $name$desc")
 				return `ItemTerraformRod$terraform$MethodVisitor`(super.visitMethod(access, name, desc, signature, exceptions))
 			}
 			
 			return super.visitMethod(access, name, desc, signature, exceptions)
-		}
-		
-		internal class `ItemTerraformRod$clinit$MethodVisitor`(mv: MethodVisitor): MethodVisitor(ASM5, mv) {
-			
-			private var injectLength = true
-			private var injectNew = false
-			
-			override fun visitIntInsn(opcode: Int, operand: Int) {
-				var operand = operand
-				if (opcode == BIPUSH) {
-					if (operand == 20) {
-						if (injectLength) {
-							injectLength = false
-							operand = 21
-						}
-					} else if (operand == 19) {
-						injectNew = true
-					}
-				}
-				super.visitIntInsn(opcode, operand)
-			}
-			
-			override fun visitInsn(opcode: Int) {
-				super.visitInsn(opcode)
-				if (opcode == AASTORE && injectNew) {
-					super.visitInsn(DUP)
-					super.visitIntInsn(BIPUSH, 20)
-					super.visitLdcInsn("livingrock")
-					super.visitInsn(AASTORE)
-				}
-			}
 		}
 		
 		internal class `ItemTerraformRod$terraform$MethodVisitor`(mv: MethodVisitor): MethodVisitor(ASM5, mv) {
@@ -807,9 +808,6 @@ class AlfheimClassTransformer: IClassTransformer {
 				if (opcode == ISTORE && `var` == 4 && put) {
 					put = false
 					
-					val l3 = Label()
-					mv.visitLabel(l3)
-					mv.visitLineNumber(100, l3)
 					mv.visitFieldInsn(GETSTATIC, "alfheim/common/core/asm/hook/fixes/GodAttributesHooks", "INSTANCE", "Lalfheim/common/core/asm/hook/fixes/GodAttributesHooks;")
 					mv.visitVarInsn(ALOAD, 3)
 					mv.visitVarInsn(ILOAD, 4)
@@ -887,8 +885,38 @@ class AlfheimClassTransformer: IClassTransformer {
 						mv.visitIntInsn(BIPUSH, 27)
 						mv.visitLdcInsn("lensTrack")
 						mv.visitInsn(AASTORE)
+						mv.visitInsn(DUP)
+						mv.visitIntInsn(BIPUSH, 28)
+						mv.visitLdcInsn("lensDaisy")
+						mv.visitInsn(AASTORE)
 					}
 				}
+			}
+		}
+	}
+	
+	internal class `TFFluids$ClassVisitor`(cv: ClassVisitor): ClassVisitor(ASM5, cv) {
+		
+		override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor {
+			if (name == "registerFluid") {
+				println("Visiting ThermalFoundation's TFFluids#registerFluid: $name$desc")
+				return `TFFluids$registerFluid$MethodVisitor`(super.visitMethod(access, name, desc, signature, exceptions))
+			}
+			return super.visitMethod(access, name, desc, signature, exceptions)
+		}
+		
+		internal class `TFFluids$registerFluid$MethodVisitor`(mv: MethodVisitor): MethodVisitor(ASM5, mv) {
+			
+			override fun visitVarInsn(opcode: Int, i: Int) {
+				if (opcode == ASTORE && i == 0) {
+					super.visitInsn(POP)
+					
+					super.visitVarInsn(ALOAD, 1)
+					super.visitMethodInsn(INVOKESTATIC, "alfheim/common/integration/ThermalFoundationIntegration\$Hooks", "postRegisterFluid", "(Ljava/lang/String;)V", false)
+					return
+				}
+				
+				super.visitVarInsn(opcode, i)
 			}
 		}
 	}
@@ -923,6 +951,6 @@ class AlfheimClassTransformer: IClassTransformer {
 	
 	companion object {
 		
-		val moreLenses = 6
+		val moreLenses = 7
 	}
 }

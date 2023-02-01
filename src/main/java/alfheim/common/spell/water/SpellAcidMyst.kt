@@ -1,6 +1,6 @@
 package alfheim.common.spell.water
 
-import alexsocol.asjlib.mc
+import alexsocol.asjlib.*
 import alfheim.api.entity.EnumRace
 import alfheim.api.lib.LibResourceLocations
 import alfheim.api.spell.SpellBase
@@ -19,7 +19,7 @@ object SpellAcidMyst: SpellBase("acidmyst", EnumRace.UNDINE, 8000, 400, 20) {
 	
 	override fun performCast(caster: EntityLivingBase): SpellCastResult {
 		val result = checkCastOver(caster)
-		if (result == SpellCastResult.OK) caster.worldObj.spawnEntityInWorld(EntitySpellAcidMyst(caster.worldObj, caster))
+		if (result == SpellCastResult.OK) EntitySpellAcidMyst(caster.worldObj, caster).spawn()
 		return result
 	}
 	

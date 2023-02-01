@@ -11,9 +11,9 @@ import vazkii.botania.common.block.subtile.generating.SubTilePassiveGenerating
 
 abstract class SubTileWeatherFlower: SubTilePassiveGenerating() {
 	
-	override fun getDelayBetweenPassiveGeneration() = if (isOnSpecialSoil) 1 else 2
+	override fun getDelayBetweenPassiveGeneration() = 2
 	
-	override fun getValueForPassiveGeneration() = if (isOnSpecialSoil) 2 else 1
+	override fun getValueForPassiveGeneration() = 1
 	
 	override fun getMaxMana() = if (isOnSpecialSoil) 400 else 200
 	

@@ -129,7 +129,7 @@ class BlockRainbowGrass: BlockTallGrass(), ILexiconable, IPickupAchievement {
 	override fun getDrops(world: World?, x: Int, y: Int, z: Int, meta: Int, fortune: Int): ArrayList<ItemStack>? {
 		return when (meta) {
 			GRASS, AURORA -> super.getDrops(world, x, y, z, meta, fortune)
-			BURIED        -> arrayListOf(ItemStack(AlfheimItems.elvenResource, 1, ElvenResourcesMetas.RainbowPetal))
+			BURIED        -> arrayListOf(ElvenResourcesMetas.RainbowPetal.stack)
 			else          -> arrayListOf(ItemStack(this, 1, meta))
 		}
 	}

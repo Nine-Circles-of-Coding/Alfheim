@@ -6,6 +6,7 @@ import alfheim.api.item.ColorOverrideHelper
 import alfheim.client.core.helper.InterpolatedIconHelper
 import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.core.handler.VisualEffectHandler
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.item.ItemMod
 import alfheim.common.item.equipment.bauble.ItemPriestEmblem
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
@@ -61,7 +62,7 @@ class ItemRodFlameStar(name: String = "rodFlameStar"): ItemMod(name), IManaUsing
 	override fun onUsingTick(stack: ItemStack, player: EntityPlayer, count: Int) {
 		val world = player.worldObj
 		
-		val priest = (ItemPriestEmblem.getEmblem(3, player) != null)
+		val priest = (!RagnarokHandler.blockedPowers[3] && ItemPriestEmblem.getEmblem(3, player) != null)
 		val prowess = IManaProficiencyArmor.Helper.hasProficiency(player)
 		
 		val cost = getCost(prowess, priest)
@@ -83,19 +84,14 @@ class ItemRodFlameStar(name: String = "rodFlameStar"): ItemMod(name), IManaUsing
 		val g = color.green / 255f
 		val b = color.blue / 255f
 		
-		VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.FLAMESTAR, world.provider.dimensionId, x, y, z, r.D, g.D, b.D)
+		VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.FLAMESTAR, world.provider.dimensionId, x, y, z, r.D, g.D, b.D, 1.0)
 		
-		if (count % 20 == 0) {
-			val entities = world.getEntitiesWithinAABB(EntityLivingBase::class.java, AxisAlignedBB.getBoundingBox(x - 0.5, y - 0.5, z - 0.5, x + 0.5, y + 0.5, z + 0.5))
-			
-			for (entity in entities) {
-				if (entity is EntityLivingBase && entity != player && entity.health > 0) {
-					if (entity.attackEntityFrom(EntityDamageSource("onFire", player), power.F)) {
-						ManaItemHandler.requestManaExactForTool(stack, player, cost, true)
-						entity.setFire(power * 20)
-					}
-				}
-			}
+		if (count % 20 != 0) return
+		getEntitiesWithinAABB(world, EntityLivingBase::class.java, getBoundingBox(x, y, z).expand(0.5)).forEach { entity ->
+			if (entity == player || entity.health <= 0) return@forEach
+			if (!entity.attackEntityFrom(DamageSource.causePlayerDamage(player).setFireDamage(), power.F)) return@forEach
+			ManaItemHandler.requestManaExactForTool(stack, player, cost, true)
+			entity.setFire(power * 20)
 		}
 	}
 	

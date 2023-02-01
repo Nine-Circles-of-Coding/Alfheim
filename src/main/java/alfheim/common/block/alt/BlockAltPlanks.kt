@@ -14,6 +14,7 @@ import net.minecraft.block.Block
 import net.minecraft.block.material.Material
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.creativetab.CreativeTabs
+import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.*
 import net.minecraft.util.*
@@ -40,7 +41,23 @@ class BlockAltPlanks: BlockMod(Material.wood), ILexiconable, IFuelHandler {
 			MinecraftForge.EVENT_BUS.register(this)
 	}
 	
-	override fun getBlockHardness(world: World, x: Int, y: Int, z: Int) = if (world.getBlockMetadata(x, y, z) == BlockAltLeaves.yggMeta) -1f else super.getBlockHardness(world, x, y, z)
+	override fun getExplosionResistance(entity: Entity?, world: World, x: Int, y: Int, z: Int, explosionX: Double, explosionY: Double, explosionZ: Double) =
+		if (world.getBlockMetadata(x, y, z) == BlockAltLeaves.yggMeta)
+			Float.MAX_VALUE
+		else
+			super.getExplosionResistance(entity, world, x, y, z, explosionX, explosionY, explosionZ)
+	
+	override fun getBlockHardness(world: World, x: Int, y: Int, z: Int) =
+		if (world.getBlockMetadata(x, y, z) == BlockAltLeaves.yggMeta)
+			-1f
+		else
+			super.getBlockHardness(world, x, y, z)
+	
+	override fun getFlammability(world: IBlockAccess, x: Int, y: Int, z: Int, face: ForgeDirection?) =
+		if (world.getBlockMetadata(x, y, z) == BlockAltLeaves.yggMeta) 0 else super.getFlammability(world, x, y, z, face)
+	
+	override fun getFireSpreadSpeed(world: IBlockAccess, x: Int, y: Int, z: Int, face: ForgeDirection?) =
+		if (world.getBlockMetadata(x, y, z) == BlockAltLeaves.yggMeta) 0 else super.getFireSpreadSpeed(world, x, y, z, face)
 	
 	override fun registerBlockIcons(reg: IIconRegister) {
 		icons = Array(ALT_TYPES.size - 1) { i ->
@@ -74,10 +91,6 @@ class BlockAltPlanks: BlockMod(Material.wood), ILexiconable, IFuelHandler {
 	override fun quantityDropped(random: Random) = 1
 	
 	override fun getItemDropped(meta: Int, random: Random, fortune: Int) = this.toItem()
-	
-	override fun isFlammable(world: IBlockAccess?, x: Int, y: Int, z: Int, face: ForgeDirection?) = false
-	
-	override fun getFireSpreadSpeed(world: IBlockAccess?, x: Int, y: Int, z: Int, face: ForgeDirection?) = 0
 	
 	internal fun register(name: String) {
 		GameRegistry.registerBlock(this, ItemUniqueSubtypedBlockMod::class.java, name, ALT_TYPES.size - 1)

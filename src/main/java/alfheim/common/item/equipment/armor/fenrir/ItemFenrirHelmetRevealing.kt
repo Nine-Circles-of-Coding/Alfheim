@@ -1,5 +1,6 @@
 package alfheim.common.item.equipment.armor.fenrir
 
+import alexsocol.asjlib.capitalized
 import alexsocol.asjlib.render.ASJRenderHelper
 import alfheim.api.ModInfo
 import alfheim.client.core.helper.IconHelper
@@ -47,7 +48,7 @@ class ItemFenrirHelmetRevealing: ItemFenrirArmor(0, "FenrirHelmetRevealing"), IG
 		if (type == "overlay")
 			ASJRenderHelper.setGlow()
 		
-		val t = type?.plus("Revealing") ?: ""
+		val t = type?.run { capitalized() + "Revealing" } ?: ""
 		
 		return "${ModInfo.MODID}:textures/model/armor/FenrirArmor${if (ConfigHandler.enableArmorModels) "" else "2"}$t.png"
 	}

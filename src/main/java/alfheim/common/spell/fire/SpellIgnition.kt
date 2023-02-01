@@ -23,9 +23,9 @@ object SpellIgnition: SpellBase("ignition", EnumRace.SALAMANDER, 2000, 100, 5) {
 	override fun performCast(caster: EntityLivingBase): SpellCastResult {
 		if (caster !is EntityPlayer) return SpellCastResult.NOTALLOW
 		
-		while (true) {
+		run {
 			val tg = CardinalSystem.TargetingSystem.getTarget(caster)
-			val tgt = tg.target ?: break
+			val tgt = tg.target ?: return@run
 			
 			if (tg.isParty) return SpellCastResult.WRONGTGT
 			if (!InteractionSecurity.canHurtEntity(caster, tgt)) return SpellCastResult.NOTALLOW

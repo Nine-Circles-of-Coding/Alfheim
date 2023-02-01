@@ -65,16 +65,20 @@ class BlockColoredDoubleGrass(var colorSet: Int): BlockDoublePlant(), IDoublePla
 	 */
 	@SideOnly(Side.CLIENT)
 	override fun getRenderColor(meta: Int): Int {
-		if (meta >= TYPES)
+		val subtype = meta % TYPES
+		if (subtype >= TYPES)
 			return 0xFFFFFF
 		
-		val color = EntitySheep.fleeceColorTable[meta + TYPES * colorSet]
+		val color = EntitySheep.fleeceColorTable[subtype + TYPES * colorSet]
 		return Color(color[0], color[1], color[2]).rgb
 	}
 	
 	@SideOnly(Side.CLIENT)
-	override fun colorMultiplier(access: IBlockAccess?, x: Int, y: Int, z: Int): Int {
-		val meta = access!!.getBlockMetadata(x, y, z)
+	override fun colorMultiplier(access: IBlockAccess, x: Int, y: Int, z: Int): Int {
+		if ((access.getBlockMetadata(x, y, z) and 8) != 0 && y > 0)
+			return colorMultiplier(access, x, y - 1, z)
+		
+		val meta = access.getBlockMetadata(x, y, z)
 		return getRenderColor(meta)
 	}
 	

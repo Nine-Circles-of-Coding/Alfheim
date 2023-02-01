@@ -2,7 +2,6 @@ package alfheim.common.spell.earth
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
-import alexsocol.asjlib.security.InteractionSecurity
 import alfheim.api.entity.EnumRace
 import alfheim.api.lib.LibResourceLocations
 import alfheim.api.spell.SpellBase
@@ -33,22 +32,19 @@ object SpellHammerfall: SpellBase("hammerfall", EnumRace.GNOME, 10000, 200, 20) 
 		
 		VisualEffectHandler.sendPacket(VisualEffects.TREMORS, caster)
 		
-		val list = caster.worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, caster.boundingBox.expand(radius, radius / 5, radius)) as MutableList<EntityLivingBase>
+		val list = getEntitiesWithinAABB(caster.worldObj, EntityLivingBase::class.java, caster.boundingBox.expand(radius, radius / 5, radius))
 		list.remove(caster)
 		
-		for (living in list) {
-			val block = living.worldObj.getBlock(living.posX.mfloor(), (living.posY - 1).mfloor(), living.posZ.mfloor())
-			if (living.onGround &&
+		list.forEach {
+			val block = it.worldObj.getBlock(it.posX.mfloor(), (it.posY - 1).mfloor(), it.posZ.mfloor())
+			if (!(it.onGround &&
 				block.material.isSolid &&
-				block.isSideSolid(living.worldObj, living.posX.mfloor(), (living.posY - 1).mfloor(), living.posZ.mfloor(), ForgeDirection.UP) &&
-				block.getBlockHardness(living.worldObj, living.posX.mfloor(), (living.posY - 1).mfloor(), living.posZ.mfloor()) < 2 &&
-				!PartySystem.mobsSameParty(caster, living) &&
-				Vector3.entityDistancePlane(living, caster) < radius) {
+				block.isSideSolid(it.worldObj, it.posX.mfloor(), (it.posY - 1).mfloor(), it.posZ.mfloor(), ForgeDirection.UP) &&
+				block.getBlockHardness(it.worldObj, it.posX.mfloor(), (it.posY - 1).mfloor(), it.posZ.mfloor()) < 2 &&
+				!PartySystem.mobsSameParty(caster, it) &&
+				Vector3.entityDistancePlane(it, caster) < radius)) return@forEach
 				
-				if (!InteractionSecurity.canHurtEntity(caster, living)) continue
-				
-				living.attackEntityFrom(DamageSourceSpell.hammerfall(caster), over(caster, damage.D))
-			}
+			it.attackEntityFrom(DamageSourceSpell.hammerfall(caster), over(caster, damage.D))
 		}
 		
 		return result

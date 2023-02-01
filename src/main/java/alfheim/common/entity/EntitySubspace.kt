@@ -1,6 +1,6 @@
 package alfheim.common.entity
 
-import alexsocol.asjlib.toItem
+import alexsocol.asjlib.*
 import alfheim.common.achievement.AlfheimAchievements
 import alfheim.common.item.AlfheimItems
 import alfheim.common.item.relic.ItemSpearSubspace
@@ -76,7 +76,7 @@ class EntitySubspace: EntityThrowableCopy {
 			return
 		
 		if (ticksExisted > liveTicks + delay)
-			setDead()
+			return setDead()
 		
 		val thrower = getThrower()
 		if (!worldObj.isRemote && (thrower == null || thrower.isDead))
@@ -96,7 +96,7 @@ class EntitySubspace: EntityThrowableCopy {
 					if (burst != null) {
 						burst.setPosition(posX, posY, posZ)
 						burst.color = 0XFFAF00
-						thrower.worldObj.spawnEntityInWorld(burst)
+						burst.spawn()
 						count++
 					}
 				}
@@ -112,8 +112,7 @@ class EntitySubspace: EntityThrowableCopy {
 					spear.rotation = MathHelper.wrapAngleTo180_float(-thrower.rotationYaw + 180)
 					spear.shoot(thrower, thrower.rotationPitch, thrower.rotationYaw, 0f, 1.45f, 1f)
 					spear.setPosition(posX, posY, posZ)
-					
-					thrower.worldObj.spawnEntityInWorld(spear)
+					spear.spawn()
 					count++
 				}
 			}

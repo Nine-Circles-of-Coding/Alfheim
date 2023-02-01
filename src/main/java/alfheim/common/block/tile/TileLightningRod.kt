@@ -7,15 +7,17 @@ import net.minecraft.init.Blocks
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.AxisAlignedBB
 import net.minecraft.world.World
-import java.util.*
 
 class TileLightningRod: TileEntity() {
 	
-	override fun updateEntity() { // FIXME dupes lightnings
+	// somehow dupes lightnings (not confirmed)
+	override fun updateEntity() {
 		if (worldObj != null) {
 			for (e in getBoltsWithinAABB(worldObj, boundingBox(48))) {
 				worldObj.removeEntity(e)
-				worldObj.addWeatherEffect(FakeLightning(worldObj, xCoord.D, (yCoord + 1).D, zCoord.D))
+				val fakeLightning = FakeLightning(worldObj)
+				fakeLightning.setPosition(xCoord.D, (yCoord + 1).D, zCoord.D)
+				worldObj.addWeatherEffect(fakeLightning)
 			}
 			
 			for (x in (xCoord - 2)..(xCoord + 2))

@@ -13,7 +13,7 @@ import vazkii.botania.common.brew.ModBrews
 import vazkii.botania.common.item.ModItems
 import vazkii.botania.common.item.brew.ItemBrewVial
 
-class RecipeThrowablePotion: IRecipe {
+object RecipeThrowablePotion: IRecipe {
 	
 	override fun matches(inv: InventoryCrafting, world: World?): Boolean {
 		var foundGunpowder = false

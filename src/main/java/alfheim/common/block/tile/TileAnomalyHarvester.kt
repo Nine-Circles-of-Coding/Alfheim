@@ -13,7 +13,6 @@ import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.AxisAlignedBB
 import net.minecraftforge.common.util.ForgeDirection.VALID_DIRECTIONS
 import vazkii.botania.common.Botania
-import vazkii.botania.common.block.tile.TileMod
 import vazkii.botania.common.core.helper.Vector3 as VVec3
 
 class TileAnomalyHarvester: ASJTile() {
@@ -55,7 +54,7 @@ class TileAnomalyHarvester: ASJTile() {
 		
 		if (worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)) return
 		
-		renderBoundBox()
+		if (worldObj.isRemote) renderBoundBox()
 	}
 	
 	fun getAoE(): AxisAlignedBB = getBoundingBox(xCoord, yCoord, zCoord).expand(radius.x / 2, radius.y / 2, radius.z / 2).getOffsetBoundingBox(offset.x + 0.5, offset.y + 0.5, offset.z + 0.5)
@@ -170,32 +169,33 @@ class TileAnomalyHarvester: ASJTile() {
 object AnomalyHarvesterBehaviors {
 	
 	init {
-		AlfheimAPI.anomalyBehaviors["Antigrav"] = { tile: TileAnomalyHarvester -> doAntigrav(tile) }
-		AlfheimAPI.anomalyBehaviors["Gravity"] = { tile: TileAnomalyHarvester -> doGravity(tile) }
-		AlfheimAPI.anomalyBehaviors["Tunnel"] = { tile: TileAnomalyHarvester -> doTunnel(tile) }
-		AlfheimAPI.anomalyBehaviors["Lightning"] = { tile: TileAnomalyHarvester -> doLightning(tile) }
-		AlfheimAPI.anomalyBehaviors["SpeedUp"] = { tile: TileAnomalyHarvester -> doSpeedUp(tile) }
+		AlfheimAPI.anomalyBehaviors["Antigrav"] = { doAntigrav(it as TileAnomalyHarvester) }
+		AlfheimAPI.anomalyBehaviors["Gravity"] = { doGravity(it as TileAnomalyHarvester) }
+		AlfheimAPI.anomalyBehaviors["Tunnel"] = { doTunnel(it as TileAnomalyHarvester) }
+		AlfheimAPI.anomalyBehaviors["Lightning"] = { doLightning(it as TileAnomalyHarvester) }
+		AlfheimAPI.anomalyBehaviors["SpeedUp"] = { doSpeedUp(it as TileAnomalyHarvester) }
 	}
 	
 	private fun doAntigrav(tile: TileAnomalyHarvester) {
 		val aabb = tile.getAoE()
-		tile.worldObj.getEntitiesWithinAABB(Entity::class.java, aabb).forEach {
-			it as Entity
+		getEntitiesWithinAABB(tile.worldObj, Entity::class.java, aabb).forEach {
 			it.motionY += if (it.isSneaking) 0.05 else 0.085 + tile.power * 0.005
 			it.fallDistance = 0f
 		}
 		
-		AlfheimHookHandler.wispNoclip = false
-		
-		for (c in 0..3) {
-			val x = (Math.random() - 0.5) * tile.radius.x + tile.offset.x
-			val y = (Math.random() - 0.5) * tile.radius.y + tile.offset.y
-			val z = (Math.random() - 0.5) * tile.radius.z + tile.offset.z
+		if (tile.worldObj.isRemote) {
+			AlfheimHookHandler.wispNoclip = false
 			
-			Botania.proxy.wispFX(tile.worldObj, tile.xCoord + x + 0.5, tile.yCoord + y - 0.5, tile.zCoord + z + 0.5, 0.5f, 0.9f, 1f, 0.1f, -0.1f, 1f)
+			for (c in 0..3) {
+				val x = (Math.random() - 0.5) * tile.radius.x + tile.offset.x
+				val y = (Math.random() - 0.5) * tile.radius.y + tile.offset.y
+				val z = (Math.random() - 0.5) * tile.radius.z + tile.offset.z
+				
+				Botania.proxy.wispFX(tile.worldObj, tile.xCoord + x + 0.5, tile.yCoord + y - 0.5, tile.zCoord + z + 0.5, 0.5f, 0.9f, 1f, 0.1f, -0.1f, 1f)
+			}
+			
+			AlfheimHookHandler.wispNoclip = true
 		}
-		
-		AlfheimHookHandler.wispNoclip = true
 	}
 	
 	fun doGravity(tile: TileAnomalyHarvester) {
@@ -203,8 +203,7 @@ object AnomalyHarvesterBehaviors {
 		val y = tile.yCoord + tile.offset.y + 0.5// - tile.radius.y / 2
 		val z = tile.zCoord + tile.offset.z + 0.5
 		
-		tile.worldObj.getEntitiesWithinAABB(Entity::class.java, tile.getAoE()).filter { it !is EntityPlayer }.forEach {
-			it as Entity
+		getEntitiesWithinAABB(tile.worldObj, Entity::class.java, tile.getAoE()).filter { it !is EntityPlayer }.forEach {
 			val v = Vector3(x, y, z).add(0.5).sub(Vector3.fromEntity(it)).normalize().mul(0.5 + tile.power * 0.1)
 			
 			it.motionX += v.x
@@ -212,7 +211,8 @@ object AnomalyHarvesterBehaviors {
 			it.motionZ += v.z
 		}
 		
-		Botania.proxy.sparkleFX(tile.worldObj, x, y, z, 0.5f, 0.75f, 1f, 1f, 10, true)
+		if (tile.worldObj.isRemote)
+			Botania.proxy.sparkleFX(tile.worldObj, x, y, z, 0.5f, 0.75f, 1f, 1f, 10, true)
 	}
 	
 	fun doTunnel(tile: TileAnomalyHarvester) {
@@ -223,8 +223,7 @@ object AnomalyHarvesterBehaviors {
 		val mZ = dir.offsetZ / 10f
 		
 		val aabb = tile.getAoE()
-		tile.worldObj.getEntitiesWithinAABB(Entity::class.java, aabb).forEach {
-			it as Entity
+		getEntitiesWithinAABB(tile.worldObj, Entity::class.java, aabb).forEach {
 			it.motionX = mX * tile.power / 2f
 			it.motionY = mY * tile.power / 2f
 			it.motionZ = mZ * tile.power / 2f
@@ -239,17 +238,19 @@ object AnomalyHarvesterBehaviors {
 //			}
 		}
 		
-		AlfheimHookHandler.wispNoclip = false
-		
-		for (c in 0..3) {
-			val x = (Math.random() - 0.5) * tile.radius.x + tile.offset.x
-			val y = (Math.random() - 0.5) * tile.radius.y + tile.offset.y
-			val z = (Math.random() - 0.5) * tile.radius.z + tile.offset.z
+		if (tile.worldObj.isRemote) {
+			AlfheimHookHandler.wispNoclip = false
 			
-			Botania.proxy.wispFX(tile.worldObj, tile.xCoord + x + 0.5 - mX * 10, tile.yCoord + y + 0.5 - mY * 10, tile.zCoord + z + 0.5 - mZ * 10, 0.3f, 0.9f, 0.8f, 0.1f, mX, mY, mZ, 1f)
+			for (c in 0..3) {
+				val x = (Math.random() - 0.5) * tile.radius.x + tile.offset.x
+				val y = (Math.random() - 0.5) * tile.radius.y + tile.offset.y
+				val z = (Math.random() - 0.5) * tile.radius.z + tile.offset.z
+				
+				Botania.proxy.wispFX(tile.worldObj, tile.xCoord + x + 0.5 - mX * 10, tile.yCoord + y + 0.5 - mY * 10, tile.zCoord + z + 0.5 - mZ * 10, 0.3f, 0.9f, 0.8f, 0.1f, mX, mY, mZ, 1f)
+			}
+			
+			AlfheimHookHandler.wispNoclip = true
 		}
-		
-		AlfheimHookHandler.wispNoclip = true
 	}
 	
 	fun doLightning(tile: TileAnomalyHarvester) {
@@ -257,21 +258,22 @@ object AnomalyHarvesterBehaviors {
 		val y = tile.yCoord + tile.offset.y + 0.5
 		val z = tile.zCoord + tile.offset.z + 0.5
 		
-		tile.worldObj.getEntitiesWithinAABB(Entity::class.java, tile.getAoE()).forEach {
-			it as Entity
+		getEntitiesWithinAABB(tile.worldObj, Entity::class.java, tile.getAoE()).forEach {
 			if (it.attackEntityFrom(DamageSourceSpell.anomaly, (Math.random() * tile.power / 2 + tile.power / 2).F))
 				Botania.proxy.lightningFX(tile.worldObj, VVec3(x, y, z), VVec3.fromEntityCenter(it), 1f, tile.worldObj.rand.nextLong(), 0, 0xFF0000)
 		}
 		
-		Botania.proxy.sparkleFX(tile.worldObj, x, y, z, 1f, 0f, 0f, 2f, 1, true)
-		Botania.proxy.sparkleFX(tile.worldObj, x, y, z, 1f, 1f, 1f, 1f, 1, true)
+		if (tile.worldObj.isRemote) {
+			Botania.proxy.sparkleFX(tile.worldObj, x, y, z, 1f, 0f, 0f, 2f, 1, true)
+			Botania.proxy.sparkleFX(tile.worldObj, x, y, z, 1f, 1f, 1f, 1f, 1, true)
+		}
 	}
 	
 	fun doSpeedUp(tile: TileAnomalyHarvester) {
 		val aabb = tile.getAoE()
 		
 		for (i in 1 until tile.power.I) {
-			tile.worldObj.getEntitiesWithinAABB(Entity::class.java, aabb).forEach { (it as Entity).onUpdate() }
+			getEntitiesWithinAABB(tile.worldObj, Entity::class.java, aabb).forEach { it.onUpdate() }
 			
 			tile.worldObj.loadedTileEntityList.forEach {
 				it as TileEntity
@@ -284,10 +286,12 @@ object AnomalyHarvesterBehaviors {
 				for (z in aabb.minZ.I..aabb.maxZ.I.minus(1))
 					tile.worldObj.getBlock(x, y, z).updateTick(tile.worldObj, x, y, z, tile.worldObj.rand)
 		
-		val x = (Math.random() - 0.5) * tile.radius.x + tile.offset.x + tile.xCoord + 0.5
-		val y = (Math.random() - 0.5) * tile.radius.y + tile.offset.y + tile.yCoord + 0.5
-		val z = (Math.random() - 0.5) * tile.radius.z + tile.offset.z + tile.zCoord + 0.5
-		
-		Botania.proxy.sparkleFX(tile.worldObj, x, y, z, 0.5f, 1f, 0.5f, 1f, 1, true)
+		if (tile.worldObj.isRemote) {
+			val x = (Math.random() - 0.5) * tile.radius.x + tile.offset.x + tile.xCoord + 0.5
+			val y = (Math.random() - 0.5) * tile.radius.y + tile.offset.y + tile.yCoord + 0.5
+			val z = (Math.random() - 0.5) * tile.radius.z + tile.offset.z + tile.zCoord + 0.5
+			
+			Botania.proxy.sparkleFX(tile.worldObj, x, y, z, 0.5f, 1f, 0.5f, 1f, 1, true)
+		}
 	}
 }

@@ -3,6 +3,7 @@ package alfheim.common.integration.thaumcraft
 import alexsocol.asjlib.*
 import alexsocol.asjlib.ASJUtilities.register
 import alfheim.api.ModInfo
+import alfheim.api.event.AlfheimModeChangedEvent
 import alfheim.api.lib.LibOreDict.ELEMENTIUM_ORE
 import alfheim.api.lib.LibOreDict.ELVORIUM_NUGGET
 import alfheim.api.lib.LibOreDict.IFFESAL_DUST
@@ -13,7 +14,9 @@ import alfheim.common.block.AlfheimBlocks
 import alfheim.common.block.compat.thaumcraft.BlockAlfheimThaumOre
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.item.compat.thaumcraft.*
+import alfheim.common.lexicon.AlfheimLexiconData
 import cpw.mods.fml.client.registry.RenderingRegistry.*
+import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.registry.GameRegistry.*
 import net.minecraft.block.Block
 import net.minecraft.creativetab.CreativeTabs
@@ -28,9 +31,12 @@ import thaumcraft.api.research.*
 import thaumcraft.api.wands.*
 import thaumcraft.common.blocks.BlockCustomOreItem
 import thaumcraft.common.config.*
+import thaumcraft.common.lib.utils.CropUtils
 import thaumcraft.common.lib.utils.Utils.addSpecialMiningResult
+import vazkii.botania.api.lexicon.LexiconRecipeMappings
 import vazkii.botania.common.Botania
 import vazkii.botania.common.item.ModItems
+import vazkii.botania.common.lexicon.page.PageText
 import vazkii.botania.common.lib.LibOreDict.*
 
 object ThaumcraftAlfheimModule {
@@ -87,11 +93,15 @@ object ThaumcraftAlfheimModule {
 	const val rodSpiritualRecipe = ModInfo.MODID + "WandRodSpiritual"
 	const val rodSpiritualResearch = "ROD_$rodSpiritualStaff"
 	
-	const val pureElementiumRecipe = ModInfo.MODID + "PUREELEMENTIUM"
-	const val pureElementiumResearch = ModInfo.MODID + "PureElementium"
+	const val pureElementiumRecipe = ModInfo.MODID + "PureElementium"
+	const val pureElementiumResearch = ModInfo.MODID + "PUREELEMENTIUM"
 	
-	const val transElementiumRecipe = ModInfo.MODID + "TRANSELEMENTIUM"
-	const val transElementiumResearch = ModInfo.MODID + "TransElementium"
+	const val transElementiumRecipe = ModInfo.MODID + "TransElementium"
+	const val transElementiumResearch = ModInfo.MODID + "TRANSELEMENTIUM"
+	
+	init {
+		eventForge()
+	}
 	
 	fun preInit() {
 		constructBlocks()
@@ -147,6 +157,14 @@ object ThaumcraftAlfheimModule {
 		
 		addSpecialMiningResult(ItemStack(alfheimThaumOre, 1, 0), ItemStack(ConfigItems.itemNugget, 1, 21), 0.9f)
 		addSpecialMiningResult(ItemStack(AlfheimBlocks.elvenOre, 1, 1), ItemStack(ConfigItems.itemNugget, 1, AlfheimConfigHandler.elementiumClusterMeta), 1f)
+		
+		CropUtils.addClickableCrop(ItemStack(AlfheimBlocks.grapesRed[2]), 32767)
+		CropUtils.addClickableCrop(ItemStack(AlfheimBlocks.grapesRedPlanted), 4)
+		CropUtils.addClickableCrop(ItemStack(AlfheimBlocks.grapesWhite), 2)
+		
+		AlfheimLexiconData.ores.setLexiconPages(PageText("TC"))
+		for (i in 0..7)
+			LexiconRecipeMappings.map(ItemStack(alfheimThaumOre, 1, i), AlfheimLexiconData.ores, 3)
 	}
 	
 	fun registerRecipes() {
@@ -283,6 +301,12 @@ object ThaumcraftAlfheimModule {
 		addSmeltingBonus(ItemStack(ConfigItems.itemNugget, 1, AlfheimConfigHandler.elementiumClusterMeta),
 						 ItemStack(ModItems.manaResource, 0, 19)        // from cluster
 		)
+	}
+	
+	@SubscribeEvent
+	fun onModeChanged(e: AlfheimModeChangedEvent) {
+		if (e.esm && !e.esmOld) addESMRecipes()
+		else if (!e.esm && e.esmOld) removeESMRecipes()
 	}
 	
 	fun addESMRecipes() {

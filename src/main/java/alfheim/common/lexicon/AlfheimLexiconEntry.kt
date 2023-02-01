@@ -21,20 +21,29 @@ open class AlfheimLexiconEntry: LexiconEntry, IAddonEntry {
 	
 	override fun setLexiconPages(vararg pages: LexiconPage): LexiconEntry {
 		for (page in pages) {
-			page.unlocalizedName = "${ModInfo.MODID}.page." + getLazyUnlocalizedName() + page.unlocalizedName
-			if (page is ITwoNamedPage) {
-				page.secondUnlocalizedName = "${ModInfo.MODID}.page." + getLazyUnlocalizedName() + page.secondUnlocalizedName
-			}
+			page.unlocalizedName = "${ModInfo.MODID}.page.$unlocalizedName${page.unlocalizedName}"
+			if (page is ITwoNamedPage)
+				page.secondUnlocalizedName = "${ModInfo.MODID}.page.$unlocalizedName${page.secondUnlocalizedName}"
 		}
 		
 		return super.setLexiconPages(*pages)
 	}
 	
-	override fun getUnlocalizedName() = "${ModInfo.MODID}.entry.${super.getUnlocalizedName()}"
+	override fun getUnlocalizedName() = "${ModInfo.MODID}.entry.$unlocalizedName"
 	
-	override fun getTagline() = "${ModInfo.MODID}.tagline.${super.getUnlocalizedName()}"
-	
-	fun getLazyUnlocalizedName() = super.getUnlocalizedName()
+	override fun getTagline() = "${ModInfo.MODID}.tagline.$unlocalizedName"
 	
 	override fun getSubtitle() = "[Alfheim]"
+	
+	companion object {
+		fun LexiconEntry.setIcon(block: Block): LexiconEntry {
+			icon = ItemStack(block)
+			return this
+		}
+		
+		fun LexiconEntry.setIcon(item: Item): LexiconEntry {
+			icon = ItemStack(item)
+			return this
+		}
+	}
 }

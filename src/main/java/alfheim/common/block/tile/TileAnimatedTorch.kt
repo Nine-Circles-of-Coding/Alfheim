@@ -126,24 +126,24 @@ class TileAnimatedTorch: ASJTile() {
 		}
 	}
 	
-	override fun writeCustomNBT(cmp: NBTTagCompound) {
-		cmp.setInteger(TAG_SIDE, side)
-		cmp.setBoolean(TAG_ROTATING, rotating)
-		cmp.setInteger(TAG_ROTATION_TICKS, rotationTicks)
-		cmp.setDouble(TAG_ANGLE_PER_TICK, anglePerTick)
-		cmp.setInteger(TAG_TORCH_MODE, torchMode.ordinal)
-		cmp.setInteger(TAG_NEXT_RANDOM_ROTATION, nextRandomRotation)
+	override fun writeCustomNBT(nbt: NBTTagCompound) {
+		nbt.setInteger(TAG_SIDE, side)
+		nbt.setBoolean(TAG_ROTATING, rotating)
+		nbt.setInteger(TAG_ROTATION_TICKS, rotationTicks)
+		nbt.setDouble(TAG_ANGLE_PER_TICK, anglePerTick)
+		nbt.setInteger(TAG_TORCH_MODE, torchMode.ordinal)
+		nbt.setInteger(TAG_NEXT_RANDOM_ROTATION, nextRandomRotation)
 	}
 	
-	override fun readCustomNBT(cmp: NBTTagCompound) {
-		side = cmp.getInteger(TAG_SIDE)
-		rotating = cmp.getBoolean(TAG_ROTATING)
+	override fun readCustomNBT(nbt: NBTTagCompound) {
+		side = nbt.getInteger(TAG_SIDE)
+		rotating = nbt.getBoolean(TAG_ROTATING)
 		if (worldObj != null && !worldObj.isRemote)
-			rotationTicks = cmp.getInteger(TAG_ROTATION_TICKS)
-		anglePerTick = cmp.getDouble(TAG_ANGLE_PER_TICK)
-		nextRandomRotation = cmp.getInteger(TAG_NEXT_RANDOM_ROTATION)
+			rotationTicks = nbt.getInteger(TAG_ROTATION_TICKS)
+		anglePerTick = nbt.getDouble(TAG_ANGLE_PER_TICK)
+		nextRandomRotation = nbt.getInteger(TAG_NEXT_RANDOM_ROTATION)
 		
-		val modeOrdinal = cmp.getInteger(TAG_TORCH_MODE)
+		val modeOrdinal = nbt.getInteger(TAG_TORCH_MODE)
 		val modes = TorchMode.values()
 		torchMode = modes[modeOrdinal % modes.size]
 	}

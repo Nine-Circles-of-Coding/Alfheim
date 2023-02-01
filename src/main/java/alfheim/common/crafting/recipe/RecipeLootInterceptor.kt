@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.item.crafting.IRecipe
 import net.minecraft.world.World
 
-class RecipeLootInterceptor: IRecipe {
+object RecipeLootInterceptor: IRecipe {
 	
 	override fun matches(inv: InventoryCrafting, world: World?): Boolean {
 		var inter = false
@@ -46,11 +46,7 @@ class RecipeLootInterceptor: IRecipe {
 		return inter
 	}
 	
-	override fun getRecipeSize(): Int {
-		return 10
-	}
+	override fun getRecipeSize() = 10
 	
-	override fun getRecipeOutput(): ItemStack? {
-		return null
-	}
+	override fun getRecipeOutput() = null
 }

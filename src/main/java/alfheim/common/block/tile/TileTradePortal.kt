@@ -30,7 +30,7 @@ class TileTradePortal: ASJTile() {
 	private var hasUnloadedParts = false
 	
 	internal val portalAABB: AxisAlignedBB
-		get() = if (getBlockMetadata() == 2) AxisAlignedBB.getBoundingBox(xCoord.D, (yCoord + 1).D, (zCoord - 1).D, (xCoord + 1).D, (yCoord + 4).D, (zCoord + 2).D) else AxisAlignedBB.getBoundingBox((xCoord - 1).D, (yCoord + 1).D, zCoord.D, (xCoord + 2).D, (yCoord + 4).D, (zCoord + 1).D)
+		get() = if (getBlockMetadata() == 2) getBoundingBox(xCoord, yCoord + 1, zCoord - 1, xCoord + 1, yCoord + 4, zCoord + 2) else getBoundingBox(xCoord - 1, yCoord + 1, zCoord, xCoord + 2, yCoord + 4, zCoord + 1)
 	
 	private val validMetadata: Int
 		get() {
@@ -59,26 +59,21 @@ class TileTradePortal: ASJTile() {
 			
 			val aabb = portalAABB
 			
-			if (ticksOpen > 60) {
+			if (ticksOpen > 60) run {
 				if (ConfigHandler.elfPortalParticlesEnabled)
 					blockParticle(meta)
 				
 				if (worldObj.rand.nextInt(AlfheimConfigHandler.tradePortalRate) == 0 && !worldObj.isRemote) setRandomRecipe()
 				
-				if (tradeRecipe != null) {
-					val items = worldObj.getEntitiesWithinAABB(EntityItem::class.java, aabb)
-					if (!worldObj.isRemote) {
-						for (item in items) {
-							item as EntityItem
-							if (item.isDead)
-								continue
-							
-							val stack = item.entityItem
-							if (stack != null && isTradeAvailable(stack, tradeRecipe!!.output)) {
-								stack.stackSize -= tradeRecipe!!.output.stackSize
-								performTrade()
-								break
-							}
+				if (tradeRecipe != null && !worldObj.isRemote) {
+					getEntitiesWithinAABB(worldObj, EntityItem::class.java, aabb).forEach {
+						if (it.isDead) return@forEach
+						
+						val stack = it.entityItem
+						if (stack != null && isTradeAvailable(stack, tradeRecipe!!.output)) {
+							stack.stackSize -= tradeRecipe!!.output.stackSize
+							performTrade()
+							return@run
 						}
 					}
 				}
@@ -152,10 +147,7 @@ class TileTradePortal: ASJTile() {
 		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord)
 	}
 	
-	internal fun spawnItem(stack: ItemStack) {
-		val item = EntityItem(worldObj, xCoord + 0.5, yCoord + 1.5, zCoord + 0.5, stack)
-		worldObj.spawnEntityInWorld(item)
-	}
+	fun spawnItem(stack: ItemStack) = EntityItem(worldObj, xCoord + 0.5, yCoord + 1.5, zCoord + 0.5, stack).spawn()
 	
 	fun setTradeRecipe(recipe: RecipeElvenTrade?) {
 		tradeRecipe = recipe

@@ -4,6 +4,7 @@ import alexsocol.asjlib.extendables.block.*
 import alfheim.api.ModInfo
 import alfheim.client.core.helper.IconHelper
 import alfheim.common.block.AlfheimBlocks.setHarvestLevelI
+import alfheim.common.block.alt.BlockYggDecor
 import alfheim.common.block.base.BlockStairsMod
 import alfheim.common.core.util.AlfheimTab
 import alfheim.common.item.block.ItemBlockLeavesMod
@@ -72,8 +73,10 @@ object AlfheimFluffBlocks {
 	val shrineRockWhiteSlab: Block
 	val shrineRockWhiteSlabFull: Block
 	val shrineRockWhiteStairs: Block
+	val yggDecor: Block
 	
 	init {
+		yggDecor = BlockYggDecor()
 		shrineRock = BlockModMeta(Material.rock, 16, ModInfo.MODID, "ShrineRock", AlfheimTab, 10f, harvLvl = 2, resist = 10000f, folder = "decor/")
 		shrinePillar = BlockShrinePillar()
 		shrineRockWhiteStairs = object: BlockStairsMod(shrineRock, 0, "ShrineRockWhiteStairs") {

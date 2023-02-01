@@ -1,17 +1,14 @@
 package alfheim.client.render.tile
 
 import alexsocol.asjlib.mc
-import alfheim.api.ModInfo
+import alfheim.api.lib.LibResourceLocations
 import alfheim.client.model.block.ModelBarrel
 import alfheim.common.block.tile.TileBarrel
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.ResourceLocation
 import org.lwjgl.opengl.GL11.*
 
 object RenderTileBarrel: TileEntitySpecialRenderer() {
-	
-	val model = ModelBarrel()
 	
 	override fun renderTileEntityAt(tile: TileEntity, x: Double, y: Double, z: Double, partialTicks: Float) {
 		if (tile !is TileBarrel) return
@@ -24,20 +21,20 @@ object RenderTileBarrel: TileEntitySpecialRenderer() {
 		glTranslated(0.5, -1.0, -0.5)
 		glRotatef(90f, 0f, 1f, 0f)
 		
-		mc.renderEngine.bindTexture(ResourceLocation(ModInfo.MODID, "textures/model/block/Barrel.png"))
-		model.render(f5)
+		mc.renderEngine.bindTexture(LibResourceLocations.barrel)
+		ModelBarrel.render(f5)
 		
 		if (tile.closed)
-			model.renderCover(f5)
+			ModelBarrel.renderCover(f5)
 		
 		glTranslatef(0f, (tile.wineLevel - 2) / -16f - 0.01f, 0f)
 		
 		if (tile.wineStage <= TileBarrel.WINE_STAGE_MASH) {
 			if (tile.wineType == TileBarrel.WINE_TYPE_RED)
-				model.redMash.render(f5)
+				ModelBarrel.redMash.render(f5)
 			
 			if (tile.wineType == TileBarrel.WINE_TYPE_WHITE)
-				model.greenMash.render(f5)
+				ModelBarrel.greenMash.render(f5)
 		}
 		
 		if (tile.wineStage >= TileBarrel.WINE_STAGE_MASH) {
@@ -55,10 +52,10 @@ object RenderTileBarrel: TileEntitySpecialRenderer() {
 			glColor4f(1f, 1f, 1f, a)
 			
 			if (tile.wineType == TileBarrel.WINE_TYPE_RED)
-				model.redWine.render(f5)
+				ModelBarrel.redWine.render(f5)
 			
 			if (tile.wineType == TileBarrel.WINE_TYPE_WHITE)
-				model.greenWine.render(f5)
+				ModelBarrel.greenWine.render(f5)
 			
 			glDisable(GL_BLEND)
 			

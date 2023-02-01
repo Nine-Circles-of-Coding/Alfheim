@@ -1,15 +1,11 @@
 package alfheim.common.block
 
-import alexsocol.asjlib.*
-import alfheim.AlfheimCore
+import alexsocol.asjlib.PotionEffectU
 import alfheim.api.ModInfo
 import alfheim.common.core.handler.AlfheimConfigHandler
-import alfheim.common.item.AlfheimItems
 import alfheim.common.item.block.ItemBlockLeavesMod
+import alfheim.common.item.equipment.bauble.ItemPendant
 import alfheim.common.lexicon.AlfheimLexiconData
-import alfheim.common.network.MessageEffect
-import baubles.api.BaublesApi
-import baubles.common.lib.PlayerHandler
 import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.relauncher.*
 import net.minecraft.block.*
@@ -17,13 +13,11 @@ import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.entity.*
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
-import net.minecraft.potion.PotionEffect
 import net.minecraft.util.IIcon
 import net.minecraft.world.World
 import net.minecraftforge.common.ForgeHooks
 import net.minecraftforge.common.util.ForgeDirection
 import vazkii.botania.api.lexicon.ILexiconable
-import vazkii.botania.api.mana.ManaItemHandler
 import java.util.*
 
 class BlockRedFlame: BlockFire(), ILexiconable {
@@ -36,7 +30,6 @@ class BlockRedFlame: BlockFire(), ILexiconable {
 		setCreativeTab(null)
 		setLightLevel(1f)
 		setLightOpacity(0)
-		setResistance(java.lang.Float.MAX_VALUE)
 	}
 	
 	override fun setBlockName(name: String): Block {
@@ -48,8 +41,7 @@ class BlockRedFlame: BlockFire(), ILexiconable {
 		val metadata = world.getBlockMetadata(x, y, z)
 		var hardness = getBlockHardness(world, x, y, z)
 		
-		val bbls = PlayerHandler.getPlayerBaubles(player)
-		if (bbls[0]?.item === AlfheimItems.elfFirePendant && ManaItemHandler.requestManaExact(bbls[0], player, 300, true)) hardness = 2f
+		if (ItemPendant.canProtect(player, ItemPendant.Companion.EnumPrimalWorldType.MUSPELHEIM, 5)) hardness = 2f
 		
 		if (hardness < 0f) return 0f
 		
@@ -73,22 +65,21 @@ class BlockRedFlame: BlockFire(), ILexiconable {
 	override fun getIcon(p_149691_1_: Int, p_149691_2_: Int) = icons[0]
 	
 	override fun onEntityCollidedWithBlock(world: World, x: Int, y: Int, z: Int, entity: Entity) {
-		if (entity is EntityPlayer && BaublesApi.getBaubles(entity)[0]?.item === AlfheimItems.elfFirePendant && ManaItemHandler.requestManaExact(BaublesApi.getBaubles(entity)[0], entity, 50, true)) return
+		if (entity is EntityPlayer && ItemPendant.canProtect(entity, ItemPendant.Companion.EnumPrimalWorldType.MUSPELHEIM, 50)) return
 		
-		if (entity is EntityLivingBase) {
-			val soulburn = PotionEffect(AlfheimConfigHandler.potionIDSoulburn, 200)
-			soulburn.curativeItems.clear()
-			entity.addPotionEffect(soulburn)
-			if (ASJUtilities.isServer) AlfheimCore.network.sendToAll(MessageEffect(entity.entityId, soulburn.potionID, soulburn.duration, soulburn.amplifier))
-		}
 		entity.setInWeb()
+		
+		if (entity !is EntityLivingBase)
+			return
+		
+		val soulburn = PotionEffectU(AlfheimConfigHandler.potionIDSoulburn, 200)
+		entity.addPotionEffect(soulburn)
 	}
 	
 	override fun updateTick(world: World, x: Int, y: Int, z: Int, rand: Random) {
-		if (world.gameRules.getGameRuleBooleanValue("doFireTick")) {
-			if (!canPlaceBlockAt(world, x, y, z) || (world.rand.nextInt(100) == 0 && !world.getBlock(x, y - 1, z).isFireSource(world, x, y - 1, z, ForgeDirection.UP)))
-				world.setBlockToAir(x, y, z)
-		}
+		if (!world.gameRules.getGameRuleBooleanValue("doFireTick")) return
+		if (!canPlaceBlockAt(world, x, y, z) || (world.rand.nextInt(100) == 0 && !world.getBlock(x, y - 1, z).isFireSource(world, x, y - 1, z, ForgeDirection.UP)))
+			world.setBlockToAir(x, y, z)
 	}
 	
 	override fun getEntry(world: World, x: Int, y: Int, z: Int, player: EntityPlayer, lexicon: ItemStack) = AlfheimLexiconData.ruling

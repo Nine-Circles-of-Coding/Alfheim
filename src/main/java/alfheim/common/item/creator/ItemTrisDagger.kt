@@ -3,6 +3,7 @@ package alfheim.common.item.creator
 import alexsocol.asjlib.*
 import alfheim.api.*
 import alfheim.client.core.helper.*
+import alfheim.common.core.helper.*
 import alfheim.common.core.util.AlfheimTab
 import com.google.common.collect.*
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
@@ -19,7 +20,6 @@ import net.minecraft.potion.*
 import net.minecraft.util.*
 import net.minecraft.world.World
 import net.minecraftforge.client.event.TextureStitchEvent
-import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.entity.living.LivingAttackEvent
 import net.minecraftforge.oredict.OreDictionary
 import vazkii.botania.api.BotaniaAPI
@@ -39,7 +39,7 @@ class ItemTrisDagger(val name: String = "reactionDagger", val toolMaterial: Tool
 	companion object {
 		
 		const val minBlockLength = 0
-		const val maxBlockLength = 20
+		const val maxBlockLength = 10
 	}
 	
 	init {
@@ -47,9 +47,11 @@ class ItemTrisDagger(val name: String = "reactionDagger", val toolMaterial: Tool
 		maxDamage = toolMaterial.maxUses
 		maxStackSize = 1
 		unlocalizedName = name
-		DaggerEventHandler.register()
+		
+		DaggerEventHandler
+		
 		if (ASJUtilities.isClient)
-			MinecraftForge.EVENT_BUS.register(this)
+			eventForge()
 	}
 	
 	override fun setUnlocalizedName(name: String): Item {
@@ -123,16 +125,13 @@ class ItemTrisDagger(val name: String = "reactionDagger", val toolMaterial: Tool
 		val greyitalics = "${EnumChatFormatting.GRAY}${EnumChatFormatting.ITALIC}"
 		val grey = EnumChatFormatting.GRAY
 		if (GuiScreen.isShiftKeyDown()) {
-			addStringToTooltip("$greyitalics${StatCollector.translateToLocal("misc.${ModInfo.MODID}.tline1")}", list)
-			addStringToTooltip("$greyitalics${StatCollector.translateToLocal("misc.${ModInfo.MODID}.tline2")}", list)
-			addStringToTooltip("$greyitalics${StatCollector.translateToLocal("misc.${ModInfo.MODID}.tline3")}", list)
-			addStringToTooltip("$grey\"My inward eye sees the depths of my soul!", list)
-			addStringToTooltip("${grey}I accept both sides, and reject my downfall!\"", list)
-		} else addStringToTooltip(StatCollector.translateToLocal("botaniamisc.shiftinfo"), list)
-	}
-	
-	fun addStringToTooltip(s: String, tooltip: MutableList<Any?>) {
-		tooltip.add(s.replace("&", "\u00a7"))
+			addStringToTooltip(list, "$greyitalics${StatCollector.translateToLocal("misc.${ModInfo.MODID}.tline1")}")
+			addStringToTooltip(list, "$greyitalics${StatCollector.translateToLocal("misc.${ModInfo.MODID}.tline2")}")
+			addStringToTooltip(list, "$greyitalics${StatCollector.translateToLocal("misc.${ModInfo.MODID}.tline3")}")
+			addStringToTooltip(list, "")
+			addStringToTooltip(list, "$grey\"My inward eye sees the depths of my soul!")
+			addStringToTooltip(list, "${grey}I accept both sides, and reject my downfall!\"")
+		} else addStringToTooltip(list, StatCollector.translateToLocal("botaniamisc.shiftinfo"))
 	}
 	
 	override fun getItemEnchantability() = toolMaterial.enchantability
@@ -147,22 +146,13 @@ class ItemTrisDagger(val name: String = "reactionDagger", val toolMaterial: Tool
  * @author WireSegal
  * Created at 10:53 AM on 2/8/16.
  */
-class DaggerEventHandler {
+object DaggerEventHandler {
 	
-	companion object {
-		class DamageSourceOculus(entity: EntityLivingBase): EntityDamageSource("${ModInfo.MODID}.oculus", entity) {
-			init {
-				setDamageBypassesArmor()
-				setMagicDamage()
-			}
-		}
-		
-		val instance = DaggerEventHandler()
-		
-		fun register() {
-			MinecraftForge.EVENT_BUS.register(instance)
-		}
+	init {
+		eventForge()
 	}
+	
+	fun dealOculusDamage(entity: EntityLivingBase) = EntityDamageSource("${ModInfo.MODID}.oculus", entity).setDamageBypassesArmor().setMagicDamage().setTo(ElementalDamage.LIGHTNESS)
 	
 	fun getHeadOrientation(entity: EntityLivingBase): Vector3 {
 		val f1 = MathHelper.cos(-entity.rotationYaw * 0.017453292F - Math.PI.F)
@@ -176,42 +166,39 @@ class DaggerEventHandler {
 	fun onLivingAttacked(e: LivingAttackEvent) {
 		val player = e.entityLiving
 		val damage = e.source
-		if (player is EntityPlayer && damage is EntityDamageSource && player.isUsingItem) {
-			val enemyEntity = damage.entity
-			if (enemyEntity is EntityLivingBase) {
-				val itemInUse = player.itemInUse
-				val itemInUseCount = player.itemInUse.maxItemUseDuration - player.itemInUseCount
-				if (itemInUse.item is ItemTrisDagger && itemInUseCount <= ItemTrisDagger.maxBlockLength && itemInUseCount >= ItemTrisDagger.minBlockLength) {
-					
-					val lookVec = Vector3(player.lookVec)
-					val targetVec = Vector3.fromEntityCenter(enemyEntity).sub(Vector3.fromEntityCenter(player))
-					val epsilon = lookVec.dotProduct(targetVec) / (lookVec.mag() * targetVec.mag())
-					if (epsilon > 0.75) {
-						e.isCanceled = true
-						player.stopUsingItem()
-						if (!player.worldObj.isRemote) {
-							if (damage !is EntityDamageSourceIndirect) {
-								enemyEntity.attackEntityFrom(DamageSourceOculus(player), e.ammount * 2f) // dammit cpw, you misspelled amount
-								val xDif = enemyEntity.posX - player.posX
-								val zDif = enemyEntity.posZ - player.posZ
-								enemyEntity.playSoundAtEntity("random.anvil_land", 1f, 0.9f + 0.1f * Math.random().F)
-								if (enemyEntity is EntityPlayer && enemyEntity.currentEquippedItem != null)
-									enemyEntity.currentEquippedItem.damageItem(30, enemyEntity)
-								enemyEntity.knockBack(player, 1f, -xDif, -zDif)
-								enemyEntity.addPotionEffect(PotionEffect(Potion.weakness.id, 60, 1, true))
-								enemyEntity.addPotionEffect(PotionEffect(Potion.moveSlowdown.id, 60, 2, true))
-							}
-						} else {
-							val mainVec = Vector3.fromEntityCenter(player).add(lookVec)
-							val baseVec = getHeadOrientation(player).crossProduct(lookVec).normalize()
-							for (i in 0..360 step 15) {
-								val rotVec = baseVec.copy().rotate(i * 180 / Math.PI, lookVec)
-								val endVec = mainVec.copy().add(rotVec)
-								Botania.proxy.lightningFX(player.worldObj, mainVec, endVec, 3f, 0xFF94A1, 0xFBAAB5)
-							}
-						}
-					}
-				}
+		if (player !is EntityPlayer || damage !is EntityDamageSource || !player.isUsingItem || damage.damageType == "${ModInfo.MODID}.oculus") return
+		
+		val enemyEntity = damage.entity
+		if (enemyEntity !is EntityLivingBase || enemyEntity == player) return
+		
+		val itemInUse = player.itemInUse
+		val itemInUseCount = player.itemInUse.maxItemUseDuration - player.itemInUseCount
+		if (itemInUse.item !is ItemTrisDagger || itemInUseCount > ItemTrisDagger.maxBlockLength || itemInUseCount < ItemTrisDagger.minBlockLength) return
+		
+		val lookVec = Vector3(player.lookVec)
+		val targetVec = Vector3.fromEntityCenter(enemyEntity).sub(Vector3.fromEntityCenter(player))
+		val epsilon = lookVec.dotProduct(targetVec) / (lookVec.mag() * targetVec.mag())
+		if (epsilon <= 0.75) return
+		
+		e.isCanceled = true
+		player.stopUsingItem()
+		
+		if (!player.worldObj.isRemote) {
+			if (damage is EntityDamageSourceIndirect) return
+			enemyEntity.attackEntityFrom(dealOculusDamage(player), e.ammount * 2f) // dammit cpw, you misspelled amount
+			enemyEntity.playSoundAtEntity("random.anvil_land", 1f, 0.9f + 0.1f * Math.random().F)
+			if (enemyEntity is EntityPlayer && enemyEntity.currentEquippedItem != null)
+				enemyEntity.currentEquippedItem.damageItem(30, enemyEntity)
+			enemyEntity.knockback(player, 1f)
+			enemyEntity.addPotionEffect(PotionEffect(Potion.weakness.id, 60, 1))
+			enemyEntity.addPotionEffect(PotionEffect(Potion.moveSlowdown.id, 60, 2))
+		} else {
+			val mainVec = Vector3.fromEntityCenter(player).add(lookVec)
+			val baseVec = getHeadOrientation(player).crossProduct(lookVec).normalize()
+			for (i in 0..360 step 15) {
+				val rotVec = baseVec.copy().rotate(i * 180 / Math.PI, lookVec)
+				val endVec = mainVec.copy().add(rotVec)
+				Botania.proxy.lightningFX(player.worldObj, mainVec, endVec, 3f, 0xFF94A1, 0xFBAAB5)
 			}
 		}
 	}

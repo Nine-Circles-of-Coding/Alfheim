@@ -3,7 +3,7 @@ package alfheim.client.model.block
 import net.minecraft.client.model.*
 import net.minecraft.entity.Entity
 
-class ModelBarrel: ModelBase() {
+object ModelBarrel: ModelBase() {
 	
 	var Shape0: ModelRenderer
 	var Shape1: ModelRenderer

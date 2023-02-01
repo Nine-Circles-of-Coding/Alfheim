@@ -20,16 +20,17 @@ class SubTileWarp: SubTileAnomalyBase() {
 		get() {
 			if (ASJUtilities.isClient) return EMPTY_LIST
 			
-			var l: MutableList<Any>? = null
+			val l: MutableList<Any> = ArrayList()
 			
 			if (ticks % 100 == 0 && !inWG()) {
-				l = allAroundRaw(EntityLivingBase::class.java, radius.D)
-				l.removeAll { it is EntityPlayer && it.capabilities.isCreativeMode }
-				if (l.size > 0) {
-					if (l.size == 1) {
-						l.add(LivingCoords(l.removeAt(0) as EntityLivingBase, x().D, y().D, z().D, radius))
+				val list = allAround(EntityLivingBase::class.java, radius.D)
+				list.removeAll { it is EntityPlayer && it.capabilities.isCreativeMode }
+				
+				if (list.size > 0) {
+					if (list.size == 1) {
+						l.add(LivingCoords(list.removeAt(0), x.D, y.D, z.D, radius))
 					} else {
-						l.add(LivingPair(rand(l), rand(l)))
+						l.add(LivingPair(list.removeRandom()!!, list.removeRandom()!!))
 					}
 					return l
 				}
@@ -40,7 +41,7 @@ class SubTileWarp: SubTileAnomalyBase() {
 				var tries = 50
 				
 				while (tries-- > 0) {
-					v[x(), y(), z(), radius] = worldObj.rand
+					v[x, y, z, radius] = worldObj.rand
 					
 					b1 = worldObj.getBlock(v.x1, v.y1, v.z1)
 					b2 = worldObj.getBlock(v.x2, v.y2, v.z2)
@@ -54,21 +55,13 @@ class SubTileWarp: SubTileAnomalyBase() {
 					
 					v.m1 = worldObj.getBlockMetadata(v.x1, v.y1, v.z1)
 					v.m2 = worldObj.getBlockMetadata(v.x2, v.y2, v.z2)
-					l = ArrayList()
 					l.add(v)
 					break
 				}
 			}
 			
-			if (l == null) l = EMPTY_LIST
 			return l
 		}
-	
-	override val strip: Int
-		get() = 6
-	
-	override val rarity: EnumAnomalityRarity
-		get() = EnumAnomalityRarity.RARE
 	
 	public override fun update() {
 		if (inWG()) return
@@ -78,56 +71,56 @@ class SubTileWarp: SubTileAnomalyBase() {
 			ASJUtilities.dispatchTEToNearbyPlayers(superTile!!)
 		}
 		
-		rand.setSeed((x() xor y() xor z()).toLong())
+		rand.setSeed((x xor y xor z).toLong())
 		val worldTime = (worldObj.totalWorldTime + rand.nextInt(1000)) / 5.0
 		val r = 0.75f + Math.random().F * 0.05f
 		
-		val x = x().D + 0.5 + sin(worldTime) * r
-		val y = y().D + 0.5 + sin(worldTime) * r
-		val z = z().D + 0.5 + sin(worldTime) * r
-		val i = x().D + 0.5 + cos(worldTime) * r
-		val j = y().D + 0.5 + cos(worldTime) * r
-		val k = z().D + 0.5 + cos(worldTime) * r
+		val a = x.D + 0.5 + sin(worldTime) * r
+		val b = y.D + 0.5 + sin(worldTime) * r
+		val c = z.D + 0.5 + sin(worldTime) * r
+		val i = x.D + 0.5 + cos(worldTime) * r
+		val j = y.D + 0.5 + cos(worldTime) * r
+		val k = z.D + 0.5 + cos(worldTime) * r
 		
-		val m = x().D + 0.5 + sin(-worldTime) * r
-		val n = y().D + 0.5 + sin(-worldTime) * r
-		val o = z().D + 0.5 + sin(-worldTime) * r
+		val m = x.D + 0.5 + sin(-worldTime) * r
+		val n = y.D + 0.5 + sin(-worldTime) * r
+		val o = z.D + 0.5 + sin(-worldTime) * r
 		
-		Botania.proxy.wispFX(worldObj, x() + 0.5, j, k,
-							 0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
-							 0.1f + Math.random().F * 0.1f)
+		Botania.proxy.wispFX(worldObj, x + 0.5, j, k,
+		                     0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
+		                     0.1f + Math.random().F * 0.1f)
 		
-		Botania.proxy.wispFX(worldObj, x() + 0.5, n, z,
-							 0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
-							 0.1f + Math.random().F * 0.1f)
+		Botania.proxy.wispFX(worldObj, x + 0.5, n, c,
+		                     0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
+		                     0.1f + Math.random().F * 0.1f)
 		
-		Botania.proxy.wispFX(worldObj, i, y() + 0.5, k,
-							 0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
-							 0.1f + Math.random().F * 0.1f)
+		Botania.proxy.wispFX(worldObj, i, y + 0.5, k,
+		                     0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
+		                     0.1f + Math.random().F * 0.1f)
 		
-		Botania.proxy.wispFX(worldObj, x, y() + 0.5, o,
-							 0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
-							 0.1f + Math.random().F * 0.1f)
+		Botania.proxy.wispFX(worldObj, a, y + 0.5, o,
+		                     0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
+		                     0.1f + Math.random().F * 0.1f)
 		
-		Botania.proxy.wispFX(worldObj, i, j, z() + 0.5,
-							 0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
-							 0.1f + Math.random().F * 0.1f)
+		Botania.proxy.wispFX(worldObj, i, j, z + 0.5,
+		                     0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
+		                     0.1f + Math.random().F * 0.1f)
 		
-		Botania.proxy.wispFX(worldObj, m, y, z() + 0.5,
-							 0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
-							 0.1f + Math.random().F * 0.1f)
+		Botania.proxy.wispFX(worldObj, m, b, z + 0.5,
+		                     0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
+		                     0.1f + Math.random().F * 0.1f)
 		
-		Botania.proxy.wispFX(worldObj, x() + 0.5, y() + 0.5, k,
-							 0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
-							 0.1f + Math.random().F * 0.1f)
+		Botania.proxy.wispFX(worldObj, x + 0.5, y + 0.5, k,
+		                     0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
+		                     0.1f + Math.random().F * 0.1f)
 		
-		Botania.proxy.wispFX(worldObj, x() + 0.5, y, z() + 0.5,
-							 0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
-							 0.1f + Math.random().F * 0.1f)
+		Botania.proxy.wispFX(worldObj, x + 0.5, b, z + 0.5,
+		                     0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
+		                     0.1f + Math.random().F * 0.1f)
 		
-		Botania.proxy.wispFX(worldObj, i, y() + 0.5, z() + 0.5,
-							 0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
-							 0.1f + Math.random().F * 0.1f)
+		Botania.proxy.wispFX(worldObj, i, y + 0.5, z + 0.5,
+		                     0.25f + Math.random().F * 0.25f, Math.random().F * 0.25f, 0.75f + Math.random().F * 0.25f,
+		                     0.1f + Math.random().F * 0.1f)
 	}
 	
 	override fun writeCustomNBT(cmp: NBTTagCompound) {
@@ -139,8 +132,6 @@ class SubTileWarp: SubTileAnomalyBase() {
 		super.readCustomNBT(cmp)
 		radius = cmp.getInteger(TAG_RADIUS)
 	}
-	
-	private fun rand(l: MutableList<Any>) = l.removeAt(worldObj.rand.nextInt(l.size)) as EntityLivingBase
 	
 	override fun performEffect(target: Any) {
 		if (ASJUtilities.isClient) return

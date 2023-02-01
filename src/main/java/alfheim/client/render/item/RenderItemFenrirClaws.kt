@@ -49,9 +49,10 @@ object RenderItemFenrirClaws: IItemRenderer {
 				glTranslatef(-9.25f, -10.25f, 0f)
 			}
 			
-			else                -> {
+			ENTITY                -> {
 				glTranslated(-0.25, -0.25, -0.5)
 			}
+			else                  -> Unit
 		}
 		
 		if (type != INVENTORY) glScaled(1.0 / 16)

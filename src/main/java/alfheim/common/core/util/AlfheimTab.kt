@@ -2,6 +2,7 @@ package alfheim.common.core.util
 
 import alexsocol.asjlib.*
 import alfheim.AlfheimCore
+import alfheim.common.block.AlfheimBlocks.airyVirus
 import alfheim.common.block.AlfheimBlocks.alfStorage
 import alfheim.common.block.AlfheimBlocks.alfheimPortal
 import alfheim.common.block.AlfheimBlocks.alfheimPylon
@@ -35,12 +36,15 @@ import alfheim.common.block.AlfheimBlocks.circuitStairs
 import alfheim.common.block.AlfheimBlocks.circuitWood
 import alfheim.common.block.AlfheimBlocks.corporeaAutocrafter
 import alfheim.common.block.AlfheimBlocks.corporeaInjector
+import alfheim.common.block.AlfheimBlocks.corporeaRatBase
+import alfheim.common.block.AlfheimBlocks.corporeaSparkBase
 import alfheim.common.block.AlfheimBlocks.dreamSapling
 import alfheim.common.block.AlfheimBlocks.elvenOre
 import alfheim.common.block.AlfheimBlocks.elvenSand
 import alfheim.common.block.AlfheimBlocks.enderActuator
 import alfheim.common.block.AlfheimBlocks.grapesRed
 import alfheim.common.block.AlfheimBlocks.grapesWhite
+import alfheim.common.block.AlfheimBlocks.icicle
 import alfheim.common.block.AlfheimBlocks.irisDirt
 import alfheim.common.block.AlfheimBlocks.irisGrass
 import alfheim.common.block.AlfheimBlocks.irisLamp
@@ -74,9 +78,10 @@ import alfheim.common.block.AlfheimBlocks.netherSapling
 import alfheim.common.block.AlfheimBlocks.netherSlabs
 import alfheim.common.block.AlfheimBlocks.netherStairs
 import alfheim.common.block.AlfheimBlocks.netherWood
+import alfheim.common.block.AlfheimBlocks.niflheimBlock
 import alfheim.common.block.AlfheimBlocks.powerStone
-import alfheim.common.block.AlfheimBlocks.ragnarokCore
 import alfheim.common.block.AlfheimBlocks.rainbowDirt
+import alfheim.common.block.AlfheimBlocks.rainbowFlowerFloating
 import alfheim.common.block.AlfheimBlocks.rainbowGrass
 import alfheim.common.block.AlfheimBlocks.rainbowLeaves
 import alfheim.common.block.AlfheimBlocks.rainbowMushroom
@@ -87,6 +92,8 @@ import alfheim.common.block.AlfheimBlocks.rainbowStairs
 import alfheim.common.block.AlfheimBlocks.rainbowTallFlower
 import alfheim.common.block.AlfheimBlocks.rainbowTallGrass
 import alfheim.common.block.AlfheimBlocks.rainbowWood
+import alfheim.common.block.AlfheimBlocks.realityAnchor
+import alfheim.common.block.AlfheimBlocks.rpc
 import alfheim.common.block.AlfheimBlocks.schemaAnnihilator
 import alfheim.common.block.AlfheimBlocks.schemaController
 import alfheim.common.block.AlfheimBlocks.schemaFiller
@@ -103,6 +110,9 @@ import alfheim.common.block.AlfheimBlocks.shimmerQuartzSlab
 import alfheim.common.block.AlfheimBlocks.shimmerQuartzStairs
 import alfheim.common.block.AlfheimBlocks.snowGrass
 import alfheim.common.block.AlfheimBlocks.snowLayer
+import alfheim.common.block.AlfheimBlocks.spire
+import alfheim.common.block.AlfheimBlocks.stalactite
+import alfheim.common.block.AlfheimBlocks.stalagmite
 import alfheim.common.block.AlfheimBlocks.tradePortal
 import alfheim.common.block.AlfheimFluffBlocks.dreamwoodBarkFence
 import alfheim.common.block.AlfheimFluffBlocks.dreamwoodBarkFenceGate
@@ -143,30 +153,36 @@ import alfheim.common.block.AlfheimFluffBlocks.shrinePillar
 import alfheim.common.block.AlfheimFluffBlocks.shrineRock
 import alfheim.common.block.AlfheimFluffBlocks.shrineRockWhiteSlab
 import alfheim.common.block.AlfheimFluffBlocks.shrineRockWhiteStairs
+import alfheim.common.block.AlfheimFluffBlocks.yggDecor
+import alfheim.common.core.asm.AlfheimClassTransformer
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.helper.ContributorsPrivacyHelper
+import alfheim.common.item.AlfheimItems
 import alfheim.common.item.AlfheimItems.`DEV-NULL`
 import alfheim.common.item.AlfheimItems.aesirCloak
 import alfheim.common.item.AlfheimItems.aesirEmblem
 import alfheim.common.item.AlfheimItems.akashicRecords
+import alfheim.common.item.AlfheimItems.armilla
 import alfheim.common.item.AlfheimItems.astrolabe
 import alfheim.common.item.AlfheimItems.attributionBauble
 import alfheim.common.item.AlfheimItems.auraRingElven
 import alfheim.common.item.AlfheimItems.auraRingGod
+import alfheim.common.item.AlfheimItems.auraRingPink
 import alfheim.common.item.AlfheimItems.balanceCloak
 import alfheim.common.item.AlfheimItems.cloudPendant
 import alfheim.common.item.AlfheimItems.cloudPendantSuper
 import alfheim.common.item.AlfheimItems.coatOfArms
 import alfheim.common.item.AlfheimItems.colorOverride
+import alfheim.common.item.AlfheimItems.corporeaRat
 import alfheim.common.item.AlfheimItems.creativeReachPendant
 import alfheim.common.item.AlfheimItems.crescentMoonAmulet
 import alfheim.common.item.AlfheimItems.daolos
+import alfheim.common.item.AlfheimItems.deathSeed
 import alfheim.common.item.AlfheimItems.dodgeRing
 import alfheim.common.item.AlfheimItems.elementalBoots
 import alfheim.common.item.AlfheimItems.elementalChestplate
 import alfheim.common.item.AlfheimItems.elementalHelmet
 import alfheim.common.item.AlfheimItems.elementalLeggings
-import alfheim.common.item.AlfheimItems.elementiumHoe
 import alfheim.common.item.AlfheimItems.elfFirePendant
 import alfheim.common.item.AlfheimItems.elfIcePendant
 import alfheim.common.item.AlfheimItems.elvenFood
@@ -200,9 +216,9 @@ import alfheim.common.item.AlfheimItems.manaGlove
 import alfheim.common.item.AlfheimItems.manaMirrorImba
 import alfheim.common.item.AlfheimItems.manaRingElven
 import alfheim.common.item.AlfheimItems.manaRingGod
+import alfheim.common.item.AlfheimItems.manaRingPink
 import alfheim.common.item.AlfheimItems.manaStone
 import alfheim.common.item.AlfheimItems.manaStoneGreater
-import alfheim.common.item.AlfheimItems.manasteelHoe
 import alfheim.common.item.AlfheimItems.mask
 import alfheim.common.item.AlfheimItems.mjolnir
 import alfheim.common.item.AlfheimItems.moonlightBow
@@ -232,16 +248,32 @@ import alfheim.common.item.AlfheimItems.rodMuspelheim
 import alfheim.common.item.AlfheimItems.rodNiflheim
 import alfheim.common.item.AlfheimItems.rodPortal
 import alfheim.common.item.AlfheimItems.rodPrismatic
+import alfheim.common.item.AlfheimItems.rodRedstone
 import alfheim.common.item.AlfheimItems.royalStaff
+import alfheim.common.item.AlfheimItems.snowBoots
+import alfheim.common.item.AlfheimItems.snowChest
+import alfheim.common.item.AlfheimItems.snowHelmet
+import alfheim.common.item.AlfheimItems.snowLeggings
+import alfheim.common.item.AlfheimItems.snowSword
 import alfheim.common.item.AlfheimItems.soulHorn
 import alfheim.common.item.AlfheimItems.soulSword
 import alfheim.common.item.AlfheimItems.spatiotemporalRing
+import alfheim.common.item.AlfheimItems.spawnEgg
 import alfheim.common.item.AlfheimItems.splashPotion
 import alfheim.common.item.AlfheimItems.starPlacer
 import alfheim.common.item.AlfheimItems.starPlacer2
 import alfheim.common.item.AlfheimItems.subspaceSpear
+import alfheim.common.item.AlfheimItems.surtrSword
+import alfheim.common.item.AlfheimItems.terraHoe
+import alfheim.common.item.AlfheimItems.thrymAxe
+import alfheim.common.item.AlfheimItems.thunderChakram
 import alfheim.common.item.AlfheimItems.triquetrum
 import alfheim.common.item.AlfheimItems.trisDagger
+import alfheim.common.item.AlfheimItems.volcanoBoots
+import alfheim.common.item.AlfheimItems.volcanoChest
+import alfheim.common.item.AlfheimItems.volcanoHelmet
+import alfheim.common.item.AlfheimItems.volcanoLeggings
+import alfheim.common.item.AlfheimItems.volcanoMace
 import alfheim.common.item.AlfheimItems.wiltedLotus
 import alfheim.common.item.AlfheimItems.wireAxe
 import net.minecraft.block.Block
@@ -275,18 +307,24 @@ object AlfheimTab: CreativeTabs("Alfheim") {
 		addBlock(manaInfuser)
 		addBlock(corporeaAutocrafter)
 		addBlock(corporeaInjector)
+		addBlock(corporeaRatBase)
+		addBlock(corporeaSparkBase)
 		addBlock(enderActuator)
 		addBlock(alfheimPortal)
 		addBlock(tradePortal)
-		if (AlfheimCore.ENABLE_RAGNAROK) addBlock(ragnarokCore)
+		addBlock(realityAnchor)
+		addBlock(rpc)
 		addBlock(Blocks.furnace, 8)
 		addBlock(ModBlocks.spreader, 4)
 		// addBlock(anomalyHarvester) // BACK
 		addBlock(anyavil)
+		addBlock(spire)
 		addBlock(alfheimPylon)
 		addBlock(manaAccelerator)
 		addBlock(itemDisplay)
 		addBlock(animatedTorch)
+		addBlock(ModBlocks.lightRelay, 2)
+		addBlock(ModBlocks.lightRelay, 3)
 		addBlock(livingwoodFunnel)
 		addBlock(amplifier)
 		addBlock(irisLamp)
@@ -301,9 +339,11 @@ object AlfheimTab: CreativeTabs("Alfheim") {
 		}
 		
 		addItem(elvenResource)
+		addItem(AlfheimItems.eventResource)
 		addItem(elvenFood)
 		addItem(wiltedLotus)
 		addItem(ModItems.ancientWill, 6)
+		addItem(deathSeed)
 		addItem(flugelHead)
 		addItem(flugelDisc)
 		
@@ -314,6 +354,8 @@ object AlfheimTab: CreativeTabs("Alfheim") {
 		//addItem (toolbelt)
 		addItem(manaStone)
 		addItem(manaStoneGreater)
+		addItem(manaRingPink)
+		addItem(auraRingPink)
 		addItem(manaRingElven)
 		addItem(auraRingElven)
 		addItem(manaRingGod)
@@ -335,7 +377,7 @@ object AlfheimTab: CreativeTabs("Alfheim") {
 		addItem(attributionBauble)
 		addItem(priestEmblem)
 		addItem(aesirEmblem)
-		if (AlfheimCore.ENABLE_RAGNAROK) addItem(ragnarokEmblem)
+		addItem(ragnarokEmblem)
 		addItem(creativeReachPendant)
 		addItem(elfFirePendant)
 		addItem(elfIcePendant)
@@ -348,15 +390,18 @@ object AlfheimTab: CreativeTabs("Alfheim") {
 		
 		addItem(astrolabe)
 		addItem(triquetrum)
+		addItem(armilla)
 		addItem(enlighter)
 		addItem(lootInterceptor)
 		addItem(hyperBucket)
 		addItem(manaMirrorImba)
 		addItem(invisibleFlameLens)
 		
-		(22..27).mapTo(list) {
-			ItemStack(ModItems.lens, 1, it)
+		(22..(21 + AlfheimClassTransformer.moreLenses)).forEach {
+			addItem(ModItems.lens, it)
 		}
+		
+		addItem(ModItems.lens, 5000)
 		
 		addItem(soulHorn)
 		addItem(soulHorn, 1)
@@ -371,10 +416,12 @@ object AlfheimTab: CreativeTabs("Alfheim") {
 		addItem(rodPortal)
 		addItem(rodClicker)
 		addItem(rodBlackHole)
+		addItem(rodRedstone)
+		addItem(corporeaRat)
 		addItem(rodGrass)
 		addItem(livingrockPickaxe)
-		addItem(manasteelHoe)
-		addItem(elementiumHoe)
+		addItem(terraHoe)
+		addItem(thunderChakram)
 		
 		addItem(elementalHelmet)
 		addItem(elementalChestplate)
@@ -386,6 +433,18 @@ object AlfheimTab: CreativeTabs("Alfheim") {
 		addItem(fenrirLeggings)
 		addItem(fenrirBoots)
 		addItem(fenrirClaws)
+		
+		addItem(snowHelmet)
+		addItem(snowChest)
+		addItem(snowLeggings)
+		addItem(snowBoots)
+		addItem(snowSword)
+		
+		addItem(volcanoHelmet)
+		addItem(volcanoChest)
+		addItem(volcanoLeggings)
+		addItem(volcanoBoots)
+		addItem(volcanoMace)
 		
 		addItem(elvoriumHelmet)
 		addItem(elvoriumChestplate)
@@ -410,6 +469,8 @@ object AlfheimTab: CreativeTabs("Alfheim") {
 		addItem(akashicRecords)
 		addItem(wireAxe)
 		addItem(trisDagger)
+		addItem(thrymAxe)
+		addItem(surtrSword)
 		
 		addBlock(lightningWood)
 		addBlock(netherWood)
@@ -461,11 +522,16 @@ object AlfheimTab: CreativeTabs("Alfheim") {
 			ItemBlockSpecialFlower.ofType(it)
 		}
 		
+		addBlock(rainbowFlowerFloating)
+		
 		if (AlfheimConfigHandler.enableMMO) addItem(paperBreak)
 		if (AlfheimConfigHandler.enableMMO) addItem(peacePipe)
 		
+		addItem(spawnEgg)
 		addItem(splashPotion)
 		addItem(fireGrenade)
+		
+		addBlock(airyVirus)
 		
 		addBlock(powerStone)
 		list.removeAt(list.size - 5)
@@ -491,6 +557,11 @@ object AlfheimTab: CreativeTabs("Alfheim") {
 		addBlock(shrineLight)
 		addBlock(shrineGlass)
 		addBlock(shrinePanel)
+		
+		addBlock(niflheimBlock)
+		addBlock(stalactite)
+		addBlock(stalagmite)
+		addBlock(icicle)
 		
 		addBlock(elvenOre)
 		
@@ -522,6 +593,7 @@ object AlfheimTab: CreativeTabs("Alfheim") {
 		addBlock(dreamwoodBarkFenceGate)
 		addBlock(dreamwoodFenceGate)
 		
+		addBlock(yggDecor)
 		addBlock(dwarfPlanks)
 		addBlock(dwarfTrapDoor)
 		

@@ -29,7 +29,6 @@ class BlockManaInfuser: BlockContainerMod(Material.rock), ILexiconable, IWandHUD
 		setStepSound(soundTypeStone)
 	}
 	
-	override fun createNewTileEntity(world: World, meta: Int) = TileManaInfuser()
 	override fun registerBlockIcons(reg: IIconRegister) {
 		val def = arrayOf(IconHelper.forBlock(reg, this, "Bottom"),
 						  IconHelper.forBlock(reg, this, "Top"),
@@ -79,6 +78,8 @@ class BlockManaInfuser: BlockContainerMod(Material.rock), ILexiconable, IWandHUD
 		(world.getTileEntity(x, y, z) as TileManaInfuser).onWanded(player)
 		return true
 	}
+	
+	override fun createNewTileEntity(world: World, meta: Int) = TileManaInfuser()
 	
 	companion object {
 		

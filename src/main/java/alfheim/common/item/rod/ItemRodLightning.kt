@@ -2,19 +2,20 @@ package alfheim.common.item.rod
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
-import alfheim.AlfheimCore
 import alfheim.api.item.ColorOverrideHelper
 import alfheim.api.lib.LibResourceLocations
 import alfheim.client.core.helper.InterpolatedIconHelper
-import alfheim.common.core.handler.AlfheimConfigHandler
+import alfheim.client.render.world.VisualEffectHandlerClient
+import alfheim.common.core.handler.*
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
+import alfheim.common.core.helper.*
 import alfheim.common.item.ItemMod
 import alfheim.common.item.equipment.bauble.ItemPriestEmblem
-import alfheim.common.network.MessageEffectLightning
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.renderer.texture.IIconRegister
-import net.minecraft.command.IEntitySelector
 import net.minecraft.entity.*
+import net.minecraft.entity.boss.IBossDisplayData
 import net.minecraft.entity.effect.EntityLightningBolt
 import net.minecraft.entity.monster.IMob
 import net.minecraft.entity.player.*
@@ -28,40 +29,12 @@ import vazkii.botania.api.item.*
 import vazkii.botania.api.mana.*
 import vazkii.botania.common.Botania
 import vazkii.botania.common.core.helper.ItemNBTHelper
-import vazkii.botania.common.entity.EntityDoppleganger
 import vazkii.botania.common.item.relic.ItemThorRing
 import java.awt.Color
 import java.util.*
 import vazkii.botania.common.core.helper.Vector3 as Bector3
 
 open class ItemRodLightning(name: String = "rodLightning"): ItemMod(name), IManaUsingItem, IAvatarWieldable {
-	
-	private val COST_AVATAR = 150
-	
-	val COST = 300
-	val PRIEST_COST = 200
-	val THOR_COST = 700
-	val PROWESS_COST = 50
-	
-	val SPEED = 90
-	val PRIEST_SPEEDUP = 30
-	val THOR_SPEEDUP = 10
-	val PROWESS_SPEEDUP = 10
-	
-	val DAMAGE = 8f
-	val PRIEST_POWERUP = 3f
-	val THOR_POWERUP = 7f
-	val PROWESS_POWERUP = 2f
-	
-	val CHAINRANGE = 7f
-	val PRIEST_RANGEUP = -1f
-	val THOR_RANGEUP = 1f
-	val PROWESS_RANGEUP = 1f
-	
-	val TARGETS = 4
-	val PRIEST_TARGETS = 2
-	val THOR_TARGETS = -2
-	val PROWESS_TARGETS = 1
 	
 	init {
 		maxStackSize = 1
@@ -89,52 +62,47 @@ open class ItemRodLightning(name: String = "rodLightning"): ItemMod(name), IMana
 	}
 	
 	override fun onUsingTick(stack: ItemStack, player: EntityPlayer, count: Int) {
-		if (count != getMaxItemUseDuration(stack) && !player.worldObj.isRemote) {
-			
-			val thor = (ItemThorRing.getThorRing(player) != null)
-			val priest = (ItemPriestEmblem.getEmblem(0, player) != null)
-			val prowess = IManaProficiencyArmor.Helper.hasProficiency(player)
-			
-			val color = ColorOverrideHelper.getColor(player, 0x0079C4)
-			val innerColor = Color(color).brighter().brighter().rgb
-			
-			if (ManaItemHandler.requestManaExactForTool(stack, player, getCost(thor, prowess, priest), false)) {
-				val target = getTarget(player.worldObj, player, ItemNBTHelper.getInt(stack, "target", -1))
-				if (target != null) {
-					ItemNBTHelper.setInt(stack, "target", target.entityId)
-					
-					val shockspeed = getSpeed(thor, prowess, priest)
-					val damage = getDamage(thor, prowess, priest)
-					
-					val targetCenter = Vector3.fromEntityCenter(target).add(0.0, 0.75, 0.0).add(Vector3(target.lookVec).mul(-0.25))
-					val targetShift = targetCenter.copy().add(getHeadOrientation(target))
-					
-					val playerCenter = Vector3.fromEntityCenter(player).add(0.0, 0.75, 0.0).add(Vector3(player.lookVec).mul(-0.25))
-					val playerShift = playerCenter.copy().add(getHeadOrientation(player))
-					
-					if (count % (shockspeed / 10) == 0) {
-						AlfheimCore.network.sendToDimension(MessageEffectLightning(targetCenter, targetShift, 2f, color, innerColor), player.dimension)
-						AlfheimCore.network.sendToDimension(MessageEffectLightning(playerCenter, playerShift, 2f, color, innerColor), player.dimension)
-					}
-					
-					if (count % shockspeed == 0) {
-						if (AlfheimConfigHandler.realLightning && thor) {
-							if (spawnLightning(player.worldObj, target.posX, target.posY, target.posZ)) {
-								if (ManaItemHandler.requestManaExactForTool(stack, player, getCost(thor, prowess, priest), true))
-									target.attackEntityFrom(DamageSource.causePlayerDamage(player), damage)
-							}
-						} else {
-							if (ManaItemHandler.requestManaExactForTool(stack, player, getCost(thor, prowess, priest), true)) {
-								target.attackEntityFrom(DamageSource.causePlayerDamage(player), damage)
-								AlfheimCore.network.sendToDimension(MessageEffectLightning(playerCenter, Vector3.fromEntityCenter(target), 1f, color, innerColor), player.dimension)
-								player.worldObj.playSoundEffect(target.posX, target.posY, target.posZ, "ambient.weather.thunder", 100f, 0.8f + player.worldObj.rand.nextFloat() * 0.2f)
-							}
-							chainLightning(stack, target, player, thor, prowess, priest, color, innerColor)
-						}
-					}
-				}
-			}
+		if (count == getMaxItemUseDuration(stack) || player.worldObj.isRemote) return
+		val thor = (!RagnarokHandler.blockedPowers[0] && ItemThorRing.getThorRing(player) != null)
+		val priest = (!RagnarokHandler.blockedPowers[0] && ItemPriestEmblem.getEmblem(0, player) != null)
+		val prowess = IManaProficiencyArmor.Helper.hasProficiency(player)
+		
+		val color = ColorOverrideHelper.getColor(player, 0x0079C4)
+		val innerColor = Color(color).brighter().brighter().rgb
+		
+		if (!ManaItemHandler.requestManaExactForTool(stack, player, getCost(thor, prowess, priest), false)) return
+		val target = getTarget(player.worldObj, player, ItemNBTHelper.getInt(stack, "target", -1)) ?: return
+		ItemNBTHelper.setInt(stack, "target", target.entityId)
+		
+		val shockspeed = getSpeed(thor, prowess, priest)
+		val damage = getDamage(thor, prowess, priest)
+		
+		val (x1, y1, z1) = Vector3.fromEntityCenter(target).add(0.0, 0.75, 0.0).add(Vector3(target.lookVec).mul(-0.25))
+		val (x2, y2, z2) = Vector3(x1, y1, z1).add(getHeadOrientation(target))
+		
+		val (x3, y3, z3) = Vector3.fromEntityCenter(player).add(0.0, 0.75, 0.0).add(Vector3(player.lookVec).mul(-0.25))
+		val (x4, y4, z4) =  Vector3(x3, y3, z3).add(getHeadOrientation(player))
+		
+		if (count % (shockspeed / 10) == 0) {
+			VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.LIGHTNING, player.dimension, x1, y1, z1, x2, y2, z2, 2.0, color.D, innerColor.D)
+			VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.LIGHTNING, player.dimension, x3, y3, z3, x4, y4, z4, 2.0, color.D, innerColor.D)
 		}
+		
+		if (count % shockspeed != 0) return
+		if (AlfheimConfigHandler.realLightning && thor) {
+			if (spawnLightning(player.worldObj, target.posX, target.posY, target.posZ)) {
+				if (ManaItemHandler.requestManaExactForTool(stack, player, getCost(true, prowess, priest), true))
+					target.attackEntityFrom(DamageSource.causePlayerDamage(player).setTo(ElementalDamage.ELECTRIC), damage)
+			}
+			return
+		}
+		if (ManaItemHandler.requestManaExactForTool(stack, player, getCost(thor, prowess, priest), true)) {
+			target.attackEntityFrom(DamageSource.causePlayerDamage(player).setTo(ElementalDamage.ELECTRIC), damage)
+			val (x5, y5, z5) = Vector3.fromEntityCenter(target)
+			VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.LIGHTNING, player.dimension, x3, y3, z3, x5, y5, z5, 1.0, color.D, innerColor.D)
+			player.worldObj.playSoundEffect(target.posX, target.posY, target.posZ, "ambient.weather.thunder", 100f, 0.8f + player.worldObj.rand.nextFloat() * 0.2f)
+		}
+		chainLightning(stack, target, player, thor, prowess, priest, color, innerColor)
 	}
 	
 	fun getCost(thor: Boolean, prowess: Boolean, priest: Boolean) =
@@ -158,9 +126,7 @@ open class ItemRodLightning(name: String = "rodLightning"): ItemMod(name), IMana
 	}
 	
 	fun getTarget(world: World, player: EntityPlayer, trial_target: Int, range: Float = 12f): EntityLivingBase? {
-		val selector = IEntitySelector { e -> e is IMob && e !is EntityPlayer && e !is EntityPlayerMP }
-		
-		val potential = world.selectEntitiesWithinAABB(EntityLivingBase::class.java, AxisAlignedBB.getBoundingBox(player.posX - range, player.posY - range, player.posZ - range, player.posX + range, player.posY + range, player.posZ + range), selector)
+		val potential = selectEntitiesWithinAABB(world, EntityLivingBase::class.java, player.boundingBox(range)) { it is IMob && it !is IBossDisplayData }
 		
 		if (trial_target >= 0) {
 			val target = world.getEntityByID(trial_target)
@@ -174,11 +140,11 @@ open class ItemRodLightning(name: String = "rodLightning"): ItemMod(name), IMana
 		if (potential.size > 0)
 			while (potential.size > 0) {
 				val i = world.rand.nextInt(potential.size)
-				if (!(potential[i] as EntityLivingBase).isDead) {
-					return potential[i] as EntityLivingBase
+				if (!potential[i].isDead) {
+					return potential[i]
 				}
 				
-				potential.remove(i)
+				potential.removeAt(i)
 			}
 		
 		return null
@@ -192,24 +158,27 @@ open class ItemRodLightning(name: String = "rodLightning"): ItemMod(name), IMana
 			
 			val alreadyTargetedEntities = ArrayList<Entity>()
 			val lightningSeed = ItemNBTHelper.getLong(stack, "lightningSeed", 0L)
-			val selector = IEntitySelector { e -> e is IMob && e !is EntityPlayer && e !is EntityPlayerMP && !alreadyTargetedEntities.contains(e) }
 			val rand = Random(lightningSeed)
-			var lightningSource: EntityLivingBase = entity
+			var lightningSource = entity
 			
 			for (i in 0..targets) {
-				val entities = entity.worldObj.getEntitiesWithinAABBExcludingEntity(lightningSource, AxisAlignedBB.getBoundingBox(lightningSource.posX - range, lightningSource.posY - range, lightningSource.posZ - range, lightningSource.posX + range, lightningSource.posY + range, lightningSource.posZ + range), selector)
-				if (entities.isEmpty()) {
-					break
+				val entities = selectEntitiesWithinAABB(entity.worldObj, Entity::class.java, lightningSource.boundingBox(range)) {
+					it is IMob && it !is EntityPlayer && !alreadyTargetedEntities.contains(it)
 				}
+				entities.remove(lightningSource)
+				if (entities.isEmpty()) break
 				
 				val target = entities[rand.nextInt(entities.size)] as EntityLivingBase
 				if (attacker != null && attacker is EntityPlayer) {
-					target.attackEntityFrom(DamageSource.causePlayerDamage(attacker as EntityPlayer?), dmg)
+					target.attackEntityFrom(DamageSource.causePlayerDamage(attacker as EntityPlayer?).setTo(ElementalDamage.ELECTRIC), dmg)
 				} else {
-					target.attackEntityFrom(DamageSource.causeMobDamage(attacker), dmg)
+					target.attackEntityFrom(DamageSource.causeMobDamage(attacker).setTo(ElementalDamage.ELECTRIC), dmg)
 				}
 				
-				AlfheimCore.network.sendToDimension(MessageEffectLightning(Vector3.fromEntityCenter(lightningSource), Vector3.fromEntityCenter(target), 1f, color, innerColor), entity.dimension)
+				val (x1, y1, z1) = Vector3.fromEntityCenter(lightningSource)
+				val (x2, y2, z2) = Vector3.fromEntityCenter(target)
+				
+				VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.LIGHTNING, entity.dimension, x1, y1, z1, x2, y2, z2, 1.0, color.D, innerColor.D)
 				alreadyTargetedEntities.add(target)
 				lightningSource = target
 				--dmg
@@ -247,10 +216,7 @@ open class ItemRodLightning(name: String = "rodLightning"): ItemMod(name), IMana
 		val innerColor = Color(color).brighter().brighter().rgb
 		
 		if (tile.currentMana >= COST_AVATAR && tile.isEnabled && tile.elapsedFunctionalTicks % 10 == 0) {
-			val selector = IEntitySelector { e -> (e is EntityLivingBase) && e !is EntityPlayer && e !is EntityPlayerMP && e !is EntityDoppleganger }
-			
-			val entities = world.selectEntitiesWithinAABB(EntityLivingBase::class.java, AxisAlignedBB.getBoundingBox((te.xCoord - range).D, (te.yCoord - range).D,
-																													 (te.zCoord - range).D, (te.xCoord + range).D, (te.yCoord + range).D, (te.zCoord + range).D), selector)
+			val entities = selectEntitiesWithinAABB(world, EntityLivingBase::class.java, te.boundingBox(range)) { it !is EntityPlayer && it !is IBossDisplayData }
 			
 			if (entities.size == 0) return
 			
@@ -270,8 +236,8 @@ open class ItemRodLightning(name: String = "rodLightning"): ItemMod(name), IMana
 				while (entities.size > 0) {
 					val i = world.rand.nextInt(entities.size)
 					
-					if (entities[i] is EntityLivingBase && entities[i] is IMob && entities[i] !is EntityPlayer && entities[i] !is EntityPlayerMP) {
-						val entity: EntityLivingBase = entities[i] as EntityLivingBase
+					if (entities[i] is IMob && entities[i] !is EntityPlayer && entities[i] !is EntityPlayerMP) {
+						val entity: EntityLivingBase = entities[i]
 						if (!entity.isDead) {
 							target = entity
 							break
@@ -299,7 +265,7 @@ open class ItemRodLightning(name: String = "rodLightning"): ItemMod(name), IMana
 				
 				if (tile.elapsedFunctionalTicks % 100 == 0) {
 					
-					target.attackEntityFrom(DamageSource.causeMobDamage(null), DAMAGE)
+					target.attackEntityFrom(DamageSource.causeMobDamage(null).setTo(ElementalDamage.ELECTRIC), DAMAGE)
 					
 					if (!world.isRemote) tile.recieveMana(-COST_AVATAR)
 					
@@ -318,4 +284,34 @@ open class ItemRodLightning(name: String = "rodLightning"): ItemMod(name), IMana
 	}
 	
 	override fun getOverlayResource(tile: IAvatarTile, stack: ItemStack) = LibResourceLocations.avatarLightning
+	
+	companion object {
+		
+		const val COST_AVATAR = 150
+		
+		const val COST = 300
+		const val PRIEST_COST = 200
+		const val THOR_COST = 700
+		const val PROWESS_COST = 50
+		
+		const val SPEED = 90
+		const val PRIEST_SPEEDUP = 30
+		const val THOR_SPEEDUP = 10
+		const val PROWESS_SPEEDUP = 10
+		
+		const val DAMAGE = 8f
+		const val PRIEST_POWERUP = 3f
+		const val THOR_POWERUP = 7f
+		const val PROWESS_POWERUP = 2f
+		
+		const val CHAINRANGE = 7f
+		const val PRIEST_RANGEUP = -1f
+		const val THOR_RANGEUP = 1f
+		const val PROWESS_RANGEUP = 1f
+		
+		const val TARGETS = 4
+		const val PRIEST_TARGETS = 2
+		const val THOR_TARGETS = -2
+		const val PROWESS_TARGETS = 1
+	}
 }

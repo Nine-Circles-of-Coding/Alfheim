@@ -11,7 +11,6 @@ import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
 import net.minecraft.world.World
 import net.minecraft.world.gen.feature.WorldGenerator
-import net.minecraftforge.client.event.sound.PlaySoundEvent17
 import net.minecraftforge.event.terraingen.TerrainGen
 import java.util.*
 
@@ -41,9 +40,9 @@ class BlockSealingSapling: BlockColoredSapling(name = "sealingSapling"), ISoundS
 		}
 	}
 	
-	override fun canSilence(world: World, x: Int, y: Int, z: Int, dist: Double, soundEvent: PlaySoundEvent17) = dist <= 8
+	override fun canSilence(world: World, x: Int, y: Int, z: Int, dist: Double) = dist <= 8
 	
-	override fun getVolumeMultiplier(world: World, x: Int, y: Int, z: Int, dist: Double, soundEvent: PlaySoundEvent17) = 0.5f
+	override fun getVolumeMultiplier(world: World, x: Int, y: Int, z: Int, dist: Double) = 0.5f
 	
 	override fun canGrowHere(block: Block) = block.material == Material.ground || block.material == Material.grass
 	

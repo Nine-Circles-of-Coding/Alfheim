@@ -74,7 +74,7 @@ class BlockDreamSapling: BlockBush(), IGrowable, ILexiconable, IFuelHandler {
 	 */
 	override fun func_149852_a(world: World, rand: Random, x: Int, y: Int, z: Int) = world.rand.nextDouble() < 0.45
 	
-	/** Grow block  */
+	/** Grow block */
 	override fun func_149853_b(world: World, rand: Random, x: Int, y: Int, z: Int) {
 		grow(world, x, y, z, rand)
 	}

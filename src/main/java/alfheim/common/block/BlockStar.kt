@@ -2,7 +2,7 @@ package alfheim.common.block
 
 import alexsocol.asjlib.*
 import alfheim.common.block.base.BlockContainerMod
-import alfheim.common.block.tile.TileEntityStar
+import alfheim.common.block.tile.TileStar
 import alfheim.common.item.AlfheimItems
 import alfheim.common.item.block.ItemStarPlacer
 import alfheim.common.lexicon.AlfheimLexiconData
@@ -35,7 +35,7 @@ class BlockStar(name: String = "starBlock"): BlockContainerMod(Material.cloth), 
 	
 	@Optional.Method(modid = "easycoloredlights")
 	override fun getLightValue(world: IBlockAccess, x: Int, y: Int, z: Int) =
-		(world.getTileEntity(x, y, z) as TileEntityStar).getLightColor()
+		(world.getTileEntity(x, y, z) as TileStar).getLightColor()
 	
 	override fun registerBlockIcons(reg: IIconRegister) = Unit
 	
@@ -63,7 +63,7 @@ class BlockStar(name: String = "starBlock"): BlockContainerMod(Material.cloth), 
 	override fun onBlockHarvested(world: World, x: Int, y: Int, z: Int, meta: Int, player: EntityPlayer?) {
 		if (player?.capabilities?.isCreativeMode != true) {
 			val te = world.getTileEntity(x, y, z)
-			if (te is TileEntityStar) {
+			if (te is TileStar) {
 				val f = 0.5
 				
 				val color = te.getColor()
@@ -75,7 +75,7 @@ class BlockStar(name: String = "starBlock"): BlockContainerMod(Material.cloth), 
 				entityitem.motionX = (world.rand.nextGaussian().F * f3).D
 				entityitem.motionY = (world.rand.nextGaussian().F * f3 + 0.2f).D
 				entityitem.motionZ = (world.rand.nextGaussian().F * f3).D
-				world.spawnEntityInWorld(entityitem)
+				entityitem.spawn()
 			}
 		}
 		
@@ -84,7 +84,7 @@ class BlockStar(name: String = "starBlock"): BlockContainerMod(Material.cloth), 
 	
 	override fun getPickBlock(target: MovingObjectPosition, world: World, x: Int, y: Int, z: Int, player: EntityPlayer): ItemStack? {
 		val te = world.getTileEntity(x, y, z)
-		if (te is TileEntityStar) {
+		if (te is TileStar) {
 			return ItemStarPlacer.colorStack(te.getColor())
 		}
 		return super.getPickBlock(target, world, x, y, z, player)
@@ -92,5 +92,5 @@ class BlockStar(name: String = "starBlock"): BlockContainerMod(Material.cloth), 
 	
 	override fun getEntry(p0: World?, p1: Int, p2: Int, p3: Int, p4: EntityPlayer?, p5: ItemStack?) = AlfheimLexiconData.frozenStar
 	
-	override fun createNewTileEntity(world: World?, meta: Int) = TileEntityStar()
+	override fun createNewTileEntity(world: World?, meta: Int) = TileStar()
 }

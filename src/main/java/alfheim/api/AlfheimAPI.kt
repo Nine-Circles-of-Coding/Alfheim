@@ -8,63 +8,76 @@ import alfheim.api.item.ThrowableCollidingItem
 import alfheim.api.lib.LibResourceLocations
 import alfheim.api.spell.SpellBase
 import alfheim.api.trees.*
-import alfheim.common.block.tile.TileAnomalyHarvester
+import alfheim.api.world.domain.Domain
 import com.google.common.collect.Lists
 import net.minecraft.block.Block
-import net.minecraft.init.Items
+import net.minecraft.init.*
 import net.minecraft.item.ItemStack
+import net.minecraft.tileentity.TileEntity
+import net.minecraft.util.*
 import net.minecraftforge.common.util.EnumHelper
 import vazkii.botania.api.recipe.RecipeElvenTrade
-import java.util.*
 
 @Suppress("unused")
 object AlfheimAPI {
 	
-	val ElvoriumArmor = EnumHelper.addArmorMaterial("ELVORIUM", 50, intArrayOf(5, 10, 8, 5), 30)!!
-	val elvoriumToolMaterial = EnumHelper.addToolMaterial("ELVORIUM", 4, 2400, 9.5f, 3f, 30)!!
-	val ElementalArmor = EnumHelper.addArmorMaterial("ELEMENTAL", 20, intArrayOf(2, 9, 5, 2), 20)!!
-	val mauftriumToolmaterial = EnumHelper.addToolMaterial("REALITY", 10, 9000, 3f, 8f, 40)!!
+	val elvoriumArmor = EnumHelper.addArmorMaterial("ALFHEIM_ELVORIUM", 50, intArrayOf(5, 8, 7, 4), 30)!!
+	val elementalArmor = EnumHelper.addArmorMaterial("ALFHEIM_ELEMENTAL", 20, intArrayOf(2, 9, 5, 2), 20)!!
+	
+	val elvoriumToolMaterial = EnumHelper.addToolMaterial("ALFHEIM_ELVORIUM", 4, 2400, 9.5f, 3f, 30)!!
+	val mauftriumToolmaterial = EnumHelper.addToolMaterial("ALFHEIM_MAUFTRIUM", 10, 9000, 3f, 8f, 40)!!
 	
 	// relic
-	val EXCALIBER = EnumHelper.addToolMaterial("EXCALIBER", 3, -1, 6.2f, 6f, 40)!!
-	val FENRIR = EnumHelper.addToolMaterial("FENRIR", 0, 2000, 0f, 3.0f, 14)!!
-	var RUNEAXE = EnumHelper.addToolMaterial("RUNEAXE", 4, 1561, 8f, 2f, 50)!!
-	val SOUL = EnumHelper.addToolMaterial("SOUL", -1, -1, -1f, -1f, -1)!! // ragnarok sword
+	val EXCALIBER = EnumHelper.addToolMaterial("ALFHEIM_EXCALIBER", 3, -1, 6.2f, 6f, 40)!!
+	val FENRIR = EnumHelper.addToolMaterial("ALFHEIM_FENRIR", 0, 2000, 0f, 3.0f, 14)!!
+	var RUNEAXE = EnumHelper.addToolMaterial("ALFHEIM_RUNEAXE", 4, 1561, 10f, 2f, 50)!!
+	val SOUL = EnumHelper.addToolMaterial("ALFHEIM_SOUL", -1, -1, -1f, -1f, -1)!! // ragnarok sword
+	val SURTR = EnumHelper.addToolMaterial("ALFHEIM_SURTR", 0, 1, 0f, 4f, 0)!!
+	val THRYM = EnumHelper.addToolMaterial("ALFHEIM_THRYM", 0, 1, 0f, 4f, 0)!!
 	
-	/** List of [RecipeElvenTrade] outputs banned for re'trading in Alfheim trade portal  */
+	val mauftriumRarity = EnumHelper.addRarity("ALFHEIM_MAUFTRIUM", EnumChatFormatting.GOLD, "Mauftrium")!!
+	val ragnarokRarity = EnumHelper.addRarity("ALFHEIM_RAGNAROK", EnumChatFormatting.DARK_RED, "Ragnarok")!!
+	
+	/** List of [RecipeElvenTrade] outputs banned for re-trading in Alfheim trade portal */
 	val bannedRetrades = ArrayList<ItemStack>()
 	
-	/** List of recipies for mana infuser  */
+	/** List of recipes for mana infuser */
 	val manaInfuserRecipes = ArrayList<RecipeManaInfuser>()
 	
-	/** List of all pink items with their relative pinkness  */
+	/** List of all pink items with their relative pinkness */
 	val pinkness = HashMap<ItemStack, Int>()
 	
-	/** List of all spells for all races  */
+	/** List of all spells for all races */
 	val spells = HashSet<SpellBase>()
 	
 	/** Map of elven spells associated with their race (affinity), sorted by name  */
 	val spellMapping = HashMap<EnumRace, HashSet<SpellBase>>()
 	
-	/** Map of anomaly types and their subtiles, specifying their behavior  */
-	val anomalies = HashMap<String, Class<out SubTileAnomalyBase>>()
+	/** Map of anomaly data  */
+	val anomalies = HashMap<String, AnomalyData>()
 	
-	/** Map of anomaly types and their behavior for use in [TileAnomalyHarvester] */
-	val anomalyBehaviors = HashMap<String, ((TileAnomalyHarvester) -> Unit)>()
-	
-	/** Map of anomaly types and their subtile instances, used for render :o  */
-	val anomalyInstances = HashMap<String, SubTileAnomalyBase>()
+	/** Map of anomaly behaviors for use in [Anomaly Harvester][alfheim.common.block.tile.TileAnomalyHarvester] */
+	val anomalyBehaviors = HashMap<String, ((TileEntity) -> Unit)>()
 	
 	/** Petronia fuels map */
 	val fuelMap = HashMap<String, Pair<Int, Int>>()
 	
 	/** Ores for Orechid Endium */
-	var oreWeightsEnd = HashMap<String, Int>()
+	val oreWeightsEnd = HashMap<String, Int>()
 	
-	var treeRecipes: MutableList<RecipeTreeCrafting> = ArrayList()
-	var treeVariants: MutableList<IIridescentSaplingVariant> = ArrayList()
-	var collidingItemHashMap: MutableMap<String, ThrowableCollidingItem> = LinkedHashMap()
-	var fallbackTcl = ThrowableCollidingItem("shadowfox_fallback", ItemStack(Items.blaze_rod)) { _, _ -> }
+	/** Map of domains */
+	val domains = LinkedHashMap<String, Domain>()
+	
+	/** Set of blocks that can increase entity's sheer cold value */
+	val coldBlocks = mutableSetOf(Blocks.ice, Blocks.packed_ice, Blocks.snow)
+	
+	/** Set of blocks that can reduce entity's sheer cold value */
+	val warmBlocks = mutableSetOf(Blocks.fire, Blocks.lava, Blocks.flowing_lava, Blocks.lit_furnace, Blocks.torch, Blocks.lit_pumpkin)
+	
+	val treeRecipes: MutableList<RecipeTreeCrafting> = ArrayList()
+	val treeVariants: MutableList<IIridescentSaplingVariant> = ArrayList()
+	val collidingItemHashMap: MutableMap<String, ThrowableCollidingItem> = LinkedHashMap()
+	val fallbackTcl = ThrowableCollidingItem("${ModInfo.MODID}_fallback", ItemStack(Items.blaze_rod)) { _, _ -> }
 	
 	fun addInfuserRecipe(rec: RecipeManaInfuser?): RecipeManaInfuser? {
 		if (rec != null) manaInfuserRecipes.add(rec)
@@ -82,18 +95,18 @@ object AlfheimAPI {
 	
 	fun removeInfusionRecipe(result: ItemStack): RecipeManaInfuser? =
 		manaInfuserRecipes.indices
-			.firstOrNull { ItemStack.areItemStacksEqual(manaInfuserRecipes[it].output, result) }
+			.firstOrNull { ASJUtilities.isItemStackEqualCrafting(manaInfuserRecipes[it].output, result) }
 			?.let { manaInfuserRecipes.removeAt(it) }
 	
-	/** Remove `output` from Alfheim trade portal  */
+	/** Remove [output] from Alfheim trade portal  */
 	fun banRetrade(output: ItemStack) =
 		bannedRetrades.add(output)
 	
-	/** Check if `output` isn't banned to be obtained through Alfheim trade portal  */
+	/** Check if [output] isn't banned to be obtained through Alfheim trade portal  */
 	fun isRetradeable(output: ItemStack) =
-		bannedRetrades.none { ItemStack.areItemStacksEqual(output, it) }
+		bannedRetrades.none { ASJUtilities.isItemStackEqualCrafting(output, it) }
 	
-	/** Map a stack to it's pinkness. Also can override old values  */
+	/** Map a [pink] stack to it's pinkness [weight]. Also can override old values  */
 	fun addPink(pink: ItemStack, weight: Int) =
 		pinkness.put(pink, weight)
 	
@@ -121,9 +134,12 @@ object AlfheimAPI {
 		require(spell.race != EnumRace.HUMAN) { "Spell race must not be human (spell ${spell.name})" }
 		require(spell.race != EnumRace.ALV) { "Alv race is currently not supported (spell ${spell.name})" }
 		
-		if (spells.add(spell)) {
+		if (spell !in spells) {
+			spells.add(spell)
 			checkGet(spell.race).add(spell)
-			LibResourceLocations.add(spell.name)
+			
+			if (ASJUtilities.isClient)
+				LibResourceLocations.add(spell.name)
 		} else
 			ASJUtilities.warn("Trying to register spell ${spell.name} twice. Skipping.")
 		
@@ -161,48 +177,30 @@ object AlfheimAPI {
 	}
 	
 	/** Register anomaly [subtile] with unique [name] */
-	fun registerAnomaly(name: String, subtile: Class<out SubTileAnomalyBase>) {
-		if (anomalies.containsKey(name)) throw IllegalArgumentException("Anomaly \"$name\" is already registered")
-		anomalies[name] = subtile
+	fun registerAnomaly(name: String, subtile: Class<out SubTileAnomalyBase>, rarity: SubTileAnomalyBase.EnumAnomalyRarity, strip: Int, color: Int = 0xFFFFFF) {
+		if (anomalies.containsKey(name))
+			throw IllegalArgumentException("Anomaly \"$name\" is already registered")
 		
-		try {
-			anomalyInstances[name] = subtile.newInstance()
-		} catch (e: Throwable) {
-			ASJUtilities.error("Cannot instantiate anomaly subtile for ${subtile.canonicalName}", e)
-			throw IllegalArgumentException("Uninstantiatable anomaly subtile $subtile")
-		}
+		anomalies[name] = AnomalyData(subtile, rarity, strip, color)
 	}
 	
-	fun getAnomaly(name: String): Class<out SubTileAnomalyBase> = anomalies[name] ?: FallbackAnomaly::class.java
-	
-	fun getAnomalyInstance(name: String) = anomalyInstances[name] ?: FallbackAnomaly
+	fun getAnomaly(name: String) = anomalies[name] ?: fallbackAnomalyData
 	
 	fun registerFuel(name: String, burnTime: Int, manaPerTick: Int) {
 		fuelMap[name] = burnTime to manaPerTick
 	}
 	
 	/**
-	 * Maps an ore (ore dictionary key) to it's weight on the End world generation. This
-	 * is used for the Orechid Endium flower. Check the static block in the EndiumOrechidAPI class
-	 * to get the weights for the vanilla blocks.<br></br>
-	 * Alternatively get the values with the OreDetector mod:<br></br>
+	 * Maps an ore (ore dictionary key) to it's weight on the End world generation.
+	 * This is used for the Orechid Endium flower.
+	 * Alternatively get the values with the OreDetector mod:
 	 * https://gist.github.com/Vazkii/9493322
 	 *
 	 * Higher weight means higher chance
 	 */
 	fun addOreWeightEnd(ore: String, weight: Int) {
-//		addOreWeightEnd(ore, weight, false)
-		
 		oreWeightsEnd[ore] = weight
 	}
-	
-	// wtf was this
-//	fun addOreWeightEnd(ore: String, weight: Int, override: Boolean) {
-//		if (!override && ore.contains("Ender") && OreDictionary.getOres(ore.replace("Ender", "")).size == 0) return
-//		if (!override && ore.contains("End") && OreDictionary.getOres(ore.replace("End", "")).size == 0) return
-//
-//		oreWeightsEnd[ore] = weight
-//	}
 	
 	/**
 	 * Adds a tree crafting recipe to the registry.
@@ -212,6 +210,19 @@ object AlfheimAPI {
 	 */
 	fun addTreeRecipe(recipe: RecipeTreeCrafting) =
 		recipe.also { treeRecipes.add(it) }
+	
+	/**
+	 * Adds a tree crafting recipe with the specified parameters to the registry.
+	 *
+	 * @param mana   - The mana cost for the recipe.
+	 * @param out    - The block that is created from the recipe.
+	 * @param outTileId - The id for tile that may be loaded from out nbt
+	 * @param core   - The core block in center that will be changed.
+	 * @param inputs - The items used in the infusion.
+	 * @return The recipe that was added to the registry.
+	 */
+	fun addTreeRecipe(mana: Int, out: ItemStack, outTileId: String?, core: ItemStack, vararg inputs: Any) =
+		addTreeRecipe(RecipeTreeCrafting(mana, out, outTileId, core, *inputs))
 	
 	/**
 	 * Adds a tree crafting recipe with the specified parameters to the registry.
@@ -232,7 +243,7 @@ object AlfheimAPI {
 	
 	fun removeTreeRecipe(result: ItemStack): RecipeTreeCrafting? =
 		treeRecipes.indices
-			.firstOrNull { ItemStack.areItemStacksEqual(treeRecipes[it].output, result) }
+			.firstOrNull { ASJUtilities.isItemStackEqualCrafting(treeRecipes[it].output, result) }
 			?.let { treeRecipes.removeAt(it) }
 	
 	/**
@@ -316,51 +327,20 @@ object AlfheimAPI {
 	/**
 	 * Gets the variant for a given soil.
 	 *
-	 * @param soil - The block the sapling is placed on.
-	 * @param meta - The meta of the block the sapling is on.
+	 * @param soil The block the sapling is placed on.
+	 * @param meta The meta of the block the sapling is on.
 	 * @return The variant, if there is one.
 	 */
 	fun getTreeVariant(soil: Block, meta: Int) =
 		treeVariants.firstOrNull { it.matchesSoil(soil, meta) }
 	
-	object FallbackAnomaly: SubTileAnomalyBase() {
-		
+	private object FallbackAnomaly: SubTileAnomalyBase() {
 		override val targets: List<Any> = emptyList()
-		override val rarity = EnumAnomalityRarity.COMMON
-		override val strip = 31
 		override fun performEffect(target: Any) = Unit
 		override fun typeBits() = 0
 	}
 	
-	init {
-		addOreWeightEnd("oreEndCoal", 9000)
-		addOreWeightEnd("oreEndCopper", 4700)
-		addOreWeightEnd("oreEndDiamond", 500)
-		addOreWeightEnd("oreEndEmerald", 500)
-		addOreWeightEnd("oreEndGold", 3635)
-		addOreWeightEnd("oreEndIron", 5790)
-		addOreWeightEnd("oreEndLapis", 3250)
-		addOreWeightEnd("oreEndLead", 2790)
-		addOreWeightEnd("oreEndNickel", 1790)
-		addOreWeightEnd("oreEndPlatinum", 350)
-		addOreWeightEnd("oreEndRedstone", 5600)
-		addOreWeightEnd("oreEndSilver", 1550)
-		addOreWeightEnd("oreEndSteel", 1690)
-		addOreWeightEnd("oreEndMithril", 1000)
-		addOreWeightEnd("oreEndCertusQuartz", 2000)
-		addOreWeightEnd("oreEndChargedCertusQuartz", 950)
-		addOreWeightEnd("oreEndUranium", 2000)
-		addOreWeightEnd("oreEndArdite", 1000)
-		addOreWeightEnd("oreEndCobalt", 1000)
-		addOreWeightEnd("oreEndOsmium", 1000)
-		addOreWeightEnd("oreEndIridium", 850)
-		addOreWeightEnd("oreEndYellorite", 3000)
-		addOreWeightEnd("oreClathrateEnder", 800)
-		addOreWeightEnd("oreEndProsperity", 200)
-		addOreWeightEnd("oreEndTin", 3750)
-		addOreWeightEnd("oreEndInferium", 500)
-		addOreWeightEnd("oreEndBiotite", 500) // OreDictionary.registerOre("oreEndBiotite", Biotite.biotite_ore)
-		addOreWeightEnd("oreEndDraconium", 200) // OreDictionary.registerOre("oreEndDraconium", ItemStack(DEFeatures.draconiumOre, 1, 2))
-		addOreWeightEnd("oreDraconiumEnd", 200) // OreDictionary.registerOre("oreDraconiumEnd", ItemStack(DEFeatures.draconiumOre, 1, 2))
-	}
+	private val fallbackAnomalyData = AnomalyData(FallbackAnomaly::class.java, SubTileAnomalyBase.EnumAnomalyRarity.COMMON, 0, 0)
+	
+	data class AnomalyData(val subtileClass: Class<out SubTileAnomalyBase>, val rarity: SubTileAnomalyBase.EnumAnomalyRarity, val strip: Int, val color: Int)
 }

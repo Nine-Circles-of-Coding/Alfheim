@@ -61,10 +61,10 @@ tc.research_name.ROD_alfheimSpiritual_staff=大地之魂杖芯
 tc.research_text.ROD_alfheimSpiritual_staff=[ALF] 彩虹再生装置
 tc.research_page.ROD_alfheimSpiritual_staff.1=盖亚守护者在被杀死后,其灵魂将会被凝聚成实体形式. 利用这些实体灵魂制作杖芯会产生意想不到的效果,盖亚的灵魂在主动的收集周围的元素,并将其存储在杖芯内. <BR>该杖芯可以存储每种vis各85点,事实上这个数量有点低于预期,但是目前也没有什么好办法将它的潜力完全发挥.
 
-tc.research_name.alfheimTransElementium=嬗变术:源质
-tc.research_text.alfheimTransElementium=将金属炼化为源质钢
-tc.research_page.alfheimTransElementium.1=你已经找到了一种提取&5Metallum&0并将其转变为源质钢的方法
+tc.research_name.alfheimTRANSELEMENTIUM=嬗变术:源质
+tc.research_text.alfheimTRANSELEMENTIUM=将金属炼化为源质钢
+tc.research_page.alfheimTRANSELEMENTIUM.1=你已经找到了一种提取&5Metallum&0并将其转变为源质钢的方法
 
-tc.research_name.alfheimPureElementium=晶簇化:源质
-tc.research_text.alfheimPureElementium=将源质矿结晶为原矿簇
-tc.research_page.alfheimPureElementium.1=原矿簇是最稀有且纯净的聚合物,你发现一种方法能提纯并聚合源质矿从而得到源质晶簇.<BR>冶炼这些矿簇的时候可以得到两倍的源质钢
+tc.research_name.alfheimPUREELEMENTIUM=晶簇化:源质
+tc.research_text.alfheimPUREELEMENTIUM=将源质矿结晶为原矿簇
+tc.research_page.alfheimPUREELEMENTIUM.1=原矿簇是最稀有且纯净的聚合物,你发现一种方法能提纯并聚合源质矿从而得到源质晶簇.<BR>冶炼这些矿簇的时候可以得到两倍的源质钢

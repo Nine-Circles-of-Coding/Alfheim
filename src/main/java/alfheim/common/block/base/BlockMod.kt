@@ -18,6 +18,7 @@ open class BlockMod(material: Material): Block(material) {
 	
 	init {
 		setCreativeTab(AlfheimTab)
+		
 		if (ASJUtilities.isClient && isInterpolated())
 			MinecraftForge.EVENT_BUS.register(this)
 	}
@@ -25,6 +26,7 @@ open class BlockMod(material: Material): Block(material) {
 	override fun setBlockName(name: String): Block {
 		if (shouldRegisterInNameSet())
 			GameRegistry.registerBlock(this, ItemBlockLeavesMod::class.java, name)
+		
 		return super.setBlockName(name)
 	}
 	

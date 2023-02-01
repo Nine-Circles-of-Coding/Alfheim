@@ -5,7 +5,9 @@ import alexsocol.asjlib.render.ASJRenderHelper
 import alfheim.api.ModInfo
 import alfheim.client.core.helper.IconHelper
 import alfheim.client.model.armor.ModelFenrirArmor
-import alfheim.common.core.handler.AlfheimConfigHandler
+import alfheim.common.core.handler.*
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
+import alfheim.common.core.helper.ContributorsPrivacyHelper
 import alfheim.common.core.util.AlfheimTab
 import alfheim.common.item.AlfheimItems
 import alfheim.common.item.equipment.tool.ItemFenrirClaws
@@ -23,21 +25,33 @@ import net.minecraft.util.*
 import net.minecraftforge.event.entity.living.LivingAttackEvent
 import vazkii.botania.api.mana.IManaDiscountArmor
 import vazkii.botania.client.lib.LibResources
-import vazkii.botania.common.core.handler.ConfigHandler
 import vazkii.botania.common.item.equipment.armor.manasteel.ItemManasteelArmor
 import java.util.*
+import kotlin.math.min
 
 open class ItemFenrirArmor(slot: Int, name: String): ItemManasteelArmor(slot, name), IManaDiscountArmor {
 	
 	lateinit var overlay: IIcon
+	lateinit var modelsGedeon: Array<ModelBiped>
 	
 	init {
 		creativeTab = AlfheimTab
 	}
 	
+	override fun getArmorModelForSlot(entity: EntityLivingBase?, stack: ItemStack?, slot: Int): ModelBiped? {
+		if (entity is EntityPlayer && ContributorsPrivacyHelper.isCorrect(entity, "GedeonGrays")) {
+			if (!::modelsGedeon.isInitialized) modelsGedeon = Array(4) { ModelFenrirArmor(it, true) }
+			return modelsGedeon[slot]
+		}
+		
+		return super.getArmorModelForSlot(entity, stack, slot)
+	}
+	
+	// make flat model texture
 	@SideOnly(Side.CLIENT)
 	override fun provideArmorModelForSlot(stack: ItemStack?, slot: Int): ModelBiped {
-		models[slot] = if (AlfheimConfigHandler.minimalGraphics) ModelBiped() else ModelFenrirArmor(slot)
+//		models[slot] = if (ConfigHandler.enableArmorModels) ModelBiped() else ModelFenrirArmor(slot)
+		models[slot] = ModelFenrirArmor(slot)
 		return models[slot]
 	}
 	
@@ -45,18 +59,21 @@ open class ItemFenrirArmor(slot: Int, name: String): ItemManasteelArmor(slot, na
 		return if (hasPhantomInk(stack)) LibResources.MODEL_INVISIBLE_ARMOR else getArmorTextureAfterInk(stack, slot, type)
 	}
 	
+	override fun getArmorTextureAfterInk(stack: ItemStack?, slot: Int) = getArmorTextureAfterInk(stack, slot, "")
+	
 	open fun getArmorTextureAfterInk(stack: ItemStack?, slot: Int, type: String?): String {
 		val t = type?.capitalized() ?: ""
 		if (t == "Overlay")
 			ASJRenderHelper.setGlow()
 		
-		return if (ConfigHandler.enableArmorModels && !AlfheimConfigHandler.minimalGraphics) ModInfo.MODID + ":textures/model/armor/FenrirArmor$t.png" else if (slot == 2) ModInfo.MODID + ":textures/model/armor/FenrirArmor1$t.png" else ModInfo.MODID + ":textures/model/armor/FenrirArmor0$t.png"
+//		return "${ModInfo.MODID}:textures/model/armor/FenrirArmor${if (ConfigHandler.enableArmorModels) t else if (slot == 2) "1$t" else "0$t"}.png"
+		return "${ModInfo.MODID}:textures/model/armor/FenrirArmor$t.png"
 	}
 	
 	override fun getColor(stack: ItemStack) = 0xFFFFFF
 	
 	override fun getIsRepairable(armor: ItemStack?, material: ItemStack): Boolean {
-		return material.item === AlfheimItems.elvenResource && material.meta == ElvenResourcesMetas.FenrirFur
+		return material.item === AlfheimItems.elvenResource && material.meta == ElvenResourcesMetas.FenrirFur.I
 	}
 	
 	override fun getAttributeModifiers(stack: ItemStack): Multimap<String, AttributeModifier> {
@@ -129,17 +146,6 @@ open class ItemFenrirArmor(slot: Int, name: String): ItemManasteelArmor(slot, na
 		addStringToTooltip(StatCollector.translateToLocal("alfheim.armorset.fenrir.desc0"), list)
 		addStringToTooltip(StatCollector.translateToLocal("alfheim.armorset.fenrir.desc1"), list)
 	}
-
-//	override fun onUpdate(stack: ItemStack, world: World, entity: Entity?, slotID: Int, inHand: Boolean) {
-//		if (entity is EntityPlayer)
-//			onArmorTick(world, entity, stack)
-//	}
-//
-//	override fun onArmorTick(world: World, player: EntityPlayer, stack: ItemStack) {
-//		super.onArmorTick(world, player, stack)
-//		if (!stack.hasTagCompound()) stack.stackTagCompound = NBTTagCompound()
-//		stack.stackTagCompound.setBoolean("SET", hasArmorSet(player))
-//	}
 	
 	override fun getDiscount(stack: ItemStack, slot: Int, player: EntityPlayer): Float {
 		return if (hasArmorSet(player)) 0.2f / 4f else 0f
@@ -164,6 +170,12 @@ open class ItemFenrirArmor(slot: Int, name: String): ItemManasteelArmor(slot, na
 				e.source.setDamageBypassesArmor()
 				e.isCanceled = false
 			}
+		}
+		
+		@SubscribeEvent(priority = EventPriority.LOW)
+		fun keepPlayerWarm(e: SheerColdHandler.SheerColdTickEvent) {
+			if (!RagnarokHandler.checkSet(e.entityLiving, (AlfheimItems.fenrirChestplate as ItemFenrirArmor).armorSetStacks)) return
+			e.delta = min(e.delta ?: 0f, 0f) // minimal so that if other source heats more - it won't override
 		}
 	}
 }

@@ -12,9 +12,10 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.*
 import net.minecraft.util.IIcon
 import net.minecraft.world.World
+import vazkii.botania.api.lexicon.IRecipeKeyProvider
 import vazkii.botania.common.core.helper.ItemNBTHelper.*
 
-class ItemBlockAnomaly(block: Block): ItemBlock(block) {
+class ItemBlockAnomaly(block: Block): ItemBlock(block), IRecipeKeyProvider {
 	
 	init {
 		maxStackSize = 1
@@ -34,23 +35,24 @@ class ItemBlockAnomaly(block: Block): ItemBlock(block) {
 	}
 	
 	override fun placeBlockAt(stack: ItemStack, player: EntityPlayer, world: World, x: Int, y: Int, z: Int, side: Int, hitX: Float, hitY: Float, hitZ: Float, metadata: Int): Boolean {
-		val placed = super.placeBlockAt(stack, player, world, x, y, z, side, hitX, hitY, hitZ, metadata)
+		if (!super.placeBlockAt(stack, player, world, x, y, z, side, hitX, hitY, hitZ, metadata)) return false
 		
-		if (placed) {
-			val te = world.getTileEntity(x, y, z)
-			if (te is TileAnomaly) {
-				te.readCustomNBT(getNBT(stack))
-				te.lock(x, y, z, world.provider.dimensionId)
-				
-				if (!world.isRemote) {
-					world.markBlockForUpdate(x, y, z)
-					ASJUtilities.dispatchTEToNearbyPlayers(te)
-				}
-			}
-		}
+		if (!player.capabilities.isCreativeMode) return true
 		
-		return placed
+		val te = world.getTileEntity(x, y, z) as? TileAnomaly ?: return true
+		te.readCustomNBT(getNBT(stack))
+		te.lock(x, y, z, world.provider.dimensionId)
+		
+		if (world.isRemote)
+			return true
+		
+		world.markBlockForUpdate(x, y, z)
+		ASJUtilities.dispatchTEToNearbyPlayers(te)
+		
+		return true
 	}
+	
+	override fun getKey(stack: ItemStack) = "${stack.unlocalizedName}~${getType(stack)}"
 	
 	companion object {
 		
@@ -66,7 +68,7 @@ class ItemBlockAnomaly(block: Block): ItemBlock(block) {
 		
 		fun ofType(stack: ItemStack, type: String?): ItemStack {
 			var t = type
-			if (type == null || type.isEmpty()) t = TYPE_UNDEFINED
+			if (type.isNullOrEmpty()) t = TYPE_UNDEFINED
 			setString(stack, TAG_SUBTILE_MAIN, t)
 			setInt(stack, TAG_SUBTILE_COUNT, 1)
 			setString(stack, TAG_SUBTILE_NAME + "1", t)

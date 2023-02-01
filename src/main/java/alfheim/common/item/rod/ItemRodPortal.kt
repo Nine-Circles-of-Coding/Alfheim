@@ -5,17 +5,16 @@ import alexsocol.asjlib.command.CommandDimTP
 import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.security.InteractionSecurity
 import alfheim.client.render.world.VisualEffectHandlerClient
+import alfheim.common.block.AlfheimBlocks
 import alfheim.common.core.handler.*
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.core.util.AlfheimTab
-import alfheim.common.entity.EntityLolicorn
 import alfheim.common.item.ItemMod
 import alfheim.common.item.equipment.bauble.ItemPriestEmblem
 import net.minecraft.block.Block
-import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
 import net.minecraft.item.*
-import net.minecraft.potion.PotionEffect
 import net.minecraft.world.World
 import vazkii.botania.common.block.ModBlocks
 import vazkii.botania.common.block.tile.TileBifrost
@@ -33,23 +32,15 @@ class ItemRodPortal: ItemMod("rodPortal") {
 		setMaxStackSize(1)
 	}
 	
-	override fun itemInteractionForEntity(stack: ItemStack?, player: EntityPlayer?, target: EntityLivingBase?): Boolean {
-		if (target is EntityLolicorn) {
-			target.type = 1
-			return true
-		}
-		
-		return false
-	}
-	
 	// [block marker] to [dimID] with [if to check Odin emblem]
 	val pairs = arrayOf(Blocks.stone to 0 with false,
 						Blocks.netherrack to -1 with false,
 						Blocks.end_stone to 1 with true,
-						ModBlocks.livingrock to AlfheimConfigHandler.dimensionIDAlfheim with false)
+						ModBlocks.livingrock to AlfheimConfigHandler.dimensionIDAlfheim with false,
+						AlfheimBlocks.niflheimBlock to AlfheimConfigHandler.dimensionIDNiflheim with false)
 	
 	override fun onItemRightClick(stack: ItemStack, world: World, player: EntityPlayer): ItemStack {
-		if (player.dimension == 1) return stack // no escape for the end
+		if (RagnarokHandler.ragnarok || player.dimension == 1) return stack // no escape for the end
 		
 		val (x, y, z) = Vector3.fromEntity(player).mf()
 		
@@ -66,7 +57,7 @@ class ItemRodPortal: ItemMod("rodPortal") {
 			}
 		
 		player.setItemInUse(stack, getMaxItemUseDuration(stack))
-		player.addPotionEffect(PotionEffect(AlfheimConfigHandler.potionIDEternity, 120))
+		player.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDEternity, 120))
 		
 		ItemNBTHelper.setInt(stack, TAG_X, x)
 		ItemNBTHelper.setInt(stack, TAG_Y, y)
@@ -111,7 +102,7 @@ class ItemRodPortal: ItemMod("rodPortal") {
 		}
 		
 		world.setBlock(x + i, y + j, z + k, ModBlocks.bifrost)
-		(world.getTileEntity(x + i, y + j, z + k) as TileBifrost).ticks = timeLeft + 10
+		(world.getTileEntity(x + i, y + j, z + k) as? TileBifrost)?.ticks = timeLeft + 10 // nullable if out of world
 		
 		VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.BIFROST, player.dimension, x.D, y.D, z.D)
 	}
@@ -133,7 +124,9 @@ class ItemRodPortal: ItemMod("rodPortal") {
 				
 				try {
 					CommandDimTP.processCommand(player, arrayOf(pair.second.toString()))
-				} catch (ignore: Throwable) {
+				} catch (e: Throwable) {
+					ASJUtilities.error("Error trying to send ${player.commandSenderName} to ${pair.second}: ${e.message}")
+					e.printStackTrace()
 				}
 				
 				break
@@ -144,7 +137,7 @@ class ItemRodPortal: ItemMod("rodPortal") {
 	
 	private fun Triple<Block, Int, Boolean>.check(player: EntityPlayer, block: Block): Boolean {
 		var flag = block === first && player.dimension != second
-		if (third && ItemPriestEmblem.getEmblem(5, player) == null) flag = false
+		if (third && (ItemPriestEmblem.getEmblem(5, player) == null || RagnarokHandler.blockedPowers[5])) flag = false
 		return flag
 	}
 	

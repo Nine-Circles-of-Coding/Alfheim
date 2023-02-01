@@ -3,7 +3,7 @@ package alfheim.common.world.dim.alfheim.biome
 import alfheim.AlfheimCore
 import alfheim.common.block.AlfheimBlocks
 import alfheim.common.core.handler.AlfheimConfigHandler
-import alfheim.common.world.dim.alfheim.customgens.WorldGenGrass
+import alfheim.common.world.dim.alfheim.customgens.*
 import net.minecraft.init.Blocks
 import net.minecraftforge.common.BiomeDictionary
 import net.minecraftforge.common.BiomeDictionary.Type
@@ -33,10 +33,7 @@ object BiomeMount3: BiomeAlfheim() {
 		standardBiomeLayers = WE_BiomeLayer()
 		standardBiomeLayers.add(Blocks.bedrock, 0.toByte(), 0, 0, 0, 0, true)
 		createChunkGen_InXZ_List.add(standardBiomeLayers)
-		val waterLakes = WE_LakeGen()
-		waterLakes.chunksForLake = 1
-		waterLakes.minY = 124
-		decorateChunkGen_List.add(waterLakes)
+		decorateChunkGen_List.add(AlfheimLakeGen(1, 124))
 		val g = WorldGenGrass(true, true, true, true, 1.2)
 		decorateChunkGen_List.add(g)
 	}

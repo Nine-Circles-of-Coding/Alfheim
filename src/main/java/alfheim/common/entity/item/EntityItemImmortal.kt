@@ -50,13 +50,13 @@ open class EntityItemImmortal: Entity {
 	override fun canTriggerWalking() = false
 	
 	override fun onUpdate() {
-		val stack = stack
-		
 		if (stack?.item is IImmortalHandledItem) {
-			if ((stack.item as IImmortalHandledItem).onEntityItemImmortalUpdate(this)) {
+			if ((stack!!.item as IImmortalHandledItem).onEntityItemImmortalUpdate(this)) {
 				return
 			}
 		}
+		
+		val stack = stack
 		
 		if (stack == null) {
 			setDead()

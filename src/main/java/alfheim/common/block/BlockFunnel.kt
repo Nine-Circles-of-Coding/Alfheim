@@ -148,11 +148,11 @@ class BlockFunnel: BlockContainerMod(Material.wood), IWandHUD, ILexiconable {
 							entityitem.entityItem.tagCompound = itemstack.tagCompound.copy() as NBTTagCompound
 						}
 						
-						val f3 = 0.05f
-						entityitem.motionX = (this.random.nextGaussian().F * f3).D
-						entityitem.motionY = (this.random.nextGaussian().F * f3 + 0.2f).D
-						entityitem.motionZ = (this.random.nextGaussian().F * f3).D
-						world.spawnEntityInWorld(entityitem)
+						val d3 = 0.05
+						entityitem.motionX = this.random.nextGaussian() * d3
+						entityitem.motionY = this.random.nextGaussian() * d3 + 0.2
+						entityitem.motionZ = this.random.nextGaussian() * d3
+						entityitem.spawn()
 					}
 				}
 			}

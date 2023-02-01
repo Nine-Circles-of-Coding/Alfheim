@@ -5,13 +5,12 @@ import alfheim.api.ModInfo
 import alfheim.common.block.AlfheimBlocks
 import alfheim.common.core.handler.AlfheimConfigHandler
 import com.google.gson.*
-import cpw.mods.fml.common.registry.*
+import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.relauncher.FMLInjectionData
 import net.minecraft.block.Block
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.ChatComponentText
 import net.minecraftforge.common.util.ForgeDirection
 import vazkii.botania.client.core.handler.ClientTickHandler
 import vazkii.botania.common.Botania
@@ -306,25 +305,25 @@ open class TileSchemaController: TileEntity() {
 		return Color.HSBtoRGB(time * 0.005F, 1F, 1F)
 	}
 	
-	open fun blockActivated(p0: EntityPlayer?) {
+	open fun blockActivated(player: EntityPlayer) {
 		if (!worldObj.isRemote && ticksAlive - lastDump > 60) {
 			lastDump = ticksAlive
 			if (pos_x != null && pos_y != null && pos_z != null && mark_x != null && mark_z != null) {
-				dumpFile(p0)
+				dumpFile(player)
 			} else {
-				p0?.addChatMessage(ChatComponentText("Missing Markers"))
+				ASJUtilities.say(player, "Missing Markers")
 			}
 		}
 	}
 	
-	fun dumpFile(p0: EntityPlayer?) {
+	fun dumpFile(player: EntityPlayer) {
 		try {
 			val e = getNewFile()
 			dumpTo(e)
 			
-			ASJUtilities.say(p0, "Schema dumped to: ${e.path}")
+			ASJUtilities.say(player, "Schema dumped to: ${e.path}")
 		} catch (var2: Exception) {
-			ASJUtilities.say(p0, "Error dumping schema")
+			ASJUtilities.say(player, "Error dumping schema")
 			ASJUtilities.error("Error dumping schema: ${var2.message}")
 			var2.printStackTrace()
 		}

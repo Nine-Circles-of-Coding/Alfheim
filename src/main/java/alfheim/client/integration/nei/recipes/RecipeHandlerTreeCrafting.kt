@@ -16,6 +16,7 @@ import vazkii.botania.client.core.handler.HUDHandler
 import vazkii.botania.client.lib.LibResources
 import vazkii.botania.common.block.tile.mana.TilePool
 import java.awt.Rectangle
+import java.util.*
 import kotlin.math.*
 
 open class RecipeHandlerTreeCrafting: TemplateRecipeHandler() {
@@ -28,7 +29,7 @@ open class RecipeHandlerTreeCrafting: TemplateRecipeHandler() {
 		GL11.glColor4f(1f, 1f, 1f, 0.5F)
 		mc.renderEngine.bindTexture(LibResourceLocations.suffuserOverlay)
 		ASJRenderHelper.drawTexturedModalRect(7, 2, 0, 0, 0, 142, 93)
-		HUDHandler.renderManaBar(32, 113, 0x0000FF, 0.75F, (arecipes[recipe] as CachedTreeRecipe).manaUsage, TilePool.MAX_MANA)
+		HUDHandler.renderManaBar(32, 113, 0x0000FF, 0.75F, (arecipes[recipe] as CachedTreeRecipe).manaUsage, TilePool.MAX_MANA / 10)
 	}
 	
 	open val recipeID: String
@@ -37,7 +38,7 @@ open class RecipeHandlerTreeCrafting: TemplateRecipeHandler() {
 	override fun getGuiTexture() = LibResources.GUI_NEI_BLANK
 	
 	override fun loadTransferRects() {
-		transferRects.add(RecipeTransferRect(Rectangle(72, 54, 18, 18), recipeID, *arrayOfNulls<Any>(0)))
+		transferRects.add(RecipeTransferRect(Rectangle(72, 54, 18, 18), recipeID))
 	}
 	
 	override fun recipiesPerPage() = 1
@@ -130,5 +131,4 @@ open class RecipeHandlerTreeCrafting: TemplateRecipeHandler() {
 		
 		override fun getResult() = output
 	}
-	
 }

@@ -24,7 +24,7 @@ open class ItemMod(name: String): Item() {
 		super.getItemStackDisplayName(stack).replace("&".toRegex(), "\u00a7")
 	
 	override fun getUnlocalizedNameInefficiently(stack: ItemStack) =
-		super.getUnlocalizedNameInefficiently(stack).replace("item\\.".toRegex(), "item.${ModInfo.MODID}:")
+		getUnlocalizedName(stack).replace("item\\.".toRegex(), "item.${ModInfo.MODID}:")
 	
 	@SideOnly(Side.CLIENT)
 	override fun registerIcons(reg: IIconRegister) {

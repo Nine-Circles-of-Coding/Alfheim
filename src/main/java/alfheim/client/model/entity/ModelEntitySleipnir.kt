@@ -280,8 +280,10 @@ object ModelEntitySleipnir: ModelBase() {
 		return prev + ticks * f3
 	}
 	
-	override fun setLivingAnimations(living: EntityLivingBase, hui: Float, knows: Float, ticks: Float) {
-		super.setLivingAnimations(living, hui, knows, ticks)
+	override fun setLivingAnimations(living: EntityLivingBase, limb: Float, prevLimb: Float, ticks: Float) {
+		super.setLivingAnimations(living, limb, prevLimb, ticks)
+		living as EntityLolicorn
+		
 		val f3 = updateHorseRotation(living.prevRenderYawOffset, living.renderYawOffset, ticks)
 		val f4 = updateHorseRotation(living.prevRotationYawHead, living.rotationYawHead, ticks)
 		val f5 = living.prevRotationPitch + (living.rotationPitch - living.prevRotationPitch) * ticks
@@ -293,14 +295,13 @@ object ModelEntitySleipnir: ModelBase() {
 		if (f6 < -20.0f) {
 			f6 = -20.0f
 		}
-		if (knows > 0.2f) {
-			f7 += MathHelper.cos(hui * 0.4f) * 0.15f * knows
+		if (prevLimb > 0.2f) {
+			f7 += MathHelper.cos(limb * 0.4f) * 0.15f * prevLimb
 		}
-		val entityhorse = living as EntityLolicorn
-		val flag2 = entityhorse.riddenByEntity != null
+		val flag2 = living.riddenByEntity != null
 		val f12 = living.ticksExisted.F + ticks
-		val f13 = MathHelper.cos(hui * 0.6662f + Math.PI.F)
-		val f14 = f13 * 0.8f * knows
+		val f13 = MathHelper.cos(limb * 0.6662f + Math.PI.F)
+		val f14 = f13 * 0.8f * prevLimb
 		head.rotationPointY = 4.0f
 		head.rotationPointZ = -10.0f
 		tailBase.rotationPointY = 3.0f
@@ -345,10 +346,10 @@ object ModelEntitySleipnir: ModelBase() {
 		frontLeftLeg.rotationPointZ = -2.0f * 0f + -8.0f * 1f + 2f
 		frontRightLeg.rotationPointY = frontLeftLeg.rotationPointY
 		frontRightLeg.rotationPointZ = frontLeftLeg.rotationPointZ
-		backLeftShin.rotationPointY = backLeftLeg.rotationPointY + MathHelper.sin(Math.PI.F / 2f + f18 + 1f * -f13 * 0.5f * knows) * 7.0f
-		backLeftShin.rotationPointZ = backLeftLeg.rotationPointZ + MathHelper.cos(Math.PI.F * 3f / 2f + f18 + 1f * -f13 * 0.5f * knows) * 7.0f
-		backRightShin.rotationPointY = backRightLeg.rotationPointY + MathHelper.sin(Math.PI.F / 2f + f18 + 1f * f13 * 0.5f * knows) * 7.0f
-		backRightShin.rotationPointZ = backRightLeg.rotationPointZ + MathHelper.cos(Math.PI.F * 3f / 2f + f18 + 1f * f13 * 0.5f * knows) * 7.0f
+		backLeftShin.rotationPointY = backLeftLeg.rotationPointY + MathHelper.sin(Math.PI.F / 2f + f18 + 1f * -f13 * 0.5f * prevLimb) * 7.0f
+		backLeftShin.rotationPointZ = backLeftLeg.rotationPointZ + MathHelper.cos(Math.PI.F * 3f / 2f + f18 + 1f * -f13 * 0.5f * prevLimb) * 7.0f
+		backRightShin.rotationPointY = backRightLeg.rotationPointY + MathHelper.sin(Math.PI.F / 2f + f18 + 1f * f13 * 0.5f * prevLimb) * 7.0f
+		backRightShin.rotationPointZ = backRightLeg.rotationPointZ + MathHelper.cos(Math.PI.F * 3f / 2f + f18 + 1f * f13 * 0.5f * prevLimb) * 7.0f
 		val f20 = (-1.0471976f + f19) * 0f + f14 * 1f
 		val f21 = (-1.0471976f + -f19) * 0f + -f14 * 1f
 		frontLeftShin.rotationPointY = frontLeftLeg.rotationPointY + MathHelper.sin(Math.PI.F / 2f + f20) * 7.0f
@@ -357,42 +358,42 @@ object ModelEntitySleipnir: ModelBase() {
 		frontRightShin.rotationPointZ = frontRightLeg.rotationPointZ + MathHelper.cos(Math.PI.F * 3f / 2f + f21) * 7.0f
 		
 		
-		backLeftLeg.rotateAngleX = f18 + -f13 * 0.5f * knows * 1f
-		backLeftShin.rotateAngleX = -0.08726646f * 0f + (-f13 * 0.5f * knows - max(0.0f, f13 * 0.5f * knows)) * 1f
+		backLeftLeg.rotateAngleX = f18 + -f13 * 0.5f * prevLimb * 1f
+		backLeftShin.rotateAngleX = -0.08726646f * 0f + (-f13 * 0.5f * prevLimb - max(0.0f, f13 * 0.5f * prevLimb)) * 1f
 		backLeftHoof.rotateAngleX = backLeftShin.rotateAngleX
 		
-		backRightMiddleLeg.rotateAngleX = f18 + -f13 * 0.5f * knows * 1f
-		backRightMiddleShin.rotateAngleX = -0.08726646f * 0f + (-f13 * 0.5f * knows - max(0.0f, f13 * 0.5f * knows)) * 1f
+		backRightMiddleLeg.rotateAngleX = f18 + -f13 * 0.5f * prevLimb * 1f
+		backRightMiddleShin.rotateAngleX = -0.08726646f * 0f + (-f13 * 0.5f * prevLimb - max(0.0f, f13 * 0.5f * prevLimb)) * 1f
 		backRightMiddleHoof.rotateAngleX = backLeftShin.rotateAngleX
 		
 		
 		
-		backRightLeg.rotateAngleX = f18 + f13 * 0.5f * knows * 1f
-		backRightShin.rotateAngleX = -0.08726646f * 0f + (f13 * 0.5f * knows - max(0.0f, -f13 * 0.5f * knows)) * 1f
+		backRightLeg.rotateAngleX = f18 + f13 * 0.5f * prevLimb * 1f
+		backRightShin.rotateAngleX = -0.08726646f * 0f + (f13 * 0.5f * prevLimb - max(0.0f, -f13 * 0.5f * prevLimb)) * 1f
 		backRightHoof.rotateAngleX = backRightShin.rotateAngleX
 		
-		backLeftMiddleLeg.rotateAngleX = f18 + f13 * 0.5f * knows * 1f
-		backLeftMiddleShin.rotateAngleX = -0.08726646f * 0f + (f13 * 0.5f * knows - max(0.0f, -f13 * 0.5f * knows)) * 1f
+		backLeftMiddleLeg.rotateAngleX = f18 + f13 * 0.5f * prevLimb * 1f
+		backLeftMiddleShin.rotateAngleX = -0.08726646f * 0f + (f13 * 0.5f * prevLimb - max(0.0f, -f13 * 0.5f * prevLimb)) * 1f
 		backLeftMiddleHoof.rotateAngleX = backRightShin.rotateAngleX
 		
 		
 		
 		frontLeftLeg.rotateAngleX = f20
-		frontLeftShin.rotateAngleX = (frontLeftLeg.rotateAngleX + Math.PI.F * max(0.0f, 0.2f + f19 * 0.2f)) * 0f + (f14 + max(0.0f, f13 * 0.5f * knows)) * 1f
+		frontLeftShin.rotateAngleX = (frontLeftLeg.rotateAngleX + Math.PI.F * max(0.0f, 0.2f + f19 * 0.2f)) * 0f + (f14 + max(0.0f, f13 * 0.5f * prevLimb)) * 1f
 		frontLeftHoof.rotateAngleX = frontLeftShin.rotateAngleX
 		
 		frontRightMiddleLeg.rotateAngleX = f20
-		frontRightMiddleShin.rotateAngleX = (frontLeftLeg.rotateAngleX + Math.PI.F * max(0.0f, 0.2f + f19 * 0.2f)) * 0f + (f14 + max(0.0f, f13 * 0.5f * knows)) * 1f
+		frontRightMiddleShin.rotateAngleX = (frontLeftLeg.rotateAngleX + Math.PI.F * max(0.0f, 0.2f + f19 * 0.2f)) * 0f + (f14 + max(0.0f, f13 * 0.5f * prevLimb)) * 1f
 		frontRightMiddleHoof.rotateAngleX = frontLeftShin.rotateAngleX
 		
 		
 		
 		frontRightLeg.rotateAngleX = f21
-		frontRightShin.rotateAngleX = (frontRightLeg.rotateAngleX + Math.PI.F * max(0.0f, 0.2f - f19 * 0.2f)) * 0f + (-f14 + max(0.0f, -f13 * 0.5f * knows)) * 1f
+		frontRightShin.rotateAngleX = (frontRightLeg.rotateAngleX + Math.PI.F * max(0.0f, 0.2f - f19 * 0.2f)) * 0f + (-f14 + max(0.0f, -f13 * 0.5f * prevLimb)) * 1f
 		frontRightHoof.rotateAngleX = frontRightShin.rotateAngleX
 		
 		frontLeftMiddleLeg.rotateAngleX = f21
-		frontLeftMiddleShin.rotateAngleX = (frontRightLeg.rotateAngleX + Math.PI.F * max(0.0f, 0.2f - f19 * 0.2f)) * 0f + (-f14 + max(0.0f, -f13 * 0.5f * knows)) * 1f
+		frontLeftMiddleShin.rotateAngleX = (frontRightLeg.rotateAngleX + Math.PI.F * max(0.0f, 0.2f - f19 * 0.2f)) * 0f + (-f14 + max(0.0f, -f13 * 0.5f * prevLimb)) * 1f
 		frontLeftMiddleHoof.rotateAngleX = frontRightShin.rotateAngleX
 		
 		
@@ -461,15 +462,28 @@ object ModelEntitySleipnir: ModelBase() {
 			horseRightSaddleRope.rotateAngleZ = -f14 / 5.0f
 			horseRightSaddleMetal.rotateAngleZ = -f14 / 5.0f
 		}
-		tailBase.rotateAngleY = MathHelper.cos(f12 * 0.7f)
+		
+		var f15 = -1.3089f + prevLimb * 1.5f
+		
+		if (f15 > 0f) {
+			f15 = 0f
+		}
+		
+		if (living.tailMovement != 0) {
+			tailBase.rotateAngleY = MathHelper.cos(f12 * 0.7f)
+			f15 = 0f
+		} else {
+			tailBase.rotateAngleY = 0f
+		}
+		
 		tailMiddle.rotateAngleY = tailBase.rotateAngleY
 		tailTip.rotateAngleY = tailBase.rotateAngleY
 		tailMiddle.rotationPointY = tailBase.rotationPointY
 		tailTip.rotationPointY = tailBase.rotationPointY
 		tailMiddle.rotationPointZ = tailBase.rotationPointZ
 		tailTip.rotationPointZ = tailBase.rotationPointZ
-		tailBase.rotateAngleX = 0f
-		tailMiddle.rotateAngleX = 0f
-		tailTip.rotateAngleX = -0.2618f + 0f
+		tailBase.rotateAngleX = f15
+		tailMiddle.rotateAngleX = f15
+		tailTip.rotateAngleX = -0.2618f + f15
 	}
 }

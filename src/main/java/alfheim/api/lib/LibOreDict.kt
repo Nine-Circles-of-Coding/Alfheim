@@ -1,7 +1,5 @@
 package alfheim.api.lib
 
-import vazkii.botania.common.lib.LibOreDict
-
 object LibOreDict {
 	
 	const val DRAGON_ORE = "oreDragonstone"
@@ -10,6 +8,7 @@ object LibOreDict {
 	const val GOLD_ORE = "oreGold"
 	const val IFFESAL_ORE = "oreIffesal"
 	const val LAPIS_ORE = "oreLapis"
+	const val NIFLEUR_ORE = "oreNifleur"
 	const val ELVORIUM_INGOT = "ingotElvorium"
 	const val MAUFTRIUM_INGOT = "ingotMauftrium"
 	const val MUSPELHEIM_POWER_INGOT = "ingotMuspelheimPower"
@@ -21,8 +20,8 @@ object LibOreDict {
 	const val IFFESAL_DUST = "dustIffesal"
 	const val FENRIR_FUR = "furFenrir"
 	val ARUNE = arrayOf("runePrimalA", "runeMuspelheimA", "runeNiflheimA")
-	const val INFUSED_DREAM_TWIG = "twig${LibOreDict.DREAM_WOOD}Insufed"
-	const val DREAM_WOOD_LOG = "log${LibOreDict.DREAM_WOOD}"
+	const val INFUSED_DREAM_TWIG = "twigDeamwoodInsufed"
+	const val DREAM_WOOD_LOG = "logDeamwood"
 	
 	// Iridescence
 	const val TWIG_THUNDERWOOD = "twigThunderwood"
@@ -50,7 +49,7 @@ object LibOreDict {
 	
 	val ALT_TYPES = arrayOf("Dry", "Golden", "Vivid", "Scorched", "Infused", "Mutated", "Wisdom", "Dreamwood")
 	
-	val EMERALD = "gemEmerald"
-	val GLOWSTONE_DUST = "dustGlowstone"
-	val REDSTONE_DUST = "dustRedstone"
+	const val EMERALD = "gemEmerald"
+	const val GLOWSTONE_DUST = "dustGlowstone"
+	const val REDSTONE_DUST = "dustRedstone"
 }

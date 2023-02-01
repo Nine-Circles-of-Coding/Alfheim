@@ -43,8 +43,8 @@ class BlockAlfheimPortal: BlockContainerMod(Material.wood), ILexiconable {
 		if (newMeta == 0) return false
 		
 		if (world.provider.dimensionId != AlfheimConfigHandler.dimensionIDAlfheim) {
-			if (world.getBlockMetadata(x, y, z) == 0 && player.currentEquippedItem?.item === AlfheimItems.elvenResource && player.currentEquippedItem.meta == ElvenResourcesMetas.InterdimensionalGatewayCore) {
-				ASJUtilities.consumeItemStack(player.inventory, ItemStack(AlfheimItems.elvenResource, 1, ElvenResourcesMetas.InterdimensionalGatewayCore))
+			if (world.getBlockMetadata(x, y, z) == 0 && player.heldItem?.item === AlfheimItems.elvenResource && player.heldItem.meta == ElvenResourcesMetas.InterdimensionalGatewayCore.I) {
+				player.heldItem.stackSize--
 			} else
 				return false
 		}
@@ -66,7 +66,7 @@ class BlockAlfheimPortal: BlockContainerMod(Material.wood), ILexiconable {
 			
 			if (tile.activated) {
 				tile.activated = false
-				world.spawnEntityInWorld(EntityItem(world, x + 0.5, y + 0.5, z + 0.5, ItemStack(AlfheimItems.elvenResource, 1, ElvenResourcesMetas.InterdimensionalGatewayCore)))
+				EntityItem(world, x + 0.5, y + 0.5, z + 0.5, ElvenResourcesMetas.InterdimensionalGatewayCore.stack).spawn()
 			}
 		}
 		

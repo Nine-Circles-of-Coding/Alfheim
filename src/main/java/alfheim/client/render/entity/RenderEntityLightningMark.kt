@@ -1,18 +1,17 @@
 package alfheim.client.render.entity
 
 import alexsocol.asjlib.glScalef
-import alexsocol.asjlib.render.*
 import alfheim.api.lib.LibResourceLocations
 import alfheim.common.entity.EntityLightningMark
-import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.entity.Render
 import net.minecraft.entity.Entity
 import org.lwjgl.opengl.GL11.*
-import vazkii.botania.client.core.helper.ShaderHelper
 import java.util.*
 import kotlin.math.min
 
 object RenderEntityLightningMark: Render() {
+	
+	val so = ShadedObjectHaloPlane(LibResourceLocations.markLightning)
 	
 	private val rand = Random()
 	
@@ -42,32 +41,4 @@ object RenderEntityLightningMark: Render() {
 		
 		glPopMatrix()
 	}
-	
-	val so: ShadedObject = object: ShadedObject(ShaderHelper.halo, RenderPostShaders.nextAvailableRenderObjectMaterialID, LibResourceLocations.mark) {
-		
-		override fun preRender() {
-			glEnable(GL_BLEND)
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-			
-			glDisable(GL_CULL_FACE)
-			glShadeModel(GL_SMOOTH)
-		}
-		
-		override fun drawMesh(vararg data: Any?) {
-			val tes = Tessellator.instance
-			tes.startDrawingQuads()
-			tes.addVertexWithUV(-1.0, 0.0, -1.0, 0.0, 0.0)
-			tes.addVertexWithUV(-1.0, 0.0, 1.0, 0.0, 1.0)
-			tes.addVertexWithUV(1.0, 0.0, 1.0, 1.0, 1.0)
-			tes.addVertexWithUV(1.0, 0.0, -1.0, 1.0, 0.0)
-			tes.draw()
-		}
-		
-		override fun postRender() {
-			glEnable(GL_TEXTURE_2D)
-			glShadeModel(GL_FLAT)
-			glDisable(GL_BLEND)
-		}
-		
-	}.also { RenderPostShaders.registerShadedObject(it) }
 }

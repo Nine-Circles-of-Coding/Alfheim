@@ -27,11 +27,13 @@ bool around(vec2 pos, float rad) {
 void main() {
     vec2 uv = vec2(gl_TexCoord[0]);
     vec4 color = texture2D(bgl_RenderedTexture, uv);
-    if (!isSolid(uv)){
+
+    if (!isSolid(uv)) {
         if (around(uv, 16.0)) {
             color.r = color.g = color.b = 0.0;
             color.a = 1.0;
         }
+
         gl_FragColor = color;
         return;
     }

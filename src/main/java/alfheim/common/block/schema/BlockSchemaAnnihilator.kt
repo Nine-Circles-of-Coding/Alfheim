@@ -7,16 +7,16 @@ import net.minecraft.block.material.Material
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
-import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.IIcon
 import net.minecraft.world.World
+import vazkii.botania.api.lexicon.ILexiconable
 import vazkii.botania.api.wand.IWandable
 import java.util.*
 
 /**
  * Created by l0nekitsune on 1/3/16.
  */
-class BlockSchemaAnnihilator: BlockContainerMod(Material.wood), IWandable {
+class BlockSchemaAnnihilator: BlockContainerMod(Material.wood), IWandable, ILexiconable {
 	
 	lateinit var icon1: IIcon
 	lateinit var icon2: IIcon
@@ -37,7 +37,7 @@ class BlockSchemaAnnihilator: BlockContainerMod(Material.wood), IWandable {
 			else -> icon3
 		}
 	
-	override fun createNewTileEntity(p_149915_1_: World?, p_149915_2_: Int) = TileSchemaAnnihilator()
+	override fun createNewTileEntity(world: World?, meta: Int) = TileSchemaAnnihilator()
 	
 	override fun registerBlockIcons(reg: IIconRegister) {
 		icon1 = IconHelper.forName(reg, "schema1")
@@ -45,13 +45,11 @@ class BlockSchemaAnnihilator: BlockContainerMod(Material.wood), IWandable {
 		icon3 = IconHelper.forName(reg, "schema3")
 	}
 	
-	override fun onUsedByWand(p0: EntityPlayer?, p1: ItemStack?, p2: World?, p3: Int, p4: Int, p5: Int, p6: Int): Boolean {
-		if (p2 != null && p0 != null) {
-			val tile: TileEntity? = p2.getTileEntity(p3, p4, p5)
-			if (tile is TileSchemaAnnihilator)
-				tile.blockActivated(p0)
-		}
+	override fun onUsedByWand(player: EntityPlayer, stack: ItemStack, world: World, x: Int, y: Int, z: Int, side: Int): Boolean {
+		val tile = world.getTileEntity(x, y, z) as? TileSchemaAnnihilator ?: return false
+		tile.blockActivated(player)
 		return true
 	}
 	
+	override fun getEntry(p0: World?, p1: Int, p2: Int, p3: Int, p4: EntityPlayer?, p5: ItemStack?) = null
 }

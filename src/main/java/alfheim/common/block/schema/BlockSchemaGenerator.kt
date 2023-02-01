@@ -7,7 +7,10 @@ import alfheim.common.core.handler.AlfheimConfigHandler
 import cpw.mods.fml.relauncher.FMLInjectionData
 import net.minecraft.block.Block
 import net.minecraft.block.material.Material
+import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.item.ItemStack
 import net.minecraft.world.World
+import vazkii.botania.api.lexicon.*
 import java.io.File
 import java.util.*
 
@@ -39,4 +42,6 @@ class BlockSchemaGenerator: BlockColoredSapling(name = "schematicOak") {
 		
 		return if (e.exists()) e.readText() else null
 	}
+	
+	override fun getEntry(p0: World?, p1: Int, p2: Int, p3: Int, p4: EntityPlayer?, p5: ItemStack?) = null
 }

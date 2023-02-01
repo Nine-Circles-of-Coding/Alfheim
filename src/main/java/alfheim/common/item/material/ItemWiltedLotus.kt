@@ -6,15 +6,17 @@ import alfheim.common.item.ItemMod
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.inventory.IInventory
 import net.minecraft.item.*
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.StatCollector
 import vazkii.botania.api.internal.VanillaPacketDispatcher
 import vazkii.botania.api.item.IManaDissolvable
 import vazkii.botania.api.mana.IManaPool
+import vazkii.botania.api.recipe.IFlowerComponent
 import vazkii.botania.common.Botania
 
-class ItemWiltedLotus: ItemMod("wiltedLotus"), IManaDissolvable {
+class ItemWiltedLotus: ItemMod("wiltedLotus"), IManaDissolvable, IFlowerComponent {
 	
 	init {
 		setHasSubtypes(true)
@@ -33,6 +35,10 @@ class ItemWiltedLotus: ItemMod("wiltedLotus"), IManaDissolvable {
 	override fun getUnlocalizedNameInefficiently(stack: ItemStack) =
 		super.getUnlocalizedNameInefficiently(stack) + stack.meta
 	
+	override fun canFit(stack: ItemStack?, apothecary: IInventory?) = true
+	
+	override fun getParticleColor(stack: ItemStack?) = 0
+	
 	override fun onDissolveTick(pool: IManaPool, stack: ItemStack, item: EntityItem) {
 		if (pool.isFull || pool.currentMana == 0) return
 		
@@ -42,7 +48,7 @@ class ItemWiltedLotus: ItemMod("wiltedLotus"), IManaDissolvable {
 		val mult = if (item.worldObj.rand.nextBoolean()) 2 else -1
 		val mana = if (t2) MANA_PER_T2 else MANA_PER
 		
-		if (mult < -1 && pool.currentMana < mana)
+		if (mult == -1 && pool.currentMana < mana)
 			return
 		
 		if (!item.worldObj.isRemote) {

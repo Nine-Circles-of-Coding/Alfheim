@@ -10,7 +10,6 @@ import net.minecraft.block.Block
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.world.World
-import net.minecraftforge.client.event.sound.PlaySoundEvent17
 import java.util.*
 
 class BlockSealingLeaves: BlockLeavesMod(), ISoundSilencer {
@@ -20,9 +19,9 @@ class BlockSealingLeaves: BlockLeavesMod(), ISoundSilencer {
 		setStepSound(Block.soundTypeCloth)
 	}
 	
-	override fun canSilence(world: World, x: Int, y: Int, z: Int, dist: Double, soundEvent: PlaySoundEvent17) = dist <= 8
+	override fun canSilence(world: World, x: Int, y: Int, z: Int, dist: Double) = dist <= 8
 	
-	override fun getVolumeMultiplier(world: World, x: Int, y: Int, z: Int, dist: Double, soundEvent: PlaySoundEvent17) = 0.5f
+	override fun getVolumeMultiplier(world: World, x: Int, y: Int, z: Int, dist: Double) = 0.5f
 	
 	override fun register(name: String) {
 		GameRegistry.registerBlock(this, ItemBlockLeavesMod::class.java, name)

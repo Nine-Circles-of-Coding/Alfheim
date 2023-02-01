@@ -1,6 +1,42 @@
 {
+	"fenrir.attack": {
+		"category": "hostile",
+		"sounds": [
+			{
+				"name": "fenrir/attack",
+				"stream": false
+			}
+		]
+	},
+	"fenrir.howl": { 
+		"category": "hostile",
+		"sounds": [
+			{
+				"name": "fenrir/howl",
+				"stream": false
+			}
+		]
+	},
+	"fenrir.hrrr": {
+		"category": "hostile",
+		"sounds": [
+			{
+				"name": "fenrir/hrrr",
+				"stream": false
+			}
+		]
+	},
+	"fenrir.hurt": {
+		"category": "hostile",
+		"sounds": [
+			{
+				"name": "fenrir/hurt",
+				"stream": false
+			}
+		]
+	},
 	"horn.bhorn": {
-		"category": "master",
+		"category": "player",
 		"sounds": [
 			{
 				"name": "horn/bhorn",
@@ -9,7 +45,7 @@
 		]
 	},
 	"horn.ehorn": {
-		"category": "master",
+		"category": "player",
 		"sounds": [
 			{
 				"name": "horn/ehorn",
@@ -18,7 +54,7 @@
 		]
 	},
 	"horn.ghorn": {
-		"category": "master",
+		"category": "player",
 		"sounds": [
 			{
 				"name": "horn/ghorn",
@@ -26,8 +62,17 @@
 			}
 		]
 	},
+	"niflportal": {
+		"category": "block",
+		"sounds": [
+			{
+				"name": "niflportal",
+				"stream": false
+			}
+		]
+	},
 	"redexp": {
-		"category": "master",
+		"category": "player",
 		"sounds": [
 			{
 				"name": "redexp",
@@ -36,7 +81,7 @@
 		]
 	},
 	"quad": {
-		"category": "master",
+		"category": "player",
 		"sounds": [
 			{
 				"name": "quad",
@@ -45,7 +90,7 @@
 		]
 	},
 	"quadh": {
-		"category": "master",
+		"category": "player",
 		"sounds": [
 			{
 				"name": "quadh",

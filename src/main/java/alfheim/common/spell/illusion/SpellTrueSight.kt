@@ -18,16 +18,14 @@ object SpellTrueSight: SpellBase("truesight", EnumRace.SPRIGGAN, 2000, 2500, 40)
 		get() = emptyArray<Any>()
 	
 	override fun performCast(caster: EntityLivingBase): SpellCastResult {
-		if (caster !is EntityPlayerMP) return SpellCastResult.NOTARGET // TODO add targets for mobs
+		if (caster !is EntityPlayerMP) return SpellCastResult.NOTALLOW
 		
-		val tg = TargetingSystem.getTarget(caster as EntityPlayer)
+		val tg = TargetingSystem.getTarget(caster)
 		val tgt = tg.target ?: return SpellCastResult.NOTARGET
 		
-		if (tgt !is EntityPlayer) return SpellCastResult.WRONGTGT
-		
-		if (tgt !== caster && ASJUtilities.isNotInFieldOfVision(tgt, caster)) return SpellCastResult.NOTSEEING
-		
-//		if (!tg.isParty && !InteractionSecurity.canInteractWithEntity(caster, tgt)) return SpellCastResult.NOTALLOW
+		if (tgt !is EntityPlayer || tgt === caster) return SpellCastResult.WRONGTGT
+		if (ASJUtilities.isNotInFieldOfVision(tgt, caster)) return SpellCastResult.NOTSEEING
+		if (!tg.isParty && !InteractionSecurity.canInteractWithEntity(caster, tgt)) return SpellCastResult.NOTALLOW
 		
 		val result = checkCast(caster)
 		if (result == SpellCastResult.OK) {

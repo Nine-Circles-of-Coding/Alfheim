@@ -1,6 +1,6 @@
 package alfheim.common.block.magtrees.sealing
 
-import alexsocol.asjlib.ASJUtilities
+import alexsocol.asjlib.*
 import alfheim.common.block.base.BlockModRotatedPillar
 import alfheim.common.item.block.ItemBlockLeavesMod
 import alfheim.common.lexicon.AlfheimLexiconData
@@ -10,7 +10,6 @@ import net.minecraft.block.material.Material
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.world.*
-import net.minecraftforge.client.event.sound.PlaySoundEvent17
 import java.util.*
 
 class BlockSealingWood: BlockModRotatedPillar(Material.wood), ISoundSilencer {
@@ -20,12 +19,12 @@ class BlockSealingWood: BlockModRotatedPillar(Material.wood), ISoundSilencer {
 		blockHardness = 2f
 		setStepSound(soundTypeCloth)
 		if (ASJUtilities.isClient)
-			EventHandlerSealingOak.register()
+			EventHandlerSealingOak.eventForge()
 	}
 	
-	override fun canSilence(world: World, x: Int, y: Int, z: Int, dist: Double, soundEvent: PlaySoundEvent17) = dist <= 8
+	override fun canSilence(world: World, x: Int, y: Int, z: Int, dist: Double) = dist <= 8
 	
-	override fun getVolumeMultiplier(world: World, x: Int, y: Int, z: Int, dist: Double, soundEvent: PlaySoundEvent17) = 0.5f
+	override fun getVolumeMultiplier(world: World, x: Int, y: Int, z: Int, dist: Double) = 0.5f
 	
 	override fun canSustainLeaves(world: IBlockAccess, x: Int, y: Int, z: Int) = true
 	

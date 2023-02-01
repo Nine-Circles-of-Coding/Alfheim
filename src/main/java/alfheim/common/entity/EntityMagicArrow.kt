@@ -6,6 +6,7 @@ import alfheim.client.render.world.VisualEffectHandlerClient.VisualEffects
 import alfheim.common.achievement.AlfheimAchievements
 import alfheim.common.core.asm.hook.AlfheimHookHandler
 import alfheim.common.core.handler.VisualEffectHandler
+import alfheim.common.core.helper.*
 import alfheim.common.item.AlfheimItems
 import alfheim.common.item.relic.ItemMoonlightBow
 import net.minecraft.entity.EntityLivingBase
@@ -21,12 +22,11 @@ import kotlin.math.*
 /**
  * @author ExtraMeteorP, CKATEPTb
  */
-@Suppress("UNCHECKED_CAST")
 class EntityMagicArrow: EntityThrowableCopy {
 	
 	var banana: Boolean
-		get() = dataWatcher.getWatchableObjectInt(27) != 0
-		set(banana) = dataWatcher.updateObject(27, if (banana) 1 else 0)
+		get() = getFlag(6)
+		set(banana) = setFlag(6, banana)
 	
 	var damage: Float
 		get() = dataWatcher.getWatchableObjectFloat(28)
@@ -49,7 +49,6 @@ class EntityMagicArrow: EntityThrowableCopy {
 	
 	override fun entityInit() {
 		super.entityInit()
-		dataWatcher.addObject(27, 0)
 		dataWatcher.addObject(28, 0f)
 		dataWatcher.addObject(29, 0)
 		dataWatcher.addObject(30, 0f)
@@ -82,8 +81,8 @@ class EntityMagicArrow: EntityThrowableCopy {
 			val og = if (banana) 0.95f else g
 			val ob = if (banana) 0.1f else if (fromMoon) g else b
 			
-			var size = (damage / (AlfheimItems.moonlightBow as ItemMoonlightBow).maxDmg) * 0.75f
-			if (!toMoon && fromMoon) size *= 50
+			var size = (abs(damage) / (AlfheimItems.moonlightBow as ItemMoonlightBow).maxDmg) * 0.75f
+			if (!toMoon && fromMoon) size *= 2
 			val life = if (fromMoon) 3f else 1f
 			val osize = size
 			val savedPosX = posX
@@ -128,10 +127,8 @@ class EntityMagicArrow: EntityThrowableCopy {
 						arrow.rotationYaw = thrower.rotationYaw
 						arrow.rotation = MathHelper.wrapAngleTo180_float(yaw)
 						arrow.life = 256
-						
 						arrow.setPosition(thrower.posX, 255.0, thrower.posZ)
-						
-						worldObj.spawnEntityInWorld(arrow)
+						arrow.spawn()
 					}
 				}
 			}
@@ -153,10 +150,8 @@ class EntityMagicArrow: EntityThrowableCopy {
 			
 			val axis = if (fromMoon) bb.expand(1.0, 1.0, 1.0) else bb.expand(0.5, 0.5, 0.5)
 			
-			val entities = worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, axis) as List<EntityLivingBase>
-			
-			for (living in entities) {
-				if (living === player) continue
+			getEntitiesWithinAABB(worldObj, EntityLivingBase::class.java, axis).forEach {
+				if (it === player) return@forEach
 				
 				if (toMoon) {
 					explode()
@@ -165,24 +160,23 @@ class EntityMagicArrow: EntityThrowableCopy {
 				}
 				
 				if (fromMoon) {
-					living.hurtResistantTime = 0
-					living.hurtTime = 0
+					it.hurtResistantTime = 0
+					it.hurtTime = 0
 				}
 				
-				if (!toMoon && !fromMoon && Vector3.entityDistance(living, player) >= 120.0) player.triggerAchievement(AlfheimAchievements.divineMarksman)
+				if (!fromMoon && Vector3.entityDistance(it, player) >= 120.0) player.triggerAchievement(AlfheimAchievements.divineMarksman)
 				
-				attackedFrom(living, player, abs(damage))
+				attackedFrom(it, player, abs(damage))
 			}
 		}
 	}
 	
 	val bb: AxisAlignedBB
-		get() = AxisAlignedBB.getBoundingBox(min(posX, lastTickPosX), min(posY, lastTickPosY), min(posZ, lastTickPosZ), max(posX, lastTickPosX), max(posY, lastTickPosY), max(posZ, lastTickPosZ))
+		get() = getBoundingBox(min(posX, lastTickPosX), min(posY, lastTickPosY), min(posZ, lastTickPosZ), max(posX, lastTickPosX), max(posY, lastTickPosY), max(posZ, lastTickPosZ))
 	
 	fun explode() {
 		val axis = bb.expand(5.0, 5.0, 5.0)
-		val entities = worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, axis) as List<EntityLivingBase>
-		entities.forEach {
+		getEntitiesWithinAABB(worldObj, EntityLivingBase::class.java, axis).forEach {
 			attackedFrom(it, thrower, max(20.0, 20 / Vector3.entityDistance(this, it)).F)
 		}
 		
@@ -190,10 +184,11 @@ class EntityMagicArrow: EntityThrowableCopy {
 	}
 	
 	fun attackedFrom(target: EntityLivingBase, entity: EntityLivingBase?, dmg: Float) {
-		if (entity is EntityPlayer)
-			target.attackEntityFrom(DamageSource.causePlayerDamage(entity), dmg)
-		else if (entity != null)
-			target.attackEntityFrom(DamageSource.causeMobDamage(entity), dmg)
+		target.attackEntityFrom(when {
+			entity is EntityPlayer -> DamageSource.causePlayerDamage(entity).setTo(ElementalDamage.LIGHTNESS).setTo(ElementalDamage.AIR)
+			entity != null         -> DamageSource.causeMobDamage(entity).setTo(ElementalDamage.LIGHTNESS).setTo(ElementalDamage.AIR)
+			else                   -> DamageSource.magic
+		}, dmg)
 	}
 	
 	override fun onImpact(pos: MovingObjectPosition) = Unit // NO-OP

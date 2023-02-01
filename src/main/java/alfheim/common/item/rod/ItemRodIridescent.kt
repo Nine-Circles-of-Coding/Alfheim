@@ -5,6 +5,7 @@ import alfheim.api.ModInfo
 import alfheim.api.event.PlayerInteractAdequateEvent
 import alfheim.api.lib.LibResourceLocations
 import alfheim.common.block.AlfheimBlocks
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.item.ItemIridescent
 import alfheim.common.item.equipment.bauble.ItemPriestEmblem
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
@@ -13,7 +14,7 @@ import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.*
 import net.minecraft.item.ItemStack
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.*
+import net.minecraft.util.StatCollector
 import net.minecraft.world.World
 import net.minecraftforge.common.util.ForgeDirection
 import vazkii.botania.api.item.*
@@ -34,25 +35,20 @@ class ItemRodIridescent(name: String = "rodColorfulSkyDirt"): ItemIridescent(nam
 			x: Int, y: Int, z: Int, side: Int, hitX: Float, hitY: Float, hitZ: Float,
 			toPlace: ItemStack?, cost: Int, r: Float, g: Float, b: Float,
 		): Boolean {
+			if (!ManaItemHandler.requestManaExactForTool(stack, player, cost, false)) return false
+			val dir = ForgeDirection.getOrientation(side)
 			
-			if (ManaItemHandler.requestManaExactForTool(stack, player, cost, false)) {
-				val dir = ForgeDirection.getOrientation(side)
-				
-				val aabb = AxisAlignedBB.getBoundingBox((x + dir.offsetX).D,
-				                                        (y + dir.offsetY).D, (z + dir.offsetZ).D,
-				                                        (x + dir.offsetX + 1).D, (y + dir.offsetY + 1).D, (z + dir.offsetZ + 1).D)
-				val entities = world.getEntitiesWithinAABB(EntityLivingBase::class.java, aabb).size
-				
-				if (entities == 0) {
-					toPlace!!.tryPlaceItemIntoWorld(player, world, x, y, z, side, hitX, hitY, hitZ)
-					
-					if (toPlace.stackSize == 0) {
-						ManaItemHandler.requestManaExactForTool(stack, player, cost, true)
-						for (i in 0..6)
-							Botania.proxy.sparkleFX(world, x + dir.offsetX + Math.random(), y + dir.offsetY + Math.random(), z + dir.offsetZ + Math.random(), r, g, b, 1F, 5)
-					}
-				}
-			}
+			val aabb = getBoundingBox(x, y, z, x + 1, y + 1, z + 1).offset(dir.offsetX, dir.offsetY, dir.offsetZ)
+			val entities = getEntitiesWithinAABB(world, EntityLivingBase::class.java, aabb).size
+			
+			if (entities != 0) return false
+			toPlace!!.tryPlaceItemIntoWorld(player, world, x, y, z, side, hitX, hitY, hitZ)
+			
+			if (toPlace.stackSize != 0) return false
+			
+			ManaItemHandler.requestManaExactForTool(stack, player, cost, true)
+			for (i in 0..6)
+				Botania.proxy.sparkleFX(world, x + dir.offsetX + Math.random(), y + dir.offsetY + Math.random(), z + dir.offsetZ + Math.random(), r, g, b, 1F, 5)
 			
 			return true
 		}
@@ -69,7 +65,6 @@ class ItemRodIridescent(name: String = "rodColorfulSkyDirt"): ItemIridescent(nam
 	@SubscribeEvent
 	fun onItemLeftClick(e: PlayerInteractAdequateEvent.LeftClick) {
 		if (e.action !== PlayerInteractAdequateEvent.LeftClick.Action.LEFT_CLICK_AIR) return
-		
 		val player = e.player
 		val world = player.worldObj
 		val stack = player.heldItem ?: return
@@ -101,18 +96,20 @@ class ItemRodIridescent(name: String = "rodColorfulSkyDirt"): ItemIridescent(nam
 				if (stack.meta >= 17) stack.meta = 0 else stack.meta++
 				damage = stack.meta
 			} else if (damage >= 17) damage = 0 else damage++
+			
 			player.playSoundAtEntity("botania:ding", 0.1F, 1F)
 			blockstack = dirtStack(damage)
 			blockstack.setStackDisplayName(StatCollector.translateToLocal("misc.${ModInfo.MODID}.color.$damage"))
-			ItemsRemainingRenderHandler.set(blockstack, -2)
-		} else if (!world.isRemote && ManaItemHandler.requestManaExactForTool(stack, player, COST * 2, false)) {
 			
+			if (world.isRemote && player == mc.thePlayer)
+				ItemsRemainingRenderHandler.set(blockstack, -2)
+		} else if (!world.isRemote && ManaItemHandler.requestManaExactForTool(stack, player, COST * 2, false)) run {
 			val color = Color(getColorFromItemStack(stack, 0))
 			val r = color.red / 255F
 			val g = color.green / 255F
 			val b = color.blue / 255F
 			
-			val sif = (ItemPriestEmblem.getEmblem(1, player) != null)
+			val sif = (!RagnarokHandler.blockedPowers[1] && ItemPriestEmblem.getEmblem(1, player) != null)
 			var basePlayerRange = 5.0
 			if (player is EntityPlayerMP)
 				basePlayerRange = player.theItemInWorldManager.blockReachDistance
@@ -126,20 +123,15 @@ class ItemRodIridescent(name: String = "rodColorfulSkyDirt"): ItemIridescent(nam
 			val y = placeVec.y.mfloor() + 1
 			val z = placeVec.z.mfloor()
 			
-			val entities = world.getEntitiesWithinAABB(EntityLivingBase::class.java,
-													   AxisAlignedBB.getBoundingBox(x.D, y.D, z.D, (x + 1).D,
-																					(y + 1).D, (z + 1).D)).size
+			val entities = getEntitiesWithinAABB(world, EntityLivingBase::class.java, getBoundingBox(x, y, z, x + 1, y + 1, z + 1)).size
 			
-			if (entities == 0) {
-				blockstack.tryPlaceItemIntoWorld(player, world, x, y, z, 0, 0F, 0F, 0F)
-				
-				if (blockstack.stackSize == 0) {
-					ManaItemHandler.requestManaExactForTool(stack, player, COST * 2, true)
-					for (i in 0..6)
-						Botania.proxy.sparkleFX(world, x + Math.random(), y + Math.random(), z + Math.random(),
-												r, g, b, 1F, 5)
-				}
-			}
+			if (entities != 0) return@run
+			blockstack.tryPlaceItemIntoWorld(player, world, x, y, z, 0, 0F, 0F, 0F)
+			
+			if (blockstack.stackSize != 0) return@run
+			
+			ManaItemHandler.requestManaExactForTool(stack, player, COST * 2, true)
+			for (i in 0..6) Botania.proxy.sparkleFX(world, x + Math.random(), y + Math.random(), z + Math.random(), r, g, b, 1F, 5)
 		}
 		if (world.isRemote)
 			player.swingItem()

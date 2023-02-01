@@ -1,5 +1,8 @@
 package alfheim.common.world.dim.alfheim.biome
 
+import alfheim.common.core.handler.AlfheimConfigHandler
+import alfheim.common.entity.EntityJellyfish
+import net.minecraft.entity.EnumCreatureType
 import net.minecraft.init.Blocks
 import net.minecraftforge.common.BiomeDictionary
 import net.minecraftforge.common.BiomeDictionary.Type
@@ -31,5 +34,6 @@ object BiomeRiver: BiomeAlfheim() {
 		createChunkGen_InXZ_List.add(standardBiomeLayers)
 		
 		spawnableCreatureList.clear()
+		spawnableWaterCreatureList.clear()
 	}
 }

@@ -1,10 +1,10 @@
 package alfheim.common.item.equipment.armor.elemental
 
-import alfheim.common.item.AlfheimItems
+import alexsocol.asjlib.PotionEffectU
 import cpw.mods.fml.relauncher.*
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
-import net.minecraft.potion.*
+import net.minecraft.potion.Potion
 import net.minecraft.util.StatCollector
 import net.minecraft.world.World
 import vazkii.botania.api.mana.ManaItemHandler
@@ -15,8 +15,8 @@ class ItemElementalEarthChest: ElementalArmor(1, "ElementalEarthChest") {
 		return 0.17f
 	}
 	
-	override fun onArmorTick(world: World, player: EntityPlayer?, stack: ItemStack?) {
-		if (armorType == 1 && player!!.getCurrentArmor(2) != null && player.getCurrentArmor(2).item === AlfheimItems.elementalChestplate && ManaItemHandler.requestManaExact(player.getCurrentArmor(2), player, 1, !world.isRemote)) player.addPotionEffect(PotionEffect(Potion.resistance.id, 1, 1))
+	override fun onArmorTick(world: World, player: EntityPlayer, stack: ItemStack) {
+		if (ManaItemHandler.requestManaExact(stack, player, 1, !world.isRemote)) player.addPotionEffect(PotionEffectU(Potion.resistance.id, 1, 1))
 	}
 	
 	@SideOnly(Side.CLIENT)

@@ -1,6 +1,6 @@
 package alfheim.common.block.tile
 
-import alexsocol.asjlib.ASJUtilities
+import alexsocol.asjlib.*
 import alexsocol.asjlib.extendables.block.TileItemContainer
 import alfheim.AlfheimCore
 import alfheim.common.network.MessageTileItem
@@ -31,8 +31,8 @@ class TileManaAccelerator: TileItemContainer() {
 		val te = worldObj.getTileEntity(xCoord, yCoord - 1, zCoord)
 		if (te !is TilePool) {
 			if (worldObj.isRemote) return
-			worldObj.spawnEntityInWorld(EntityItem(worldObj, xCoord + 0.5, yCoord + 0.5, zCoord + 0.5, ItemStack(worldObj.getBlock(xCoord, yCoord, zCoord), 1, worldObj.getBlockMetadata(xCoord, yCoord, zCoord))))
-			if (item != null) worldObj.spawnEntityInWorld(EntityItem(worldObj, xCoord + 0.5, yCoord + 0.5, zCoord + 0.5, item!!.copy()))
+			EntityItem(worldObj, xCoord + 0.5, yCoord + 0.5, zCoord + 0.5, ItemStack(worldObj.getBlock(xCoord, yCoord, zCoord), 1, worldObj.getBlockMetadata(xCoord, yCoord, zCoord))).spawn()
+			if (item != null) EntityItem(worldObj, xCoord + 0.5, yCoord + 0.5, zCoord + 0.5, item!!.copy()).spawn()
 			item = null
 			worldObj.setBlockToAir(xCoord, yCoord, zCoord)
 			return

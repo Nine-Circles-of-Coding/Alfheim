@@ -2,6 +2,7 @@ package alfheim.common.entity
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
+import alfheim.common.core.helper.*
 import alfheim.common.item.AlfheimItems
 import alfheim.common.item.relic.ItemMjolnir
 import net.minecraft.block.*
@@ -12,39 +13,46 @@ import net.minecraft.item.ItemStack
 import net.minecraft.util.*
 import net.minecraft.world.World
 import net.minecraftforge.common.util.ForgeDirection
-import vazkii.botania.common.Botania
 import vazkii.botania.common.core.helper.ItemNBTHelper
-import vazkii.botania.common.core.helper.Vector3 as Bector3
 import java.awt.Color
 
 class EntityMjolnir: EntityThrowable {
 	
-	var bounced = false
+	var bounced: Boolean
+		get() = getFlag(6)
+		set(bounced) = setFlag(6, bounced)
+	
+	var timesBounced: Int
+		get() = dataWatcher.getWatchableObjectInt(3)
+		set(times) {
+			dataWatcher.updateObject(3, times)
+		}
 	
 	var stack: ItemStack
+		get() = dataWatcher.getWatchableObjectItemStack(4)
+		set(stack) {
+			dataWatcher.updateObject(4, stack)
+		}
 	
-	constructor(world: World?): super(world) {
-		stack = ItemStack(AlfheimItems.mjolnir)
-	}
+	constructor(world: World?): super(world)
 	
 	constructor(world: World?, e: EntityLivingBase?, stack: ItemStack): super(world, e) {
 		this.stack = stack
-		
 	}
 	
 	override fun entityInit() {
-		dataWatcher.addObject(30, 0)
-		dataWatcher.setObjectWatched(30)
+		dataWatcher.addObject(3, 0)
+		dataWatcher.addObject(4, ItemStack(AlfheimItems.mjolnir))
 	}
 	
 	override fun onUpdate() {
+		super.onUpdate()
+		
+		if (worldObj.isRemote) return
+		
 		val mx = motionX
 		val my = motionY
 		val mz = motionZ
-		
-		super.onUpdate()
-		
-		Botania.proxy.lightningFX(worldObj, Bector3.fromEntity(this), Bector3.fromEntity(this).sub(Bector3(mx, my, mz).multiply(1.25)), 1f, color, colorB)
 		
 		val bounces = timesBounced
 		if (bounces >= MAX_BOUNCES || ticksExisted > 30) {
@@ -54,9 +62,11 @@ class EntityMjolnir: EntityThrowable {
 				setDead()
 			else {
 				val motion = Vector3.fromEntityCenter(thrower).sub(Vector3.fromEntityCenter(this)).normalize()
+				
 				motionX = motion.x
 				motionY = motion.y
 				motionZ = motion.z
+				
 				if (Vector3.pointDistanceSpace(posX, posY, posZ, thrower.posX, thrower.posY, thrower.posZ) < 1) {
 					if (thrower is EntityPlayer) {
 						val slot = ASJUtilities.getSlotWithItem(AlfheimItems.mjolnir, thrower.inventory)
@@ -64,6 +74,7 @@ class EntityMjolnir: EntityThrowable {
 						if (slot != -1)
 							thrower.inventory[slot]?.let { if (it.item === AlfheimItems.mjolnir) ItemNBTHelper.setInt(it, ItemMjolnir.TAG_COOLDOWN, 0) }
 					}
+					
 					setDead()
 				}
 			}
@@ -73,6 +84,7 @@ class EntityMjolnir: EntityThrowable {
 				motionY = my
 				motionZ = mz
 			}
+			
 			bounced = false
 		}
 	}
@@ -84,8 +96,8 @@ class EntityMjolnir: EntityThrowable {
 			pos.entityHit.attackEntityFrom(
 				when (thrower) {
 					null            -> DamageSource.generic
-					is EntityPlayer -> DamageSource.causePlayerDamage(thrower)
-					else            -> DamageSource.causeMobDamage(thrower)
+					is EntityPlayer -> DamageSource.causePlayerDamage(thrower).setTo(ElementalDamage.ELECTRIC)
+					else            -> DamageSource.causeMobDamage(thrower).setTo(ElementalDamage.ELECTRIC)
 				}, 12f)
 		} else {
 			if (noClip) return
@@ -114,17 +126,14 @@ class EntityMjolnir: EntityThrowable {
 	override fun attackEntityFrom(dmg: DamageSource?, amount: Float) = false
 	override fun isEntityInvulnerable() = true
 	
-	var timesBounced: Int
-		get() = dataWatcher.getWatchableObjectInt(30)
-		set(times) {
-			dataWatcher.updateObject(30, times)
-		}
-	
 	companion object {
 		
 		private const val MAX_BOUNCES = 16
 		
 		val color = Color(0x0079C4).rgb
 		val colorB = Color(0x0079C4).brighter().brighter().rgb
+		
+		val colorP = Color(0xc40058).rgb
+		val colorBP = Color(0xc40058).brighter().brighter().rgb
 	}
 }

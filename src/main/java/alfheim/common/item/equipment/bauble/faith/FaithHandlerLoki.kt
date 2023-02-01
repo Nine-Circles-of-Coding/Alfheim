@@ -2,9 +2,10 @@ package alfheim.common.item.equipment.bauble.faith
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
-import alfheim.AlfheimCore
 import alfheim.api.event.PlayerInteractAdequateEvent
 import alfheim.api.item.ColorOverrideHelper
+import alfheim.common.core.asm.hook.fixes.GodAttributesHooks
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.entity.*
 import alfheim.common.item.AlfheimItems
 import alfheim.common.item.equipment.bauble.*
@@ -28,6 +29,8 @@ object FaithHandlerLoki: IFaithHandler {
 	}
 	
 	override fun onWornTick(stack: ItemStack, player: EntityPlayer, type: IFaithHandler.FaithBauble) {
+		if (RagnarokHandler.blockedPowers[3]) return
+		
 		if (type != IFaithHandler.FaithBauble.EMBLEM) return
 		if (stack.cooldown > 0) --stack.cooldown
 		if (player.isBurning) player.extinguish()
@@ -35,14 +38,14 @@ object FaithHandlerLoki: IFaithHandler {
 	
 	@SubscribeEvent
 	fun leftClick(e: PlayerInteractAdequateEvent.LeftClick) {
+		if (ASJUtilities.isClient || RagnarokHandler.blockedPowers[3]) return
+		
 		if (e.action == PlayerInteractAdequateEvent.LeftClick.Action.LEFT_CLICK_BLOCK) return
-		// FIXME not working if close to entity
 		
 		val player = e.player
 		val stack = player.heldItem
 		
-		var emblem = ItemPriestEmblem.getEmblem(3, player)
-		if (emblem == null) if (AlfheimCore.ENABLE_RAGNAROK) emblem = ItemRagnarokEmblem.getEmblem(player, 3) ?: return else return
+		val emblem = ItemPriestEmblem.getEmblem(3, player) ?: ItemRagnarokEmblem.getEmblem(player, 3) ?: return
 		
 		if (!ManaItemHandler.requestManaExact(emblem, player, 300, false)) return
 		if (emblem.cooldown > 0) return
@@ -50,18 +53,18 @@ object FaithHandlerLoki: IFaithHandler {
 		if (stack == null) {
 			ManaItemHandler.requestManaExact(emblem, player, 300, true)
 			
-			val aura = EntityFireAura(player.worldObj, player)
-			aura.shoot(player, player.rotationPitch, player.rotationYaw, 0.0f, 0.8f, 1.0f)
-			
-			if (!player.worldObj.isRemote)
-				player.worldObj.spawnEntityInWorld(aura)
+			if (!player.worldObj.isRemote) {
+				val aura = EntityFireAura(player.worldObj, player)
+				aura.shoot(player, player.rotationPitch, player.rotationYaw, 0.0f, 0.8f, 1.0f)
+				aura.spawn()
+				
+				if (!player.capabilities.isCreativeMode)
+					emblem.cooldown = 50
+			}
 			
 			for (i in 0..5)
 				player.worldObj.playAuxSFXAtEntity(null, 1008, player.posX.mfloor(), player.posY.mfloor(), player.posZ.mfloor(), 0)
-			
-			if (!player.capabilities.isCreativeMode)
-				emblem.cooldown = 50
-		} else if (stack.item === Items.fire_charge) {
+		} else if (stack.item === Items.fire_charge && !player.worldObj.isRemote) {
 			ManaItemHandler.requestManaExact(emblem, player, 300, true)
 			
 			if (!player.worldObj.isRemote)
@@ -88,7 +91,7 @@ object FaithHandlerLoki: IFaithHandler {
 		ghastBall.accelerationX = ghastBall.motionX * 0.1
 		ghastBall.accelerationY = ghastBall.motionY * 0.1
 		ghastBall.accelerationZ = ghastBall.motionZ * 0.1
-		player.worldObj.spawnEntityInWorld(ghastBall)
+		ghastBall.spawn()
 		player.worldObj.playAuxSFXAtEntity(null, 1008, player.posX.mfloor(), player.posY.mfloor(), player.posZ.mfloor(), 0)
 		
 		if (!player.capabilities.isCreativeMode)
@@ -99,17 +102,17 @@ object FaithHandlerLoki: IFaithHandler {
 	
 	@SubscribeEvent
 	fun onPlayerHurt(e: LivingAttackEvent) {
+		if (RagnarokHandler.blockedPowers[3]) return
+		
 		val player = e.entityLiving as? EntityPlayer ?: return
 		
-		var emblem = ItemPriestEmblem.getEmblem(3, player)
-		if (emblem == null && AlfheimCore.ENABLE_RAGNAROK) emblem = ItemRagnarokEmblem.getEmblem(player, 3)
+		val emblem = ItemPriestEmblem.getEmblem(3, player) ?: ItemRagnarokEmblem.getEmblem(player, 3)
 		
-		if (emblem != null)
-			if (e.source.isExplosion || (Math.random() <= 0.1 && e.source.damageType in avoidableDamage)) {
-				e.isCanceled = true
-				
-				return
-			}
+		if (emblem != null && (e.source.isExplosion || (Math.random() <= 0.1 && e.source.damageType in avoidableDamage))) {
+			e.isCanceled = true
+			
+			return
+		}
 		
 		val awakened = getGodPowerLevel(player) >= 6
 		
@@ -122,6 +125,8 @@ object FaithHandlerLoki: IFaithHandler {
 	}
 	
 	override fun getGodPowerLevel(player: EntityPlayer): Int {
+		if (RagnarokHandler.blockedPowers[3]) return 0
+		
 		var lvl = 0
 		
 		if (player.inventory.hasItemStack(ItemStack(AlfheimItems.gleipnir))) lvl += 4
@@ -142,7 +147,7 @@ object FaithHandlerLoki: IFaithHandler {
 		val (x, y, z) = Vector3.fromEntity(player)
 		
 		for (i in 1..9) {
-			val pos = Vector3(x, y + 0.25, z).add(Vector3(0.0, 0.0, 0.5).rotate(Botania.proxy.worldElapsedTicks * 5 % 360 + i * 40.0, Vector3.oY))
+			val pos = Vector3(x, y + 0.25, z).add(Vector3(0, 0, 0.5).rotateOY(Botania.proxy.worldElapsedTicks * 5 % 360 + i * 40.0))
 			Botania.proxy.sparkleFX(mc.theWorld, pos.x, pos.y, pos.z, r, g, b, 1f, 4)
 		}
 	}

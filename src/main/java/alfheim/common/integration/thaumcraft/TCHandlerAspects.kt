@@ -5,6 +5,7 @@ package alfheim.common.integration.thaumcraft
 import alexsocol.asjlib.toItem
 import alfheim.api.ModInfo
 import alfheim.api.lib.LibOreDict
+import alfheim.api.lib.LibResourceLocations.ResourceLocationIL
 import alfheim.common.block.AlfheimBlocks
 import alfheim.common.block.AlfheimBlocks.alfStorage
 import alfheim.common.block.AlfheimBlocks.alfheimPortal
@@ -24,6 +25,7 @@ import alfheim.common.block.AlfheimBlocks.poisonIce
 import alfheim.common.block.AlfheimBlocks.redFlame
 import alfheim.common.block.AlfheimBlocks.tradePortal
 import alfheim.common.core.handler.AlfheimConfigHandler
+import alfheim.common.integration.thaumcraft.TCHandlerShadowFoxAspects.getAspect
 import alfheim.common.integration.thaumcraft.ThaumcraftAlfheimModule.alfheimThaumOre
 import alfheim.common.item.*
 import alfheim.common.item.AlfheimItems.astrolabe
@@ -38,7 +40,6 @@ import alfheim.common.item.AlfheimItems.elementalChestplate
 import alfheim.common.item.AlfheimItems.elementalHelmet
 import alfheim.common.item.AlfheimItems.elementalHelmetRevealing
 import alfheim.common.item.AlfheimItems.elementalLeggings
-import alfheim.common.item.AlfheimItems.elementiumHoe
 import alfheim.common.item.AlfheimItems.elfFirePendant
 import alfheim.common.item.AlfheimItems.elfIcePendant
 import alfheim.common.item.AlfheimItems.elvenResource
@@ -57,7 +58,6 @@ import alfheim.common.item.AlfheimItems.manaRingElven
 import alfheim.common.item.AlfheimItems.manaRingGod
 import alfheim.common.item.AlfheimItems.manaStone
 import alfheim.common.item.AlfheimItems.manaStoneGreater
-import alfheim.common.item.AlfheimItems.manasteelHoe
 import alfheim.common.item.AlfheimItems.mask
 import alfheim.common.item.AlfheimItems.paperBreak
 import alfheim.common.item.AlfheimItems.peacePipe
@@ -76,12 +76,13 @@ import net.minecraftforge.oredict.OreDictionary
 import org.lwjgl.opengl.GL11
 import thaumcraft.api.ThaumcraftApi
 import thaumcraft.api.aspects.*
-import vazkii.botania.common.block.ModBlocks
 import vazkii.botania.common.block.ModBlocks.*
 import vazkii.botania.common.block.ModFluffBlocks.*
-import vazkii.botania.common.item.ModItems
 import vazkii.botania.common.item.ModItems.*
 import vazkii.botania.common.lib.LibEntityNames
+import vazkii.botania.common.block.ModBlocks.cacophonium as cacoblock
+import vazkii.botania.common.item.ModItems.gaiaHead as gaiaHeadItem
+import vazkii.botania.common.item.ModItems.tinyPlanet as tinyPlanetItem
 
 object TCHandlerAlfheimAspects {
 	
@@ -155,8 +156,6 @@ object TCHandlerAlfheimAspects {
 		ThaumcraftApi.registerObjectTag(ItemStack(elvoriumBoots), AspectList().add(Aspect.getAspect("auram"), 12).add(Aspect.getAspect("metallum"), 28).add(Aspect.getAspect("praecantatio"), 64).add(Aspect.getAspect("tutamen"), 12).add(Aspect.getAspect("potentia"), 16).add(Aspect.getAspect("lucrum"), 30))
 		ThaumcraftApi.registerObjectTag(ItemStack(realitySword), AspectList().add(Aspect.getAspect("auram"), 54).add(Aspect.getAspect("lucrum"), 49).add(Aspect.getAspect("metallum"), 18).add(Aspect.getAspect("potentia"), 36).add(Aspect.getAspect("praecantatio"), 64).add(Aspect.getAspect("telum"), 12))
 		ThaumcraftApi.registerObjectTag(ItemStack(livingrockPickaxe), AspectList().add(Aspect.getAspect("arbor"), 1).add(Aspect.getAspect("perditio"), 2).add(Aspect.getAspect("perfodio"), 2).add(Aspect.getAspect("terra"), 2))
-		ThaumcraftApi.registerObjectTag(ItemStack(manasteelHoe), AspectList().add(Aspect.getAspect("meto"), 4).add(Aspect.getAspect("metallum"), 6).add(Aspect.getAspect("praecantatio"), 1))
-		ThaumcraftApi.registerObjectTag(ItemStack(elementiumHoe), AspectList().add(Aspect.getAspect("meto"), 4).add(Aspect.getAspect("metallum"), 6).add(Aspect.getAspect("praecantatio"), 4))
 		ThaumcraftApi.registerObjectTag(ItemStack(rodMuspelheim), AspectList().add(Aspect.getAspect("auram"), 32).add(Aspect.getAspect("praecantatio"), 64).add(Aspect.getAspect("potentia"), 24).add(Aspect.getAspect("instrumentum"), 8).add(Aspect.getAspect("metallum"), 8).add(Aspect.getAspect("ignis"), 16))
 		ThaumcraftApi.registerObjectTag(ItemStack(rodNiflheim), AspectList().add(Aspect.getAspect("auram"), 32).add(Aspect.getAspect("praecantatio"), 64).add(Aspect.getAspect("potentia"), 24).add(Aspect.getAspect("instrumentum"), 8).add(Aspect.getAspect("metallum"), 8).add(Aspect.getAspect("gelum"), 16))
 		ThaumcraftApi.registerObjectTag(ItemStack(excaliber), AspectList().add(Aspect.getAspect("motus"), 16).add(Aspect.getAspect("potentia"), 16).add(Aspect.getAspect("praecantatio"), 16).add(Aspect.getAspect("telum"), 16))
@@ -199,20 +198,6 @@ object BotaniaTCAspects {
 	fun wildStack(i: Block): ItemStack = ItemStack(i, 1, OreDictionary.WILDCARD_VALUE)
 	fun wildStack(i: Item): ItemStack = ItemStack(i, 1, OreDictionary.WILDCARD_VALUE)
 	
-	fun initAspects() {
-	
-	}
-	
-	fun getAspect(mod: String, tag: String): Aspect? {
-		if (Loader.isModLoaded(mod)) {
-			try {
-				return Aspect.getAspect(tag)
-			} catch (e: Exception) {
-			}
-		}
-		return null
-	}
-	
 	fun AspectList.a(asp: Aspect?, n: Int = 1): AspectList {
 		if (asp != null)
 			this.add(asp, n)
@@ -227,7 +212,7 @@ object BotaniaTCAspects {
 		val ENVY: Aspect? = getAspect("ForbiddenMagic", "invidia")
 		val WRATH: Aspect? = getAspect("ForbiddenMagic", "ira")
 		val SLOTH: Aspect? = getAspect("ForbiddenMagic", "desidia")
-		val COLOR = if (TCHandlerShadowFoxAspects.COLOR == null) Aspect.SENSES else TCHandlerShadowFoxAspects.COLOR
+		val COLOR = TCHandlerShadowFoxAspects.COLOR
 		val forbidden = Loader.isModLoaded("ForbiddenMagic")
 		
 		var list = AspectList().a(Aspect.PLANT, 2).a(Aspect.LIFE).a(COLOR)
@@ -297,7 +282,7 @@ object BotaniaTCAspects {
 		ThaumcraftApi.registerObjectTag(wildStack(turntable), list)
 		
 		list = AspectList().a(Aspect.EARTH, 64).a(Aspect.HUNGER, 12).a(Aspect.MAGIC, 2) // It's REALLY heavy.
-		ThaumcraftApi.registerObjectTag(wildStack(ModBlocks.tinyPlanet), list)
+		ThaumcraftApi.registerObjectTag(wildStack(tinyPlanet), list)
 		
 		list = AspectList().a(Aspect.MAGIC, 8).a(Aspect.EXCHANGE, 8)
 		ThaumcraftApi.registerObjectTag(wildStack(alchemyCatalyst), list)
@@ -455,7 +440,7 @@ object BotaniaTCAspects {
 		ThaumcraftApi.registerObjectTag(wildStack(manaBomb), list)
 		
 		list = AspectList(ItemStack(Blocks.noteblock)).a(Aspect.GREED, 2).a(Aspect.AIR, 3)
-		ThaumcraftApi.registerObjectTag(wildStack(ModBlocks.cacophonium), list)
+		ThaumcraftApi.registerObjectTag(wildStack(cacoblock), list)
 		
 		list = AspectList().a(Aspect.MOTION, 2).a(Aspect.AIR, 2)
 		ThaumcraftApi.registerObjectTag(wildStack(bellows), list)
@@ -470,7 +455,7 @@ object BotaniaTCAspects {
 		ThaumcraftApi.registerObjectTag(wildStack(redStringInterceptor), list)
 		
 		list = AspectList(ItemStack(Items.skull, 1, 3)).a(Aspect.ELDRITCH, 4).a(Aspect.EARTH, 4)
-		ThaumcraftApi.registerObjectTag(wildStack(ModBlocks.gaiaHead), list)
+		ThaumcraftApi.registerObjectTag(wildStack(gaiaHead), list)
 		
 		list = AspectList().a(Aspect.ELDRITCH, 4).a(Aspect.VOID, 2).a(Aspect.MIND, 2)
 		ThaumcraftApi.registerObjectTag(wildStack(corporeaRetainer), list)
@@ -660,7 +645,7 @@ object BotaniaTCAspects {
 		ThaumcraftApi.registerObjectTag(wildStack(terrasteelHelmRevealing), list)
 		
 		list = AspectList().a(Aspect.EARTH, 12).a(Aspect.HUNGER, 12).a(Aspect.MAGIC, 2)
-		ThaumcraftApi.registerObjectTag(wildStack(ModItems.tinyPlanet), list)
+		ThaumcraftApi.registerObjectTag(wildStack(tinyPlanetItem), list)
 		
 		list = AspectList().a(Aspect.VOID, 2).a(Aspect.MAGIC, 8).a(Aspect.METAL, 8)
 		ThaumcraftApi.registerObjectTag(wildStack(manaRing), list)
@@ -753,8 +738,8 @@ object BotaniaTCAspects {
 		list = AspectList().a(Aspect.WEATHER, 16).a(Aspect.WEAPON, 4)
 		ThaumcraftApi.registerObjectTag(wildStack(thunderSword), list)
 		
-		list = AspectList(ItemStack(ModBlocks.gaiaHead))
-		ThaumcraftApi.registerObjectTag(wildStack(ModItems.gaiaHead), list)
+		list = AspectList(ItemStack(gaiaHead))
+		ThaumcraftApi.registerObjectTag(wildStack(gaiaHeadItem), list)
 		
 		/// ENTITIES!
 		
@@ -829,28 +814,26 @@ object TCHandlerShadowFoxAspects {
 	
 	fun forMeta(cap: Int, lambda: (Int) -> Unit) {
 		for (i in 0..cap) {
-			lambda.invoke(i)
+			lambda(i)
 		}
 	}
 	
-	var COLOR: Aspect? = null
+	lateinit var COLOR: Aspect
 	
 	fun initAspects() {
-		if (AlfheimConfigHandler.addAspectsToBotania)
-			BotaniaTCAspects.initAspects()
+//		if (AlfheimConfigHandler.addAspectsToBotania)
+//			BotaniaTCAspects.initAspects()
 		
-		if (AlfheimConfigHandler.addTincturemAspect)
-			COLOR = RainbowAspect("tincturem", arrayOf(Aspect.LIGHT, Aspect.ORDER), ResourceLocation(ModInfo.MODID, "textures/misc/tincturem.png"), GL11.GL_ONE_MINUS_SRC_ALPHA)
+		COLOR = if (AlfheimConfigHandler.addTincturemAspect)
+			RainbowAspect("tincturem", arrayOf(Aspect.LIGHT, Aspect.ORDER), ResourceLocationIL(ModInfo.MODID, "textures/misc/tincturem.png"), GL11.GL_ONE_MINUS_SRC_ALPHA)
+		else
+			Aspect.SENSES
 	}
 	
-	fun getAspect(mod: String, tag: String): Aspect? {
-		if (Loader.isModLoaded(mod)) {
-			try {
-				return Aspect.getAspect(tag)
-			} catch (e: Exception) {
-			}
-		}
-		return null
+	fun getAspect(mod: String, tag: String) = try {
+		if (Loader.isModLoaded(mod)) Aspect.getAspect(tag) else null
+	} catch (e: Exception) {
+		null
 	}
 	
 	fun replaceAspect(stack: ItemStack, a1: Aspect, a2: Aspect) {
@@ -881,37 +864,36 @@ object TCHandlerShadowFoxAspects {
 		val SLOTH: Aspect? = getAspect("ForbiddenMagic", "desidia")
 		val forbidden = Loader.isModLoaded("ForbiddenMagic")
 		val hellAspect = if (forbidden) NETHER else Aspect.FIRE
-		val colorAspect = if (AlfheimConfigHandler.addTincturemAspect) COLOR else Aspect.SENSES
 		
 		val splinterlist = AspectList().add(Aspect.TREE, 1).add(Aspect.ENTROPY, 1)
 		
-		var list = AspectList().add(Aspect.EARTH, 2).add(colorAspect, 1)
+		var list = AspectList().add(Aspect.EARTH, 2).add(COLOR, 1)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimBlocks.irisDirt), list)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimBlocks.rainbowDirt), list)
 		
-		list = AspectList().add(Aspect.PLANT, 2).add(Aspect.TREE, 1).add(colorAspect, 1)
+		list = AspectList().add(Aspect.PLANT, 2).add(Aspect.TREE, 1).add(COLOR, 1)
 		ThaumcraftApi.registerObjectTag(ItemStack(AlfheimBlocks.irisSapling), list)
 		
-		list = AspectList().add(Aspect.PLANT, 1).add(Aspect.AIR, 1).add(colorAspect, 1)
+		list = AspectList().add(Aspect.PLANT, 1).add(Aspect.AIR, 1).add(COLOR, 1)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimBlocks.irisGrass), list)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimBlocks.rainbowGrass), list)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimBlocks.irisTallGrass0), list)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimBlocks.irisTallGrass1), list)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimBlocks.rainbowTallGrass), list)
 		
-		list = AspectList().add(Aspect.TREE, 4).add(colorAspect, 1)
+		list = AspectList().add(Aspect.TREE, 4).add(COLOR, 1)
 		forMeta(4) { ThaumcraftApi.registerObjectTag(ItemStack(AlfheimBlocks.irisWood0, 1, it), list) }
 		forMeta(4) { ThaumcraftApi.registerObjectTag(ItemStack(AlfheimBlocks.irisWood1, 1, it), list) }
 		forMeta(4) { ThaumcraftApi.registerObjectTag(ItemStack(AlfheimBlocks.irisWood2, 1, it), list) }
 		forMeta(4) { ThaumcraftApi.registerObjectTag(ItemStack(AlfheimBlocks.irisWood3, 1, it), list) }
 		ThaumcraftApi.registerObjectTag(ItemStack(AlfheimBlocks.rainbowWood), list)
 		forMeta(4) { ThaumcraftApi.registerObjectTag(ItemStack(AlfheimBlocks.altWood0, 1, it), list) }
-		forMeta(2) { ThaumcraftApi.registerObjectTag(ItemStack(AlfheimBlocks.altWood1, 1, it), list) }
+		forMeta(2) { ThaumcraftApi.registerObjectTag(ItemStack(altWood1, 1, it), list) }
 		
 		list = AspectList().add(Aspect.TREE, 1).add(Aspect.METAL, 1)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimBlocks.itemDisplay), list)
 		
-		list = AspectList().add(Aspect.TREE, 8).add(Aspect.MAGIC, 8).add(colorAspect, 2).add(Aspect.CRAFT, 4)
+		list = AspectList().add(Aspect.TREE, 8).add(Aspect.MAGIC, 8).add(COLOR, 2).add(Aspect.CRAFT, 4)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimBlocks.treeCrafterBlock), list)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimBlocks.treeCrafterBlockRB), list)
 		
@@ -932,13 +914,13 @@ object TCHandlerShadowFoxAspects {
 		list = AspectList().add(Aspect.CLOTH, 4).add(Aspect.FIRE, 2).add(Aspect.MAGIC, 2)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimBlocks.kindling), list)
 		
-		list = AspectList().add(Aspect.PLANT, 1).add(Aspect.EXCHANGE, 1).add(colorAspect, 1)
+		list = AspectList().add(Aspect.PLANT, 1).add(Aspect.EXCHANGE, 1).add(COLOR, 1)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimItems.irisSeeds), list)
 		
-		list = AspectList().add(Aspect.TOOL, 8).add(Aspect.EARTH, 4).add(Aspect.AIR, 2).add(colorAspect, 2).add(Aspect.MAGIC, 4)
+		list = AspectList().add(Aspect.TOOL, 8).add(Aspect.EARTH, 4).add(Aspect.AIR, 2).add(COLOR, 2).add(Aspect.MAGIC, 4)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimItems.rodColorfulSkyDirt), list)
 		
-		list = AspectList().add(Aspect.TOOL, 8).add(Aspect.LIGHT, 6).add(colorAspect, 2).add(Aspect.MAGIC, 4)
+		list = AspectList().add(Aspect.TOOL, 8).add(Aspect.LIGHT, 6).add(COLOR, 2).add(Aspect.MAGIC, 4)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimItems.rodPrismatic), list)
 		
 		list = AspectList().add(Aspect.TOOL, 8).add(Aspect.WEATHER, 8).add(Aspect.MAGIC, 4)
@@ -958,10 +940,10 @@ object TCHandlerShadowFoxAspects {
 		list = AspectList().add(Aspect.ELDRITCH, 5).add(hellAspect, 16)
 		ThaumcraftApi.registerObjectTag(ItemStack(AlfheimItems.priestEmblem, 1, 3), list)
 		
-		list = AspectList().add(Aspect.CLOTH, 4).add(colorAspect, 2)
+		list = AspectList().add(Aspect.CLOTH, 4).add(COLOR, 2)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimItems.coatOfArms), list)
 		
-		list = AspectList().add(colorAspect, 8).add(Aspect.METAL, 4)
+		list = AspectList().add(COLOR, 8).add(Aspect.METAL, 4)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimItems.colorOverride), list)
 		
 		list = AspectList().add(Aspect.CLOTH, 2).add(Aspect.GREED, 2).add(Aspect.ELDRITCH, 2)
@@ -977,18 +959,18 @@ object TCHandlerShadowFoxAspects {
 		ThaumcraftApi.registerObjectTag(ItemStack(AlfheimItems.wiltedLotus, 1, 1), list)
 		
 		list = AspectList().add(Aspect.TOOL, 2).add(Aspect.TREE, 2).add(Aspect.WEATHER, 2)
-		ThaumcraftApi.registerObjectTag(ItemStack(elvenResource, 1, ElvenResourcesMetas.ThunderwoodTwig), list)
+		ThaumcraftApi.registerObjectTag(ElvenResourcesMetas.ThunderwoodTwig.stack, list)
 		
-		ThaumcraftApi.registerObjectTag(ItemStack(elvenResource, 1, ElvenResourcesMetas.ThunderwoodSplinters), splinterlist)
+		ThaumcraftApi.registerObjectTag(ElvenResourcesMetas.ThunderwoodSplinters.stack, splinterlist)
 		
 		list = AspectList().add(Aspect.TOOL, 2).add(Aspect.TREE, 2).add(hellAspect, 2)
-		ThaumcraftApi.registerObjectTag(ItemStack(elvenResource, 1, ElvenResourcesMetas.NetherwoodTwig), list)
+		ThaumcraftApi.registerObjectTag(ElvenResourcesMetas.NetherwoodTwig.stack, list)
 		
-		ThaumcraftApi.registerObjectTag(ItemStack(elvenResource, 1, ElvenResourcesMetas.NetherwoodSplinters), splinterlist)
+		ThaumcraftApi.registerObjectTag(ElvenResourcesMetas.NetherwoodSplinters.stack, splinterlist)
 		
 		list = AspectList().add(Aspect.FIRE, 4).add(Aspect.ENERGY, 2)
 		if (forbidden) list.add(NETHER, 2)
-		ThaumcraftApi.registerObjectTag(ItemStack(elvenResource, 1, ElvenResourcesMetas.NetherwoodCoal), list)
+		ThaumcraftApi.registerObjectTag(ElvenResourcesMetas.NetherwoodCoal.stack, list)
 		
 		list = AspectList().add(Aspect.TOOL, 3).add(Aspect.VOID, 12).add(Aspect.CLOTH, 4).add(Aspect.GREED, 2)
 		if (forbidden) list.add(SLOTH, 2)
@@ -997,13 +979,10 @@ object TCHandlerShadowFoxAspects {
 		list = AspectList(ItemStack(manaFlame))
 		ThaumcraftApi.registerObjectTag(ItemStack(AlfheimBlocks.rainbowFlame), list)
 		
-		list = AspectList(ItemStack(manaFlame)).add(Aspect.VOID, 1)
-		ThaumcraftApi.registerObjectTag(ItemStack(AlfheimBlocks.invisibleFlame), list)
-		
 		list = AspectList(ItemStack(lens, 1, 17)).add(Aspect.VOID, 1)
 		ThaumcraftApi.registerObjectTag(ItemStack(AlfheimItems.invisibleFlameLens), list)
 		
-		list = AspectList().add(Aspect.LIGHT, 4).add(Aspect.MECHANISM, 2).add(colorAspect, 4)
+		list = AspectList().add(Aspect.LIGHT, 4).add(Aspect.MECHANISM, 2).add(COLOR, 4)
 		ThaumcraftApi.registerObjectTag(ItemStack(AlfheimBlocks.irisLamp), list)
 		
 		list = AspectList().add(Aspect.TREE, 4).add(Aspect.VOID, 1)
@@ -1012,7 +991,7 @@ object TCHandlerShadowFoxAspects {
 		list = AspectList().add(Aspect.PLANT, 2).add(Aspect.TREE, 1).add(Aspect.VOID, 1)
 		ThaumcraftApi.registerObjectTag(ItemStack(AlfheimBlocks.sealingSapling), list)
 		
-		list = AspectList().add(Aspect.ELDRITCH, 2).add(Aspect.LIGHT, 2).add(COLOR, 2)
+		list = AspectList().add(Aspect.ELDRITCH, 2).add(Aspect.LIGHT, 2).add(this.COLOR, 2)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimItems.starPlacer), list)
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimBlocks.starBlock), list)
 		
@@ -1032,9 +1011,9 @@ object TCHandlerShadowFoxAspects {
 		ThaumcraftApi.registerObjectTag(wildStack(AlfheimBlocks.shimmerQuartz), list)
 		
 		list = AspectList(ItemStack(Items.quartz))
-		ThaumcraftApi.registerObjectTag(ItemStack(elvenResource, 1, ElvenResourcesMetas.RainbowQuartz), list)
+		ThaumcraftApi.registerObjectTag(ElvenResourcesMetas.RainbowQuartz.stack, list)
 		
-		list = AspectList().add(COLOR, 1)
+		list = AspectList().add(this.COLOR, 1)
 		ThaumcraftApi.registerObjectTag(LibOreDict.DYES[16], list)
 		
 		list = AspectList().add(Aspect.TAINT, 2).add(Aspect.ENTROPY, 2).add(Aspect.PLANT, 2)
@@ -1047,15 +1026,13 @@ object TCHandlerShadowFoxAspects {
 	}
 	
 	fun overrideVanillaAspects() {
-		if (COLOR != null) {
-			replaceAspect(wildStack(Blocks.stained_hardened_clay), Aspect.SENSES, COLOR!!)
-			replaceAspect(wildStack(Blocks.red_flower), Aspect.SENSES, COLOR!!)
-			replaceAspect(wildStack(Blocks.yellow_flower), Aspect.SENSES, COLOR!!)
-			
-			for (i in LibOreDict.DYES)
-				replaceAspect(i, Aspect.SENSES, COLOR!!)
-			
-			replaceAspect("oreLapis", Aspect.SENSES, COLOR!!)
-		}
+		replaceAspect(wildStack(Blocks.stained_hardened_clay), Aspect.SENSES, COLOR)
+		replaceAspect(wildStack(Blocks.red_flower), Aspect.SENSES, COLOR)
+		replaceAspect(wildStack(Blocks.yellow_flower), Aspect.SENSES, COLOR)
+		
+		for (i in LibOreDict.DYES)
+			replaceAspect(i, Aspect.SENSES, COLOR)
+		
+		replaceAspect("oreLapis", Aspect.SENSES, COLOR)
 	}
 }

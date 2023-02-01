@@ -7,7 +7,6 @@ import alfheim.client.render.world.VisualEffectHandlerClient.VisualEffects
 import alfheim.common.core.handler.*
 import alfheim.common.core.handler.CardinalSystem.PartySystem
 import alfheim.common.core.util.DamageSourceSpell
-import alexsocol.asjlib.security.InteractionSecurity
 import alfheim.common.spell.tech.SpellDriftingMine
 import cpw.mods.fml.relauncher.*
 import net.minecraft.entity.*
@@ -16,14 +15,13 @@ import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.*
 import net.minecraft.world.World
 import java.util.*
-import kotlin.math.atan2
+import kotlin.math.*
 
 class EntitySpellDriftingMine(world: World): Entity(world), ITimeStopSpecific {
 	
 	var caster: EntityLivingBase? = null
 	
-	override val isImmune: Boolean
-		get() = false
+	override val isImmune = false
 	
 	init {
 		setSize(1f, 1f)
@@ -41,17 +39,10 @@ class EntitySpellDriftingMine(world: World): Entity(world), ITimeStopSpecific {
 	
 	fun onImpact(mop: MovingObjectPosition?) {
 		if (!worldObj.isRemote) {
-			if (mop?.entityHit is EntityLivingBase) {
-				do {
-					if (InteractionSecurity.canHurtEntity(caster ?: break, mop.entityHit as EntityLivingBase))
-						mop.entityHit.attackEntityFrom(DamageSourceSpell.explosion(this, caster), SpellBase.over(caster, SpellDriftingMine.damage.D))
-				} while (false)
-			}
+			mop?.entityHit?.attackEntityFrom(DamageSourceSpell.explosion(this, caster), SpellBase.over(caster, SpellDriftingMine.damage.D))
 			
-			val l = worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, this.boundingBox(SpellDriftingMine.radius)) as List<EntityLivingBase>
-			for (e in l) if (!PartySystem.mobsSameParty(e, caster)) {
-				if (!InteractionSecurity.canHurtEntity(caster ?: continue, e)) continue
-				e.attackEntityFrom(DamageSourceSpell.explosion(this, caster), SpellBase.over(caster, SpellDriftingMine.damage.D))
+			getEntitiesWithinAABB(worldObj, EntityLivingBase::class.java, boundingBox(SpellDriftingMine.radius)).forEach {
+				it.attackEntityFrom(DamageSourceSpell.explosion(this, caster), SpellBase.over(caster, SpellDriftingMine.damage.D))
 			}
 			
 			worldObj.playSoundEffect(posX, posY, posZ, "random.explode", 4f, (1f + (worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.2f) * 0.7f)
@@ -76,7 +67,7 @@ class EntitySpellDriftingMine(world: World): Entity(world), ITimeStopSpecific {
 			var movingobjectposition: MovingObjectPosition? = worldObj.rayTraceBlocks(vec3, vec31)
 			
 			if (movingobjectposition == null) {
-				val l = worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, boundingBox.addCoord(motionX, motionY, motionZ).expand(1)) as MutableList<EntityLivingBase>
+				val l = getEntitiesWithinAABB(worldObj, EntityLivingBase::class.java, boundingBox.addCoord(motionX, motionY, motionZ).expand(1))
 				l.remove(caster)
 				
 				for (e in l)
@@ -88,7 +79,7 @@ class EntitySpellDriftingMine(world: World): Entity(world), ITimeStopSpecific {
 			
 			if (movingobjectposition != null) onImpact(movingobjectposition)
 			
-			val f1 = MathHelper.sqrt_double(motionX * motionX + motionZ * motionZ)
+			val f1 = sqrt(motionX * motionX + motionZ * motionZ)
 			rotationYaw = (atan2(motionZ, motionX) * 180.0 / Math.PI).F + 90f
 			
 			rotationPitch = (atan2(f1.D, motionY) * 180.0 / Math.PI).F - 90f

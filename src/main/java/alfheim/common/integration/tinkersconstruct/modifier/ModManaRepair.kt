@@ -2,7 +2,6 @@ package alfheim.common.integration.tinkersconstruct.modifier
 
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.integration.tinkersconstruct.TinkersConstructAlfheimModule
-import alfheim.common.item.AlfheimItems
 import alfheim.common.item.material.ElvenResourcesMetas
 import net.minecraft.entity.*
 import net.minecraft.entity.player.EntityPlayer
@@ -18,7 +17,7 @@ import tconstruct.modifiers.tools.ModBoolean
 import vazkii.botania.api.mana.ManaItemHandler
 import vazkii.botania.common.core.helper.ItemNBTHelper
 
-object ModManaRepair: ModBoolean(arrayOf(ItemStack(AlfheimItems.elvenResource, 1, ElvenResourcesMetas.ManaInfusionCore)), AlfheimConfigHandler.modifierIDs[0], "ManaCore", "${EnumChatFormatting.AQUA}", StatCollector.translateToLocal("modifier.tool.manacore")) {
+object ModManaRepair: ModBoolean(arrayOf(ElvenResourcesMetas.ManaInfusionCore.stack), AlfheimConfigHandler.modifierIDs[0], "ManaCore", "${EnumChatFormatting.AQUA}", StatCollector.translateToLocal("modifier.tool.manacore")) {
 	
 	override fun canModify(stack: ItemStack, input: Array<ItemStack?>?): Boolean {
 		val tool = stack.item as? IModifyable ?: return false
@@ -59,7 +58,7 @@ object AModNatural: ActiveToolMod() {
 		val addDelay = if (stack === player.currentEquippedItem) 1 else 10
 		
 		if (headMaterial in TinkersConstructAlfheimModule.manaGenMaterials && player.ticksExisted % (TinkersConstructAlfheimModule.manaGenDelay[headMaterial] ?: 20) * addDelay == 0)
-			ManaItemHandler.dispatchManaExact(stack, player, 1, true)
+			ManaItemHandler.dispatchMana(stack, player, 1, true)
 	}
 	
 	override fun damageTool(stack: ItemStack, damage: Int, entity: EntityLivingBase?): Boolean {

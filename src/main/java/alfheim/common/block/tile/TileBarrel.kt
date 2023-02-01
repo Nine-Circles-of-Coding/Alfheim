@@ -68,8 +68,8 @@ class TileBarrel: ASJTile() {
 		const val WINE_STAGE_READY = 4
 		
 		val WINE_TYPE_NONE = 0
-		val WINE_TYPE_WHITE = ElvenFoodMetas.WhiteGrapes
-		val WINE_TYPE_RED = ElvenFoodMetas.RedGrapes
+		val WINE_TYPE_WHITE = ElvenFoodMetas.WhiteGrapes.I
+		val WINE_TYPE_RED = ElvenFoodMetas.RedGrapes.I
 		
 		const val MAX_WINE_LEVEL = 12
 		const val FERMENTATION_TIME = 6000

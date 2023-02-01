@@ -11,6 +11,8 @@ import kotlin.math.*
 
 class ItemAlfheimWandRod: Item() {
 	
+	lateinit var textures: Array<IIcon>
+	
 	init {
 		creativeTab = ThaumcraftAlfheimModule.tcnTab
 		setHasSubtypes(true)
@@ -19,13 +21,12 @@ class ItemAlfheimWandRod: Item() {
 	
 	@SideOnly(Side.CLIENT)
 	override fun registerIcons(reg: IIconRegister) {
-		for (i in textures.indices)
-			textures[i] = reg.registerIcon("thaumcraft:AlfRod$i")
+		textures = Array(3) { reg.registerIcon("thaumcraft:AlfRod$it") }
 	}
 	
 	@SideOnly(Side.CLIENT)
 	override fun getIconFromDamage(meta: Int): IIcon {
-		return textures[max(0, min(meta, textures.size - 1))]!!
+		return textures[max(0, min(meta, textures.size - 1))]
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -36,10 +37,5 @@ class ItemAlfheimWandRod: Item() {
 	
 	override fun getUnlocalizedName(stack: ItemStack): String {
 		return "${super.getUnlocalizedName()}.${stack.meta}"
-	}
-	
-	companion object {
-		
-		val textures = arrayOfNulls<IIcon>(3)
 	}
 }

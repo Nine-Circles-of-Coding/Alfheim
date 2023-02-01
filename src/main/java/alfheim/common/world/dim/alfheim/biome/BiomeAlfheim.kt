@@ -12,8 +12,11 @@ import net.minecraft.world.biome.BiomeGenBase
 import net.minecraftforge.common.BiomeDictionary
 import net.minecraftforge.common.BiomeDictionary.Type
 import ru.vamig.worldengine.*
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.component3
 
-open class BiomeAlfheim @JvmOverloads constructor(r: Boolean = false): WE_Biome(WE_WorldProvider.we_id, r) {
+abstract class BiomeAlfheim: WE_Biome(WE_WorldProvider.we_id) {
 	
 	init {
 		setBiomeName("Alfheim")
@@ -26,15 +29,12 @@ open class BiomeAlfheim @JvmOverloads constructor(r: Boolean = false): WE_Biome(
 		temperature = if (AlfheimCore.winter) 0f else 0.5f
 		
 		createChunkGen_InXZ_List.clear()
-		createChunkGen_InXYZ_List.clear()
 		decorateChunkGen_List.clear()
 		
-		addEntry(EntityElf::class.java, AlfheimConfigHandler.elvesSpawn)
-		addEntry(EntitySheep::class.java, AlfheimConfigHandler.sheepSpawn)
-		addEntry(EntityPig::class.java, AlfheimConfigHandler.pigSpawn)
-		addEntry(EntityChicken::class.java, AlfheimConfigHandler.chickSpawn)
-		addEntry(EntityCow::class.java, AlfheimConfigHandler.cowSpawn)
+		alfheimBiomes.add(this)
 	}
+	
+	override fun getFloatTemperature(x: Int, y: Int, z: Int) = if (AlfheimCore.winter) 0f else 0.5f
 	
 	override fun getSkyColorByTemp(temp: Float) = if (AlfheimCore.winter) 0x576cd9 else 0x266eff
 	
@@ -47,9 +47,9 @@ open class BiomeAlfheim @JvmOverloads constructor(r: Boolean = false): WE_Biome(
 		val dreamTree = StructureDreamsTree(AlfheimBlocks.altWood1, AlfheimBlocks.altLeaves, 3, 7, 11, 15)
 		val sadOak = StructureDreamsTree(Blocks.log, Blocks.leaves, 0, 4, 8, 4)
 		
-		fun BiomeGenBase.addEntry(clazz: Class<*>, rate: IntArray) {
+		fun BiomeGenBase.addEntry(clazz: Class<*>, rate: IntArray, type: EnumCreatureType = EnumCreatureType.creature) {
 			val (w, i, x) = rate
-			this.getSpawnableList(EnumCreatureType.creature).add(SpawnListEntry(clazz, w, i, x))
+			this.getSpawnableList(type).add(SpawnListEntry(clazz, w, i, x))
 		}
 	}
 }

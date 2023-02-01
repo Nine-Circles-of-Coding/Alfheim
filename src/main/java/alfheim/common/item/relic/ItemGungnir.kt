@@ -2,10 +2,12 @@ package alfheim.common.item.relic
 
 import alexsocol.asjlib.*
 import alfheim.client.render.world.VisualEffectHandlerClient
-import alfheim.common.core.handler.VisualEffectHandler
+import alfheim.common.core.handler.*
+import alfheim.common.core.helper.*
 import alfheim.common.core.util.AlfheimTab
 import alfheim.common.entity.*
 import net.minecraft.entity.*
+import net.minecraft.entity.boss.EntityDragon
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.*
 import net.minecraft.util.*
@@ -50,6 +52,8 @@ class ItemGungnir: ItemRelic("Gungnir") {
 	override fun getItemUseAction(stack: ItemStack?) = EnumAction.bow
 	
 	override fun onPlayerStoppedUsing(stack: ItemStack, world: World, player: EntityPlayer, left: Int) {
+		if (world.isRemote) return
+		
 		if (player.isSneaking)
 			shoot(stack, world, player)
 		else
@@ -57,15 +61,31 @@ class ItemGungnir: ItemRelic("Gungnir") {
 	}
 	
 	fun onePunchMan(stack: ItemStack, world: World, player: EntityPlayer) {
-		val target = ASJUtilities.getMouseOver(player, 128.0, false)?.entityHit as? EntityLivingBase ?: return
+		var target: EntityLivingBase? = null
 		
-		target.attackEntityFrom(DamageSource.causePlayerDamage(player).setDamageBypassesArmor(), 100f)
+		if (AlfheimConfigHandler.enableMMO) {
+			val tgt = CardinalSystem.TargetingSystem.getTarget(player)
+			if (!tgt.isParty) target = tgt.target
+			if (target != null && ASJUtilities.isNotInFieldOfVision(target, player)) target = null
+		}
+		
+		if (target == null)
+			target = ASJUtilities.getMouseOver(player, 128.0, false)?.entityHit as? EntityLivingBase ?: return
+		
+		val src = DamageSource.causePlayerDamage(player).setDamageBypassesArmor().setTo(ElementalDamage.LIGHTNESS)
+		if (target is EntityDragon)
+			target.attackEntityFromPart(target.dragonPartHead, src, 100f)
+		else
+			target.attackEntityFrom(src, 100f)
+		
+		
 		if (!player.capabilities.isCreativeMode) stack.cooldown = 1000
-		if (!world.isRemote) VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.GUNGNIR, player.dimension, player.entityId.D)
+		
+		VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.GUNGNIR, player.dimension, player.entityId.D, target.entityId.D)
 	}
 	
 	fun shoot(stack: ItemStack, world: World, player: EntityPlayer) {
-		if (!world.isRemote) player.worldObj.spawnEntityInWorld(EntitySubspaceSpear(world, player).also {
+		if (!world.isRemote) EntitySubspaceSpear(world, player).also {
 			it.damage = 20f
 			it.life = 200
 			it.type = 1
@@ -76,7 +96,7 @@ class ItemGungnir: ItemRelic("Gungnir") {
 			it.shoot(player, player.rotationPitch, player.rotationYaw, 0f, 1.45f, 1f)
 			it.setPosition(player)
 			it.posY += player.eyeHeight
-		})
+		}.spawn()
 		
 		if (!player.capabilities.isCreativeMode) stack.cooldown = 500
 	}

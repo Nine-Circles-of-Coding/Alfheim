@@ -6,7 +6,6 @@ import alfheim.common.core.util.DamageSourceSpell
 import alfheim.common.spell.sound.SpellIsaacStorm
 import net.minecraft.entity.*
 import net.minecraft.entity.monster.IMob
-import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.MovingObjectPosition
 import net.minecraft.world.World
 import vazkii.botania.common.Botania
@@ -15,11 +14,9 @@ import kotlin.math.abs
 
 class EntitySpellIsaacMissile(world: World): EntityThrowableCopy(world) {
 	
-	internal var time = 0
-	
 	var userSelected: Boolean
-		get() = dataWatcher.getWatchableObjectInt(25) != 0
-		set(value) = dataWatcher.updateObject(25, if (value) 1 else 0)
+		get() = getFlag(6)
+		set(value) = setFlag(6, value)
 	
 	var targetEntity: EntityLivingBase?
 		get() {
@@ -53,7 +50,7 @@ class EntitySpellIsaacMissile(world: World): EntityThrowableCopy(world) {
 			return false
 		}
 		
-		val entities = worldObj.getEntitiesWithinAABB(targetClass ?: IMob::class.java, getBoundingBox(posX, posY, posZ).expand(SpellIsaacStorm.radius))
+		val entities = getEntitiesWithinAABB(worldObj, targetClass ?: IMob::class.java, getBoundingBox(posX, posY, posZ).expand(SpellIsaacStorm.radius))
 		while (entities.size > 0) {
 			val e = entities[worldObj.rand.nextInt(entities.size)] as Entity
 			if (e !is EntityLivingBase || e.isDead) {
@@ -78,7 +75,6 @@ class EntitySpellIsaacMissile(world: World): EntityThrowableCopy(world) {
 	}
 	
 	override fun entityInit() {
-		dataWatcher.addObject(25, 0)
 		dataWatcher.addObject(26, 0)
 		dataWatcher.addObject(27, "")
 	}
@@ -90,7 +86,7 @@ class EntitySpellIsaacMissile(world: World): EntityThrowableCopy(world) {
 		
 		super.onUpdate()
 		
-		if (!worldObj.isRemote && (!findTarget() || time > SpellIsaacStorm.duration)) {
+		if (!worldObj.isRemote && (!findTarget() || ticksExisted > SpellIsaacStorm.duration)) {
 			setDead()
 			return
 		}
@@ -110,43 +106,33 @@ class EntitySpellIsaacMissile(world: World): EntityThrowableCopy(world) {
 			particlePos.add(step)
 		}
 		
-		val target = targetEntity
-		if (target != null) {
-			val targetVec = Vector3.fromEntityCenter(target)
-			val diffVec = targetVec.copy().sub(thisVec)
-			val motionVec = diffVec.copy().normalize().mul(0.6)
-			motionX = motionVec.x
-			motionY = motionVec.y
-			if (time < 10)
-				motionY = abs(motionY)
-			motionZ = motionVec.z
+		chaseTarget(this, targetEntity ?: return) { target ->
+			target.hurtResistantTime = 0
+			target.attackEntityFrom(DamageSourceSpell.missile(this, thrower), SpellIsaacStorm.damage)
 			
-			val targetList = worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, getBoundingBox(posX, posY, posZ).expand(0.5))
-			if (targetList.contains(target)) {
-				target.attackEntityFrom(DamageSourceSpell.missile(this, thrower), SpellIsaacStorm.damage)
-				target.hurtResistantTime = 0
-				
-				setDead()
-			}
+			setDead()
 		}
 		
-		time++
-	}
-	
-	override fun writeEntityToNBT(cmp: NBTTagCompound) {
-		super.writeEntityToNBT(cmp)
-		cmp.setInteger(TAG_TIME, time)
-	}
-	
-	override fun readEntityFromNBT(cmp: NBTTagCompound) {
-		super.readEntityFromNBT(cmp)
-		time = cmp.getInteger(TAG_TIME)
+		if (ticksExisted < 10)
+			motionY = abs(motionY)
 	}
 	
 	override fun onImpact(pos: MovingObjectPosition) = Unit
 	
 	companion object {
 		
-		private const val TAG_TIME = "time"
+		fun chaseTarget(entity: Entity, target: EntityLivingBase, onTargetCollide: (EntityLivingBase) -> Unit) {
+			val thisVec = Vector3.fromEntityCenter(entity)
+			val targetVec = Vector3.fromEntityCenter(target)
+			val diffVec = targetVec.copy().sub(thisVec)
+			val motionVec = diffVec.copy().normalize().mul(0.6)
+			entity.motionX = motionVec.x
+			entity.motionY = motionVec.y
+			entity.motionZ = motionVec.z
+			
+			val targetList = getEntitiesWithinAABB(entity.worldObj, EntityLivingBase::class.java, getBoundingBox(entity.posX, entity.posY, entity.posZ).expand(0.5))
+			if (targetList.contains(target))
+				onTargetCollide(target)
+		}
 	}
 }

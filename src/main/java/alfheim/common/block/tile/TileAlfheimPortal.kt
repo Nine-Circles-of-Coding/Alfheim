@@ -6,22 +6,18 @@ import alexsocol.asjlib.math.Vector3
 import alfheim.api.entity.raceID
 import alfheim.common.block.AlfheimBlocks
 import alfheim.common.core.handler.AlfheimConfigHandler
-import alfheim.common.item.AlfheimItems
 import alfheim.common.item.material.ElvenResourcesMetas
 import com.google.common.base.Function
 import net.minecraft.block.Block
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
-import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.server.MinecraftServer
-import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.*
 import vazkii.botania.api.lexicon.multiblock.*
 import vazkii.botania.common.Botania
 import vazkii.botania.common.block.ModBlocks
-import vazkii.botania.common.block.tile.TileMod
 import vazkii.botania.common.block.tile.mana.TilePool
 import vazkii.botania.common.core.handler.ConfigHandler
 import java.util.*
@@ -35,13 +31,10 @@ class TileAlfheimPortal: ASJTile() {
 	private var hasUnloadedParts = false
 	
 	val portalAABB: AxisAlignedBB
-		get() {
-			var aabb = AxisAlignedBB.getBoundingBox((xCoord - 1).D, (yCoord + 1).D, zCoord + 0.25, (xCoord + 2).D, (yCoord + 4).D, zCoord + 0.75)
-			if (getBlockMetadata() == 2)
-				aabb = AxisAlignedBB.getBoundingBox(xCoord + 0.25, (yCoord + 1).D, (zCoord - 1).D, xCoord + 0.75, (yCoord + 4).D, (zCoord + 2).D)
-			
-			return aabb
-		}
+		get() = if (getBlockMetadata() == 2)
+				getBoundingBox(xCoord + 0.25, yCoord + 1, zCoord - 1, xCoord + 0.75, yCoord + 4, zCoord + 2)
+			else
+				getBoundingBox(xCoord - 1, yCoord + 1, zCoord + 0.25, xCoord + 2, yCoord + 4, zCoord + 0.75)
 	
 	val validMetadata: Int
 		get() {
@@ -67,50 +60,41 @@ class TileAlfheimPortal: ASJTile() {
 			return
 		}
 		
-		if (!hasUnloadedParts) {
+		if (!hasUnloadedParts) run {
 			ticksOpen++
 			
 			val aabb = portalAABB
 			
-			if (ticksOpen > 60) {
-				val players = worldObj.getEntitiesWithinAABB(EntityPlayer::class.java, aabb)
-				if (!worldObj.isRemote)
-					for (player in players) {
-						player as EntityPlayer
-						if (player.isDead) continue
+			if (ticksOpen <= 60) return@run
+			if (ConfigHandler.elfPortalParticlesEnabled) blockParticle(meta)
+			if (worldObj.isRemote) return@run
+			
+			getEntitiesWithinAABB(worldObj, EntityPlayer::class.java, aabb).forEach { player ->
+				if (player.isDead) return@forEach
+				
+				if (player.dimension == AlfheimConfigHandler.dimensionIDAlfheim) {
+					val midgard = MinecraftServer.getServer().worldServerForDimension(0)
+					val coords = player.getBedLocation(0) ?: midgard.spawnPoint ?: ChunkCoordinates()
+					
+					val bb = player.boundingBox.expand(0).offset(-player.posX, -player.posY, -player.posZ).offset(coords.posX, coords.posY, coords.posZ)
+					if (midgard.func_147461_a(bb).isNotEmpty())
+						coords.posY = midgard.getTopSolidOrLiquidBlock(coords.posX, coords.posZ)
+					
+					ASJUtilities.sendToDimensionWithoutPortal(player, 0, coords.posX + 0.5, coords.posY + 0.5, coords.posZ + 0.5)
+				} else {
+					val alfheim = MinecraftServer.getServer().worldServerForDimension(AlfheimConfigHandler.dimensionIDAlfheim)
+					
+					val coords = if (AlfheimConfigHandler.enableElvenStory) {
+						val race = player.raceID - 1 // for array length
 						
-						if (player.dimension == AlfheimConfigHandler.dimensionIDAlfheim) {
-							var coords: ChunkCoordinates? = player.getBedLocation(0)
-							if (coords == null) coords = MinecraftServer.getServer().worldServerForDimension(0).spawnPoint
-							if (coords == null) coords = ChunkCoordinates(0, MinecraftServer.getServer().worldServerForDimension(0).getHeightValue(0, 0) + 3, 0)
-							
-							if (AlfheimConfigHandler.destroyPortal && (xCoord != 0 || zCoord != 0)) {
-								worldObj.newExplosion(player, xCoord.D, yCoord.D, zCoord.D, 5f, false, false)
-								val x = if (meta == 1) 2 else 0
-								val z = if (meta == 1) 0 else 2
-								worldObj.setBlockToAir(xCoord - x, yCoord + 2, zCoord - z)
-								worldObj.setBlockToAir(xCoord + x, yCoord + 2, zCoord + z)
-								worldObj.setBlockToAir(xCoord, yCoord + 4, zCoord)
-								worldObj.setBlockToAir(xCoord, yCoord, zCoord)
-							}
-							
-							ASJUtilities.sendToDimensionWithoutPortal(player, 0, coords.posX.D, coords.posY.D, coords.posZ.D)
-						} else {
-							if (AlfheimConfigHandler.enableElvenStory) {
-								val race = player.raceID - 1 // for array length
-								if (race in 0..8)
-									ASJUtilities.sendToDimensionWithoutPortal(player, AlfheimConfigHandler.dimensionIDAlfheim, AlfheimConfigHandler.zones[race].x, AlfheimConfigHandler.zones[race].y, AlfheimConfigHandler.zones[race].z)
-								else {
-									if (AlfheimConfigHandler.bothSpawnStructures)
-										findAndTP(player)
-									else
-										ASJUtilities.sendToDimensionWithoutPortal(player, AlfheimConfigHandler.dimensionIDAlfheim, 0.5, 253.0, 0.5)
-								}
-							} else
-								findAndTP(player)
-						}
-					}
-				if (ConfigHandler.elfPortalParticlesEnabled) blockParticle(meta)
+						if (race in 0..8) {
+							val (x, y, z) = AlfheimConfigHandler.zones[race].I
+							ChunkCoordinates(x, y, z)
+						} else alfheim.spawnPoint
+					} else alfheim.spawnPoint
+					
+					ASJUtilities.sendToDimensionWithoutPortal(player, AlfheimConfigHandler.dimensionIDAlfheim, coords.posX + 0.5, coords.posY + 0.5, coords.posZ + 0.5)
+				}
 			}
 		} else
 			closeNow = false
@@ -118,7 +102,7 @@ class TileAlfheimPortal: ASJTile() {
 		if (closeNow) {
 			worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 0, 3)
 			if (!worldObj.isRemote && worldObj.provider.dimensionId != AlfheimConfigHandler.dimensionIDAlfheim)
-				worldObj.spawnEntityInWorld(EntityItem(worldObj, xCoord + 0.5, yCoord + 1.5, zCoord + 0.5, ItemStack(AlfheimItems.elvenResource, 1, ElvenResourcesMetas.InterdimensionalGatewayCore)))
+				EntityItem(worldObj, xCoord + 0.5, yCoord + 1.5, zCoord + 0.5, ElvenResourcesMetas.InterdimensionalGatewayCore.stack).spawn()
 			for (i in 0..35)
 				blockParticle(meta)
 			closeNow = false
@@ -126,7 +110,7 @@ class TileAlfheimPortal: ASJTile() {
 		} else if (newMeta != meta) {
 			if (newMeta == 0) {
 				if (!worldObj.isRemote && worldObj.provider.dimensionId != AlfheimConfigHandler.dimensionIDAlfheim)
-					worldObj.spawnEntityInWorld(EntityItem(worldObj, xCoord + 0.5, yCoord + 1.5, zCoord + 0.5, ItemStack(AlfheimItems.elvenResource, 1, ElvenResourcesMetas.InterdimensionalGatewayCore)))
+					EntityItem(worldObj, xCoord + 0.5, yCoord + 1.5, zCoord + 0.5, ElvenResourcesMetas.InterdimensionalGatewayCore.stack).spawn()
 				for (i in 0..35)
 					blockParticle(meta)
 				activated = false
@@ -135,17 +119,6 @@ class TileAlfheimPortal: ASJTile() {
 		}
 		
 		hasUnloadedParts = false
-	}
-	
-	private fun findAndTP(player: EntityPlayer) {
-		ASJUtilities.sendToDimensionWithoutPortal(player, AlfheimConfigHandler.dimensionIDAlfheim, 0.5, 75.0, -1.5)
-		val alfheim = MinecraftServer.getServer().worldServerForDimension(AlfheimConfigHandler.dimensionIDAlfheim)
-		for (y in 50..149) {
-			if (alfheim.getBlock(0, y, 0) === AlfheimBlocks.alfheimPortal && alfheim.getBlockMetadata(0, y, 0) == 1) {
-				ASJUtilities.sendToDimensionWithoutPortal(player, AlfheimConfigHandler.dimensionIDAlfheim, 0.5, (y + 1).D, -1.5)
-				break
-			}
-		}
 	}
 	
 	private fun blockParticle(meta: Int) {
@@ -172,14 +145,14 @@ class TileAlfheimPortal: ASJTile() {
 		return false
 	}
 	
-	override fun writeCustomNBT(cmp: NBTTagCompound) {
-		cmp.setInteger(TAG_TICKS_OPEN, ticksOpen)
-		cmp.setBoolean(TAG_ACTIVATED, activated)
+	override fun writeCustomNBT(nbt: NBTTagCompound) {
+		nbt.setInteger(TAG_TICKS_OPEN, ticksOpen)
+		nbt.setBoolean(TAG_ACTIVATED, activated)
 	}
 	
-	override fun readCustomNBT(cmp: NBTTagCompound) {
-		ticksOpen = cmp.getInteger(TAG_TICKS_OPEN)
-		activated = cmp.getBoolean(TAG_ACTIVATED)
+	override fun readCustomNBT(nbt: NBTTagCompound) {
+		ticksOpen = nbt.getInteger(TAG_TICKS_OPEN)
+		activated = nbt.getBoolean(TAG_ACTIVATED)
 	}
 	
 	private fun checkConverter(baseConverter: Function<IntArray, IntArray>?) =
@@ -282,7 +255,7 @@ class TileAlfheimPortal: ASJTile() {
 		return false
 	}
 	
-	override fun getRenderBoundingBox() = TileEntity.INFINITE_EXTENT_AABB!!
+	override fun getRenderBoundingBox() = INFINITE_EXTENT_AABB!!
 	
 	companion object {
 		

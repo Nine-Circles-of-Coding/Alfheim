@@ -16,7 +16,6 @@ import vazkii.botania.common.core.handler.ConfigHandler
 import vazkii.botania.common.lib.LibBlockNames
 import java.util.*
 import kotlin.math.*
-import kotlin.math.roundToLong as roundToLong1
 
 class WorldGenGrass(val grass: Boolean, val flowers: Boolean, val doubleFlowers: Boolean, val botanicalFlowers: Boolean, val mod: Double): IWorldGenerator {
 	
@@ -30,7 +29,7 @@ class WorldGenGrass(val grass: Boolean, val flowers: Boolean, val doubleFlowers:
 		if (botanicalFlowers) {
 			val dist = min(8, max(1, ConfigHandler.flowerPatchSize))
 			for (i in 0 until ConfigHandler.flowerQuantity)
-				if (rand.nextInt((ConfigHandler.flowerPatchChance / mod).roundToLong1().I) == 0) {
+				if (rand.nextInt((ConfigHandler.flowerPatchChance / mod).roundToInt()) == 0) {
 					val x = cx + rand.nextInt(16)
 					val z = cz + rand.nextInt(16)
 					val y = world.getTopSolidOrLiquidBlock(x, z)
@@ -89,7 +88,7 @@ class WorldGenGrass(val grass: Boolean, val flowers: Boolean, val doubleFlowers:
 			}
 		}
 		
-		var perChunk = (64 * mod).roundToLong1().I
+		var perChunk = (64 * mod).roundToInt()
 		var iteration = 256
 		
 		val types = arrayOf<Block>(Blocks.yellow_flower, Blocks.yellow_flower, // 0 1

@@ -51,7 +51,7 @@ class BlockGrapeWhite: BlockBush(), IGrowable, ILexiconable {
 	override fun getIcon(side: Int, meta: Int) = if (side == 0) iconsBush.safeGet(meta) else blockIcon!!
 	override fun getRenderType() = LibRenderIDs.idGrapeWhite
 	override fun addCollisionBoxesToList(world: World?, x: Int, y: Int, z: Int, aabb: AxisAlignedBB?, list: List<Any?>?, entity: Entity?) = if (entity !is EntityBoat) super.addCollisionBoxesToList(world, x, y, z, aabb, list, entity) else Unit
-	override fun getCollisionBoundingBoxFromPool(world: World?, x: Int, y: Int, z: Int) = AxisAlignedBB.getBoundingBox(x + minX, y + minY, z + minZ, x + maxX, y + maxY, z + maxZ)!!
+	override fun getCollisionBoundingBoxFromPool(world: World?, x: Int, y: Int, z: Int) = getBoundingBox(x + minX, y + minY, z + minZ, x + maxX, y + maxY, z + maxZ)
 	override fun canPlaceBlockOn(block: Block) = block === Blocks.water
 	override fun canBlockStay(world: World, x: Int, y: Int, z: Int) = if (y in 0..255) world.getBlock(x, y - 1, z) === Blocks.water && world.getBlockMetadata(x, y - 1, z) == 0 else false
 	
@@ -74,7 +74,7 @@ class BlockGrapeWhite: BlockBush(), IGrowable, ILexiconable {
 	
 	override fun onBlockActivated(world: World, x: Int, y: Int, z: Int, player: EntityPlayer, side: Int, hitX: Float, hitY: Float, hitZ: Float): Boolean {
 		if (!world.isRemote && world.getBlockMetadata(x, y, z) >= 2 && player.heldItem == null) {
-			player.dropPlayerItemWithRandomChoice(ItemStack(AlfheimItems.elvenFood, world.rand.nextInt(2) + 1, ElvenFoodMetas.WhiteGrapes), true)?.delayBeforeCanPickup = 0
+			player.dropPlayerItemWithRandomChoice(ElvenFoodMetas.WhiteGrapes.stack(world.rand.nextInt(2) + 1), true)?.delayBeforeCanPickup = 0
 			world.setBlockMetadataWithNotify(x, y, z, 0, 3)
 			return true
 		}

@@ -1,6 +1,6 @@
 package alfheim.common.spell.sound
 
-import alexsocol.asjlib.boundingBox
+import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.security.InteractionSecurity
 import alfheim.api.entity.EnumRace
@@ -16,28 +16,27 @@ object SpellOutdare: SpellBase("outdare", EnumRace.POOKA, 6000, 2400, 20) {
 		get() = arrayOf<Any>(radius)
 	
 	override fun performCast(caster: EntityLivingBase): SpellCastResult {
-		val l = caster.worldObj.getEntitiesWithinAABB(EntityLiving::class.java, caster.boundingBox(radius)) as MutableList<EntityLiving>
+		val l = getEntitiesWithinAABB(caster.worldObj, EntityLiving::class.java, caster.boundingBox(radius))
 		l.remove(caster)
 		if (l.isEmpty()) return SpellCastResult.NOTARGET
 		
 		val result = checkCast(caster)
 		if (result != SpellCastResult.OK) return result
 		
-		for (e in l)
-			if (Vector3.entityDistance(caster, e) < radius) {
-				if (!InteractionSecurity.canInteractWithEntity(caster, e))
-					continue
+		l.forEach {
+			if (Vector3.entityDistance(caster, it) >= radius) return@forEach
+			if (!InteractionSecurity.canInteractWithEntity(caster, it)) return@forEach
+			
+			if (it is EntityFlugel) {
+				if (caster is EntityPlayer) it.playersDamage[caster.commandSenderName] = it.playersDamage.getOrDefault(caster.commandSenderName, 0f) + 1000f
 				
-				if (e is EntityFlugel) {
-					if (caster is EntityPlayer)
-						e.playersDamage[caster.commandSenderName] = e.playersDamage.getOrDefault(caster.commandSenderName, 0f) + 400f
-					continue
-				}
-				
-				e.attackTarget = caster
-				e.setLastAttacker(caster)
-				e.setRevengeTarget(caster)
+				return@forEach
 			}
+			
+			it.attackTarget = caster
+			it.setLastAttacker(caster)
+			it.setRevengeTarget(caster)
+		}
 		
 		return result
 	}

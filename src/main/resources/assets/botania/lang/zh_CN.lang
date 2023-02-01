@@ -48,13 +48,11 @@ alfheim.page.portal4=接下来,你需要建立一个链接, 这个链接可以�
 alfheim.page.portal5=制造 &1超维度核心-尘世&0
 alfheim.page.portal6=艾尔夫海姆之门
 alfheim.page.portal7=要激活这扇门户,你需要在门 户上放置一个&2核心&0, 和精灵传送门相似. 不过有一点需要注意, 在精灵乡中的艾尔夫海姆之 门并不需要魔力来源,但是在 尘世中,世界里的魔力并不是 那么充足,所以需要想办法为 它供给足够的魔力
-alfheim.page.portal8=不幸的是,即使是Mastray, 也不可能创造一个稳定且功 能齐全的门户这个版本不能 再传送死物,只会和高等 生物产生精神连接 但是,世界的中心蕴含的能量, 能够以稀少的代价填补精灵 乡的时间异常
-alfheim.page.portal8s=不幸的是,即使是Mastray, 也不可能创造一个稳定且功 能齐全的门户这个版本不能 再传送死物,只会和高等 生物产生精神连接 但是它成功的弥补了精灵乡 的时间异常
+alfheim.page.portal8=不幸的是,即使是Mastray, 也不可能创造一个稳定且功 能齐全的门户这个版本不能 再传送死物,只会和高等 生物产生精神连接 但是它成功的弥补了精灵乡 的时间异常
 
 alfheim.entry.worldgen=世界生成
 alfheim.tagline.worldgen=更多奇怪的小玩意儿
 alfheim.page.worldgen0=如果我们能忘记世界本身所 存在的危险,艾尔夫海姆确实 是一个美丽的世界 <br>可以通过和清理普通原木相 同的方式清理梦之木原木从 而获取梦之木
-alfheim.page.worldgen0u=如果我们能忘记世界本身所 存在的危险,艾尔夫海姆确实 是一个美丽的世界 <br>可以通过和清理普通原木相 同的方式清理梦之木原木从 而获取梦之木
 alfheim.page.worldgen1=净化 &1梦之木&0
 alfheim.page.worldgen2=制造 &1萤石粉&0
 alfheim.page.worldgen3=在这个世界上,有一些远古时 期留下的遗迹,例如和盖亚守 护者战斗的地方... <br>这个世界的沙子和尘世的沙 子不太一样.. 也许它会让事情变得更有趣 一些
@@ -179,8 +177,8 @@ alfheim.page.advMana1=事实证明,即使龙石具备吸收 并保存魔力的�
 alfheim.page.advMana2=制造 &1注魔宝石&0
 alfheim.page.advMana3=&c强化 &1注魔宝石&0
 alfheim.page.advMana4=而如果将魔灵钢或始源魂灵 锭打造成完美的魔力导体,并 将注魔宝石安放在上面会怎 么样呢?精灵中最伟大的工匠 们制造出了指环状的魔力容 器,不仅美观又方便,而且由于 魔灵钢和始源魂灵合金对于 魔力的亲和,这些戒指的存储 效率又有了进一步的提升.
-alfheim.page.advMana5=制造 &1魔灵魔力之戒&0
-alfheim.page.advMana6=制造 &1始源魂灵魔力之戒&0
+alfheim.page.advMana6=制造 &1魔灵魔力之戒&0
+alfheim.page.advMana7=制造 &1始源魂灵魔力之戒&0
 
 alfheim.entry.auraAlf=光环之戒
 alfheim.tagline.auraAlf=一切都可以变得更好
@@ -314,8 +312,8 @@ alfheim.tagline.dodgRing=跳到一旁以躲避攻击
 alfheim.page.dodgRing0=&1灵动之戒&0可以在佩戴者需要 的时候让他快速向左/右移动 一小段距离,可以躲避战斗中 的一些攻击. 通过快速摁下两次左移键或 者右移键来快速向一旁并闪 避袭来的攻击. 使用后将会有一小段的冷却 时间,并且会消耗一些饥饿值
 alfheim.page.dodgRing1=敏捷的奖励
 
-alfheim.page.judgementCloaks1n=&1神圣斗篷&0可以完全抵挡佩戴 者受到的伤害<br>&1罪恶斗篷&0会让周围生物和佩 戴者承受一样的伤害.<br>&1均衡斗篷&0可以将佩戴者受到 伤害的一半返还给攻击者,同 时它也可以防止佩戴者死亡.
-alfheim.page.judgementCloaks4=疼痛分配
+botania.page.judgementCloaks1n=&1神圣斗篷&0可以完全抵挡佩戴 者受到的伤害<br>&1罪恶斗篷&0会让周围生物和佩 戴者承受一样的伤害.<br>&1均衡斗篷&0可以将佩戴者受到 伤害的一半返还给攻击者,同 时它也可以防止佩戴者死亡.
+botania.page.judgementCloaks4=疼痛分配
 
 ################################################################ EBT ################################################################
 

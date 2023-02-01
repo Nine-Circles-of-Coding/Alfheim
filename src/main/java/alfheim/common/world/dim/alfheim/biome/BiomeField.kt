@@ -36,8 +36,8 @@ object BiomeField: BiomeAlfheim() {
 		standardBiomeLayers.add(Blocks.bedrock, 0.toByte(), 0, 0, 0, 0, true)
 		createChunkGen_InXZ_List.add(standardBiomeLayers)
 		val t = WE_StructureGen()
-		t.add(StructureArena(), 1000)
-		t.add(StructureShrine(), 5000)
+		t.add(StructureArena, 1000)
+		t.add(StructureShrine, 5000)
 		decorateChunkGen_List.add(t)
 		val g = WorldGenGrass(true, true, true, true, 1.0)
 		decorateChunkGen_List.add(g)
@@ -45,8 +45,7 @@ object BiomeField: BiomeAlfheim() {
 		decorateChunkGen_List.add(r)
 		val w = WorldGenGrapesWhiteAlfheim(4, AlfheimBlocks.grapesWhite)
 		decorateChunkGen_List.add(w)
-		
-		addEntry(EntityAlfheimPixie::class.java, AlfheimConfigHandler.pixieSpawn)
-		addEntry(EntityButterfly::class.java, AlfheimConfigHandler.butterflySpawn)
+		val i = WorldGenIridescence()
+		decorateChunkGen_List.add(i)
 	}
 }

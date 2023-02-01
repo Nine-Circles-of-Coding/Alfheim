@@ -1,5 +1,6 @@
 package alfheim.common.block
 
+import alexsocol.asjlib.ASJUtilities
 import alexsocol.asjlib.extendables.MaterialPublic
 import alfheim.api.*
 import alfheim.common.block.base.BlockContainerMod
@@ -12,6 +13,7 @@ import net.minecraft.block.Block
 import net.minecraft.block.material.MapColor
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.creativetab.CreativeTabs
+import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.*
 import net.minecraft.util.*
@@ -29,7 +31,6 @@ class BlockAnomaly: BlockContainerMod(anomaly), ILexiconable {
 		setCreativeTab(AlfheimTab)
 		setLightLevel(1f)
 		setLightOpacity(0)
-		setResistance(java.lang.Float.MAX_VALUE / 3f)
 		setStepSound(Block.soundTypeCloth)
 	}
 	
@@ -38,6 +39,21 @@ class BlockAnomaly: BlockContainerMod(anomaly), ILexiconable {
 	override fun setBlockName(name: String): Block {
 		GameRegistry.registerBlock(this, ItemBlockAnomaly::class.java, name)
 		return super.setBlockName(name)
+	}
+	
+	override fun onBlockPlacedBy(world: World, x: Int, y: Int, z: Int, placer: EntityLivingBase?, stack: ItemStack?) {
+		val player = placer as? EntityPlayer ?: return
+		if (!player.capabilities.isCreativeMode) return
+		
+		val te = world.getTileEntity(x, y, z) as? TileAnomaly ?: return
+		te.readCustomNBT(getNBT(stack))
+		te.lock(x, y, z, world.provider.dimensionId)
+		
+		if (world.isRemote)
+			return
+		
+		world.markBlockForUpdate(x, y, z)
+		ASJUtilities.dispatchTEToNearbyPlayers(te)
 	}
 	
 	override fun onBlockActivated(world: World, x: Int, y: Int, z: Int, player: EntityPlayer?, side: Int, hitX: Float, hitY: Float, hitZ: Float): Boolean {
@@ -65,7 +81,8 @@ class BlockAnomaly: BlockContainerMod(anomaly), ILexiconable {
 	override fun isOpaqueCube() = false
 	override fun renderAsNormalBlock() = false
 	override fun getRenderType() = -1
-	override fun getItemDropped(meta: Int, rand: Random?, luck: Int) = null
+	override fun getItemDropped(meta: Int, rand: Random?, fortune: Int) = null
+	override fun quantityDropped(random: Random?) = 0
 	override fun getEntry(world: World, x: Int, y: Int, z: Int, player: EntityPlayer, lexicon: ItemStack) = AlfheimLexiconData.anomaly
 	
 	companion object {

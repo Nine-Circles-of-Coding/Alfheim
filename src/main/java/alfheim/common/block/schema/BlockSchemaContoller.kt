@@ -7,13 +7,13 @@ import net.minecraft.block.material.Material
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
-import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.IIcon
 import net.minecraft.world.World
+import vazkii.botania.api.lexicon.ILexiconable
 import vazkii.botania.api.wand.IWandable
 import java.util.*
 
-class BlockSchemaContoller: BlockContainerMod(Material.wood), IWandable {
+class BlockSchemaContoller: BlockContainerMod(Material.wood), IWandable, ILexiconable {
 	
 	lateinit var icon1: IIcon
 	lateinit var icon2: IIcon
@@ -41,12 +41,11 @@ class BlockSchemaContoller: BlockContainerMod(Material.wood), IWandable {
 		icon3 = IconHelper.forName(reg, "schema3")
 	}
 	
-	override fun onUsedByWand(p0: EntityPlayer?, p1: ItemStack?, p2: World?, p3: Int, p4: Int, p5: Int, p6: Int): Boolean {
-		if (p2 != null) {
-			val tile: TileEntity? = p2.getTileEntity(p3, p4, p5)
-			if (tile is TileSchemaController)
-				tile.blockActivated(p0)
-		}
+	override fun onUsedByWand(player: EntityPlayer, stack: ItemStack, world: World, x: Int, y: Int, z: Int, side: Int): Boolean {
+		val tile = world.getTileEntity(x, y, z) as? TileSchemaController ?: return false
+		tile.blockActivated(player)
 		return true
 	}
+	
+	override fun getEntry(p0: World?, p1: Int, p2: Int, p3: Int, p4: EntityPlayer?, p5: ItemStack?) = null
 }

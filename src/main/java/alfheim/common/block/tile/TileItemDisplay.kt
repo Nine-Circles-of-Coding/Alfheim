@@ -66,39 +66,39 @@ class TileItemDisplay: ASJTile(), ISidedInventory {
 	
 	override fun getInventoryName() = "container.itemDisplay"
 	
-	override fun isUseableByPlayer(player: EntityPlayer?) = true
+	override fun isUseableByPlayer(player: EntityPlayer) = false
 	
 	override fun hasCustomInventoryName() = false
 	
-	override fun readCustomNBT(nbttagcompound: NBTTagCompound) {
-		val nbttaglist = nbttagcompound.getTagList("Items", 10)
+	override fun readCustomNBT(nbt: NBTTagCompound) {
+		val list = nbt.getTagList("Items", 10)
 		inventory = arrayOfNulls(this.sizeInventory)
 		
-		for (i in 0 until nbttaglist.tagCount()) {
-			val nbttagcompound1 = nbttaglist.getCompoundTagAt(i)
+		for (i in 0 until list.tagCount()) {
+			val nbti = list.getCompoundTagAt(i)
 			
-			val b0: Int = (nbttagcompound1.getByte("Slot")).I
+			val b0: Int = (nbti.getByte("Slot")).I
 			
 			if (b0 >= 0 && b0 < inventory.size) {
-				inventory[b0] = ItemStack.loadItemStackFromNBT(nbttagcompound1)
+				inventory[b0] = ItemStack.loadItemStackFromNBT(nbti)
 			}
 		}
 		
 	}
 	
-	override fun writeCustomNBT(nbttagcompound: NBTTagCompound) {
-		val nbttaglist = NBTTagList()
+	override fun writeCustomNBT(nbt: NBTTagCompound) {
+		val list = NBTTagList()
 		
 		for (i in inventory.indices) {
 			if (inventory[i] != null) {
-				val nbttagcompound1 = NBTTagCompound()
-				nbttagcompound1.setByte("Slot", i.toByte())
-				inventory[i]!!.writeToNBT(nbttagcompound1)
-				nbttaglist.appendTag(nbttagcompound1)
+				val nbti = NBTTagCompound()
+				nbti.setByte("Slot", i.toByte())
+				inventory[i]!!.writeToNBT(nbti)
+				list.appendTag(nbti)
 			}
 		}
 		
-		nbttagcompound.setTag("Items", nbttaglist)
+		nbt.setTag("Items", list)
 	}
 	
 	override fun openInventory() = Unit

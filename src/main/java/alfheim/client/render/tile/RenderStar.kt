@@ -1,6 +1,6 @@
 package alfheim.client.render.tile
 
-import alfheim.common.block.tile.TileEntityStar
+import alfheim.common.block.tile.TileStar
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer
 import net.minecraft.tileentity.TileEntity
 import org.lwjgl.opengl.GL11.*
@@ -17,7 +17,7 @@ import java.util.*
 object RenderStar: TileEntitySpecialRenderer() {
 	
 	override fun renderTileEntityAt(tile: TileEntity, x: Double, y: Double, z: Double, partticks: Float) {
-		if (tile is TileEntityStar) {
+		if (tile is TileStar) {
 			glPushMatrix()
 			glEnable(GL_BLEND)
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)

@@ -3,13 +3,13 @@ package alfheim.common.entity.spell
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.*
 import alfheim.api.spell.*
-import alfheim.common.core.handler.AlfheimConfigHandler
+import alfheim.common.core.handler.*
 import alfheim.common.core.util.DamageSourceSpell
+import alfheim.common.entity.boss.EntityFenrir
 import alfheim.common.spell.wind.SpellFenrirStorm
 import net.minecraft.entity.*
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.util.AxisAlignedBB
 import net.minecraft.world.World
 import java.util.*
 
@@ -18,16 +18,18 @@ class EntitySpellFenrirStorm(world: World): Entity(world), ITimeStopSpecific {
 	val area: OrientedBB
 	var caster: EntityLivingBase? = null
 	var mjolnir: Boolean
-		get() = dataWatcher.getWatchableObjectInt(2) != 0
-		set(value) = dataWatcher.updateObject(2, if (value) 1 else 0)
+		get() = getFlag(6)
+		set(build) = setFlag(6, build)
 	
-	override val isImmune: Boolean
-		get() = false
+	override val isImmune = false
+	
+	val radius: Double
+		get() = if (caster is EntityFenrir) 24.0 else SpellFenrirStorm.radius
 	
 	init {
 		setSize(0.25f, 0.25f)
-		area = OrientedBB(AxisAlignedBB.getBoundingBox(-0.5, -0.5, -SpellFenrirStorm.radius, 0.5, 0.5, SpellFenrirStorm.radius))
-		renderDistanceWeight = SpellFenrirStorm.radius / 2
+		area = OrientedBB(getBoundingBox(-0.5, -0.5, -radius, 0.5, 0.5, radius))
+		renderDistanceWeight = radius / 2
 	}
 	
 	constructor(world: World, caster: EntityLivingBase, mjolnir: Boolean = false): this(world) {
@@ -36,10 +38,10 @@ class EntitySpellFenrirStorm(world: World): Entity(world), ITimeStopSpecific {
 		setPositionAndRotation(caster.posX + l.x, caster.posY + caster.eyeHeight.D + l.y, caster.posZ + l.z, caster.rotationYaw, caster.rotationPitch)
 		
 		area.translate(caster.posX, caster.posY + caster.eyeHeight, caster.posZ)
-		area.rotateOX(-caster.rotationPitch.D)
-		area.rotateOY((caster.rotationYaw).D)
+		area.rotateOX(-caster.rotationPitch) // sign is ok!!!
+		area.rotateOY(caster.rotationYaw) // sign is ok!!!
 		
-		val v = Vector3(caster.lookVec).mul(SpellFenrirStorm.radius + 0.5)
+		val v = Vector3(caster.lookVec).mul(radius + 0.5)
 		area.translate(v.x, v.y, v.z)
 		
 		this.mjolnir = mjolnir
@@ -57,31 +59,30 @@ class EntitySpellFenrirStorm(world: World): Entity(world), ITimeStopSpecific {
 		if (mjolnir) {
 			rotationYaw = caster.rotationYaw
 			rotationPitch = caster.rotationPitch
-			
-			area.fromAABB(AxisAlignedBB.getBoundingBox(-0.5, -0.5, -SpellFenrirStorm.radius, 0.5, 0.5, SpellFenrirStorm.radius))
+
+			val l = Vector3(caster.lookVec).mul(0.1)
+			setPositionAndRotation(caster.posX + l.x, caster.posY + caster.eyeHeight.D + l.y, caster.posZ + l.z, caster.rotationYaw, caster.rotationPitch)
+
+			area.fromAABB(getBoundingBox(-0.5, -0.5, -radius, 0.5, 0.5, radius))
 			area.translate(caster.posX, caster.posY + caster.eyeHeight, caster.posZ)
-			area.rotateOX(-caster.rotationPitch.D)
-			area.rotateOY((caster.rotationYaw).D)
 			
-			val v = Vector3(caster.lookVec).mul(SpellFenrirStorm.radius + 0.5)
+			// I have no fucking idea why radians but it works so DON'T TOUCH
+			area.rotateOX(Math.toRadians(caster.rotationPitch.D))
+			area.rotateOY(-Math.toRadians(caster.rotationYaw.D))
+
+			val v = Vector3(caster.lookVec).mul(radius + 0.5)
 			area.translate(v.x, v.y, v.z)
 		}
 		
-		boundingBox.setBB(area.toAABB())
-		
-		if (ticksExisted == 4 || mjolnir) {
-			val l = worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, area.toAABB()) as List<EntityLivingBase>
-			for (e in l)
-				if (e !== caster && area.intersectsWith(e.boundingBox))
-					e.attackEntityFrom(DamageSourceSpell.lightning(this, caster), SpellBase.over(caster, SpellFenrirStorm.damage.D))
+		if (ticksExisted != 4 && !mjolnir) return
+		getEntitiesWithinAABB(worldObj, EntityLivingBase::class.java, area.toAABB()).forEach { e ->
+			if (e !== caster && area.intersectsWith(OrientedBB(e.boundingBox()))) e.attackEntityFrom(DamageSourceSpell.lightningIndirect(this, caster), SpellBase.over(caster, SpellFenrirStorm.damage.D))
 		}
 	}
 	
 	override fun affectedBy(uuid: UUID) = caster!!.uniqueID != uuid
 	
-	public override fun entityInit() {
-		dataWatcher.addObject(2, 0)
-	}
+	public override fun entityInit() = Unit
 	
 	public override fun readEntityFromNBT(nbt: NBTTagCompound) {
 		if (nbt.hasKey("castername")) caster = worldObj.getPlayerEntityByName(nbt.getString("castername")) else setDead()

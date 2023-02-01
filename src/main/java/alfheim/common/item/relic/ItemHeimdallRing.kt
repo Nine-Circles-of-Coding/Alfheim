@@ -4,6 +4,7 @@ import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.core.handler.VisualEffectHandler
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.item.*
 import baubles.api.BaubleType
 import baubles.common.lib.PlayerHandler
@@ -31,6 +32,8 @@ class ItemHeimdallRing: ItemRelicBauble("HeimdallRing") {
 	
 	@SubscribeEvent
 	fun onWornTick(e: LivingEvent.LivingUpdateEvent) {
+		if (RagnarokHandler.blockedPowers[4]) return
+		
 		val player = e.entityLiving as? EntityPlayer ?: return
 		getHeimdallRing(player) ?: return
 		
@@ -38,17 +41,18 @@ class ItemHeimdallRing: ItemRelicBauble("HeimdallRing") {
 	}
 	
 	fun leadToDungeon(player: EntityPlayer) {
-		if (player.heldItem?.item === Items.ender_eye) {
-			val pos = player.worldObj.findClosestStructure("Stronghold", player.posX.mfloor(), player.posY.mfloor(), player.posZ.mfloor()) ?: return
-			val m = Vector3(pos.chunkPosX, pos.chunkPosY, pos.chunkPosZ).sub(player.posX, player.posY, player.posZ).normalize()
-			
-			val color = Color(ItemIridescent.rainbowColor())
-			VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.WISP, player.dimension, player.posX, player.posY, player.posZ, color.red / 255.0, color.green / 255.0, color.blue / 255.0, 1.0, m.x, m.y, m.z, 1.0)
-		}
+		if (player.heldItem?.item !== Items.ender_eye) return
+		val pos = player.worldObj.findClosestStructure("Stronghold", player.posX.mfloor(), player.posY.mfloor(), player.posZ.mfloor()) ?: return
+		val m = Vector3(pos.chunkPosX, pos.chunkPosY, pos.chunkPosZ).sub(player.posX, player.posY, player.posZ).normalize()
+		
+		val color = Color(ItemIridescent.rainbowColor())
+		VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.WISP, player.dimension, player.posX, player.posY, player.posZ, color.red / 255.0, color.green / 255.0, color.blue / 255.0, 1.0, m.x, m.y, m.z, 1.0)
 	}
 	
 	@SubscribeEvent
 	fun trackEntities(e: LivingEvent.LivingUpdateEvent) {
+		if (RagnarokHandler.blockedPowers[4]) return
+		
 		if (ASJUtilities.isServer) return
 		if (e.entity === mc.thePlayer) return
 		
@@ -70,10 +74,11 @@ class ItemHeimdallRing: ItemRelicBauble("HeimdallRing") {
 	
 	@SubscribeEvent
 	fun onEndermanTeleported(e: EnderTeleportEvent) {
-		if (e.entity !is EntityPlayer) {
-			if (e.entity.worldObj.playerEntities.any { Vector3.entityDistance(e.entity, it as EntityPlayer) < 16 && getHeimdallRing(it) != null })
-				e.isCanceled = true
-		}
+		if (RagnarokHandler.blockedPowers[4]) return
+		
+		if (e.entity is EntityPlayer) return
+		if (e.entity.worldObj.playerEntities.any { Vector3.entityDistance(e.entity, it as EntityPlayer) < 16 && getHeimdallRing(it) != null })
+			e.isCanceled = true
 	}
 	
 	companion object {

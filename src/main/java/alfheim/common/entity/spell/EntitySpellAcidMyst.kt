@@ -10,30 +10,24 @@ import alfheim.common.core.handler.CardinalSystem.PartySystem
 import alfheim.common.core.util.DamageSourceSpell
 import alfheim.common.spell.water.SpellAcidMyst
 import net.minecraft.entity.*
-import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.world.World
 import java.util.*
 
-class EntitySpellAcidMyst(world: World): Entity(world), ITimeStopSpecific {
+class EntitySpellAcidMyst(world: World, val caster: EntityLivingBase?): Entity(world), ITimeStopSpecific {
 	
-	var caster: EntityLivingBase? = null
-	
-	override val isImmune: Boolean
-		get() = false
+	override val isImmune = false
 	
 	init {
 		setSize(1f, 1f)
-	}
-	
-	constructor(world: World, caster: EntityLivingBase): this(world) {
-		this.caster = caster
-		setPosition(caster.posX, caster.posY, caster.posZ)
+		if (caster != null) setPosition(caster.posX, caster.posY, caster.posZ)
 		VisualEffectHandler.sendPacket(VisualEffects.ACID, this)
 	}
 	
+	constructor(world: World): this(world, null)
+	
 	override fun onEntityUpdate() {
-		if (!AlfheimConfigHandler.enableMMO || caster == null || caster!!.isDead || ticksExisted > SpellAcidMyst.duration) {
+		if (!AlfheimConfigHandler.enableMMO || caster == null || caster.isDead || ticksExisted > SpellAcidMyst.duration) {
 			setDead()
 			return
 		}
@@ -41,25 +35,16 @@ class EntitySpellAcidMyst(world: World): Entity(world), ITimeStopSpecific {
 		
 		if (ticksExisted % 20 == 0) VisualEffectHandler.sendPacket(VisualEffects.ACID, this)
 		
-		val l = worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, getBoundingBox(posX, posY, posZ).expand(SpellAcidMyst.radius)) as MutableList<EntityLivingBase>
-		l.remove(caster!!)
-		for (e in l)
-			if (!PartySystem.mobsSameParty(caster!!, e) && Vector3.entityDistance(caster!!, e) <= SpellAcidMyst.radius && InteractionSecurity.canHurtEntity(caster ?: continue, e))
-				e.attackEntityFrom(DamageSourceSpell.poison, SpellBase.over(caster, SpellAcidMyst.damage.D))
+		val l = getEntitiesWithinAABB(worldObj, EntityLivingBase::class.java, getBoundingBox(posX, posY, posZ).expand(SpellAcidMyst.radius))
+		l.remove(caster)
+		l.forEach {
+			if (!PartySystem.mobsSameParty(caster, it) && Vector3.entityDistance(caster, it) <= SpellAcidMyst.radius && InteractionSecurity.canHurtEntity(caster, it))
+				it.attackEntityFrom(DamageSourceSpell.poisonMagic, SpellBase.over(caster, SpellAcidMyst.damage.D))
+		}
 	}
 	
-	override fun affectedBy(uuid: UUID): Boolean {
-		return caster!!.uniqueID != uuid
-	}
-	
-	public override fun entityInit() {}
-	
-	public override fun readEntityFromNBT(nbt: NBTTagCompound) {
-		if (nbt.hasKey("castername")) caster = worldObj.getPlayerEntityByName(nbt.getString("castername")) else setDead()
-		if (caster == null) setDead()
-	}
-	
-	public override fun writeEntityToNBT(nbt: NBTTagCompound) {
-		if (caster is EntityPlayer) nbt.setString("castername", caster!!.commandSenderName)
-	}
+	public override fun entityInit() = Unit
+	public override fun readEntityFromNBT(nbt: NBTTagCompound) = Unit
+	public override fun writeEntityToNBT(nbt: NBTTagCompound) = Unit
+	override fun affectedBy(uuid: UUID) = caster?.uniqueID != uuid
 }

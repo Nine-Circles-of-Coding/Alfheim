@@ -1,17 +1,21 @@
 package alfheim.common.block.tile
 
-import alexsocol.asjlib.ASJUtilities
+import alexsocol.asjlib.*
 import alexsocol.asjlib.extendables.block.TileImmobile
+import alexsocol.asjlib.math.Vector3
 import alfheim.api.block.tile.SubTileAnomalyBase
 import alfheim.common.item.equipment.bauble.ItemSpatiotemporalRing
+import alfheim.common.world.dim.alfheim.biome.*
+import net.minecraft.entity.EntityList
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.world.World
-import java.util.*
+import vazkii.botania.common.Botania
 
 class TileAnomaly: TileImmobile() {
 	
+	var seed = 0L
 	val subTiles = HashMap<String, SubTileAnomalyBase>()
 	var mainSubTile: String? = null
 	var compatibilityBit = 0 // not serializing because will be recalculated on load
@@ -19,13 +23,28 @@ class TileAnomaly: TileImmobile() {
 	override fun updateEntity() {
 		super.updateEntity()
 		
-		val main = mainSubTile
-		if (main == null || main.isEmpty() || subTiles[main] == null) return
+		if (seed == 0L)
+			seed = worldObj.rand.nextLong()
 		
-		val l = subTiles[main]!!.targets as MutableList<Any?>
+		val main = subTiles[mainSubTile] ?: return
+		val l = main.targets as MutableList<Any?>
 		
 		l.removeIf { it is EntityPlayer && ItemSpatiotemporalRing.hasProtection(it) }
 		for (subTile in subTiles.values) subTile.updateEntity(l)
+		
+		if (Botania.thaumcraftLoaded && worldObj.rand.nextInt(6000) == 0) spawnWisps()
+	}
+	
+	fun spawnWisps() {
+		if (worldObj.isRemote || !worldObj.getBiomeGenForCoords(xCoord, zCoord).let { it is BiomeField || it is BiomeForest || it is BiomeForest2 }) return
+		if (mainSubTile != "Warp" && mainSubTile != "Lightning") return
+		
+		for (i in 0..worldObj.rand.nextInt(3))
+			EntityList.createEntityByName("Thaumcraft.Wisp", worldObj)?.apply {
+				val (x, y, z) = Vector3.fromTileEntity(this@TileAnomaly).add(0.5)
+				setPosition(x, y, z)
+				spawn()
+			}
 	}
 	
 	fun onActivated(stack: ItemStack?, player: EntityPlayer, world: World, x: Int, y: Int, z: Int): Boolean {
@@ -56,6 +75,7 @@ class TileAnomaly: TileImmobile() {
 	
 	override fun writeCustomNBT(nbt: NBTTagCompound) {
 		super.writeCustomNBT(nbt)
+		nbt.setLong(TAG_SEED, seed)
 		
 		if (mainSubTile == null) return
 		
@@ -85,6 +105,7 @@ class TileAnomaly: TileImmobile() {
 	override fun readCustomNBT(nbt: NBTTagCompound) {
 		super.readCustomNBT(nbt)
 		
+		seed = nbt.getLong(TAG_SEED)
 		mainSubTile = nbt.getString(TAG_SUBTILE_MAIN)
 		
 		var c = nbt.getInteger(TAG_SUBTILE_COUNT)
@@ -112,5 +133,6 @@ class TileAnomaly: TileImmobile() {
 		const val TAG_SUBTILE_NAME = "subTileName"
 		const val TAG_SUBTILE_CMP = "subTileCmp"
 		const val TAG_SUBTILE_COUNT = "subTileCount"
+		const val TAG_SEED = "seed"
 	}
 }

@@ -1,8 +1,8 @@
 [
 	{
-		"modid": "${modid}",
-		"name": "${name}",
-		"description": "${desc}",
+		"modid": "alfheim",
+		"name": "Alfheim",
+		"description": "Botania addon allowing you to travel to Alfheim",
 		"version": "${version}",
 		"mcversion": "${mcversion}",
 		"url": "https://discord.gg/dqQXZHq",
@@ -10,14 +10,14 @@
 		"authorList": [
 			"AlexSocol"
 		],
-		"credits": "${cred}",
-		"logoFile": "${logo}",
+		"credits": "see credits.txt in mod file",
+		"logoFile": "alfheim_logo.png",
 		"useDependencyInformation": true,
 		"requiredMods": [
-			${reqM}
+			"Botania"
 		],
 		"dependencies": [
-			${deps}
+			"Botania","MineTweaker3","Thaumcraft"
 		],
 		"dependants": [ ]
 	}

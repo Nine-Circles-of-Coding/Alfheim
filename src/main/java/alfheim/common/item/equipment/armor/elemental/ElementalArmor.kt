@@ -15,7 +15,7 @@ import vazkii.botania.common.core.handler.ConfigHandler
 import vazkii.botania.common.item.ModItems
 import vazkii.botania.common.item.equipment.armor.manasteel.ItemManasteelArmor
 
-abstract class ElementalArmor(type: Int, name: String): ItemManasteelArmor(type, name, AlfheimAPI.ElementalArmor), IPixieSpawner {
+abstract class ElementalArmor(type: Int, name: String): ItemManasteelArmor(type, name, AlfheimAPI.elementalArmor), IPixieSpawner {
 	
 	init {
 		creativeTab = AlfheimTab

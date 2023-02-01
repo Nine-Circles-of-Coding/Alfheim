@@ -8,7 +8,18 @@ import net.minecraft.block.*
 import net.minecraft.world.*
 import java.util.*
 
-class BlockCircuitWoodSlab(full: Boolean, source: Block = AlfheimBlocks.circuitPlanks): BlockRainbowWoodSlab(full, source) {
+class BlockCircuitWoodSlab(full: Boolean, source: Block = AlfheimBlocks.circuitPlanks): BlockRainbowWoodSlab(full, source), ICircuitBlock {
+	
+	override fun onBlockAdded(world: World, x: Int, y: Int, z: Int) {
+		val below = world.getBlock(x, y - 1, z)
+		if (below !is ICircuitBlock) return
+		
+		below.updateTick(world, x, y - 1, z, world.rand)
+	}
+	
+	override fun breakBlock(world: World, x: Int, y: Int, z: Int, block: Block?, meta: Int) {
+		onBlockAdded(world, x, y, z)
+	}
 	
 	override fun getFullBlock() = AlfheimBlocks.circuitSlabsFull as BlockSlab
 	
@@ -21,8 +32,8 @@ class BlockCircuitWoodSlab(full: Boolean, source: Block = AlfheimBlocks.circuitP
 	// ####
 	
 	override fun updateTick(world: World, x: Int, y: Int, z: Int, random: Random) {
-		super.updateTick(world, x, y, z, random)
 		world.notifyBlocksOfNeighborChange(x, y, z, this)
+		onBlockAdded(world, x, y, z)
 	}
 	
 	override fun getLightValue(world: IBlockAccess?, x: Int, y: Int, z: Int) = 8
@@ -34,7 +45,18 @@ class BlockCircuitWoodSlab(full: Boolean, source: Block = AlfheimBlocks.circuitP
 	override fun isProvidingWeakPower(blockAccess: IBlockAccess, x: Int, y: Int, z: Int, meta: Int) = ICircuitBlock.getPower(blockAccess, x, y, z)
 }
 
-class BlockCircuitWoodStairs(source: Block = AlfheimBlocks.circuitPlanks): BlockRainbowWoodStairs(source) {
+class BlockCircuitWoodStairs(source: Block = AlfheimBlocks.circuitPlanks): BlockRainbowWoodStairs(source), ICircuitBlock {
+	
+	override fun onBlockAdded(world: World, x: Int, y: Int, z: Int) {
+		val below = world.getBlock(x, y - 1, z)
+		if (below !is ICircuitBlock) return
+		
+		below.updateTick(world, x, y - 1, z, world.rand)
+	}
+	
+	override fun breakBlock(world: World, x: Int, y: Int, z: Int, block: Block?, meta: Int) {
+		onBlockAdded(world, x, y, z)
+	}
 	
 	override fun register() {
 		GameRegistry.registerBlock(this, ItemBlockLeavesMod::class.java, name)
@@ -43,8 +65,8 @@ class BlockCircuitWoodStairs(source: Block = AlfheimBlocks.circuitPlanks): Block
 	// ####
 	
 	override fun updateTick(world: World, x: Int, y: Int, z: Int, random: Random) {
-		super.updateTick(world, x, y, z, random)
 		world.notifyBlocksOfNeighborChange(x, y, z, this)
+		onBlockAdded(world, x, y, z)
 	}
 	
 	override fun getLightValue(world: IBlockAccess?, x: Int, y: Int, z: Int) = 8

@@ -1,5 +1,7 @@
 package alfheim.common.entity
 
+import alexsocol.asjlib.*
+import alfheim.common.core.helper.*
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
@@ -59,13 +61,11 @@ class EntitySubspaceSpear: EntityThrowableCopy {
 		}
 		
 		if (!worldObj.isRemote) {
-			val axis = AxisAlignedBB.getBoundingBox(posX - 1f, posY - 0.45f, posZ - 1f, lastTickPosX + 1f, lastTickPosY + 0.45f, lastTickPosZ + 1f)
+			val axis = getBoundingBox(posX - 1, posY - 0.45, posZ - 1, lastTickPosX + 1, lastTickPosY + 0.45, lastTickPosZ + 1)
 			
-			@Suppress("UNCHECKED_CAST")
-			val entities = worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, axis) as List<EntityLivingBase>
-			for (living in entities)
-				if (living !== thrower)
-					attackedFrom(living, thrower, damage * 1.5f)
+			getEntitiesWithinAABB(worldObj, EntityLivingBase::class.java, axis).forEach { living ->
+				if (living !== thrower) attackedFrom(living, thrower, damage * 1.5f, type == 1)
+			}
 		}
 		super.onUpdate()
 		
@@ -99,8 +99,10 @@ class EntitySubspaceSpear: EntityThrowableCopy {
 		const val TAG_LIFE = "life"
 		const val TAG_PITCH = "pitch"
 		
-		fun attackedFrom(target: EntityLivingBase, thrower: EntityLivingBase, damage: Float) {
-			target.attackEntityFrom((if (thrower is EntityPlayer) DamageSource.causePlayerDamage(thrower) else DamageSource.causeMobDamage(thrower)).setDamageBypassesArmor(), damage)
+		fun attackedFrom(target: EntityLivingBase, thrower: EntityLivingBase, damage: Float, holy: Boolean) {
+			val src = (if (thrower is EntityPlayer) DamageSource.causePlayerDamage(thrower) else DamageSource.causeMobDamage(thrower)).setDamageBypassesArmor()
+			if (holy) src.setTo(ElementalDamage.LIGHTNESS)
+			target.attackEntityFrom(src, damage)
 		}
 	}
 }

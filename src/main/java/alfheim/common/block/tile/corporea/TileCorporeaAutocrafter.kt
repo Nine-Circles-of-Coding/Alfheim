@@ -47,7 +47,7 @@ class TileCorporeaAutocrafter: ASJTile(), ICorporeaInterceptor, IInventory {
 				for (stack in allFoundStacks) missing -= stack.stackSize
 				
 				if (missing > 0) {
-					val requestor = requestorSpark.inventory as TileEntity
+					val requestor = requestorSpark.inventory as? TileEntity ?: continue
 					
 					setPendingRequest(requestor.xCoord, requestor.yCoord, requestor.zCoord, request, missing)
 					
@@ -136,7 +136,7 @@ class TileCorporeaAutocrafter: ASJTile(), ICorporeaInterceptor, IInventory {
 		
 		// buffer is filled and everything can be passed to crafter
 		
-		val down = InventoryHelper.getInventory(worldObj, xCoord, yCoord - 2, zCoord) ?: return
+		val down = InventoryHelper.getInventory(worldObj, xCoord, yCoord - 1, zCoord) ?: InventoryHelper.getInventory(worldObj, xCoord, yCoord - 2, zCoord) ?: return
 		
 		for (i in 0 until patterns.sizeInventory) {
 			patterns[i] ?: continue
@@ -198,10 +198,7 @@ class TileCorporeaAutocrafter: ASJTile(), ICorporeaInterceptor, IInventory {
 	}
 	
 	fun checkRedstone() {
-		var redstone = false
-		
-		for (dir in ForgeDirection.VALID_DIRECTIONS)
-			redstone = redstone || worldObj.getIndirectPowerLevelTo(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ, dir.ordinal) > 0
+		val redstone = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)
 		
 		if (!prevRedstone && redstone) {
 			waitingForIngredient = false

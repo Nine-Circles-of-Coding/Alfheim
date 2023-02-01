@@ -1,6 +1,7 @@
 package alfheim.common.entity.boss.ai.flugel
 
 import alexsocol.asjlib.math.Vector3
+import alexsocol.asjlib.random
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.entity.boss.EntityFlugel
 import cpw.mods.fml.common.registry.GameRegistry
@@ -18,7 +19,7 @@ class AIChase(flugel: EntityFlugel, task: AITask): AIBase(flugel, task) {
 		lowest = flugel.worldObj.rand.nextInt(10) == 0
 		
 		if (flugel.worldObj.rand.nextInt(4) == 0) {
-			val player = flugel.worldObj.getPlayerEntityByName(flugel.playersDamage.keys.random()) ?: return
+			val player = flugel.worldObj.getPlayerEntityByName(flugel.playersDamage.keys.random(flugel.rng) ?: return) ?: return
 			if (player.capabilities.isCreativeMode) return
 			
 			for (a in 0..9)

@@ -3,6 +3,7 @@
 precision highp float;
 precision highp int;
 
+uniform vec3 color2 = vec3(0.0);
 uniform float ftime;
 float speed = 0.1;
 varying vec3 vPos;
@@ -113,6 +114,10 @@ vec3 _sn_4_floatToColor(float v){
 void main() {
     vec3 _io_4_return = vPos / 10.0 + ftime * speed;
     float _io_5_return = _sn_3_octive(_io_4_return);
-    vec3 io8 = _sn_4_floatToColor(_io_5_return);
-    gl_FragColor = vec4(io8.r, 0.0, 0.0, 1.0);
+    vec3 multiplier = _sn_4_floatToColor(_io_5_return);
+
+    vec3 primaryColor = vec3(gl_Color.r, gl_Color.g, gl_Color.b) * multiplier;
+    vec3 secondaryColor = color2 * (vec3(1.0) - multiplier);
+
+    gl_FragColor = vec4(primaryColor + secondaryColor, 1.0);
 }

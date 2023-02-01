@@ -7,9 +7,10 @@ import alfheim.api.entity.EnumRace
 import alfheim.api.spell.SpellBase
 import alfheim.common.core.handler.CardinalSystem.PartySystem
 import alfheim.common.core.handler.CardinalSystem.TargetingSystem
-import alfheim.common.core.util.EntityDamageSourceSpell
+import alfheim.common.core.util.*
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.util.DamageSource
 
 object SpellSwap: SpellBase("swap", EnumRace.LEPRECHAUN, 12000, 1200, 20) {
 	
@@ -19,14 +20,11 @@ object SpellSwap: SpellBase("swap", EnumRace.LEPRECHAUN, 12000, 1200, 20) {
 		get() = arrayOf(damage)
 	
 	override fun performCast(caster: EntityLivingBase): SpellCastResult {
-		if (caster !is EntityPlayer) return SpellCastResult.NOTARGET // TODO add targets for mobs
-		
 		val tg = TargetingSystem.getTarget(caster)
-		val pt = PartySystem.getParty(caster)
 		
 		if (tg.target == null && (!tg.isParty || tg.partyIndex < 0)) return SpellCastResult.NOTARGET
 		
-		val tgt = (if (tg.isParty) pt[tg.partyIndex] else tg.target) ?: return SpellCastResult.NOTARGET
+		val tgt = tg.target ?: return SpellCastResult.NOTARGET
 		
 		if (tgt === caster) return SpellCastResult.WRONGTGT
 		
@@ -68,7 +66,7 @@ object SpellSwap: SpellBase("swap", EnumRace.LEPRECHAUN, 12000, 1200, 20) {
 			if (tg.isParty)
 				tgt.heal(hp)
 			else
-				tgt.attackEntityFrom(EntityDamageSourceSpell("magic", caster), hp)
+				tgt.attackEntityFrom(DamageSourceSpell.magic(caster), hp)
 		}
 		
 		return result

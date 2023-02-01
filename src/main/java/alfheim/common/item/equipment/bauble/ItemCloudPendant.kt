@@ -3,7 +3,7 @@ package alfheim.common.item.equipment.bauble
 import alexsocol.asjlib.mc
 import alfheim.AlfheimCore
 import alfheim.common.network.Message0dS
-import alfheim.common.network.Message0dS.m0ds
+import alfheim.common.network.Message0dS.M0ds
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.entity.EntityPlayerSP
 import net.minecraft.entity.EntityLivingBase
@@ -27,7 +27,7 @@ class ItemCloudPendant @JvmOverloads constructor(name: String = "CloudPendant", 
 				jumpDown = if (player.movementInput.jump) {
 					if (!jumpDown && timesJumped < maxAllowedJumps) {
 						player.jump()
-						AlfheimCore.network.sendToServer(Message0dS(m0ds.JUMP))
+						AlfheimCore.network.sendToServer(Message0dS(M0ds.JUMP))
 						timesJumped++
 					}
 					true

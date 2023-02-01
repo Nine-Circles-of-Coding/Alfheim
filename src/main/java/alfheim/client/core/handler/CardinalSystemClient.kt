@@ -12,13 +12,11 @@ import net.minecraft.entity.boss.IBossDisplayData
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.potion.Potion
 import net.minecraft.util.MovingObjectPosition.MovingObjectType
-import java.io.Serializable
 import java.util.*
-import kotlin.collections.HashMap
-import kotlin.collections.HashSet
 
 object CardinalSystemClient {
 	
+	val playerRaceIDs = HashMap<String, Int>()
 	val playerSkinsData = HashMap<String, Pair<Boolean, Boolean>>()
 	
 	object SpellCastingSystemClient {
@@ -56,19 +54,27 @@ object CardinalSystemClient {
 		
 		fun selectMob(): Boolean {
 			if (mc.thePlayer == null) return false
-			val mop = ASJUtilities.getMouseOver(mc.thePlayer, 128.0, true)
-			if (mop != null && mop.typeOfHit == MovingObjectType.ENTITY && mop.entityHit is EntityLivingBase) {
-				if (PlayerSegmentClient.party?.isMember(mop.entityHit as EntityLivingBase) == false) {
-					val invis = (mop.entityHit as EntityLivingBase).isPotionActive(Potion.invisibility) || mop.entityHit.isInvisibleToPlayer(mc.thePlayer)
-					if (Vector3.entityDistance(mop.entityHit, mc.thePlayer) < (if (mop.entityHit is IBossDisplayData) 128 else 32) && !invis) {
-						PlayerSegmentClient.target = mop.entityHit as EntityLivingBase
-						PlayerSegmentClient.isParty = false
-						PlayerSegmentClient.partyIndex = -1
-					}
-				} else
-					ASJUtilities.say(mc.thePlayer, "alfheimmisc.teamnotmob")
+			val mop = ASJUtilities.getMouseOver(mc.thePlayer, 128.0, true) ?: return false
+			
+			if (mop.typeOfHit != MovingObjectType.ENTITY || mop.entityHit !is EntityLivingBase)
+				return false
+			
+			if (PlayerSegmentClient.party?.isMember(mop.entityHit as EntityLivingBase) == true) {
+				ASJUtilities.say(mc.thePlayer, "alfheimmisc.teamnotmob")
+				return false
 			}
-			return PlayerSegmentClient.target != null && !PlayerSegmentClient.isParty
+			
+			val invis = (mop.entityHit as EntityLivingBase).isPotionActive(Potion.invisibility) || mop.entityHit.isInvisibleToPlayer(mc.thePlayer)
+			if (invis) return false
+			
+			if (Vector3.entityDistance(mop.entityHit, mc.thePlayer) > (if (mop.entityHit is IBossDisplayData) 128 else 32))
+				return false
+			
+			PlayerSegmentClient.target = mop.entityHit as EntityLivingBase
+			PlayerSegmentClient.isParty = false
+			PlayerSegmentClient.partyIndex = -1
+			
+			return true
 		}
 		
 		fun selectTeam(): Boolean {
@@ -77,14 +83,10 @@ object CardinalSystemClient {
 			
 			if (PlayerSegmentClient.party == null) PlayerSegmentClient.party = Party(mc.thePlayer)
 			
-			//while (true) {
 			PlayerSegmentClient.partyIndex = ++PlayerSegmentClient.partyIndex % PlayerSegmentClient.party!!.count
-			val team = PlayerSegmentClient.party!![PlayerSegmentClient.partyIndex]
-			PlayerSegmentClient.target = team
-			// if (team != null && Vector3.entityDistancePlane(mc.thePlayer, PlayerSegmentClient.target!!) < (if (team is IBossDisplayData) 128 else 32)) break
-			//}
+			PlayerSegmentClient.target = PlayerSegmentClient.party!![PlayerSegmentClient.partyIndex]
 			
-			return PlayerSegmentClient.isParty
+			return true
 		}
 	}
 	
@@ -115,7 +117,7 @@ object CardinalSystemClient {
 		fun inside(pl: EntityPlayer) = tsAreas.any { Vector3.vecEntityDistance(it.pos, pl) < SpellTimeStop.radius + 0.5 }
 		
 		fun render() {
-			for (tsa in tsAreas) SpellVisualizations.redSphere(tsa.pos.x, tsa.pos.y, tsa.pos.z)
+			for (tsa in tsAreas) SpellVisualizations.redSphere(tsa.pos.x, tsa.pos.y, tsa.pos.z, SpellTimeStop.radius)
 		}
 		
 		fun remove(i: Int) {
@@ -130,7 +132,7 @@ object CardinalSystemClient {
 		}
 	}
 	
-	object PlayerSegmentClient: Serializable {
+	object PlayerSegmentClient {
 		
 		val coolDown = HashMap<String, Int>()
 		var hotSpells = IntArray(12)
@@ -144,10 +146,10 @@ object CardinalSystemClient {
 		var isParty: Boolean = false
 		var partyIndex: Int = 0
 		
+		var limbo = 0
+		
 		var knowledge: MutableSet<String> = HashSet()
 		
 		var esmAbility = true
-		
-		private const val serialVersionUID = 6871678638741684L
 	}
 }

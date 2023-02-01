@@ -1,17 +1,14 @@
 package alfheim.common.spell.darkness
 
-import alexsocol.asjlib.ASJUtilities
+import alexsocol.asjlib.*
 import alexsocol.asjlib.security.InteractionSecurity
-import alfheim.AlfheimCore
 import alfheim.api.entity.EnumRace
 import alfheim.api.spell.SpellBase
 import alfheim.client.render.world.VisualEffectHandlerClient.VisualEffects
 import alfheim.common.core.handler.*
 import alfheim.common.core.handler.CardinalSystem.TargetingSystem
-import alfheim.common.network.MessageEffect
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.potion.PotionEffect
 
 object SpellDecay: SpellBase("decay", EnumRace.IMP, 12000, 2400, 25) {
 	
@@ -21,8 +18,6 @@ object SpellDecay: SpellBase("decay", EnumRace.IMP, 12000, 2400, 25) {
 		get() = arrayOf(duration, efficiency)
 	
 	override fun performCast(caster: EntityLivingBase): SpellCastResult {
-		if (caster !is EntityPlayer) return SpellCastResult.NOTARGET // TODO add targets for mobs
-		
 		val tg = TargetingSystem.getTarget(caster)
 		val tgt = tg.target ?: return SpellCastResult.NOTARGET
 		
@@ -34,11 +29,9 @@ object SpellDecay: SpellBase("decay", EnumRace.IMP, 12000, 2400, 25) {
 		if (!InteractionSecurity.canHurtEntity(caster, tgt)) return SpellCastResult.NOTALLOW
 		
 		val result = checkCast(caster)
-		if (result == SpellCastResult.OK) {
-			tgt.addPotionEffect(PotionEffect(AlfheimConfigHandler.potionIDDecay, duration, 0, true))
-			AlfheimCore.network.sendToAll(MessageEffect(tgt.entityId, AlfheimConfigHandler.potionIDDecay, duration, 0))
-			VisualEffectHandler.sendPacket(VisualEffects.DISPEL, tgt)
-		}
+		if (result != SpellCastResult.OK) return result
+		tgt.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDDecay, duration))
+		VisualEffectHandler.sendPacket(VisualEffects.DISPEL, tgt)
 		
 		return result
 	}

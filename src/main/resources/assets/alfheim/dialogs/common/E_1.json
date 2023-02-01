@@ -1,0 +1,65 @@
+{
+	"greetingsByLevel": [
+		"",
+		"dialog.common.greetingGuest",
+		"dialog.common.greetingFriend",
+		"dialog.common.greetingHero"
+	],
+	
+	"startingLines": [
+		"linekey.aboutYou",
+		"linekey.aboutCity",
+		"linekey.aboutGod",
+		"linekey.goodbye"
+	],
+	
+	"conversations": {
+		"linekey.aboutGod": {
+			"answerlines": [
+				"dialog.common.aboutGod1",
+				"dialog.common.aboutGod2",
+				"dialog.common.aboutGod3",
+				"dialog.common.aboutGod4"
+			],
+			"continuation": [
+				"linekey.aboutYou",
+				"linekey.aboutCity",
+				"linekey.goodbye"
+			]
+		},
+		"linekey.aboutCity": {
+			"answerlines": [
+				"dialog.common.aboutCity1",
+				"dialog.common.aboutCity2"
+			],
+			"continuation": [
+				"linekey.aboutYou",
+				"linekey.aboutGod",
+				"linekey.goodbye"
+			]
+		},
+		"linekey.aboutYou": {
+			"answerlines": [
+				"dialog.common.aboutMe1",
+				"dialog.common.aboutMe2",
+				"dialog.common.aboutMe3"
+			],
+			"continuation": [
+				"linekey.aboutCity",
+				"linekey.aboutGod",
+				"linekey.goodbye"
+			]
+		},
+		"linekey.goodbye": {
+			"answerlines": [],
+			"continuation": []
+		}
+	},
+	
+	"goodbyesByLevel": [
+		"",
+		"dialog.common.goodbyeGuest",
+		"dialog.common.goodbyeFriend",
+		"dialog.common.goodbyeHero"
+	]
+}

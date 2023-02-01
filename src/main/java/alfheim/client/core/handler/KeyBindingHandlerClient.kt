@@ -18,11 +18,12 @@ import alfheim.client.gui.GUISpells
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.helper.flight
 import alfheim.common.network.*
-import alfheim.common.network.Message2d.m2d
+import alfheim.common.network.Message2d.M2d
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.settings.KeyBinding
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.MovingObjectPosition
+import net.minecraft.util.MovingObjectPosition.MovingObjectType.*
 import net.minecraftforge.common.MinecraftForge
 import org.lwjgl.input.*
 
@@ -60,7 +61,7 @@ object KeyBindingHandlerClient {
 		if (Mouse.isButtonDown(0)) {
 			if (!toggleLMB) {
 				toggleLMB = true
-				hit()
+				sendAction(true)
 			}
 		} else if (toggleLMB) {
 			toggleLMB = false
@@ -69,7 +70,7 @@ object KeyBindingHandlerClient {
 		if (Mouse.isButtonDown(1)) {
 			if (!toggleRMB) {
 				toggleRMB = true
-				use()
+				sendAction(false)
 			}
 		} else if (toggleRMB) {
 			toggleRMB = false
@@ -110,15 +111,15 @@ object KeyBindingHandlerClient {
 			if (mc.gameSettings.keyBindJump.isPressed && !toggleJump && safeKeyDown(Keyboard.KEY_LMENU) && !toggleAlt && !player.capabilities.isFlying && player.onGround) {
 				KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.keyCode, false)
 				toggleAlt = true
-				toggleJump = toggleAlt
+				toggleJump = true
 				val boost = player.flight >= 300
 				toggleFlight(boost)
-				if (boost && mc.thePlayer.race != EnumRace.HUMAN) {
+				if (boost && (mc.thePlayer.race != EnumRace.HUMAN || mc.thePlayer.capabilities.isCreativeMode)) {
 					player.motionY += 3.0
 				}
 			} else if (toggleJump && toggleAlt) {
 				toggleAlt = false
-				toggleJump = toggleAlt
+				toggleJump = false
 			}
 		}
 		
@@ -146,14 +147,14 @@ object KeyBindingHandlerClient {
 								
 								val spell = AlfheimAPI.getSpellByIDs(raceID, spellID)
 								if (spell == null)
-									PacketHandlerClient.handle(Message2d(m2d.COOLDOWN, 0.0, (-DESYNC.ordinal).D))
+									PacketHandlerClient.handle(Message2d(M2d.COOLDOWN, 0.0, (-DESYNC.ordinal).D))
 								else if (!player.capabilities.isCreativeMode && !SpellBase.consumeMana(player, spell.getManaCost(), false) && !player.isPotionActive(AlfheimConfigHandler.potionIDLeftFlame)) {
-									PacketHandlerClient.handle(Message2d(m2d.COOLDOWN, 0.0, (-NOMANA.ordinal).D))
+									PacketHandlerClient.handle(Message2d(M2d.COOLDOWN, 0.0, (-NOMANA.ordinal).D))
 									return@run
 								}
 								
 								AlfheimCore.network.sendToServer(MessageKeyBindS(CAST.ordinal, true, i))
-								PlayerSegmentClient.initM = AlfheimAPI.getSpellByIDs(PlayerSegmentClient.hotSpells[i] shr 28 and 0xF, PlayerSegmentClient.hotSpells[i] and 0xFFFFFFF)!!.getCastTime()
+								PlayerSegmentClient.initM = if (player.capabilities.isCreativeMode) 1 else AlfheimAPI.getSpellByIDs(PlayerSegmentClient.hotSpells[i] shr 28 and 0xF, PlayerSegmentClient.hotSpells[i] and 0xFFFFFFF)!!.getCastTime()
 								PlayerSegmentClient.init = PlayerSegmentClient.initM
 							}
 						}
@@ -216,15 +217,15 @@ object KeyBindingHandlerClient {
 							
 							val spell = AlfheimAPI.getSpellByIDs(raceID, spellID)
 							if (spell == null)
-								PacketHandlerClient.handle(Message2d(m2d.COOLDOWN, 0.0, (-DESYNC.ordinal).D))
+								PacketHandlerClient.handle(Message2d(M2d.COOLDOWN, 0.0, (-DESYNC.ordinal).D))
 							else if (!player.capabilities.isCreativeMode && !SpellBase.consumeMana(player, spell.getManaCost(), false) && !player.isPotionActive(AlfheimConfigHandler.potionIDLeftFlame)) {
-								PacketHandlerClient.handle(Message2d(m2d.COOLDOWN, 0.0, (-NOMANA.ordinal).D))
+								PacketHandlerClient.handle(Message2d(M2d.COOLDOWN, 0.0, (-NOMANA.ordinal).D))
 								return@run
 							}
 							
 							val i = raceID and 0xF shl 28 or (spellID and 0xFFFFFFF)
 							AlfheimCore.network.sendToServer(MessageKeyBindS(CAST.ordinal, false, i))
-							PlayerSegmentClient.initM = AlfheimAPI.getSpellByIDs(raceID, spellID)!!.getCastTime()
+							PlayerSegmentClient.initM = if (player.capabilities.isCreativeMode) 1 else AlfheimAPI.getSpellByIDs(raceID, spellID)!!.getCastTime()
 							PlayerSegmentClient.init = PlayerSegmentClient.initM
 						}
 					}
@@ -238,16 +239,24 @@ object KeyBindingHandlerClient {
 					toggleUnCast = true
 					AlfheimCore.network.sendToServer(MessageKeyBindS(UNCAST.ordinal, false, 0))
 					PlayerSegmentClient.initM = 0
-					PlayerSegmentClient.init = PlayerSegmentClient.initM
+					PlayerSegmentClient.init = 0
 				}
 			} else if (toggleUnCast) {
 				toggleUnCast = false
 			}
 			
 			if (safeKeyDown(ClientProxy.keySelMob.keyCode)) {
-				if (!toggleSelMob) {
+				if (!toggleSelMob) run {
 					toggleSelMob = true
-					if (TargetingSystemClient.selectMob()) AlfheimCore.network.sendToServer(MessageKeyBindS(SEL.ordinal, PlayerSegmentClient.isParty, PlayerSegmentClient.target?.entityId ?: 0))
+					
+					if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
+						PlayerSegmentClient.target = null
+						PlayerSegmentClient.isParty = false
+						PlayerSegmentClient.partyIndex = -1
+					} else if (!TargetingSystemClient.selectMob())
+						return@run
+					
+					AlfheimCore.network.sendToServer(MessageKeyBindS(SEL.ordinal, PlayerSegmentClient.isParty, PlayerSegmentClient.target?.entityId ?: -1))
 				}
 			} else if (toggleSelMob) {
 				toggleSelMob = false
@@ -279,46 +288,30 @@ object KeyBindingHandlerClient {
 		false
 	}
 	
-	fun hit() {
+	fun sendAction(left: Boolean) {
 		val player = mc.thePlayer
 		
-		val mopEntity = ASJUtilities.getMouseOver(player, mc.playerController.blockReachDistance.D, true)
-		val mopNoEntity = ASJUtilities.getMouseOver(player, mc.playerController.blockReachDistance.D, false)
+		val mop: MovingObjectPosition? = if (mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == ENTITY) {
+			mc.objectMouseOver
+		} else {
+			val distance = mc.playerController.blockReachDistance.D
+			val pos = player.getPosition(0f)
+			val look = player.getLook(0f)
+			val combined = pos.addVector(look.xCoord * distance, look.yCoord * distance, look.zCoord * distance)
+			player.worldObj.rayTraceBlocks(pos, combined, true)
+		}
 		
-		if (mopNoEntity == null || mopNoEntity.typeOfHit == MovingObjectPosition.MovingObjectType.MISS) {
-			when (mopEntity?.typeOfHit) {
-				MovingObjectPosition.MovingObjectType.BLOCK  ->
-					MinecraftForge.EVENT_BUS.post(LeftClick(player, LEFT_CLICK_LIQUID, mopEntity.blockX, mopEntity.blockY, mopEntity.blockZ, mopEntity.sideHit, mopEntity.entityHit))
-				MovingObjectPosition.MovingObjectType.ENTITY ->
-					MinecraftForge.EVENT_BUS.post(LeftClick(player, LEFT_CLICK_ENTITY, mopEntity.blockX, mopEntity.blockY, mopEntity.blockZ, mopEntity.sideHit, mopEntity.entityHit))
-				else                                         ->
-					MinecraftForge.EVENT_BUS.post(LeftClick(player, LEFT_CLICK_AIR, mopNoEntity?.blockX ?: -1, mopNoEntity?.blockY ?: -1, mopNoEntity?.blockZ ?: -1, mopNoEntity?.sideHit ?: -1, mopNoEntity?.entityHit))
-			}
-		} else if (mopNoEntity.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
-			MinecraftForge.EVENT_BUS.post(LeftClick(player, LEFT_CLICK_BLOCK, mopNoEntity.blockX, mopNoEntity.blockY, mopNoEntity.blockZ, mopNoEntity.sideHit, mopNoEntity.entityHit))
+		val type = if (mop == null || mop.typeOfHit == MISS)
+			(if (left) LEFT_CLICK_AIR else RIGHT_CLICK_AIR)
+		else when (mop.typeOfHit) {
+			BLOCK  -> if (mc.theWorld.getBlock(mop.blockX, mop.blockY, mop.blockZ).material.isLiquid) (if (left) LEFT_CLICK_LIQUID else RIGHT_CLICK_LIQUID) else (if (left) LEFT_CLICK_BLOCK else RIGHT_CLICK_BLOCK)
+			ENTITY -> if (left) LEFT_CLICK_ENTITY else RIGHT_CLICK_ENTITY
+			else -> if (left) LEFT_CLICK_AIR else RIGHT_CLICK_AIR
+		}
 		
-		AlfheimCore.network.sendToServer(MessageKeyBindS(HIT.ordinal, false, 0))
-	}
-	
-	fun use() {
-		val player = mc.thePlayer
+		MinecraftForge.EVENT_BUS.post(if (left) LeftClick(player, type as LeftClick.Action, mop?.blockX ?: -1, mop?.blockY ?: -1, mop?.blockZ ?: -1, mop?.sideHit ?: -1, mop?.entityHit) else RightClick(player, type as RightClick.Action, mop?.blockX ?: -1, mop?.blockY ?: -1, mop?.blockZ ?: -1, mop?.sideHit ?: -1, mop?.entityHit))
 		
-		val mopEntity = ASJUtilities.getMouseOver(player, mc.playerController.blockReachDistance.D, true)
-		val mopNoEntity = ASJUtilities.getMouseOver(player, mc.playerController.blockReachDistance.D, false)
-		
-		if (mopNoEntity == null || mopNoEntity.typeOfHit == MovingObjectPosition.MovingObjectType.MISS) {
-			when (mopEntity?.typeOfHit) {
-				MovingObjectPosition.MovingObjectType.BLOCK  ->
-					MinecraftForge.EVENT_BUS.post(RightClick(player, RIGHT_CLICK_LIQUID, mopEntity.blockX, mopEntity.blockY, mopEntity.blockZ, mopEntity.sideHit, mopEntity.entityHit))
-				MovingObjectPosition.MovingObjectType.ENTITY ->
-					MinecraftForge.EVENT_BUS.post(RightClick(player, RIGHT_CLICK_ENTITY, mopEntity.blockX, mopEntity.blockY, mopEntity.blockZ, mopEntity.sideHit, mopEntity.entityHit))
-				else                                         ->
-					MinecraftForge.EVENT_BUS.post(RightClick(player, RIGHT_CLICK_AIR, mopNoEntity?.blockX ?: -1, mopNoEntity?.blockY ?: -1, mopNoEntity?.blockZ ?: -1, mopNoEntity?.sideHit ?: -1, mopNoEntity?.entityHit))
-			}
-		} else if (mopNoEntity.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
-			MinecraftForge.EVENT_BUS.post(RightClick(player, RIGHT_CLICK_BLOCK, mopNoEntity.blockX, mopNoEntity.blockY, mopNoEntity.blockZ, mopNoEntity.sideHit, mopNoEntity.entityHit))
-		
-		AlfheimCore.network.sendToServer(MessageKeyBindS(USE.ordinal, false, 0))
+		AlfheimCore.network.sendToServer(MessageNI(MessageNI.Mni.INTERACTION, if (left) 1 else 0, type.ordinal, mop?.blockX ?: -1, mop?.blockY ?: -1, mop?.blockZ ?: -1, mop?.sideHit ?: -1, mop?.entityHit?.entityId ?: -1))
 	}
 	
 	fun toggleFlight(boost: Boolean) {
@@ -329,6 +322,6 @@ object KeyBindingHandlerClient {
 	}
 	
 	enum class KeyBindingIDs {
-		CORN, FLIGHT, ESMABIL, HIT, USE, CAST, UNCAST, SEL, SECRET
+		CORN, FLIGHT, ESMABIL, CAST, UNCAST, SEL, SECRET
 	}
 }

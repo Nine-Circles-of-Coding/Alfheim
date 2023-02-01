@@ -1,19 +1,16 @@
 package alfheim.common.item.relic
 
-import alexsocol.asjlib.mc
+import alexsocol.asjlib.*
 import alexsocol.asjlib.render.ASJRenderHelper
 import alfheim.api.ModInfo
 import alfheim.api.item.relic.record.AkashicRecord
 import alfheim.api.lib.LibResourceLocations
 import alfheim.client.model.item.ModelAkashicBox
 import alfheim.common.item.AlfheimItems
-import alfheim.common.item.relic.AkashikModels.bookModel
-import alfheim.common.item.relic.AkashikModels.boxModel
 import alfheim.common.item.relic.record.AkashicRecordNewChance
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.gameevent.PlayerEvent
 import cpw.mods.fml.relauncher.*
-import net.minecraft.client.model.ModelBook
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.client.renderer.entity.RenderManager
 import net.minecraft.client.renderer.texture.IIconRegister
@@ -30,6 +27,7 @@ import org.lwjgl.opengl.GL12
 import vazkii.botania.api.mana.ManaItemHandler
 import vazkii.botania.common.core.helper.ItemNBTHelper.*
 import vazkii.botania.common.item.relic.ItemRelic
+import kotlin.collections.random
 import kotlin.math.max
 
 class ItemAkashicRecords: ItemRelic("AkashicRecords") {
@@ -43,7 +41,7 @@ class ItemAkashicRecords: ItemRelic("AkashicRecords") {
 	override fun onUsingTick(stack: ItemStack, player: EntityPlayer, left: Int) {
 		// ASJUtilities.chatLog("Use tick ($left left)")
 		
-		// TODO play some "progress" sound
+		// play some "progress" sound
 	}
 	
 	override fun getMaxItemUseDuration(stack: ItemStack) = 1200
@@ -58,7 +56,7 @@ class ItemAkashicRecords: ItemRelic("AkashicRecords") {
 				if (isOpen(stack))
 					nextRecord(player, stack)
 			}
-		} else Unit // TODO play some "fail" sound
+		} else Unit // play some "fail" sound
 	}
 	
 	override fun onEaten(stack: ItemStack, world: World?, player: EntityPlayer): ItemStack {
@@ -133,9 +131,9 @@ class ItemAkashicRecords: ItemRelic("AkashicRecords") {
 		
 		fun generateRecord(player: EntityPlayer, stack: ItemStack) {
 			if (generateRecordActual(player, stack)) {
-				// TODO play some "success" sound
+				// play some "success" sound
 			} else {
-				// TODO play some "fail" sound
+				// play some "fail" sound
 			}
 		}
 		
@@ -197,7 +195,8 @@ class ItemAkashicRecords: ItemRelic("AkashicRecords") {
 		
 		fun registerRecord(rec: AkashicRecord) {
 			records[rec.name] = rec
-			recordTextures[rec.name] = ResourceLocation(ModInfo.MODID, "textures/model/item/record/${rec.name}.png")
+			if (ASJUtilities.isClient)
+				recordTextures[rec.name] = LibResourceLocations.ResourceLocationIL(ModInfo.MODID, "textures/model/item/record/${rec.name}.png")
 		}
 		
 		@SubscribeEvent
@@ -257,7 +256,7 @@ class ItemAkashicRecords: ItemRelic("AkashicRecords") {
 				glRotatef(90f, 0f, 1f, 0f)
 				
 				mc.renderEngine.bindTexture(LibResourceLocations.akashicBox)
-				boxModel.render(0.0625f)
+				ModelAkashicBox.render(0.0625f)
 				
 				glRotatef(90f, 0f, 1f, 0f)
 				glTranslated(-0.5, 0.0, 0.5)
@@ -267,14 +266,14 @@ class ItemAkashicRecords: ItemRelic("AkashicRecords") {
 					if (!verifyExistance(stack, "$TAG_RECORD_PREF${num++}")) continue
 					
 					recordTextures[getString(stack, "$TAG_RECORD_PREF${num - 1}", "")]?.also { mc.renderEngine.bindTexture(it) }
-					bookModel.render(null, 0f, 0f, 0f, 0f, 0f, 1f / 16f)
+					ModelAkashicBox.bookModel.render(null, 0f, 0f, 0f, 0f, 0f, 1f / 16f)
 					
 					if (getInt(stack, TAG_RECORD_SELECT, 0) == num - 1) {
 						glDisable(GL_TEXTURE_2D)
 						glColor4f(1f, 0f, 0f, frame / 60f)
 						glLineWidth(3f)
 						glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
-						bookModel.render(null, 0f, 0f, 0f, 0f, 0f, 1f / 16f)
+						ModelAkashicBox.bookModel.render(null, 0f, 0f, 0f, 0f, 0f, 1f / 16f)
 						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 						glColor4f(1f, 1f, 1f, frame / 60f)
 						glEnable(GL_TEXTURE_2D)
@@ -291,11 +290,4 @@ class ItemAkashicRecords: ItemRelic("AkashicRecords") {
 			glPopMatrix()
 		}
 	}
-}
-
-// I hate those SideOnly things -_-
-private object AkashikModels {
-	
-	val boxModel = ModelAkashicBox()
-	val bookModel = ModelBook()
 }

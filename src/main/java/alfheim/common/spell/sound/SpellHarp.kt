@@ -40,7 +40,7 @@ object SpellHarp: SpellBase("harp", EnumRace.POOKA, 15000, 3600, 30) {
 		}
 		
 		val result = checkCast(caster)
-		if (result == SpellCastResult.OK) caster.worldObj.spawnEntityInWorld(EntitySpellHarp(caster.worldObj, caster, x, y, z))
+		if (result == SpellCastResult.OK) EntitySpellHarp(caster.worldObj, caster, x, y, z).spawn()
 		return result
 	}
 }

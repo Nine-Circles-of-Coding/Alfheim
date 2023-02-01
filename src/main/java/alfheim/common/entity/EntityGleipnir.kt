@@ -1,12 +1,13 @@
 package alfheim.common.entity
 
+import alexsocol.asjlib.*
 import alexsocol.asjlib.security.InteractionSecurity
 import alfheim.common.core.handler.*
+import alfheim.common.potion.PotionEternity
 import cpw.mods.fml.relauncher.*
 import net.minecraft.entity.*
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.potion.PotionEffect
 import net.minecraft.world.World
 
 class EntityGleipnir: Entity {
@@ -40,20 +41,29 @@ class EntityGleipnir: Entity {
 		thrower ?: return
 		if (worldObj.isRemote) return
 		
-		val targets = worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, boundingBox) as MutableList<EntityLivingBase>
+		val targets = getEntitiesWithinAABB(worldObj, EntityLivingBase::class.java, boundingBox)
 		targets.remove(thrower)
-		
-		targets.removeAll { !InteractionSecurity.canHurtEntity(thrower, it) }
+		targets.removeAll { !InteractionSecurity.canInteractWithEntity(thrower, it) }
 		
 		if (AlfheimConfigHandler.enableMMO) {
 			val pt = CardinalSystem.PartySystem.getParty(thrower)
 			targets.removeAll { pt.isMember(it) }
 		}
 		
-		targets.forEach { it.addPotionEffect(PotionEffect(AlfheimConfigHandler.potionIDEternity, 5, 1, true)) }
+		targets.forEach { it.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDEternity, 5, PotionEternity.STUN or PotionEternity.IRREMOVABLE)) }
 	}
 	
 	override fun entityInit() = Unit
-	override fun writeEntityToNBT(nbt: NBTTagCompound?) = Unit
-	override fun readEntityFromNBT(nbt: NBTTagCompound?) = Unit
+	
+	override fun writeEntityToNBT(nbt: NBTTagCompound) {
+		nbt.setInteger(TAG_TICKS, ticksExisted)
+	}
+	
+	override fun readEntityFromNBT(nbt: NBTTagCompound) {
+		ticksExisted = nbt.getInteger(TAG_TICKS)
+	}
+	
+	companion object {
+		const val TAG_TICKS = "ticks"
+	}
 }

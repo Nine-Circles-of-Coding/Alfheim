@@ -44,7 +44,7 @@ interface IFaithHandler {
 		}
 	}
 	
-	// if want to add more types, modify when expressions in IFaithHandler's
+	// if want to add more types, modify 'when' expressions in IFaithHandler subclasses
 	enum class FaithBauble {
 		
 		EMBLEM, CLOAK

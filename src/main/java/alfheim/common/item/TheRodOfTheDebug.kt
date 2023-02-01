@@ -1,14 +1,29 @@
 package alfheim.common.item
 
-import alexsocol.asjlib.ASJUtilities
+import alexsocol.asjlib.*
+import alexsocol.asjlib.math.Vector3
+import alexsocol.asjlib.render.ASJShaderHelper
+import alfheim.AlfheimCore
 import alfheim.api.ModInfo
 import alfheim.api.entity.*
+import alfheim.api.event.PlayerInteractAdequateEvent
+import alfheim.api.lib.LibShaderIDs
+import alfheim.client.core.handler.CardinalSystemClient
+import alfheim.common.core.handler.CardinalSystem
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.integration.thaumcraft.ThaumcraftAlfheimModule
+import cpw.mods.fml.common.*
 import cpw.mods.fml.common.registry.GameRegistry
-import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.client.Minecraft
+import net.minecraft.client.renderer.OpenGlHelper
+import net.minecraft.entity.EntityLivingBase
+import net.minecraft.entity.player.*
+import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.util.*
 import net.minecraft.world.World
+import org.lwjgl.opengl.*
 import vazkii.botania.common.Botania
 import vazkii.botania.common.core.helper.ItemNBTHelper
 
@@ -19,16 +34,15 @@ class TheRodOfTheDebug: ItemMod("TheRodOfTheDebug") {
 	}
 	
 	override fun onItemRightClick(stack: ItemStack, world: World, player: EntityPlayer): ItemStack {
-		if (ModInfo.OBF) return stack
+		if (!ModInfo.DEV) return stack
 		
 		try {
 			if (!player.isSneaking) {
-//				if (!world.isRemote) {
-//					//CardinalSystem.PartySystem.setParty(player, CardinalSystem.PartySystem.Party(player))
-//					CardinalSystem.PartySystem.getParty(player).add(CardinalSystem.TargetingSystem.getTarget(player).target)
-//				}
-//
-//				for (o in world.loadedEntityList) if (o is Entity && o !is EntityPlayer) o.setDead()
+				if (!world.isRemote) {
+				
+				} else {
+				
+				}
 			} else {
 				player.raceID = (player.race.ordinal + 1) % 11
 				ASJUtilities.chatLog("${player.race.ordinal} - ${player.race}", player)
@@ -42,11 +56,9 @@ class TheRodOfTheDebug: ItemMod("TheRodOfTheDebug") {
 	}
 	
 	override fun onItemUse(stack: ItemStack, player: EntityPlayer, world: World, x: Int, y: Int, z: Int, side: Int, hitX: Float, hitY: Float, hitZ: Float): Boolean {
-		if (ModInfo.OBF) return false
+		if (!ModInfo.DEV) return false
 		
 		try {
-//			if (!world.isRemote) world.getBlock(x, y, z).updateTick(world, x, y, z, world.rand)
-			
 			val te = world.getTileEntity(x, y, z)
 			if (te != null) {
 				val nbt = NBTTagCompound()
@@ -66,6 +78,32 @@ class TheRodOfTheDebug: ItemMod("TheRodOfTheDebug") {
 	}
 	
 	companion object {
+		
+		init {
+			eventForge()
+		}
+		
+		@Mod.EventHandler
+		fun onClickedEntity(e: PlayerInteractAdequateEvent.RightClick) {
+			if (e.action != PlayerInteractAdequateEvent.RightClick.Action.RIGHT_CLICK_ENTITY) return
+			val stack = e.player.heldItem ?: return
+			if (stack.item !== AlfheimItems.`DEV-NULL`) return
+			
+			val source = DamageSource.causePlayerDamage(e.player)
+			val name = stack.displayName
+			
+			if ("fire" in name) source.setFireDamage()
+			if ("magic" in name) source.setMagicDamage()
+			if ("expl" in name) source.setExplosion()
+			if ("proj" in name) source.setProjectile()
+			if ("pierce" in name) source.setDamageBypassesArmor()
+			if ("potion" in name) source.setDamageIsAbsolute()
+			if ("creative" in name) source.setDamageAllowedInCreativeMode()
+			
+			val dmg = stack.meta.F
+			
+			e.entity?.attackEntityFrom(source, dmg)
+		}
 		
 		fun royalStaff(player: EntityPlayer) {
 			if (!Botania.thaumcraftLoaded) return

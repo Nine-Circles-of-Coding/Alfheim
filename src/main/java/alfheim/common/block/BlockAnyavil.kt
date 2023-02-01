@@ -60,13 +60,10 @@ class BlockAnyavil: BlockContainerMod(Material.iron), IManaTrigger, IWandable, I
 		
 		if (player.isSneaking) return false
 		if (te.item != null) {
-			if (!world.isRemote) {
-				val entityitem = EntityItem(world, x + 0.5, y + 0.5, z + 0.5, te.item!!)
-				world.spawnEntityInWorld(entityitem)
-			}
+			if (!world.isRemote) EntityItem(world, x + 0.5, y + 0.5, z + 0.5, te.item!!).spawn()
 			te.item = null
 		}
-		if (stack != null && stack.stackSize == 1 && stack.item.isDamageable && GameRegistry.findUniqueIdentifierFor(stack.item).toString() !in AlfheimConfigHandler.anyavilBlackList) {
+		if (stack != null && stack.stackSize == 1 && stack.item.isDamageable && GameRegistry.findUniqueIdentifierFor(stack.item).toString() !in AlfheimConfigHandler.repairBlackList) {
 			te.item = stack.copy()
 			te.item!!.stackSize = stack.stackSize
 			stack.stackSize = 0
@@ -96,8 +93,7 @@ class BlockAnyavil: BlockContainerMod(Material.iron), IManaTrigger, IWandable, I
 		run {
 			val te = world.getTileEntity(x, y, z) as? TileItemContainer ?: return@run
 			if (te.item != null) {
-				val entityitem = EntityItem(world, x + 0.5, y + 0.5, z + 0.5, te.item!!)
-				world.spawnEntityInWorld(entityitem)
+				EntityItem(world, x + 0.5, y + 0.5, z + 0.5, te.item!!).spawn()
 				te.item = null
 			}
 		}

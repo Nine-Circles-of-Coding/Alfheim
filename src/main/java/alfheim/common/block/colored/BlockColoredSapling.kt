@@ -1,6 +1,6 @@
 package alfheim.common.block.colored
 
-import alexsocol.asjlib.*
+import alexsocol.asjlib.toItem
 import alfheim.api.AlfheimAPI
 import alfheim.client.core.helper.IconHelper
 import alfheim.common.core.util.AlfheimTab
@@ -21,6 +21,7 @@ import net.minecraft.world.gen.feature.WorldGenerator
 import net.minecraftforge.common.EnumPlantType
 import net.minecraftforge.common.util.ForgeDirection
 import vazkii.botania.api.lexicon.ILexiconable
+import vazkii.botania.api.lexicon.LexiconEntry
 import java.util.*
 
 @Suppress("LeakingThis")
@@ -52,7 +53,7 @@ open class BlockColoredSapling(val name: String = "irisSapling"): BlockSapling()
 	
 	override fun getPlantType(world: IBlockAccess?, x: Int, y: Int, z: Int) = EnumPlantType.Plains
 	
-	override fun getPlantMetadata(world: IBlockAccess?, x: Int, y: Int, z: Int) = world?.getBlockMetadata(x, y, z) ?: 0
+	override fun getPlantMetadata(world: IBlockAccess, x: Int, y: Int, z: Int) = world.getBlockMetadata(x, y, z)
 	
 	override fun canPlaceBlockAt(world: World, x: Int, y: Int, z: Int) =
 		super.canPlaceBlockAt(world, x, y, z) && canBlockStay(world, x, y, z)
@@ -118,11 +119,16 @@ open class BlockColoredSapling(val name: String = "irisSapling"): BlockSapling()
 	}
 	
 	/**
-	 *  shouldFertilize
+	 * canFertilize
 	 */
-	override fun func_149852_a(world: World?, random: Random?, x: Int, y: Int, z: Int): Boolean {
-		if (world != null) return world.rand.nextFloat().D < 0.45
-		return false
+	override fun func_149851_a(world: World?, x: Int, y: Int, z: Int, isRemote: Boolean) = canGrowHere(world!!.getBlock(x, y - 1, z))
+	
+	/**
+	 * shouldCallFertilize
+	 * If false #fertilize won't be called, but bonemeal stack size will be decremented
+	 */
+	override fun func_149852_a(world: World?, random: Random, x: Int, y: Int, z: Int): Boolean {
+		return random.nextDouble() < 0.45
 	}
 	
 	/**
@@ -132,14 +138,9 @@ open class BlockColoredSapling(val name: String = "irisSapling"): BlockSapling()
 		markOrGrowMarked(world, x, y, z, random)
 	}
 	
-	/**
-	 * canFertilize
-	 */
-	override fun func_149851_a(world: World?, x: Int, y: Int, z: Int, isRemote: Boolean) = canGrowHere(world!!.getBlock(x, y - 1, z))
-	
 	open fun canGrowHere(block: Block) = AlfheimAPI.getIridescentSoils().contains(block)
 	
-	override fun getEntry(p0: World?, p1: Int, p2: Int, p3: Int, p4: EntityPlayer?, p5: ItemStack?) = AlfheimLexiconData.irisSapling
+	override fun getEntry(p0: World?, p1: Int, p2: Int, p3: Int, p4: EntityPlayer?, p5: ItemStack?): LexiconEntry? = AlfheimLexiconData.irisSapling
 	
 	override fun getBurnTime(fuel: ItemStack) = if (fuel.item === this.toItem()) 100 else 0
 	

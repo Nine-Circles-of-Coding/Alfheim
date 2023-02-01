@@ -28,7 +28,7 @@ object BifrostFlowerDispenserHandler: IBehaviorDispenseItem {
 	}
 	
 	override fun dispense(block: IBlockSource, stack: ItemStack): ItemStack? {
-		if (stack.meta != ElvenResourcesMetas.RainbowDust) return defaultBehavior.dispense(block, stack)
+		if (stack.meta != ElvenResourcesMetas.RainbowDust.I) return defaultBehavior.dispense(block, stack)
 		
 		val facing = ForgeDirection.getOrientation(BlockDispenser.func_149937_b(block.blockMetadata).ordinal)
 		val x = block.xInt + facing.offsetX
@@ -89,8 +89,7 @@ object ThrownPotionDispenserHandler: IBehaviorDispenseItem {
 		potion.motionZ = (MathHelper.cos(potion.rotationYaw / 180f * Math.PI.F) * MathHelper.cos(potion.rotationPitch / 180f * Math.PI.F) * f).D
 		potion.motionY = (-MathHelper.sin((potion.rotationPitch + potion.func_70183_g()) / 180f * Math.PI.F) * f).D
 		potion.setThrowableHeading(potion.motionX, potion.motionY, potion.motionZ, potion.func_70182_d(), 1f)
-		
-		block.world.spawnEntityInWorld(potion)
+		potion.spawn()
 		
 		return stack
 	}
@@ -139,8 +138,7 @@ object ThrownItemDispenserHandler: IBehaviorDispenseItem {
 		potion.motionZ = (MathHelper.cos(potion.rotationYaw / 180f * Math.PI.F) * MathHelper.cos(potion.rotationPitch / 180f * Math.PI.F) * f).D
 		potion.motionY = (-MathHelper.sin((potion.rotationPitch + potion.func_70183_g()) / 180f * Math.PI.F) * f).D
 		potion.setThrowableHeading(potion.motionX, potion.motionY, potion.motionZ, potion.func_70182_d(), 1f)
-		
-		block.world.spawnEntityInWorld(potion)
+		potion.spawn()
 		
 		return stack
 	}

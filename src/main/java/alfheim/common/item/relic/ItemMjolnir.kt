@@ -6,12 +6,13 @@ import alfheim.api.item.ColorOverrideHelper
 import alfheim.client.core.helper.IconHelper
 import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.core.handler.VisualEffectHandler
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
+import alfheim.common.core.helper.*
 import alfheim.common.entity.EntityMjolnir
 import alfheim.common.entity.spell.EntitySpellFenrirStorm
 import alfheim.common.item.equipment.bauble.*
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.renderer.texture.IIconRegister
-import net.minecraft.command.IEntitySelector
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.attributes.AttributeModifier
 import net.minecraft.entity.monster.IMob
@@ -26,7 +27,7 @@ import vazkii.botania.common.core.helper.ItemNBTHelper.*
 import vazkii.botania.common.item.relic.*
 import java.awt.Color
 import java.util.*
-import kotlin.math.*
+import kotlin.math.min
 import vazkii.botania.common.core.helper.Vector3 as Bector3
 
 class ItemMjolnir: ItemRelic("Mjolnir") {
@@ -39,6 +40,8 @@ class ItemMjolnir: ItemRelic("Mjolnir") {
 	// ################ Checker ################
 	
 	fun isWorthy(player: EntityLivingBase): Boolean {
+		if (RagnarokHandler.blockedPowers[0]) return false
+		
 		if (player !is EntityPlayer) return false
 		if (player.capabilities.isCreativeMode) return true
 		return ItemPriestCloak.getCloak(0, player) != null && ItemPriestEmblem.getEmblem(0, player) != null && ItemThorRing.getThorRing(player) != null
@@ -47,8 +50,8 @@ class ItemMjolnir: ItemRelic("Mjolnir") {
 	// ################ Left-click ################
 	
 	override fun onEntitySwing(entity: EntityLivingBase, stack: ItemStack?): Boolean {
-		if (entity.isSneaking && isWorthy(entity))
-			entity.worldObj.spawnEntityInWorld(EntitySpellFenrirStorm(entity.worldObj, entity, true))
+		if (!entity.worldObj.isRemote && entity.isSneaking && isWorthy(entity))
+			EntitySpellFenrirStorm(entity.worldObj, entity, true).spawn()
 		
 		return super.onEntitySwing(entity, stack)
 	}
@@ -60,22 +63,20 @@ class ItemMjolnir: ItemRelic("Mjolnir") {
 		var dmg = 8f
 		
 		val alreadyTargetedEntities = ArrayList<EntityLivingBase>()
-		val selector = IEntitySelector { e -> e is EntityLivingBase && e is IMob && e !is EntityPlayer && !alreadyTargetedEntities.contains(e) }
-		var lightningSource: EntityLivingBase = entity
+		var lightningSource = entity
 		
 		val lightningSeed = getLong(stack, TAG_LIGHTNING_SEED, 0)
 		val rand = Random(lightningSeed)
 		
 		for (i in 0..5) {
-			val entities = entity.worldObj.getEntitiesWithinAABBExcludingEntity(lightningSource, lightningSource.boundingBox(range), selector) as MutableList<EntityLivingBase>
+			val entities = selectEntitiesWithinAABB(entity.worldObj, EntityLivingBase::class.java, lightningSource.boundingBox(range)) {
+				it is IMob && it !is EntityPlayer && !alreadyTargetedEntities.contains(it)
+			}
 			if (entities.isEmpty()) break
 			
 			val target = entities[rand.nextInt(entities.size)]
 			
-			if (attacker is EntityPlayer)
-				target.attackEntityFrom(DamageSource.causePlayerDamage(attacker), dmg)
-			else
-				target.attackEntityFrom(DamageSource.causeMobDamage(attacker), dmg)
+			target.attackEntityFrom(if (attacker is EntityPlayer) DamageSource.causePlayerDamage(attacker) else DamageSource.causeMobDamage(attacker).setTo(ElementalDamage.ELECTRIC), dmg)
 			
 			var color = 0x0079C4
 			if (attacker is EntityPlayer) color = ColorOverrideHelper.getColor(attacker, color)
@@ -122,38 +123,37 @@ class ItemMjolnir: ItemRelic("Mjolnir") {
 	}
 	
 	override fun onPlayerStoppedUsing(stack: ItemStack, world: World, player: EntityPlayer, itemInUseCount: Int) {
-		if (getCharge(stack) >= MAX_CHARGE) {
-			if (player.isSneaking) {
-				setCharge(stack, 0)
-				if (!world.isRemote)
-					world.spawnEntityInWorld(EntityMjolnir(world, player, stack.copy()))
-				
-				stack.cooldown = 600
-				return
-			} else if (player is EntityPlayerMP) {
-				val mop = ASJUtilities.getSelectedBlock(player, player.theItemInWorldManager.blockReachDistance, true)
-				
-				if (mop != null && mop.typeOfHit == MovingObjectType.BLOCK) {
-					setInt(stack, TAG_SHAKE_TIMER, 16)
-					setInt(stack, TAG_SHAKE_X, mop.blockX)
-					setInt(stack, TAG_SHAKE_Y, mop.blockY)
-					setInt(stack, TAG_SHAKE_Z, mop.blockZ)
-					
-					val start = Bector3(mop.blockX.D + 0.5, mop.blockY.D + 1.5, mop.blockZ.D + 0.5)
-					val end = Bector3()
-					val oY = Bector3(0.0, 1.0, 0.0)
-					
-					val color = ColorOverrideHelper.getColor(player, 0x0079C4)
-					
-					for (i in 0 until 360 step 5) {
-						end.set(5.0, 1.0, 0.0).rotate(i.D, oY).add(start)
-						Botania.proxy.lightningFX(world, start, end, 3f, color, Color(color).brighter().brighter().rgb)
-					}
-				}
-			}
+		val charge = getCharge(stack)
+		setCharge(stack, 0)
+		if (charge < MAX_CHARGE) return
+		if (player.isSneaking) {
+			setCharge(stack, 0)
+			if (!world.isRemote)
+				EntityMjolnir(world, player, stack.copy()).spawn()
+			
+			stack.cooldown = 600
+			return
 		}
 		
-		setCharge(stack, 0)
+		if (player !is EntityPlayerMP) return
+		val mop = ASJUtilities.getSelectedBlock(player, player.theItemInWorldManager.blockReachDistance, true)
+		
+		if (mop == null || mop.typeOfHit != MovingObjectType.BLOCK) return
+		setInt(stack, TAG_SHAKE_TIMER, 16)
+		setInt(stack, TAG_SHAKE_X, mop.blockX)
+		setInt(stack, TAG_SHAKE_Y, mop.blockY)
+		setInt(stack, TAG_SHAKE_Z, mop.blockZ)
+		
+		val start = Bector3(mop.blockX.D + 0.5, mop.blockY.D + 1.5, mop.blockZ.D + 0.5)
+		val end = Bector3()
+		val oY = Bector3(0.0, 1.0, 0.0)
+		
+		val color = ColorOverrideHelper.getColor(player, 0x0079C4)
+		
+		for (i in 0 until 360 step 5) {
+			end.set(5.0, 1.0, 0.0).rotate(i.D, oY).add(start)
+			Botania.proxy.lightningFX(world, start, end, 3f, color, Color(color).brighter().brighter().rgb)
+		}
 	}
 	
 	override fun onUpdate(stack: ItemStack, world: World, entity: Entity, slot: Int, inHand: Boolean) {
@@ -171,18 +171,18 @@ class ItemMjolnir: ItemRelic("Mjolnir") {
 			val radius = 5 - timer / 3 + 1.0
 			
 			val center = Vector3(x + 0.5, y, z + 0.5)
-			val list = world.getEntitiesWithinAABB(EntityLivingBase::class.java, getBoundingBox(x, y + 1, z).offset(0.5).expand(radius)) as MutableList<EntityLivingBase>
-			for (e in list) {
-				if (e === entity) continue
+			getEntitiesWithinAABB(world, EntityLivingBase::class.java, getBoundingBox(x, y + 1, z).offset(0.5).expand(radius)).forEach { e ->
+				if (e === entity) return@forEach
 				
 				if (Vector3.vecEntityDistance(center, e) in (radius - 1)..(radius + 1)) {
+					val src = (if (entity is EntityPlayer) DamageSource.causePlayerDamage(entity) else DamageSource.causeMobDamage(entity)).setTo(ElementalDamage.ELECTRIC)
 					if (e.onGround) {
-						e.attackEntityFrom(if (entity is EntityPlayer) DamageSource.causePlayerDamage(entity) else DamageSource.causeMobDamage(entity), 10f)
+						e.attackEntityFrom(src, 10f)
 						e.hurtResistantTime = 0
 						e.hurtTime = 0
 					}
 					
-					e.attackEntityFrom(DamageSource.causeIndirectMagicDamage(entity, entity), 5f)
+					e.attackEntityFrom(src, 5f)
 				}
 			}
 			
@@ -198,7 +198,7 @@ class ItemMjolnir: ItemRelic("Mjolnir") {
 	
 	@SideOnly(Side.CLIENT)
 	override fun getColorFromItemStack(stack: ItemStack?, pass: Int): Int {
-		return if (pass == 1 && getCharge(stack) >= MAX_CHARGE) Color.HSBtoRGB((200 + (sin(Botania.proxy.worldElapsedTicks / 10.0 % 20) * 20).F) / 360f, 0.5f, 1f) else -0x1
+		return super.getColorFromItemStack(stack, pass)
 	}
 	
 	@SideOnly(Side.CLIENT)

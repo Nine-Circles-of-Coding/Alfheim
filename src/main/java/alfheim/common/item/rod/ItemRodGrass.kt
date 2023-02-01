@@ -2,6 +2,7 @@ package alfheim.common.item.rod
 
 import alexsocol.asjlib.mfloor
 import alexsocol.asjlib.security.InteractionSecurity
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.item.ItemMod
 import alfheim.common.item.relic.ItemSifRing
 import net.minecraft.block.Block
@@ -36,7 +37,7 @@ class ItemRodGrass: ItemMod("grassRod"), IManaUsingItem {
 	
 	fun terraform(stack: ItemStack?, world: World, player: EntityPlayer) {
 		var range = if (IManaProficiencyArmor.Helper.hasProficiency(player)) 22 else 16
-		if (ItemSifRing.getSifRing(player) != null) range += 8
+		if (!RagnarokHandler.blockedPowers[1] && ItemSifRing.getSifRing(player) != null) range += 8
 		
 		val x = player.posX.mfloor()
 		val y = (player.posY - if (world.isRemote) 2 else 1).mfloor()
@@ -67,7 +68,7 @@ class ItemRodGrass: ItemMod("grassRod"), IManaUsingItem {
 			if (InteractionSecurity.isInteractionBanned(player, x, y, z, world)) return false
 			
 			ManaItemHandler.requestManaExactForTool(stack, player, cost, world.isRemote)
-			if (world.isRemote)
+			if (!world.isRemote)
 				world.setBlock(x, y, z, block)
 			else
 				for (i in 0..5) Botania.proxy.sparkleFX(world, x + Math.random(), y + Math.random(), z + Math.random(), r, g, b, 1f, 5)

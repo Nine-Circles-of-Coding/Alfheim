@@ -42,13 +42,14 @@ object AlfheimHPHooks {
 		var new = hp
 		
 		if (e.activePotionsMap != null && e.isPotionActive(AlfheimConfigHandler.potionIDLeftFlame)) {
-			new = 1f
+			new = 0.123f
 		}
 		
-		e.dataWatcher.updateObject(6, MathHelper.clamp_float(new, 0f, e.maxHealth))
+		val hp = MathHelper.clamp_float(new, 0f, e.maxHealth)
+		e.dataWatcher.updateObject(6, hp)
 		if (pt != null) {
 			val i = pt.indexOf(e)
-			if (i != -1) pt.setHealth(i, MathHelper.clamp_float(new, 0f, e.maxHealth))
+			if (i != -1) pt.setHealth(i, hp)
 		}
 	}
 }

@@ -1,64 +1,58 @@
 package alfheim.common.block.magtrees.sealing
 
 import alexsocol.asjlib.*
+import alexsocol.asjlib.math.Vector3
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import net.minecraft.client.audio.*
 import net.minecraft.util.ResourceLocation
+import net.minecraft.world.World
 import net.minecraftforge.client.event.sound.PlaySoundEvent17
-import net.minecraftforge.common.MinecraftForge
-import kotlin.math.*
 
 /**
  * @author WireSegal
  * Created at 8:49 AM on 1/27/16.
  */
-class EventHandlerSealingOak {
+object EventHandlerSealingOak {
 	
-	companion object {
-		
-		val instance = EventHandlerSealingOak()
-		
-		fun register() {
-			MinecraftForge.EVENT_BUS.register(instance)
-		}
-	}
-	
-	val MAXRANGE = 16
+	const val MAXRANGE = 16
 	
 	@SubscribeEvent
 	fun onSound(event: PlaySoundEvent17) {
-		if (mc.theWorld != null && event.result != null) {
-			val world = mc.theWorld
-			if (event.result !is ITickableSound) {
-				
-				val x = event.result.xPosF
-				val y = event.result.yPosF
-				val z = event.result.zPosF
-				
-				var volumeMultiplier = 1f
-				
-				for (dx in (x - MAXRANGE).I..(x + MAXRANGE).I) {
-					for (dy in (y - MAXRANGE).I..(y + MAXRANGE).I) {
-						for (dz in (z - MAXRANGE).I..(z + MAXRANGE).I) {
-							val block = world.getBlock(dx, dy, dz)
-							if (block is ISoundSilencer) {
-								val distance = dist(dx, dy, dz, x, y, z)
-								if (distance <= MAXRANGE && block.canSilence(world, dx, dy, dz, distance, event)) {
-									volumeMultiplier *= block.getVolumeMultiplier(world, dx, dy, dz, distance, event)
-								}
-							}
-						}
-					}
-				}
-				if (volumeMultiplier != 1f) {
-					event.result = VolumeModSound(event.result, volumeMultiplier)
+		if (event.result == null || event.result is ITickableSound) return
+		
+		val world = mc.theWorld ?: return
+		val x = event.result.xPosF.I
+		val y = event.result.yPosF.I
+		val z = event.result.zPosF.I
+		
+		val volumeMultiplier = calculateMultiplier(world, x, y, z)
+		
+		if (volumeMultiplier == 1f) return
+		
+		event.result = VolumeModSound(event.result, volumeMultiplier)
+	}
+	
+	fun calculateMultiplier(world: World, x: Int, y: Int, z: Int): Float {
+		var volumeMultiplier = 1f
+		
+		for (dx in x.bidiRange(MAXRANGE)) {
+			for (dy in y.bidiRange(MAXRANGE)) {
+				for (dz in z.bidiRange(MAXRANGE)) {
+					val block = world.getBlock(dx, dy, dz)
+					if (block !is ISoundSilencer) continue
+					
+					val distance = Vector3.pointDistanceSpace(dx + 0.5, dy + 0.5, dz + 0.5, x, y, z)
+					if (distance > MAXRANGE || !block.canSilence(world, dx, dy, dz, distance)) continue
+					
+					volumeMultiplier *= block.getVolumeMultiplier(world, dx, dy, dz, distance)
 				}
 			}
 		}
 		
+		return volumeMultiplier
 	}
 	
-	inner class VolumeModSound(val sound: ISound, val volumeMult: Float): ISound {
+	class VolumeModSound(val sound: ISound, val volumeMult: Float): ISound {
 		
 		override fun getPositionedSoundLocation(): ResourceLocation = sound.positionedSoundLocation
 		override fun canRepeat(): Boolean = sound.canRepeat()
@@ -69,12 +63,5 @@ class EventHandlerSealingOak {
 		override fun getYPosF(): Float = sound.yPosF
 		override fun getZPosF(): Float = sound.zPosF
 		override fun getAttenuationType(): ISound.AttenuationType = sound.attenuationType
-	}
-	
-	private fun dist(dx: Int, dy: Int, dz: Int, x: Float, y: Float, z: Float): Double {
-		val xd = (dx + 0.5 - x).pow(2.0)
-		val yd = (dy + 0.5 - y).pow(2.0)
-		val zd = (dz + 0.5 - z).pow(2.0)
-		return sqrt(xd + yd + zd)
 	}
 }

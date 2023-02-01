@@ -16,7 +16,7 @@ object RenderBlockShrinePanel: ISimpleBlockRenderingHandler {
 	override fun renderWorldBlock(world: IBlockAccess?, x: Int, y: Int, z: Int, block: Block?, modelId: Int, renderer: RenderBlocks?) =
 		(world != null && block is BlockPaneMeta && renderer != null) && renderBlockStainedGlassPane(world, block, x, y, z, renderer)
 	
-	// unholly code from RenderBlocks#renderBlockStainedGlassPane
+	// unholy code from RenderBlocks#renderBlockStainedGlassPane
 	fun renderBlockStainedGlassPane(world: IBlockAccess, block: BlockPaneMeta, x: Int, y: Int, z: Int, renderer: RenderBlocks): Boolean {
 		val tessellator = Tessellator.instance
 		tessellator.setBrightness(block.getMixedBrightnessForBlock(world, x, y, z))

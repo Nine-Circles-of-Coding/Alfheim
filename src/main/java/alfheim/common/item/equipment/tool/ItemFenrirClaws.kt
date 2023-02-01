@@ -1,19 +1,27 @@
 package alfheim.common.item.equipment.tool
 
+import alexsocol.asjlib.*
 import alexsocol.asjlib.render.ASJRenderHelper
 import alfheim.api.*
 import alfheim.client.core.helper.IconHelper
 import alfheim.common.core.util.AlfheimTab
+import alfheim.common.item.AlfheimItems
+import alfheim.common.item.creator.*
 import alfheim.common.item.equipment.armor.fenrir.ItemFenrirArmor
+import alfheim.common.item.material.ElvenResourcesMetas
 import com.google.common.collect.*
+import cpw.mods.fml.common.eventhandler.*
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.attributes.AttributeModifier
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
-import net.minecraft.util.IIcon
+import net.minecraft.potion.*
+import net.minecraft.util.*
 import net.minecraft.world.World
+import net.minecraftforge.event.entity.living.LivingHurtEvent
+import vazkii.botania.common.core.helper.*
 import vazkii.botania.common.core.helper.ItemNBTHelper
 import vazkii.botania.common.item.equipment.tool.manasteel.ItemManasteelSword
 import vazkii.botania.common.lib.LibMisc
@@ -37,7 +45,9 @@ class ItemFenrirClaws: ItemManasteelSword(AlfheimAPI.FENRIR, "FenrirClaws") {
 		ItemNBTHelper.setBoolean(stack, "SET", ItemFenrirArmor.hasSet(player))
 	}
 	
-	override fun getIsRepairable(stack: ItemStack?, material: ItemStack?) = false // TODO make repairable
+	override fun getIsRepairable(stack: ItemStack?, material: ItemStack?): Boolean {
+		return material?.item === AlfheimItems.elvenResource && material.meta == ElvenResourcesMetas.MauftriumNugget.I
+	}
 	
 	override fun getAttributeModifiers(stack: ItemStack): Multimap<String, AttributeModifier> {
 		val set = ItemNBTHelper.getBoolean(stack, "SET", false)
@@ -87,4 +97,31 @@ class ItemFenrirClaws: ItemManasteelSword(AlfheimAPI.FENRIR, "FenrirClaws") {
 	}
 	
 	override fun getIconIndex(stack: ItemStack?) = itemIcon!! // no elucidator
+	
+	companion object {
+		
+		init {
+			eventForge()
+		}
+		
+		@SubscribeEvent(priority = EventPriority.LOWEST)
+		fun onLivingAttacked(e: LivingHurtEvent) {
+			val player = e.entityLiving
+			val damage = e.source
+			if (player !is EntityPlayer || damage !is EntityDamageSource || !player.isUsingItem) return
+			
+			val enemyEntity = damage.entity
+			if (enemyEntity !is EntityLivingBase || enemyEntity == player) return
+			
+			val itemInUse = player.itemInUse
+			if (itemInUse.item !is ItemFenrirClaws) return
+			
+			val lookVec = Vector3(player.lookVec)
+			val targetVec = Vector3.fromEntityCenter(enemyEntity).sub(Vector3.fromEntityCenter(player))
+			val epsilon = lookVec.dotProduct(targetVec) / (lookVec.mag() * targetVec.mag())
+			if (epsilon <= 0.75) return
+			
+			e.ammount /= 2f
+		}
+	}
 }

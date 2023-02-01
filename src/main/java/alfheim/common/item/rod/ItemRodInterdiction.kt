@@ -8,7 +8,7 @@ import alfheim.api.lib.LibResourceLocations
 import alfheim.client.core.helper.InterpolatedIconHelper
 import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.core.handler.VisualEffectHandler
-import alfheim.common.entity.boss.EntityFlugel
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.item.ItemMod
 import alfheim.common.item.equipment.bauble.ItemPriestEmblem
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
@@ -16,10 +16,10 @@ import cpw.mods.fml.relauncher.*
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.command.IEntitySelector
 import net.minecraft.entity.*
+import net.minecraft.entity.boss.IBossDisplayData
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.*
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.AxisAlignedBB
 import net.minecraft.world.World
 import net.minecraftforge.client.event.TextureStitchEvent
 import net.minecraftforge.common.MinecraftForge
@@ -27,7 +27,6 @@ import vazkii.botania.api.internal.IManaBurst
 import vazkii.botania.api.item.*
 import vazkii.botania.api.mana.*
 import vazkii.botania.common.Botania
-import vazkii.botania.common.entity.EntityDoppleganger
 import java.awt.Color
 import kotlin.math.*
 
@@ -102,7 +101,7 @@ open class ItemRodInterdiction(name: String = "rodInterdiction"): ItemMod(name),
 		val y = player.posY
 		val z = player.posZ
 		
-		val priest = (ItemPriestEmblem.getEmblem(2, player) != null)
+		val priest = (!RagnarokHandler.blockedPowers[2] && ItemPriestEmblem.getEmblem(2, player) != null)
 		val prowess = IManaProficiencyArmor.Helper.hasProficiency(player)
 		
 		val cost = getCost(prowess, priest)
@@ -116,8 +115,8 @@ open class ItemRodInterdiction(name: String = "rodInterdiction"): ItemMod(name),
 			val b = color.blue.F / 255f
 			if (count % 5 == 0) VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.SEAROD, world.provider.dimensionId, x, y, z, range.D, r.D, g.D, b.D)
 			
-			val exclude: EntityLivingBase = player
-			val entities = world.getEntitiesWithinAABBExcludingEntity(exclude, AxisAlignedBB.getBoundingBox(x - range, y - range, z - range, x + range, y + range, z + range), PLAYER_SELECTOR) as List<Entity>
+			val entities = selectEntitiesWithinAABB(world, Entity::class.java, getBoundingBox(x, y, z).expand(range)) { PLAYER_SELECTOR.isEntityApplicable(it) }
+			entities.remove(player)
 			
 			if (pushEntities(x, y, z, range, velocity, player, entities)) {
 				if (count % 3 == 0) player.playSoundAtEntity("${ModInfo.MODID}:wind", 0.4F, 1F)
@@ -145,9 +144,7 @@ open class ItemRodInterdiction(name: String = "rodInterdiction"): ItemMod(name),
 		if (tile.currentMana >= AVATAR_COST) {
 			if (tile.elapsedFunctionalTicks % 5 == 0) particleRing(world, x, y, z, RANGE, 0f, 0f, 1f)
 			
-			val entities = world.selectEntitiesWithinAABB(EntityLivingBase::class.java,
-														  AxisAlignedBB.getBoundingBox(x - RANGE, y - RANGE, z - RANGE,
-																					   x + RANGE, y + RANGE, z + RANGE), AVATAR_SELECTOR) as List<EntityLivingBase>
+			val entities = selectEntitiesWithinAABB(world, EntityLivingBase::class.java, getBoundingBox(x, y, z).expand(RANGE)) { AVATAR_SELECTOR.isEntityApplicable(it) }
 			
 			if (pushEntities(x, y, z, RANGE, VELOCITY, null, entities)) {
 				if (tile.elapsedFunctionalTicks % 3 == 0) world.playSoundEffect(x, y, z, "${ModInfo.MODID}:wind", 0.4F, 1F)
@@ -176,13 +173,13 @@ open class ItemRodInterdiction(name: String = "rodInterdiction"): ItemMod(name),
 		object PLAYER_SELECTOR: IEntitySelector {
 			
 			override fun isEntityApplicable(e: Entity) =
-				(e is EntityLivingBase && (e !is EntityDoppleganger || e !is EntityFlugel)) || (e is IProjectile && e !is IManaBurst)
+				(e is EntityLivingBase && (e !is IBossDisplayData)) || (e is IProjectile && e !is IManaBurst)
 		}
 		
 		object AVATAR_SELECTOR: IEntitySelector {
 			
 			override fun isEntityApplicable(e: Entity) =
-				e is EntityLivingBase && e !is EntityPlayer && e !is EntityDoppleganger && e !is EntityFlugel
+				e is EntityLivingBase && e !is EntityPlayer && e !is IBossDisplayData
 		}
 	}
 }

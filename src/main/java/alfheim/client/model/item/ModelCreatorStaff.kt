@@ -53,143 +53,143 @@ object ModelCreatorStaff: ModelBase() {
 	}
 	
 	fun render() {
-		if (RenderManager.instance.renderEngine != null) {
-			val player = mc.thePlayer
-			mc.renderEngine.bindTexture(rodT)
+		if (RenderManager.instance.renderEngine == null) return
+		
+		val player = mc.thePlayer
+		mc.renderEngine.bindTexture(rodT)
+		glPushMatrix()
+		
+		glTranslated(0.0, 0.2, 0.0)
+		
+		val lastX = OpenGlHelper.lastBrightnessX
+		val lastY = OpenGlHelper.lastBrightnessY
+		
+		glPushMatrix()
+		var i = (200f + MathHelper.sin(player.ticksExisted.F) * 5f + 5f).I
+		var j = i % 65536
+		var k = i / 65536
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, j.F / 1f, k.F / 1f)
+		
+		glTranslated(0.0, -0.1, 0.0)
+		glScaled(1.2, 2.0, 1.2)
+		
+		Rod.render(0.0625f)
+		i = player.getBrightnessForRender(0f)
+		j = i % 65536
+		k = i / 65536
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, j.F / 1f, k.F / 1f)
+		
+		glPopMatrix()
+		mc.renderEngine.bindTexture(capT)
+		glPushMatrix()
+		glScaled(1.3, 1.1, 1.3)
+		
+		glPushMatrix()
+		glScaled(1.3)
+		Cap.render(0.0625f)
+		glPopMatrix()
+		glPushMatrix()
+		glTranslated(0.0, 0.3, 0.0)
+		glScaled(1.0, 0.66, 1.0)
+		Cap.render(0.0625f)
+		glPopMatrix()
+		
+		glTranslated(0.0, 0.225, 0.0)
+		glPushMatrix()
+		glScaled(1.0, 0.66, 1.0)
+		Cap.render(0.0625f)
+		glPopMatrix()
+		glTranslated(0.0, 0.65, 0.0)
+		
+		CapBottom.render(0.0625f)
+		glPopMatrix()
+		glPushMatrix()
+		glRotatef(180f, 1f, 0f, 0f)
+		val tessellator = Tessellator.instance
+		val icon = ItemRoyalStaff.orn
+		val f1 = icon.maxU
+		val f2 = icon.minV
+		val f3 = icon.minU
+		val f4 = icon.maxV
+		RenderManager.instance.renderEngine.bindTexture(TextureMap.locationItemsTexture)
+		glPushMatrix()
+		glTranslatef(-0.25f, -0.1f, 0.0275f)
+		glScaled(0.5)
+		ItemRenderer.renderItemIn2D(tessellator, f1, f2, f3, f4, icon.iconWidth, icon.iconHeight, 0.1f)
+		glPopMatrix()
+		glPushMatrix()
+		glRotatef(90f, 0f, 1f, 0f)
+		glTranslatef(-0.25f, -0.1f, 0.0275f)
+		glScaled(0.5)
+		ItemRenderer.renderItemIn2D(tessellator, f1, f2, f3, f4, icon.iconWidth, icon.iconHeight, 0.1f)
+		glPopMatrix()
+		glPopMatrix()
+		
+		val alpha = 0.6f
+		glPushMatrix()
+		glTranslatef(0f, -0.15f, 0f)
+		glScaled(0.165, 0.1765, 0.165)
+		
+		mc.renderEngine.bindTexture(TextureMap.locationItemsTexture)
+		renderBlocks.setRenderBoundsFromBlock(Blocks.stone)
+		ItemRoyalStaff.dep?.let { drawFaces(renderBlocks, it) }
+		glPopMatrix()
+		
+		mc.renderEngine.bindTexture(wandT)
+		
+		glPushMatrix()
+		glTranslatef(0f, -0.0475f, 0f)
+		glScaled(0.525, 0.5525, 0.525)
+		
+		val c = Color(0xFFE9CF)
+		glColor4f(c.red.F / 255f, c.green.F / 255f, c.blue.F / 255f, alpha)
+		i = (195f + MathHelper.sin(player.ticksExisted.F / 3f) * 10f + 10f).I
+		j = i % 65536
+		k = i / 65536
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, j.F / 1f, k.F / 1f)
+		Focus.render(0.0625f)
+		glPopMatrix()
+		
+		glPushMatrix()
+		i = 200
+		j = i % 65536
+		k = i / 65536
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, j.F / 1f, k.F / 1f)
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE)
+		
+		glDisable(GL_CULL_FACE)
+		for (rot in 0..9) {
 			glPushMatrix()
-			
-			glTranslated(0.0, 0.2, 0.0)
-			
-			val lastX = OpenGlHelper.lastBrightnessX
-			val lastY = OpenGlHelper.lastBrightnessY
-			
-			glPushMatrix()
-			var i = (200f + MathHelper.sin(player.ticksExisted.F) * 5f + 5f).I
-			var j = i % 65536
-			var k = i / 65536
-			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, j.F / 1f, k.F / 1f)
-			
-			glTranslated(0.0, -0.1, 0.0)
-			glScaled(1.2, 2.0, 1.2)
-			
-			Rod.render(0.0625f)
-			i = player.getBrightnessForRender(0f)
-			j = i % 65536
-			k = i / 65536
-			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, j.F / 1f, k.F / 1f)
-			
-			glPopMatrix()
-			mc.renderEngine.bindTexture(capT)
-			glPushMatrix()
-			glScaled(1.3, 1.1, 1.3)
-			
-			glPushMatrix()
-			glScaled(1.3)
-			Cap.render(0.0625f)
-			glPopMatrix()
-			glPushMatrix()
-			glTranslated(0.0, 0.3, 0.0)
-			glScaled(1.0, 0.66, 1.0)
-			Cap.render(0.0625f)
-			glPopMatrix()
-			
-			glTranslated(0.0, 0.225, 0.0)
-			glPushMatrix()
-			glScaled(1.0, 0.66, 1.0)
-			Cap.render(0.0625f)
-			glPopMatrix()
-			glTranslated(0.0, 0.65, 0.0)
-			
-			CapBottom.render(0.0625f)
-			glPopMatrix()
-			glPushMatrix()
-			glRotatef(180f, 1f, 0f, 0f)
-			val tessellator = Tessellator.instance
-			val icon = ItemRoyalStaff.orn
-			val f1 = icon.maxU
-			val f2 = icon.minV
-			val f3 = icon.minU
-			val f4 = icon.maxV
-			RenderManager.instance.renderEngine.bindTexture(TextureMap.locationItemsTexture)
-			glPushMatrix()
-			glTranslatef(-0.25f, -0.1f, 0.0275f)
-			glScaled(0.5)
-			ItemRenderer.renderItemIn2D(tessellator, f1, f2, f3, f4, icon.iconWidth, icon.iconHeight, 0.1f)
-			glPopMatrix()
-			glPushMatrix()
-			glRotatef(90f, 0f, 1f, 0f)
-			glTranslatef(-0.25f, -0.1f, 0.0275f)
-			glScaled(0.5)
-			ItemRenderer.renderItemIn2D(tessellator, f1, f2, f3, f4, icon.iconWidth, icon.iconHeight, 0.1f)
-			glPopMatrix()
-			glPopMatrix()
-			
-			val alpha = 0.6f
-			glPushMatrix()
-			glTranslatef(0f, -0.15f, 0f)
-			glScaled(0.165, 0.1765, 0.165)
-			
-			mc.renderEngine.bindTexture(TextureMap.locationItemsTexture)
-			renderBlocks.setRenderBoundsFromBlock(Blocks.stone)
-			ItemRoyalStaff.dep?.let { drawFaces(renderBlocks, it) }
-			glPopMatrix()
-			
-			mc.renderEngine.bindTexture(wandT)
-			
-			glPushMatrix()
-			glTranslatef(0f, -0.0475f, 0f)
-			glScaled(0.525, 0.5525, 0.525)
-			
-			val c = Color(0xFFE9CF)
-			glColor4f(c.red.F / 255f, c.green.F / 255f, c.blue.F / 255f, alpha)
-			i = (195f + MathHelper.sin(player.ticksExisted.F / 3f) * 10f + 10f).I
-			j = i % 65536
-			k = i / 65536
-			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, j.F / 1f, k.F / 1f)
-			Focus.render(0.0625f)
-			glPopMatrix()
-			
-			glPushMatrix()
-			i = 200
-			j = i % 65536
-			k = i / 65536
-			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, j.F / 1f, k.F / 1f)
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE)
-			
-			glDisable(GL_CULL_FACE)
-			for (rot in 0..9) {
-				glPushMatrix()
-				glRotated((36 * rot + player.ticksExisted).D, 0.0, 1.0, 0.0)
-				drawRune(0.16, -0.009999999776482582, -0.125, rot, player)
-				glPopMatrix()
-			}
-			
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-			glPopMatrix()
-			
-			glPushMatrix()
-			i = 200
-			j = i % 65536
-			k = i / 65536
-			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, j.F / 1f, k.F / 1f)
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE)
-			
-			for (rot in 0..3) {
-				glRotated(90.0, 0.0, 1.0, 0.0)
-				
-				for (a in 0..13) {
-					val rune = (a + rot * 3) % 16
-					drawRune(0.36 + a.D * 0.14, -0.009999999776482582, -0.08, rune, player)
-				}
-			}
-			
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-			glPopMatrix()
-			
-			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastX, lastY)
-			
+			glRotated((36 * rot + player.ticksExisted).D, 0.0, 1.0, 0.0)
+			drawRune(0.16, -0.009999999776482582, -0.125, rot, player)
 			glPopMatrix()
 		}
+		
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+		glPopMatrix()
+		
+		glPushMatrix()
+		i = 200
+		j = i % 65536
+		k = i / 65536
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, j.F / 1f, k.F / 1f)
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE)
+		
+		for (rot in 0..3) {
+			glRotated(90.0, 0.0, 1.0, 0.0)
+			
+			for (a in 0..13) {
+				val rune = (a + rot * 3) % 16
+				drawRune(0.36 + a.D * 0.14, -0.009999999776482582, -0.08, rune, player)
+			}
+		}
+		
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+		glPopMatrix()
+		
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastX, lastY)
+		
+		glPopMatrix()
 	}
 	
 	fun drawFaces(renderblocks: RenderBlocks, i: IIcon) {

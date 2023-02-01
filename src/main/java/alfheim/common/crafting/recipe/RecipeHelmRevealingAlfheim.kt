@@ -23,6 +23,7 @@ class RecipeHelmRevealingAlfheim: IRecipe {
 				else                   -> return false // Found an invalid item, breaking the recipe
 			}
 		}
+		
 		return foundGoggles && foundHelm
 	}
 	
@@ -75,5 +76,4 @@ class RecipeHelmRevealingAlfheim: IRecipe {
 		val helmItem = helmStack.item
 		return helmItem === AlfheimItems.elementalHelmet || helmItem === AlfheimItems.elvoriumHelmet
 	}
-	
 }

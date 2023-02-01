@@ -47,9 +47,9 @@ open class BlockPatternLexicon(modid: String, material: Material, name: String, 
 			
 			if (!fallInstantly && world.checkChunksExist(x - b0, y - b0, z - b0, x + b0, y + b0, z + b0)) {
 				if (!world.isRemote) {
-					val entityfallingblock = EntityFallingBlock(world, (x.F + 0.5f).D, (y.F + 0.5f).D, (z.F + 0.5f).D, this, world.getBlockMetadata(x, y, z))
-					func_149829_a(entityfallingblock)
-					world.spawnEntityInWorld(entityfallingblock)
+					val efb = EntityFallingBlock(world, (x.F + 0.5f).D, (y.F + 0.5f).D, (z.F + 0.5f).D, this, world.getBlockMetadata(x, y, z))
+					func_149829_a(efb)
+					efb.spawn()
 				}
 			} else {
 				world.setBlockToAir(x, y, z)

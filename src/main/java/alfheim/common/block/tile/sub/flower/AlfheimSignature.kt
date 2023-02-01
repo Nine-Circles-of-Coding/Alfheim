@@ -29,7 +29,7 @@ class AlfheimSignature(val name: String): SubTileSignature() {
 		tooltip.add(EnumChatFormatting.BLUE.toString() + StatCollector.translateToLocal(getType()))
 	}
 	
-	fun getType(): String? {
+	fun getType(): String {
 		val clazz = BotaniaAPI.getSubTileMapping(name) ?: return "uwotm8"
 		if (clazz.getAnnotation(PassiveFlower::class.java) != null) return "botania.flowerType.passiveGenerating"
 		if (SubTileGenerating::class.java.isAssignableFrom(clazz)) return "botania.flowerType.generating"

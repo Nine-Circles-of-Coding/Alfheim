@@ -5,7 +5,8 @@ import alfheim.api.*
 import alfheim.client.core.helper.IconHelper
 import alfheim.client.render.world.VisualEffectHandlerClient.VisualEffects
 import alfheim.common.core.handler.*
-import alfheim.common.core.util.AlfheimTab
+import alfheim.common.core.helper.*
+import alfheim.common.core.util.*
 import com.google.common.collect.*
 import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.relauncher.*
@@ -36,15 +37,6 @@ import kotlin.math.min
 class ItemWireAxe(val name: String = "axeRevelation", val toolMaterial: ToolMaterial = AlfheimAPI.RUNEAXE, val slayerDamage: Double = 6.0): ItemSword(toolMaterial), IManaUsingItem {
 	
 	companion object {
-		class DamageSourceGodslayer(player: EntityLivingBase, creative: Boolean): EntityDamageSource("player", player) {
-			init {
-				setDamageBypassesArmor()
-				setDamageIsAbsolute()
-				if (creative)
-					setDamageAllowedInCreativeMode()
-			}
-		}
-		
 		val godSlayingDamage = RangedAttribute("${ModInfo.MODID}.godSlayingAttackDamage", 0.0, 0.0, Double.MAX_VALUE)
 	}
 	
@@ -103,19 +95,18 @@ class ItemWireAxe(val name: String = "axeRevelation", val toolMaterial: ToolMate
 		if (!ManaItemHandler.requestManaExact(stack, player, 100, false)) return
 		
 		val range = min(getMaxItemUseDuration(stack) - inUseTicks, 200) / 20 + 1
-		val entities = world.getEntitiesWithinAABBExcludingEntity(player, player.boundingBox(range))
+		val entities = getEntitiesWithinAABB(world, EntityPlayer::class.java, player.boundingBox(range))
+		entities.remove(player)
 		if (!player.capabilities.isCreativeMode) stack.damageStack(1, player)
 		
 		var count = 0
-		for (entity in entities) {
-			if (entity is EntityPlayer && ManaItemHandler.requestManaExact(stack, entity, 1, false)) {
-				if (entity.attackEntityFrom(DamageSource.causePlayerDamage(player), 0.001f)) {
-					count++
-					if (!world.isRemote) entity.addChatMessage(ChatComponentText(StatCollector.translateToLocal("misc.${ModInfo.MODID}.wayOfUndoing").replace('&', '\u00a7')))
-//					entity.addPotionEffect(PotionEffect(AlfheimConfigHandler.potionIDManaVoid, 10, 0, true))
-					ManaItemHandler.dispatchMana(stack, player, ManaItemHandler.requestMana(stack, entity, 1000, true), true)
-				}
-			}
+		entities.forEach {
+			if (!ManaItemHandler.requestManaExact(stack, it, 1, false)) return@forEach
+			if (!it.attackEntityFrom(DamageSource.causePlayerDamage(player).setTo(ElementalDamage.LIGHTNESS), 0.001f)) return@forEach
+			count++
+			if (!world.isRemote) ASJUtilities.say(it, "misc.${ModInfo.MODID}.wayOfUndoing")
+//			it.addPotionEffect(PotionEffect(AlfheimConfigHandler.potionIDManaVoid, 10, 0, true))
+			ManaItemHandler.dispatchMana(stack, player, ManaItemHandler.requestMana(stack, it, 1000, true), true)
 		}
 		
 		if (count > 0) {
@@ -133,12 +124,13 @@ class ItemWireAxe(val name: String = "axeRevelation", val toolMaterial: ToolMate
 		val greyitalics = "${EnumChatFormatting.GRAY}${EnumChatFormatting.ITALIC}"
 		val grey = EnumChatFormatting.GRAY
 		if (GuiScreen.isShiftKeyDown()) {
-			addStringToTooltip("$greyitalics${StatCollector.translateToLocal("misc.${ModInfo.MODID}.wline1")}", list)
-			addStringToTooltip("$greyitalics${StatCollector.translateToLocal("misc.${ModInfo.MODID}.wline2")}", list)
-			addStringToTooltip("$greyitalics${StatCollector.translateToLocal("misc.${ModInfo.MODID}.wline3")}", list)
-			addStringToTooltip("$grey\"I awaken the Ancients within all of you!", list)
-			addStringToTooltip("${grey}From my soul's fire the world burns anew!\"", list)
-		} else addStringToTooltip(StatCollector.translateToLocal("botaniamisc.shiftinfo"), list)
+			addStringToTooltip(list, "$greyitalics${StatCollector.translateToLocal("misc.${ModInfo.MODID}.wline1")}")
+			addStringToTooltip(list, "$greyitalics${StatCollector.translateToLocal("misc.${ModInfo.MODID}.wline2")}")
+			addStringToTooltip(list, "$greyitalics${StatCollector.translateToLocal("misc.${ModInfo.MODID}.wline3")}")
+			addStringToTooltip(list, "")
+			addStringToTooltip(list, "$grey\"I awaken the Ancients within all of you!")
+			addStringToTooltip(list, "${grey}From my soul's fire the world burns anew!\"")
+		} else addStringToTooltip(list, StatCollector.translateToLocal("botaniamisc.shiftinfo"))
 	}
 	
 	fun addStringToTooltip(s: String, tooltip: MutableList<Any?>) {
@@ -155,53 +147,46 @@ class ItemWireAxe(val name: String = "axeRevelation", val toolMaterial: ToolMate
 	}
 	
 	override fun onLeftClickEntity(stack: ItemStack, player: EntityPlayer, entity: Entity): Boolean {
-		val godslaying = stack.attributeModifiers[godSlayingDamage.attributeUnlocalizedName]
+		val damage = ModifiableAttributeInstance(ServersideAttributeMap(), godSlayingDamage).apply { stack.attributeModifiers[godSlayingDamage.attributeUnlocalizedName].forEach { applyModifier(it as AttributeModifier) } }.attributeValue
+		if (damage <= 0 || !entity.canAttackWithItem() || entity.hitByEntity(player)) return false
 		
-		if (godslaying != null)
-			for (attr in godslaying)
-				if (attr is AttributeModifier) {
-					attackEntity(player, entity, attr.amount, DamageSourceGodslayer(player, AlfheimConfigHandler.wireoverpowered))
-					entity.hurtResistantTime = 0
-				}
+		attackEntity(player, entity, damage, DamageSourceSpell.godslayer(player, AlfheimConfigHandler.wireoverpowered))
+		entity.hurtResistantTime = 0
 		
 		return false
 	}
 	
-	fun attackEntity(player: EntityLivingBase, entity: Entity, amount: Double, damageSource: DamageSource) {
+	fun attackEntity(attacker: EntityLivingBase, target: Entity, amount: Double, damageSource: DamageSource) {
 		var damage = amount
-		var extraDmg = 0f
-		if (entity is EntityLivingBase)
-			extraDmg = EnchantmentHelper.getEnchantmentModifierLiving(player, entity)
 		
-		if (damage > 0.0 || extraDmg > 0f) {
-			val flag = player.fallDistance > 0f &&
-					   !player.onGround &&
-					   !player.isOnLadder &&
-					   !player.isInWater &&
-					   !player.isPotionActive(Potion.blindness) &&
-					   player.ridingEntity == null &&
-					   entity is EntityLivingBase
-			if (flag && damage > 0.0)
-				damage *= 1.5
-			damage += extraDmg.D
-			val flag2 = entity.attackEntityFrom(damageSource, damage.F)
-			if (flag2) {
-				if (flag && player is EntityPlayer)
-					player.onCriticalHit(entity)
-				if (extraDmg > 0f && player is EntityPlayer)
-					player.onEnchantmentCritical(entity)
-				player.setLastAttacker(entity)
-				if (entity is EntityLivingBase)
-					EnchantmentHelper.func_151384_a(entity, player)
-				EnchantmentHelper.func_151385_b(player, entity)
-			}
-		}
+		val crit = attacker.fallDistance > 0f &&
+				   !attacker.onGround &&
+				   !attacker.isOnLadder &&
+				   !attacker.isInWater &&
+				   !attacker.isPotionActive(Potion.blindness) &&
+				   attacker.ridingEntity == null &&
+				   target is EntityLivingBase
+		
+		if (crit && damage > 0.0)
+			damage *= 1.5
+		
+		val success = target.attackEntityFrom(damageSource, damage.F)
+		
+		if (!success) return
+		
+		if (crit && attacker is EntityPlayer)
+			attacker.onCriticalHit(target)
+		
+		attacker.setLastAttacker(target)
+		if (target is EntityLivingBase)
+			EnchantmentHelper.func_151384_a(target, attacker)
+		
+		EnchantmentHelper.func_151385_b(attacker, target)
 	}
 	
 	override fun onBlockDestroyed(stack: ItemStack, world: World?, block: Block, x: Int, y: Int, z: Int, player: EntityLivingBase?): Boolean {
-		if (block.getBlockHardness(world, x, y, z).D != 0.0) {
+		if (block.getBlockHardness(world, x, y, z).D != 0.0)
 			stack.damageStack(1, player)
-		}
 		
 		return true
 	}

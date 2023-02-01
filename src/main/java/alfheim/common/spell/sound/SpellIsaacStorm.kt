@@ -8,7 +8,6 @@ import alfheim.common.entity.spell.EntitySpellIsaacMissile
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.monster.IMob
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.util.AxisAlignedBB
 
 object SpellIsaacStorm: SpellBase("isaacstorm", EnumRace.POOKA, 256000, 72000, 100, true) {
 	
@@ -25,7 +24,7 @@ object SpellIsaacStorm: SpellBase("isaacstorm", EnumRace.POOKA, 256000, 72000, 1
 		val tg = CardinalSystem.TargetingSystem.getTarget(caster)
 		val tgt = if (tg.isParty) null else tg.target
 		
-		if (tgt == null && caster.worldObj.getEntitiesWithinAABB(IMob::class.java, AxisAlignedBB.getBoundingBox(caster.posX, caster.posY + 2, caster.posZ, caster.posX, caster.posY + 2, caster.posZ).expand(radius)).isEmpty())
+		if (tgt == null && getEntitiesWithinAABB(caster.worldObj, IMob::class.java, caster.boundingBox(radius).offset(0, 2, 0)).isEmpty())
 			return SpellCastResult.NOTARGET
 		
 		val tgc = if (!caster.isSneaking && tgt != null) tgt::class.java else null
@@ -41,7 +40,7 @@ object SpellIsaacStorm: SpellBase("isaacstorm", EnumRace.POOKA, 256000, 72000, 1
 						userSelected = true
 					}
 					noClip = true
-					caster.worldObj.spawnEntityInWorld(this)
+					spawn()
 				}
 			}
 			

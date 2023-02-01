@@ -1,6 +1,7 @@
 package alfheim.client.render.tile
 
 import alexsocol.asjlib.*
+import alfheim.api.AlfheimAPI
 import alfheim.common.block.tile.TileAnomaly
 import net.minecraft.client.renderer.*
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer
@@ -27,11 +28,11 @@ object RenderTileAnomaly: TileEntitySpecialRenderer() {
 		glDisable(GL_LIGHTING)
 		glDepthMask(false)
 		
-		glTranslated(mainSTE.x() + 0.5, mainSTE.y() + 0.5, mainSTE.z() + 0.5)
+		glTranslated(mainSTE.x + 0.5, mainSTE.y + 0.5, mainSTE.z + 0.5)
 		
-		val frame = System.nanoTime().div(40000000L).plus(x).toLong().rem(mainSTE.frames).I
-		
-		renderFacingStrip(0.0, 0.0, 0.0, 0f, 1f, 1f, mainSTE.frames, mainSTE.strip, frame, partialTicks, mainSTE.color)
+		val (_, _, strip, color) = AlfheimAPI.getAnomaly(tile.mainSubTile ?: "")
+		val frame = System.nanoTime().div(40000000L).plus(tile.seed).rem(32).I
+		renderFacingStrip(0.0, 0.0, 0.0, 0f, 1f, 1f, 32, strip, frame, partialTicks, color)
 		
 		glDepthMask(true)
 		glEnable(GL_LIGHTING)

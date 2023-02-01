@@ -2,17 +2,21 @@ package alfheim.common.block
 
 import alexsocol.asjlib.ASJUtilities
 import alfheim.AlfheimCore
+import alfheim.api.entity.*
 import alfheim.client.core.helper.IconHelper
 import alfheim.common.block.base.BlockContainerMod
 import alfheim.common.block.tile.TileRaceSelector
+import alfheim.common.lexicon.AlfheimLexiconData
 import alfheim.common.network.MessageRaceSelection
 import net.minecraft.block.material.Material
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.item.ItemStack
 import net.minecraft.util.IIcon
 import net.minecraft.world.World
+import vazkii.botania.api.lexicon.ILexiconable
 
-class BlockRaceSelector: BlockContainerMod(Material.glass) {
+class BlockRaceSelector: BlockContainerMod(Material.glass), ILexiconable {
 	
 	lateinit var icons: Array<IIcon>
 	
@@ -24,9 +28,12 @@ class BlockRaceSelector: BlockContainerMod(Material.glass) {
 	}
 	
 	override fun onBlockActivated(world: World, x: Int, y: Int, z: Int, player: EntityPlayer, side: Int, hitX: Float, hitY: Float, hitZ: Float): Boolean {
+		val tile = world.getTileEntity(x, y, z) as? TileRaceSelector ?: return false
+		if (player.race != EnumRace.HUMAN)
+			tile.teleport(player)
+		
 		if (!world.isRemote) return false
 		
-		val tile = world.getTileEntity(x, y, z) as? TileRaceSelector ?: return false
 		val res = onBlockActivated2(world, x, y, z, player, side, hitX, hitZ, tile)
 		if (res.first) {
 			tile.activeRotation = res.second.actRot
@@ -127,8 +134,10 @@ class BlockRaceSelector: BlockContainerMod(Material.glass) {
 	override fun getRenderBlockPass() = 1
 	override fun isOpaqueCube() = false
 	override fun renderAsNormalBlock() = false
-}
+	
+	override fun getEntry(world: World?, x: Int, y: Int, z: Int, player: EntityPlayer?, lexicon: ItemStack?) = AlfheimLexiconData.races
 
-private data class ActivationResult(var meta: Pair<Boolean, Int>, var custom: Boolean, var female: Boolean, var rotation: Int, var actRot: Int, var timer: Int, var giveRace: Boolean) {
-	constructor(): this(false to 0, false, false, 0, 0, 0, false)
+	private data class ActivationResult(var meta: Pair<Boolean, Int>, var custom: Boolean, var female: Boolean, var rotation: Int, var actRot: Int, var timer: Int, var giveRace: Boolean) {
+		constructor(): this(false to 0, false, false, 0, 0, 0, false)
+	}
 }

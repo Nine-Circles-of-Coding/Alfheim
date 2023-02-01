@@ -1,7 +1,6 @@
 package alfheim.common.world.dim.alfheim.structure
 
 import alexsocol.asjlib.*
-import alfheim.AlfheimCore
 import alfheim.api.ModInfo
 import alfheim.common.block.AlfheimBlocks
 import alfheim.common.core.handler.AlfheimConfigHandler
@@ -16,22 +15,29 @@ import kotlin.math.min
 
 object StructureSpawnpoint {
 	
+	var inGen = false // possible stack overflow fix
+	
 	fun generate(world: World, rand: Random) {
-		if (!AlfheimConfigHandler.enableElvenStory || AlfheimConfigHandler.bothSpawnStructures) generateSpawnCastle(world, 0, world.getTopSolidOrLiquidBlock(0, 0) + 10, 0)
-		if (AlfheimConfigHandler.enableElvenStory || AlfheimConfigHandler.bothSpawnStructures) generateStartBox(world, 0, 248, 0, rand)
+		if (inGen) return
+		inGen = true
+		
+		if (!AlfheimConfigHandler.enableElvenStory || AlfheimConfigHandler.bothSpawnStructures) generatePortal(world, 0, 220, 0)
+		if (AlfheimConfigHandler.enableElvenStory || AlfheimConfigHandler.bothSpawnStructures) generateStartBox(world, 0, 0, 0, rand)
 		
 		ASJUtilities.log("Spawn created")
+		
+		inGen = false
 	}
 	
-	fun generateSpawnCastle(world: World, x: Int, y: Int, z: Int) {
-		world.setSpawnLocation(x, y, z)
-		SchemaUtils.generate(world, x, y, z, SchemaUtils.loadStructure("${ModInfo.MODID}/schemas/spawnpoint"))
-		ASJUtilities.fillGenHoles(world, if (AlfheimCore.winter) AlfheimBlocks.snowGrass else Blocks.grass, 0, x - 11, x + 11, y - 8, z - 41, z + 1, 0)
+	fun generatePortal(world: World, x: Int, y: Int, z: Int) {
+		world.setSpawnLocation(x, y, z - 3)
+		SchemaUtils.generate(world, x, y, z, SchemaUtils.loadStructure("${ModInfo.MODID}/schemas/portal"))
 	}
 	
 	fun generateStartBox(world: World, x: Int, y: Int, z: Int, rand: Random) {
 		world.setSpawnLocation(x, y + 2, z)
-		SchemaUtils.generate(world, x, y, z, AlfheimSchemas.spawnbox)
+		SchemaUtils.generate(world, x, y, z, SchemaUtils.loadStructure("${ModInfo.MODID}/schemas/spawnbox"))
+		world.setBlock(x, y, z, Blocks.bedrock)
 		
 		if (!AlfheimConfigHandler.bonusChest) return
 		

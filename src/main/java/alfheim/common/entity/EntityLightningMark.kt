@@ -5,10 +5,13 @@ import net.minecraft.entity.effect.EntityLightningBolt
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.world.World
 
-class EntityLightningMark @JvmOverloads constructor(world: World, x: Double = 0.0, y: Double = 0.0, z: Double = 0.0): Entity(world) {
+class EntityLightningMark(world: World): Entity(world) {
 	
 	init {
 		setSize(1.5f, 0.0001f)
+	}
+	
+	constructor(world: World, x: Double, y: Double, z: Double): this(world) {
 		setPosition(x, y, z)
 	}
 	

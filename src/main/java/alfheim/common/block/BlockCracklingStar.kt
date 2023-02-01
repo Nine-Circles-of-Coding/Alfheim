@@ -67,11 +67,11 @@ class BlockCracklingStar: BlockContainerMod(Material.cloth), IWandable, ILexicon
 				
 				val entityitem = EntityItem(world, x.F + f, y.F + f, z.F + f, stack)
 				
-				val f3 = 0.05f
-				entityitem.motionX = (world.rand.nextGaussian().F * f3).D
-				entityitem.motionY = (world.rand.nextGaussian().F * f3 + 0.2f).D
-				entityitem.motionZ = (world.rand.nextGaussian().F * f3).D
-				world.spawnEntityInWorld(entityitem)
+				val d3 = 0.05
+				entityitem.motionX = world.rand.nextGaussian() * d3
+				entityitem.motionY = world.rand.nextGaussian() * d3 + 0.2
+				entityitem.motionZ = world.rand.nextGaussian() * d3
+				entityitem.spawn()
 			}
 		}
 		

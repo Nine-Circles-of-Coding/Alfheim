@@ -7,11 +7,14 @@ import alfheim.client.core.helper.IconHelper
 import alfheim.common.block.AlfheimBlocks
 import alfheim.common.block.base.BlockLeavesMod
 import alfheim.common.core.handler.CardinalSystem
-import alfheim.common.item.block.ItemUniqueSubtypedBlockMod
+import alfheim.common.item.AlfheimItems
+import alfheim.common.item.block.*
+import alfheim.common.item.material.ElvenFoodMetas
 import alfheim.common.lexicon.AlfheimLexiconData
 import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.creativetab.CreativeTabs
+import net.minecraft.entity.Entity
 import net.minecraft.entity.player.*
 import net.minecraft.init.Items
 import net.minecraft.item.*
@@ -29,48 +32,23 @@ class BlockAltLeaves: BlockLeavesMod(), IGlowingLayerBlock {
 		setBlockName("altLeaves")
 	}
 	
-	// IDK whether this is good source of glowstone or not
-	override fun onBlockActivated(world: World, x: Int, y: Int, z: Int, player: EntityPlayer, side: Int, hitX: Float, hitY: Float, hitZ: Float): Boolean {
-		val stack = player.currentEquippedItem ?: return false
-		
-		val meta = world.getBlockMetadata(x, y, z)
-		
-		if (stack.item === ModItems.manaResource && stack.meta == 9 && meta % 8 == yggMeta + 1) {
-			var eat = 2
-			val sides = BooleanArray(6)
-			
-			for (dir in ForgeDirection.values()) {
-				if (dir == ForgeDirection.UNKNOWN || eat <= 0) continue
-				
-				if (world.getBlock(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ) === this && world.getBlockMetadata(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ) % 8 == yggMeta + 1) {
-					--eat
-					sides[dir.ordinal] = true
-				}
-			}
-			
-			if (eat > 0) return false
-			
-			for (dir in ForgeDirection.values()) {
-				if (dir == ForgeDirection.UNKNOWN) continue
-				if (sides[dir.ordinal]) world.setBlockToAir(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ)
-			}
-			
-			world.setBlockToAir(x, y, z)
-			
-			stack.stackSize--
-			if (!player.inventory.addItemStackToInventory(ItemStack(Items.glowstone_dust))) {
-				player.dropPlayerItemWithRandomChoice(ItemStack(Items.glowstone_dust), true)
-			}
-			
-			if (!world.isRemote && player is EntityPlayerMP) CardinalSystem.KnowledgeSystem.learn(player, CardinalSystem.KnowledgeSystem.Knowledge.GLOWSTONE)
-			
-			return true
-		}
-		
-		return false
-	}
+	override fun getExplosionResistance(entity: Entity?, world: World, x: Int, y: Int, z: Int, explosionX: Double, explosionY: Double, explosionZ: Double) =
+		if (world.getBlockMetadata(x, y, z) % 8 == yggMeta)
+			Float.MAX_VALUE
+		else
+			super.getExplosionResistance(entity, world, x, y, z, explosionX, explosionY, explosionZ)
 	
-	override fun getBlockHardness(world: World, x: Int, y: Int, z: Int) = if (world.getBlockMetadata(x, y, z) % 8 == yggMeta) -1f else super.getBlockHardness(world, x, y, z)
+	override fun getBlockHardness(world: World, x: Int, y: Int, z: Int) =
+		if (world.getBlockMetadata(x, y, z) % 8 == yggMeta)
+			-1f
+		else
+			super.getBlockHardness(world, x, y, z)
+	
+	override fun getFlammability(world: IBlockAccess, x: Int, y: Int, z: Int, face: ForgeDirection?) =
+		if (world.getBlockMetadata(x, y, z) % 8 == yggMeta) 0 else super.getFlammability(world, x, y, z, face)
+	
+	override fun getFireSpreadSpeed(world: IBlockAccess, x: Int, y: Int, z: Int, face: ForgeDirection?) =
+		if (world.getBlockMetadata(x, y, z) % 8 == yggMeta) 0 else super.getFireSpreadSpeed(world, x, y, z, face)
 	
 	override fun register(name: String) {
 		GameRegistry.registerBlock(this, ItemUniqueSubtypedBlockMod::class.java, name, ALT_TYPES.size)
@@ -92,6 +70,12 @@ class BlockAltLeaves: BlockLeavesMod(), IGlowingLayerBlock {
 	
 	override fun getItemDropped(meta: Int, random: Random, fortune: Int) = if (meta % 8 == yggMeta) null else if (meta % 8 == yggMeta + 1) AlfheimBlocks.dreamSapling.toItem() else AlfheimBlocks.irisSapling.toItem()
 	
+	override fun func_150124_c(world: World, x: Int, y: Int, z: Int, meta: Int, chance: Int) {
+		if (meta % 8 != yggMeta + 1 || world.rand.nextInt(chance / 2) != 0) return
+		
+		dropBlockAsItem(world, x, y, z, ElvenFoodMetas.DreamCherry.stack)
+	}
+	
 	override fun createStackedBlock(meta: Int) = ItemStack(this, 1, meta % 8)
 	
 	override fun func_150123_b(meta: Int) = if (meta == yggMeta) 0 else if (meta == yggMeta + 1) 100 else 60
@@ -105,7 +89,7 @@ class BlockAltLeaves: BlockLeavesMod(), IGlowingLayerBlock {
 			list.add(ItemStack(item, 1, i))
 	}
 	
-	override fun decayBit() = 0b1000
+	override fun decayBit() = 0x8
 	
 	override fun canDecay(meta: Int) = if (meta % 8 == yggMeta) false else super.canDecay(meta)
 	
@@ -115,7 +99,7 @@ class BlockAltLeaves: BlockLeavesMod(), IGlowingLayerBlock {
 		val meta = world.getBlockMetadata(x, y, z)
 		return when {
 			meta % 8 == yggMeta + 1 -> AlfheimLexiconData.worldgen
-			meta % 8 == yggMeta     -> null
+			meta % 8 == yggMeta     -> AlfheimLexiconData.legends
 			else                    -> AlfheimLexiconData.irisSapling
 		}
 	}

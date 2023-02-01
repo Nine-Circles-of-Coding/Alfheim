@@ -44,7 +44,7 @@ class AIDeathray(flugel: EntityFlugel, task: AITask): AIBase(flugel, task) {
 						motVec.normalize().negate().mul(1.5)
 						
 						val star = EntityFallingStar(flugel.worldObj, flugel)
-						flugel.worldObj.spawnEntityInWorld(star)
+						star.spawn()
 						
 						star.setPosition(posVec.x, posVec.y, posVec.z)
 						star.motionX = motVec.x
@@ -61,8 +61,7 @@ class AIDeathray(flugel: EntityFlugel, task: AITask): AIBase(flugel, task) {
 					motion.negate().normalize()
 					
 					val star = EntityFallingStar(flugel.worldObj, flugel)
-					
-					flugel.worldObj.spawnEntityInWorld(star)
+					star.spawn()
 					
 					star.posX = target.x
 					star.posY = target.y

@@ -19,14 +19,8 @@ class SubTileGravity: SubTileAnomalyBase() {
 		get() {
 			if (inWG()) return EMPTY_LIST
 			val radius = power * 10
-			return allAroundRaw(Entity::class.java, radius)
+			return allAround(Entity::class.java, radius)
 		}
-	
-	override val strip: Int
-		get() = 0
-	
-	override val rarity: EnumAnomalityRarity
-		get() = EnumAnomalityRarity.COMMON
 	
 	public override fun update() {
 		if (inWG()) return
@@ -63,7 +57,7 @@ class SubTileGravity: SubTileAnomalyBase() {
 		ve.set(target)
 		if (ASJUtilities.isClient) if (target === mc.thePlayer) ve.add(0.0, -1.62, 0.0)
 		
-		val dist = sqrt((ve.x - x() + 0.5).pow(2.0) + (ve.y - y() + 0.5).pow(2.0) + (ve.z - z() + 0.5).pow(2.0))
+		val dist = sqrt((ve.x - x + 0.5).pow(2.0) + (ve.y - y + 0.5).pow(2.0) + (ve.z - z + 0.5).pow(2.0))
 		if (dist > radius) return
 		
 		vt.set(superTile!!).add(0.5)

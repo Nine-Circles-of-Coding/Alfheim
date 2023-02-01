@@ -8,8 +8,6 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.potion.PotionEffect
-import net.minecraft.util.AxisAlignedBB
 import net.minecraft.world.World
 import vazkii.botania.common.item.ModItems
 
@@ -26,17 +24,14 @@ class EntityVoidCreeper(world: World): EntityCreeper(world) {
 	override fun writeEntityToNBT(tag: NBTTagCompound) {
 		super.writeEntityToNBT(tag)
 		
-		if (dataWatcher.getWatchableObjectByte(17).I == 1) {
-			tag.setBoolean("powered", true)
-		}
-		
+		tag.setBoolean("powered", getFlag(6))
 		tag.setInteger("Fuse", fuseTime)
 		tag.setBoolean("ignited", func_146078_ca())
 	}
 	
 	override fun readEntityFromNBT(tag: NBTTagCompound) {
 		super.readEntityFromNBT(tag)
-		dataWatcher.updateObject(17, java.lang.Byte.valueOf((if (tag.getBoolean("powered")) 1 else 0).toByte()))
+		setFlag(6, tag.getBoolean("powered"))
 		if (tag.hasKey("Fuse")) fuseTime = tag.getInteger("Fuse")
 		if (tag.getBoolean("ignited")) func_146079_cb()
 	}
@@ -44,64 +39,54 @@ class EntityVoidCreeper(world: World): EntityCreeper(world) {
 	override fun getDropItem() = Items.gunpowder!!
 	
 	override fun dropFewItems(par1: Boolean, par2: Int) {
-		if (par1) {
-			if (Math.random() < AlfheimConfigHandler.blackLotusDropRate) {
-				entityDropItem(ItemStack(ModItems.blackLotus), 1F)
-			}
-		}
+		if (par1 && Math.random() < AlfheimConfigHandler.blackLotusDropRate)
+			entityDropItem(ItemStack(ModItems.blackLotus), 1F)
 	}
 	
 	override fun onUpdate() {
-		if (isEntityAlive) {
-			this.lastActiveTime = this.timeSinceIgnited
-			
-			if (func_146078_ca()) {
-				this.creeperState = 1
-			}
-			
-			val i = this.creeperState
-			
-			if (i > 0 && this.timeSinceIgnited == 0) {
-				playSound("creeper.primed", 1f, 0.5f)
-			}
-			
-			this.timeSinceIgnited += i
-			
-			if (this.timeSinceIgnited < 0) {
-				this.timeSinceIgnited = 0
-			}
-			
-			if (this.timeSinceIgnited >= this.fuseTime) {
-				this.timeSinceIgnited = this.fuseTime
-				creeperGoBoom()
-			}
-		}
 		super.onUpdate()
+		
+		if (!isEntityAlive) return
+		lastActiveTime = timeSinceIgnited
+		
+		if (func_146078_ca()) {
+			creeperState = 1
+		}
+		
+		val i = creeperState
+		
+		if (i > 0 && timeSinceIgnited == 0)
+			playSound("creeper.primed", 1f, 0.5f)
+		
+		timeSinceIgnited += i
+		
+		if (timeSinceIgnited < 0)
+			timeSinceIgnited = 0
+		
+		if (timeSinceIgnited >= fuseTime) {
+			timeSinceIgnited = fuseTime
+			creeperGoBoom()
+		}
 	}
 	
 	override fun fall(distance: Float) {
 		super.fall(distance)
-		this.timeSinceIgnited = (this.timeSinceIgnited.F + distance * 1.5f).I
+		timeSinceIgnited = (timeSinceIgnited.F + distance * 1.5f).I
 		
-		if (this.timeSinceIgnited > this.fuseTime - 5) {
-			this.timeSinceIgnited = this.fuseTime - 5
-		}
+		if (timeSinceIgnited > fuseTime - 5)
+			timeSinceIgnited = fuseTime - 5
 	}
 	
 	private fun creeperGoBoom() {
-		if (!worldObj.isRemote) {
-			val r = range * if (powered) 2 else 1
-			
-			val potential = worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, AxisAlignedBB.getBoundingBox(posX - r, posY - r, posZ - r, posX + r, posY + r, posZ + r))
-			
-			for (p in potential) {
-				if (p is EntityPlayer) {
-					p.addPotionEffect(PotionEffect(AlfheimConfigHandler.potionIDManaVoid, if (powered) 1200 else 120, 0))
-				}
-			}
-			
-			worldObj.createExplosion(this, posX, posY, posZ, 1f, false)
-			setDead()
+		if (worldObj.isRemote) return
+		val r = range * if (powered) 2 else 1
+		
+		getEntitiesWithinAABB(worldObj, EntityLivingBase::class.java, boundingBox(r)).forEach {
+			if (it !is EntityPlayer) return@forEach
+			it.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDManaVoid, if (powered) 1200 else 120, 0))
 		}
+		
+		worldObj.createExplosion(this, posX, posY, posZ, 1f, false)
+		setDead()
 	}
 }

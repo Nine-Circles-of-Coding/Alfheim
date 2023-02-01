@@ -18,7 +18,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType
 import org.lwjgl.opengl.GL11.*
 import kotlin.math.*
 
-class GUISpells: Gui() {
+object GUISpells: Gui() {
 	
 	@SubscribeEvent
 	fun onOverlayRendering(e: RenderGameOverlayEvent.Post) {
@@ -178,8 +178,8 @@ class GUISpells: Gui() {
 		// ################ Spell name ################
 		
 		var spell = AlfheimAPI.getSpellByIDs(KeyBindingHandlerClient.raceID, KeyBindingHandlerClient.spellID)
-		if (fadeOut > 0) {
-			font.drawString(StatCollector.translateToLocal("spell." + spell!!.name + ".name"), 24, height - 18, ASJRenderHelper.enumColorToRGB(EnumRace.getEnumColor(KeyBindingHandlerClient.raceID.D)), true)
+		if (fadeOut > 0 && spell != null) {
+			font.drawString(StatCollector.translateToLocal("spell.${spell.name}.name"), 24, height - 18, ASJRenderHelper.enumColorToRGB(EnumRace.getEnumColor(KeyBindingHandlerClient.raceID)), true)
 		}
 		
 		// ################################################################ HOTSPELLS ################################################################
@@ -222,38 +222,35 @@ class GUISpells: Gui() {
 		glPopMatrix()
 	}
 	
-	companion object {
-		
-		var fadeOut = 5f
-			set(value) {
-				fun clamp(f: Float) = max(0f, f)
-				field = if (value < field) clamp(field - 0.01f) else value
-			}
-		
-		fun ticksToTime(ticks: Int): String {
-			if (ticks < 20) return "\u00a7f$ticks"
-			if (ticks < 1200) return "\u00a7e" + ticks / 20
-			if (ticks < 72000) return "\u00a76" + ticks / 1200
-			return if (ticks < 720000) "\u00a7c" + ticks / 72000 else "\u00a74omg"
+	var fadeOut = 5f
+		set(value) {
+			fun clamp(f: Float) = max(0f, f)
+			field = if (value < field) clamp(field - 0.01f) else value
 		}
-		
-		fun drawRect(size: Int) {
-			Tessellator.instance.startDrawingQuads()
-			Tessellator.instance.addVertex(0.0, 0.0, 0.0)
-			Tessellator.instance.addVertex(0.0, size.D, 0.0)
-			Tessellator.instance.addVertex(size.D, size.D, 0.0)
-			Tessellator.instance.addVertex(size.D, 0.0, 0.0)
-			Tessellator.instance.draw()
-		}
-		
-		fun drawRect(texture: ResourceLocation, size: Int) {
-			mc.renderEngine.bindTexture(texture)
-			Tessellator.instance.startDrawingQuads()
-			Tessellator.instance.addVertexWithUV(0.0, 0.0, 0.0, 0.0, 0.0)
-			Tessellator.instance.addVertexWithUV(0.0, size.D, 0.0, 0.0, 1.0)
-			Tessellator.instance.addVertexWithUV(size.D, size.D, 0.0, 1.0, 1.0)
-			Tessellator.instance.addVertexWithUV(size.D, 0.0, 0.0, 1.0, 0.0)
-			Tessellator.instance.draw()
-		}
+	
+	fun ticksToTime(ticks: Int): String {
+		if (ticks < 20) return "\u00a7f$ticks"
+		if (ticks < 1200) return "\u00a7e" + ticks / 20
+		if (ticks < 72000) return "\u00a76" + ticks / 1200
+		return if (ticks < 720000) "\u00a7c" + ticks / 72000 else "\u00a74omg"
+	}
+	
+	fun drawRect(size: Int) {
+		Tessellator.instance.startDrawingQuads()
+		Tessellator.instance.addVertex(0.0, 0.0, 0.0)
+		Tessellator.instance.addVertex(0.0, size.D, 0.0)
+		Tessellator.instance.addVertex(size.D, size.D, 0.0)
+		Tessellator.instance.addVertex(size.D, 0.0, 0.0)
+		Tessellator.instance.draw()
+	}
+	
+	fun drawRect(texture: ResourceLocation, size: Int) {
+		mc.renderEngine.bindTexture(texture)
+		Tessellator.instance.startDrawingQuads()
+		Tessellator.instance.addVertexWithUV(0.0, 0.0, 0.0, 0.0, 0.0)
+		Tessellator.instance.addVertexWithUV(0.0, size.D, 0.0, 0.0, 1.0)
+		Tessellator.instance.addVertexWithUV(size.D, size.D, 0.0, 1.0, 1.0)
+		Tessellator.instance.addVertexWithUV(size.D, 0.0, 0.0, 1.0, 0.0)
+		Tessellator.instance.draw()
 	}
 }

@@ -1,5 +1,6 @@
 package alfheim.common.spell.earth
 
+import alexsocol.asjlib.spawn
 import alfheim.api.entity.EnumRace
 import alfheim.api.spell.SpellBase
 import alfheim.common.entity.spell.EntitySpellMortar
@@ -17,7 +18,7 @@ object SpellMortar: SpellBase("mortar", EnumRace.GNOME, 7500, 200, 5) {
 	
 	override fun performCast(caster: EntityLivingBase): SpellCastResult {
 		val result = checkCastOver(caster)
-		if (result == SpellCastResult.OK) caster.worldObj.spawnEntityInWorld(EntitySpellMortar(caster.worldObj, caster))
+		if (result == SpellCastResult.OK) EntitySpellMortar(caster.worldObj, caster).spawn()
 		return result
 	}
 }

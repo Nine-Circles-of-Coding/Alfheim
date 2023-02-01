@@ -2,6 +2,8 @@ package alfheim.common.item.lens
 
 import alexsocol.asjlib.*
 import alfheim.common.core.handler.AlfheimConfigHandler
+import alfheim.common.core.helper.*
+import alfheim.common.core.util.DamageSourceSpell
 import alfheim.common.item.equipment.armor.elvoruim.ItemElvoriumArmor
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
@@ -23,16 +25,21 @@ class LensSuperconductor: Lens() {
 	}
 	
 	override fun updateBurst(burst: IManaBurst, entity: EntityThrowable, stack: ItemStack) {
-		if (entity.worldObj.isRemote || burst.isFake) return
 		burst as EntityManaBurst
 		
-		val axis = AxisAlignedBB.getBoundingBox(entity.posX, entity.posY, entity.posZ, entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ).expand(1.5)
-		val list = entity.worldObj.getEntitiesWithinAABB(EntityLivingBase::class.java, axis) as MutableList<EntityLivingBase>
-		list.remove(burst.thrower)
+		if (entity.worldObj.isRemote || burst.isFake) return
 		
-		for (e in list)
-			e.attackEntityFrom(SUPERCONDUCTOR(burst.thrower), if (e is EntityPlayer) if (ItemElvoriumArmor.hasSet(e) || !AlfheimConfigHandler.uberBlaster) 12f.also { if (AlfheimConfigHandler.uberBlaster) e.inventory.damageArmor(13f) } else 25f else 8f)
+		val axis = getBoundingBox(entity.posX, entity.posY, entity.posZ, entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ).expand(1.5)
+		val list = getEntitiesWithinAABB(entity.worldObj, EntityLivingBase::class.java, axis)
+		list.remove(burst.thrower)
+		list.forEach {
+			var admg = false
+			val dmg = if (it !is EntityPlayer) 8f else if (ItemElvoriumArmor.hasSet(it) || !AlfheimConfigHandler.uberBlaster) 12f.also { if (AlfheimConfigHandler.uberBlaster) admg = true } else 25f
+			
+			if (!it.attackEntityFrom(SUPERCONDUCTOR(burst.thrower), dmg) || !admg) return@forEach
+			(it as EntityPlayer).inventory.damageArmor(13f)
+		}
 	}
 	
-	fun SUPERCONDUCTOR(e: EntityLivingBase?) = (if (e != null) EntityDamageSource("indirectMagic", e) else DamageSource("magic")).setDamageBypassesArmor().setMagicDamage().setDamageIsAbsolute().setDifficultyScaled()
+	fun SUPERCONDUCTOR(e: EntityLivingBase?) = (if (e != null) DamageSourceSpell.magic(e) else DamageSource("magic")).setTo(ElementalDamage.ELECTRIC)
 }

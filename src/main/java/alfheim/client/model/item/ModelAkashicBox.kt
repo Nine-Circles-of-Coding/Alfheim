@@ -2,7 +2,9 @@ package alfheim.client.model.item
 
 import net.minecraft.client.model.*
 
-class ModelAkashicBox: ModelBase() {
+object ModelAkashicBox: ModelBase() {
+	
+	val bookModel = ModelBook()
 	
 	var Back: ModelRenderer
 	var Bottom: ModelRenderer

@@ -1,7 +1,6 @@
 package alfheim.common.block.magtrees.sealing
 
 import net.minecraft.world.World
-import net.minecraftforge.client.event.sound.PlaySoundEvent17
 
 /**
  * @author WireSegal
@@ -20,10 +19,9 @@ interface ISoundSilencer {
 	 * @param y - The y position of the block.
 	 * @param z - The z position of the block.
 	 * @param dist - The distance to the block from the sound.
-	 * @param soundEvent - The event being processed.
 	 * @return - Whether the block should silence the given sound.
 	 */
-	fun canSilence(world: World, x: Int, y: Int, z: Int, dist: Double, soundEvent: PlaySoundEvent17): Boolean
+	fun canSilence(world: World, x: Int, y: Int, z: Int, dist: Double): Boolean
 	
 	/**
 	 * Gets the volume multiplier that the block should apply.
@@ -33,8 +31,7 @@ interface ISoundSilencer {
 	 * @param y - The y position of the block.
 	 * @param z - The z position of the block.
 	 * @param dist - The distance to the block from the sound.
-	 * @param soundEvent - The event being processed.
 	 * @return - The volume multiplier of the given block.
 	 */
-	fun getVolumeMultiplier(world: World, x: Int, y: Int, z: Int, dist: Double, soundEvent: PlaySoundEvent17): Float
+	fun getVolumeMultiplier(world: World, x: Int, y: Int, z: Int, dist: Double): Float
 }

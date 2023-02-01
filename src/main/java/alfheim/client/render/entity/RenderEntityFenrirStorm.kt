@@ -1,9 +1,8 @@
 package alfheim.client.render.entity
 
 import alexsocol.asjlib.*
-import alexsocol.asjlib.math.Vector3
+import alexsocol.asjlib.math.*
 import alfheim.common.entity.spell.EntitySpellFenrirStorm
-import alfheim.common.spell.wind.SpellFenrirStorm
 import net.minecraft.client.renderer.OpenGlHelper
 import net.minecraft.client.renderer.entity.Render
 import net.minecraft.entity.Entity
@@ -27,15 +26,7 @@ object RenderEntityFenrirStorm: Render() {
 		glPushMatrix()
 		glTranslated(x, y, z)
 		
-		/*try {
-			val area = OrientedBB(AxisAlignedBB.getBoundingBox(-0.5, -0.5, -8.0, 0.5, 0.5, 8.0))
-			area.rotateOX(e.rotationPitch.D)
-			area.rotateOY(-e.rotationYaw.D)
-			val v = Vector3(ASJUtilities.getLookVec(e)).mul(8.5)
-			area.translate(v.x, v.y, v.z)
-			area.draw(0)
-		} catch (ignore: Throwable) {}*/
-		val parts = max(1, min(e.ticksExisted * 2, SpellFenrirStorm.radius.I * 2))
+		val parts = max(1, min(e.ticksExisted * 2, e.radius.I * 2))
 		
 		glDisable(GL_TEXTURE_2D)
 		glDisable(GL_LIGHTING)

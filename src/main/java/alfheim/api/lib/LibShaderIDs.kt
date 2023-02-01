@@ -7,4 +7,6 @@ object LibShaderIDs {
 	var idGravity = 0
 	var idNoise = 0
 	var idShadow = 0
+	var idSun = 0
+	var idWorley = 0
 }

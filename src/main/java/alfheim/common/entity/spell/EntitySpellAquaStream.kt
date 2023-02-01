@@ -6,12 +6,10 @@ import alfheim.api.spell.*
 import alfheim.client.render.world.VisualEffectHandlerClient.VisualEffects
 import alfheim.common.core.handler.*
 import alfheim.common.core.util.DamageSourceSpell
-import alexsocol.asjlib.security.InteractionSecurity
 import alfheim.common.spell.water.SpellAquaStream
 import net.minecraft.entity.*
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.util.MovingObjectPosition.MovingObjectType
 import net.minecraft.world.World
 import java.util.*
 
@@ -19,8 +17,7 @@ class EntitySpellAquaStream(world: World): Entity(world), ITimeStopSpecific {
 	
 	var caster: EntityLivingBase? = null
 	
-	override val isImmune: Boolean
-		get() = false
+	override val isImmune = false
 	
 	init {
 		setSize(1f, 1f)
@@ -45,19 +42,8 @@ class EntitySpellAquaStream(world: World): Entity(world), ITimeStopSpecific {
 		val look = Vector3(caster.lookVec)
 		val d = 0.75
 		VisualEffectHandler.sendPacket(VisualEffects.WISP, dimension, look.x + caster.posX, look.y + caster.posY + caster.eyeHeight.D, look.z + caster.posZ, 0.5, 0.5, 1.0, 1.0, look.x / d, look.y / d, look.z / d, 0.5)
-		
-		val hp: Vector3
-		if (mop?.hitVec != null) {
-			hp = Vector3(mop.hitVec)
-			if (mop.typeOfHit == MovingObjectType.ENTITY) {
-				if (mop.entityHit is EntityLivingBase && !InteractionSecurity.canHurtEntity(caster, mop.entityHit as EntityLivingBase)) return
-				
-				mop.entityHit.attackEntityFrom(DamageSourceSpell.water(caster), SpellBase.over(caster, SpellAquaStream.damage.D))
-			}
-		} else {
-			hp = look.copy().extend(SpellAquaStream.radius).add(Vector3.fromEntity(caster)).add(0.0, caster.eyeHeight.D, 0.0)
-		}
-		
+		mop?.entityHit?.attackEntityFrom(DamageSourceSpell.water(caster), SpellBase.over(caster, SpellAquaStream.damage.D))
+		val hp = if (mop?.hitVec != null) Vector3(mop.hitVec) else look.copy().extend(SpellAquaStream.radius).add(Vector3.fromEntity(caster)).add(0.0, caster.eyeHeight.D, 0.0)
 		VisualEffectHandler.sendPacket(VisualEffects.AQUASTREAM_HIT, dimension, hp.x, hp.y, hp.z)
 	}
 	

@@ -17,7 +17,8 @@ open class ItemAuraRingAlfheim(name: String, val delay: Int = 5): ItemBauble(nam
 	override fun onWornTick(stack: ItemStack, player: EntityLivingBase) {
 		super.onWornTick(stack, player)
 		if (player is EntityPlayer && player.ticksExisted % delay == 0)
-			ManaItemHandler.dispatchManaExact(stack, player, 10, true)
+			if (!ManaItemHandler.dispatchManaExact(stack, player, 10, true))
+				ManaItemHandler.dispatchMana(stack, player, 10, true)
 	}
 	
 	override fun getBaubleType(itemstack: ItemStack): BaubleType {

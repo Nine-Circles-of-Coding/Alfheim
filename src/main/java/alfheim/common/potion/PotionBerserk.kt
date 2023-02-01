@@ -5,7 +5,7 @@ import net.minecraft.entity.*
 import net.minecraft.entity.ai.attributes.*
 import java.util.*
 
-class PotionBerserk: PotionAlfheim(AlfheimConfigHandler.potionIDBerserk, "berserk", false, 0xAA1111) {
+object PotionBerserk: PotionAlfheim(AlfheimConfigHandler.potionIDBerserk, "berserk", false, 0xAA1111) {
 	
 	val uuid = UUID.fromString("23593E88-FFE3-1707-DE94-6BCD1756B35D")!!
 	

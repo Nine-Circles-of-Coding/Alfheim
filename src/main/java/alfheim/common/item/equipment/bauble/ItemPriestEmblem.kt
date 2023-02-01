@@ -6,6 +6,8 @@ import alfheim.api.item.equipment.bauble.IManaDiscountBauble
 import alfheim.client.core.helper.IconHelper
 import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.core.handler.VisualEffectHandler
+import alfheim.common.core.handler.ragnarok.RagnarokHandler
+import alfheim.common.core.handler.ragnarok.RagnarokHandler.timesDied
 import alfheim.common.core.util.*
 import alfheim.common.item.AlfheimItems
 import alfheim.common.item.equipment.bauble.faith.IFaithHandler.Companion.getFaithHandler
@@ -20,13 +22,12 @@ import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.*
-import net.minecraft.potion.*
+import net.minecraft.potion.Potion
 import net.minecraft.util.*
 import net.minecraftforge.client.event.RenderPlayerEvent
 import org.lwjgl.opengl.GL11.*
 import vazkii.botania.api.item.IBaubleRender
 import vazkii.botania.api.mana.*
-import vazkii.botania.common.core.helper.ItemNBTHelper
 import vazkii.botania.common.item.equipment.bauble.ItemBauble
 
 class ItemPriestEmblem: ItemBauble("priestEmblem"), IBaubleRender, IManaUsingItem, IManaDiscountBauble {
@@ -35,12 +36,13 @@ class ItemPriestEmblem: ItemBauble("priestEmblem"), IBaubleRender, IManaUsingIte
 		
 		const val COST = 2
 		const val TYPES = 6
+		
 		lateinit var icons: Array<IIcon>
 		lateinit var baubleIcons: Array<IIcon>
 		
 		fun getEmblem(meta: Int, player: EntityPlayer?): ItemStack? {
 			val stack = PlayerHandler.getPlayerBaubles(player ?: return null)[0] ?: return null
-			return if (((stack.item === AlfheimItems.priestEmblem && (meta == -1 || stack.meta == meta)) || stack.item == AlfheimItems.aesirEmblem) && isActive(stack)) stack else null
+			return if ((stack.item === AlfheimItems.priestEmblem && (meta == -1 || stack.meta == meta) || stack.item == AlfheimItems.aesirEmblem) && isActive(stack)) stack else null
 		}
 		
 		fun isActive(stack: ItemStack) = ItemNBTHelper.getBoolean(stack, "active", false)
@@ -105,8 +107,15 @@ class ItemPriestEmblem: ItemBauble("priestEmblem"), IBaubleRender, IManaUsingIte
 	
 	override fun getBaubleType(stack: ItemStack) = BaubleType.AMULET
 	
-	override fun getUnlocalizedName(stack: ItemStack) =
-		super.getUnlocalizedName(stack) + stack.meta
+	override fun getUnlocalizedName(stack: ItemStack) = super.getUnlocalizedName(stack) + stack.meta
+	
+	override fun canEquip(stack: ItemStack, player: EntityLivingBase): Boolean {
+		if (player !is EntityPlayer) return false
+		
+		return if (RagnarokHandler.ragnarok) {
+			player.timesDied < 5
+		} else true
+	}
 	
 	override fun onEquippedOrLoadedIntoWorld(stack: ItemStack, player: EntityLivingBase) {
 		setDangerous(stack, false)
@@ -116,26 +125,40 @@ class ItemPriestEmblem: ItemBauble("priestEmblem"), IBaubleRender, IManaUsingIte
 	}
 	
 	override fun onWornTick(stack: ItemStack, player: EntityLivingBase) {
-		if (player is EntityPlayer) {
-			getFaithHandler(stack).onWornTick(stack, player, EMBLEM)
+		if (player !is EntityPlayer) return
+		
+		if (player.timesDied >= 5) {
+			PlayerHandler.getPlayerBaubles(player)[0] = null
 			
-			if (player.ticksExisted % 10 == 0) {
-				val flag: Boolean
-				setActive(stack, ManaItemHandler.requestManaExact(stack, player, COST, true).also { flag = it })
-				setDangerous(stack, true)
-				
-				VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.EMBLEM_ACTIVATION, player.dimension, player.entityId.D, if (flag) 1.0 else 0.0)
-			}
+			if (!player.inventory.addItemStackToInventory(stack))
+				player.dropPlayerItemWithRandomChoice(stack, false)
+			
+			return
 		}
+		
+		getFaithHandler(stack).onWornTick(stack, player, EMBLEM)
+		
+		if (player.ticksExisted % 10 != 0) return
+		val flag: Boolean
+		setActive(stack, ManaItemHandler.requestManaExact(stack, player, COST, true).also { flag = it })
+		setDangerous(stack, true)
+		
+		VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.EMBLEM_ACTIVATION, player.dimension, player.entityId.D, if (flag) 1.0 else 0.0)
+	}
+	
+	override fun canUnequip(stack: ItemStack?, player: EntityLivingBase?): Boolean {
+		return !RagnarokHandler.ragnarok
 	}
 	
 	override fun onUnequipped(stack: ItemStack, player: EntityLivingBase) {
+		if (ASJUtilities.isClient) return
+		
 		if (!(!isDangerous(stack) || (player is EntityPlayer && player.capabilities.isCreativeMode))) {
 			player.attackEntityFrom(DamageSourceSpell.faith, 6f)
-			player.addPotionEffect(PotionEffect(Potion.blindness.id, 150, 0))
-			player.addPotionEffect(PotionEffect(Potion.confusion.id, 150, 2))
-			player.addPotionEffect(PotionEffect(Potion.moveSlowdown.id, 300, 2))
-			player.addPotionEffect(PotionEffect(Potion.weakness.id, 300, 2))
+			player.addPotionEffect(PotionEffectU(Potion.blindness.id, 150))
+			player.addPotionEffect(PotionEffectU(Potion.confusion.id, 150, 2))
+			player.addPotionEffect(PotionEffectU(Potion.moveSlowdown.id, 300, 2))
+			player.addPotionEffect(PotionEffectU(Potion.weakness.id, 300, 2))
 		}
 		setDangerous(stack, false)
 		

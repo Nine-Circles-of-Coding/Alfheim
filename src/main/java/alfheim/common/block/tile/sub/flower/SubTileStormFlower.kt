@@ -26,7 +26,7 @@ class SubTileStormFlower: SubTilePassiveGenerating() {
 			
 			if ((e is EntityLightningBolt || e is FakeLightning) && !e.isDead && Vector3.entityTileDistance(e, supertile) < 2) {
 				e.setDead()
-				cooldown = 1200
+				cooldown = 50
 				addMana(maxMana)
 			}
 		}

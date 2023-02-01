@@ -1,30 +1,29 @@
 package alfheim.api.entity
 
 import alexsocol.asjlib.*
-import alfheim.api.ModInfo
 import alfheim.api.event.PlayerChangedRaceEvent
-import net.minecraft.entity.ai.attributes.*
+import alfheim.client.core.handler.CardinalSystemClient
+import alfheim.common.core.handler.CardinalSystem
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.*
 import net.minecraftforge.common.MinecraftForge
-import java.util.*
 
 enum class EnumRace {
 	
 	HUMAN, SALAMANDER, SYLPH, CAITSITH, POOKA, GNOME, LEPRECHAUN, SPRIGGAN, UNDINE, IMP, ALV;
 	
 	val rgbColor: Int
-		get() = getRGBColor(ordinal.D)
+		get() = getRGBColor(ordinal)
 	
 	val enumColor: EnumChatFormatting
-		get() = getEnumColor(ordinal.D)
+		get() = getEnumColor(ordinal)
 	
 	fun glColor() {
-		glColor(ordinal.D)
+		glColor(ordinal)
 	}
 	
 	fun glColorA(alpha: Double) {
-		glColorA(ordinal.D, alpha)
+		glColorA(ordinal, alpha)
 	}
 	
 	fun localize() =
@@ -32,9 +31,7 @@ enum class EnumRace {
 	
 	companion object {
 		
-		private val RACE: IAttribute = RangedAttribute(ModInfo.MODID.uppercase() + ":RACE", 0.0, 0.0, values().size.D.minus(1)).setShouldWatch(true)
-		
-		fun getRGBColor(id: Double): Int {
+		fun getRGBColor(id: Int): Int {
 			return when (getByID(id)) {
 				SALAMANDER -> 0xb61f24
 				SYLPH      -> 0x5ee52e
@@ -45,11 +42,12 @@ enum class EnumRace {
 				SPRIGGAN   -> 0x282739
 				UNDINE     -> 0x40c0a4
 				IMP        -> 0x786a89
+				ALV        -> 0xFFEE99
 				else       -> 0xffffff
 			}
 		}
 		
-		fun getEnumColor(id: Double): EnumChatFormatting {
+		fun getEnumColor(id: Int): EnumChatFormatting {
 			return when (getByID(id)) {
 				SALAMANDER -> EnumChatFormatting.DARK_RED
 				SYLPH      -> EnumChatFormatting.GREEN
@@ -60,15 +58,16 @@ enum class EnumRace {
 				SPRIGGAN   -> EnumChatFormatting.WHITE
 				UNDINE     -> EnumChatFormatting.AQUA
 				IMP        -> EnumChatFormatting.LIGHT_PURPLE
+				ALV        -> EnumChatFormatting.WHITE
 				else       -> EnumChatFormatting.WHITE
 			}
 		}
 		
-		fun glColor(id: Double) {
+		fun glColor(id: Int) {
 			glColor1u(addAlpha(getRGBColor(id), 255))
 		}
 		
-		fun glColorA(id: Double, alpha: Double) {
+		fun glColorA(id: Int, alpha: Double) {
 			glColor1u(addAlpha(getRGBColor(id), (alpha * 255).I))
 		}
 		
@@ -79,44 +78,40 @@ enum class EnumRace {
 			org.lwjgl.opengl.GL11.glColor4ub((color shr 16 and 0xFF).toByte(), (color shr 8 and 0xFF).toByte(), (color and 0xFF).toByte(), (color shr 24 and 0xFF).toByte())
 		}
 		
-		private fun getByID(id: Double) =
-			if (0 > id || id > values().size) HUMAN else values()[id.I]
+		private fun getByID(id: Int) = if (0 > id || id > values().size) HUMAN else values()[id]
 		
-		fun ensureExistance(player: EntityPlayer) {
-			if (player.getEntityAttribute(RACE) == null) registerRace(player)
-		}
-		
-		private fun registerRace(player: EntityPlayer) {
-			try {
-				player.getAttributeMap().registerAttribute(RACE)
-			} catch (e: IllegalArgumentException) {
-				if (e.message != "Attribute is already registered!")
-					throw e
-			}
-			setRaceID(player, 0.0)
-		}
-		
-		operator fun get(id: Int) = getByID(id.D)
+		operator fun get(id: Int) = getByID(id)
 		
 		operator fun get(player: EntityPlayer): EnumRace {
-			ensureExistance(player)
-			return getByID(player.getEntityAttribute(RACE).attributeValue)
+			val id = if (ASJUtilities.isServer)
+				CardinalSystem.forPlayer(player).raceID
+			else
+				CardinalSystemClient.playerRaceIDs[player.commandSenderName] ?: 0
+			
+			return getByID(id)
 		}
 		
 		fun getRaceID(player: EntityPlayer): Int {
-			ensureExistance(player)
-			return player.getEntityAttribute(RACE).attributeValue.I
+			return if (ASJUtilities.isServer)
+				CardinalSystem.forPlayer(player).raceID
+			else
+				CardinalSystemClient.playerRaceIDs[player.commandSenderName] ?: 0
 		}
 		
 		operator fun set(player: EntityPlayer, race: EnumRace) {
-			ensureExistance(player)
-			player.getEntityAttribute(RACE).baseValue = race.ordinal.D
+			if (ASJUtilities.isServer)
+				CardinalSystem.forPlayer(player).raceID = race.ordinal
+			else
+				CardinalSystemClient.playerRaceIDs[player.commandSenderName] = race.ordinal
 			
 			MinecraftForge.EVENT_BUS.post(PlayerChangedRaceEvent(player, player.race, race))
 		}
 		
-		internal fun setRaceID(player: EntityPlayer, raceID: Double) {
-			player.getEntityAttribute(RACE).baseValue = raceID
+		internal fun setRaceID(player: EntityPlayer, raceID: Int) {
+			if (ASJUtilities.isServer)
+				CardinalSystem.forPlayer(player).raceID = raceID
+			else
+				CardinalSystemClient.playerRaceIDs[player.commandSenderName] = raceID
 		}
 	}
 }
@@ -130,10 +125,10 @@ var EntityPlayer.race
 /**
  * Internal Alfheim value, please, don't set it unless you know what you are doing
  * <br>
- * and fire [alfheim.api.event.PlayerChangedRaceEvent] if needed
+ * and fire [an event][alfheim.api.event.PlayerChangedRaceEvent] if needed
  */
 var EntityPlayer.raceID
 	get() = EnumRace.getRaceID(this)
 	internal set(value) {
-		EnumRace.setRaceID(this, value.D)
+		EnumRace.setRaceID(this, value)
 	}

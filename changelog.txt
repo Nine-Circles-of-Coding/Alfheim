@@ -1,5 +1,38 @@
 Innovations:
- --
-
+ Added events to mob spawn logic and improved it a little
+ New weapon - thunder chackram (#188)
+ New tool - redstone debug rod (#235)
+ Events now will be repeated in the middle of each Winter/Summer month for two weeks duration
+ Shrinked Aquapanthus radius to 3 and added visualization
+ /alfheim command now fails on first wrong argument
+ Floating bifrost flower (#256)
+ Aurora floating island type (#257)
+ The Flugel’s music now repeats while the battle goes on
+ [B] Tweaks to Gaia Guardian:
+ [B] - Music now repeats while the battle goes on
+ [B] - Dice of Fate now gives extra goodies from a random pool once you’ve acquired all the relics
+ [B] - All players now get the related advancements from a Gaia Guardian kill
+ [B] - Magic landmines now deal magic damage
+ [B] "Radius: N" tooltip to Laputa Shards so it's more clear they do something to your world
+ [B] Recipe to split composite lenses apart, losing the slime ball
+ [B] Hidden Achievement - "That's Why I Baked Bread". Try to figure this one out! It shouldn't be very hard if you know the Botania memes
+ [B] ... and a related function
+ [B] Loki Ring will now exit binding mode when you take it off, to prevent situations where you forget where you set the binding center and can’t exit binding mode
+ [B] Increased the Narslimmus’ mana buffer to not have it overflow when it eats a big slime
+ [B] Allow Glimmering and Floating Flowers to be used with the Mana Enchanter (and Bifrost ones too)
+ [B] Horns and Drums will have a lower chance to break blocks when in range of any sealing blocks (not completely because that's how multiplication works)
+ [B] The Rosa Arcana can now get its XP from orbs in the world (it was there before but with a stupid condition)
+ [B] Make Gaia Spreader recipe shapeless b/c why was it shaped before
+ [B] Add reverse petal block recipes from block -> petals
+ 
 Fixes:
- Rod of the Vibrant Plains Sneak-Leftclick to cycle through colors in reverse order
+ Windflows potion icon
+ Meme song ending
+ Creative reach pendant sync (fake) (#258)
+ Alfheim Portal in-wall teleportation (once again)
+ Bud of Ygg. visualization
+ Firework Lens bug
+ Gaia head equip bug
+ Spatiotemporal ring tooltip
+ Wilted lotus mana tricks
+ Wind flows potion icon

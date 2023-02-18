@@ -25,7 +25,7 @@ import vazkii.botania.common.Botania
 import java.util.*
 
 @Suppress("UNUSED_PARAMETER")
-@Mod(modid = MODID, version = "RC", dependencies = "required-after:Botania", useMetadata = true, guiFactory = "$MODID.client.gui.GUIFactory", modLanguageAdapter = KotlinAdapter.className)
+@Mod(modid = MODID, dependencies = "required-after:Botania", useMetadata = true, guiFactory = "$MODID.client.gui.GUIFactory", modLanguageAdapter = KotlinAdapter.className)
 object AlfheimCore {
 	
 	@KotlinProxy(clientSide = "$MODID.client.core.proxy.ClientProxy", serverSide = "$MODID.common.core.proxy.CommonProxy")

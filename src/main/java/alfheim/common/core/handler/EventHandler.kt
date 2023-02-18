@@ -120,7 +120,8 @@ object EventHandler {
 	
 	@SubscribeEvent
 	fun onNetherPortalActivation(e: NetherPortalActivationEvent) {
-		if (e.worldObj.provider.dimensionId == AlfheimConfigHandler.dimensionIDAlfheim) e.isCanceled = true
+		if (e.worldObj.provider.dimensionId == AlfheimConfigHandler.dimensionIDAlfheim ||
+			e.worldObj.provider.dimensionId == AlfheimConfigHandler.dimensionIDNiflheim) e.isCanceled = true
 	}
 	
 	@SubscribeEvent

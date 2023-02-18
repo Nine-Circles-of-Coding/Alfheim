@@ -22,6 +22,7 @@ class EntitySpellHarp(world: World): Entity(world), ITimeStopSpecific {
 	
 	init {
 		setSize(0.1f, 0.1f)
+		renderDistanceWeight = 10.0
 	}
 	
 	constructor(world: World, caster: EntityLivingBase, x: Double, y: Double, z: Double): this(world) {

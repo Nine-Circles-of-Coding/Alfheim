@@ -205,7 +205,7 @@ open class RedstoneSignalHandler(datakey: String = ID): WorldSavedData(datakey) 
 	}
 	
 	@Synchronized
-	fun addSignal(worldObj: World, x: Int, y: Int, z: Int, duration: Int, strength: Int): Boolean {
+	open fun addSignal(worldObj: World, x: Int, y: Int, z: Int, duration: Int, strength: Int): Boolean {
 		return if (worldObj.blockExists(x, y, z)) {
 			val signal = RedstoneSignal(worldObj.provider.dimensionId, x, y, z, duration, strength)
 			if (signal in redstoneSignals) redstoneSignals.remove(signal)
@@ -218,7 +218,7 @@ open class RedstoneSignalHandler(datakey: String = ID): WorldSavedData(datakey) 
 	}
 	
 	@Synchronized
-	fun tick() {
+	open fun tick() {
 		val i = redstoneSignals.iterator()
 		while (i.hasNext()) {
 			val rs = i.next()
@@ -235,7 +235,7 @@ open class RedstoneSignalHandler(datakey: String = ID): WorldSavedData(datakey) 
 	}
 	
 	@Synchronized
-	fun getPower(world: World, x: Int, y: Int, z: Int) =
+	open fun getPower(world: World, x: Int, y: Int, z: Int) =
 		redstoneSignals.firstOrNull { (dim, sx, sy, sz) -> dim == world.provider.dimensionId && x == sx && sy == y && sz == z }?.strength ?: 0
 	
 	@Synchronized
@@ -266,7 +266,7 @@ open class RedstoneSignalHandler(datakey: String = ID): WorldSavedData(datakey) 
 		
 		fun get(): RedstoneSignalHandler {
 			val server = FMLCommonHandler.instance().minecraftServerInstance ?: return RedstoneSignalHandlerClient
-			val overWorld = server.entityWorld
+			val overWorld = server.worldServers.getOrElse(0) { return RedstoneSignalHandlerDummy }
 			
 			var handler = overWorld.mapStorage.loadData(RedstoneSignalHandler::class.java, ID) as RedstoneSignalHandler?
 			
@@ -289,6 +289,15 @@ open class RedstoneSignalHandler(datakey: String = ID): WorldSavedData(datakey) 
 }
 
 object RedstoneSignalHandlerClient: RedstoneSignalHandler("$ID-Client")
+
+object RedstoneSignalHandlerDummy: RedstoneSignalHandler("$ID-Dummy") {
+	override fun addSignal(worldObj: World, x: Int, y: Int, z: Int, duration: Int, strength: Int) = false
+	override fun tick() = Unit
+	override fun getPower(world: World, x: Int, y: Int, z: Int) = 0
+	override fun isDirty() = false
+	override fun readFromNBT(nbt: NBTTagCompound) = Unit
+	override fun writeToNBT(nbt: NBTTagCompound) = Unit
+}
 
 data class RedstoneSignal(var dimension: Int, var x: Int, var y: Int, var z: Int, var duration: Int, var strength: Int, var age: Int = 0) {
 	

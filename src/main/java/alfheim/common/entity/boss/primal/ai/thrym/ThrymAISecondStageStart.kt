@@ -31,14 +31,14 @@ class ThrymAISecondStageStart(val host: EntityThrym): EntityAIBase() {
 		list.remove(host)
 		list.removeAll { (it as? EntityPlayer)?.capabilities?.disableDamage == true }
 		list.forEach {
-			val dist = Vector3.fromEntity(it).sub(host).normalize().mul(0.05)
+			val (x, y, z) = Vector3.fromEntity(it).sub(host).normalize().mul(0.08)
 			
-			it.motionX -= dist.x
-			it.motionY -= dist.y
-			it.motionZ -= dist.z
+			it.motionX -= x
+			it.motionY -= y
+			it.motionZ -= z
 			
 			if (it is EntityPlayerMP) it.playerNetServerHandler.sendPacket(S12PacketEntityVelocity(it))
-			if (dist.length() > 3) return@forEach
+			if (Vector3.entityDistancePlane(it, host) > 3) return@forEach
 			
 			it.attackEntityFrom(host.defaultWeaponDamage(it), 1f)
 		}

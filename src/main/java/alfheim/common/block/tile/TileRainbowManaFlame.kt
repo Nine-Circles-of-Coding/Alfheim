@@ -29,8 +29,8 @@ open class TileRainbowManaFlame: TileManaFlame() {
 		if (!shouldRender()) return
 		
 		if (soul) {
-			val c = getColor()
-			Botania.proxy.wispFX(worldObj, xCoord + 0.5, yCoord + 0.5, zCoord + 0.5, (c shr 16 and 0xFF) / 255f, (c shr 8 and 0xFF) / 255f, (c and 0xFF) / 255f, (Math.random() * 0.5).F, (Math.random() * 0.015 - 0.0075).F, (Math.random() * 0.025).F, (Math.random() * 0.015 - 0.0075).F, 2f)
+			val (r, g, b) = Color(getColor()).getRGBColorComponents(null)
+			Botania.proxy.wispFX(worldObj, xCoord + 0.5, yCoord + 0.5, zCoord + 0.5, r, g, b, (Math.random() * 0.5).F, (Math.random() * 0.015 - 0.0075).F, (Math.random() * 0.025).F, (Math.random() * 0.015 - 0.0075).F, 2f)
 		} else
 			super.updateEntity()
 	}
@@ -74,11 +74,11 @@ open class TileRainbowManaFlame: TileManaFlame() {
 	}
 	
 	override fun getLightColor(): Int {
-		val (r, g, b) = Color(getColor()).getColorComponents(null)
+		val (r, g, b) = Color(getColor()).getRGBColorComponents(null)
 		return ColoredLightHelper.makeRGBLightValue(r, g, b, 1f)
 	}
 	
-	fun shouldRender() = Botania.proxy.isClientPlayerWearingMonocle || !invisible
+	fun shouldRender() = ASJUtilities.isClient && (Botania.proxy.isClientPlayerWearingMonocle || !invisible)
 	
 	companion object {
 		private val TAG_SOUL = "soul"

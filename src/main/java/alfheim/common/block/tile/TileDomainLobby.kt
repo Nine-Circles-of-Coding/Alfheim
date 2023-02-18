@@ -6,6 +6,7 @@ import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.render.ASJRenderHelper.toVec3
 import alfheim.api.AlfheimAPI
 import alfheim.common.block.AlfheimBlocks
+import alfheim.common.core.asm.hook.AlfheimHookHandler
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.item.*
 import alfheim.common.item.material.ElvenResourcesMetas
@@ -131,6 +132,7 @@ class TileDomainLobby: TileImmobile() {
 			players.forEach {
 				it.entityData.setIntArray(TAG_DOMAIN_ENTRANCE, center.mf().toIntArray() + it.dimension)
 				
+				AlfheimHookHandler.allowtp = true
 				ASJUtilities.sendToDimensionWithoutPortal(it, AlfheimConfigHandler.dimensionIDDomains, x + 0.5, 65.0, z + 0.5)
 			}
 			

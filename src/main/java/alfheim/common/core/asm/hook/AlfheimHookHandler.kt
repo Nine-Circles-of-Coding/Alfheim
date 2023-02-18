@@ -242,7 +242,7 @@ object AlfheimHookHandler {
 		
 		if (player.capabilities.isCreativeMode) return false
 		if (dimTo == dimensionIDHelheim) return false
-		if (dimTo == dimensionIDDomains) return false
+		if (dimTo == dimensionIDDomains) return true // only with TileDomainLobby
 		
 		return when (player.dimension) {
 			dimensionIDDomains  -> dimTo != (player.entityData.getIntArray(TileDomainLobby.TAG_DOMAIN_ENTRANCE).getOrNull(3) ?: dimTo)

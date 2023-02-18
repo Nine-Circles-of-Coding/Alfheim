@@ -185,7 +185,7 @@ object ClientProxy : CommonProxy() {
 		
 		GUIScreenOverlay.eventForge()
 		GUISheerCold.eventForge()
-		GUIBanner.eventForge()
+		GUIBanner.eventForge().eventFML()
 		
 		RenderPostShaders.allowShaders = !AlfheimConfigHandler.minimalGraphics && OpenGlHelper.shadersSupported
 	}

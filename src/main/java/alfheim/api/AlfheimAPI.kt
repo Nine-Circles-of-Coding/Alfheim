@@ -136,7 +136,7 @@ object AlfheimAPI {
 		
 		if (spell !in spells) {
 			spells.add(spell)
-			checkGet(spell.race).add(spell)
+			spellMapping.computeIfAbsent(spell.race) { HashSet(8) }.add(spell)
 			
 			if (ASJUtilities.isClient)
 				LibResourceLocations.add(spell.name)
@@ -145,15 +145,8 @@ object AlfheimAPI {
 		
 	}
 	
-	private fun checkGet(affinity: EnumRace): HashSet<SpellBase> {
-		if (!spellMapping.containsKey(affinity)) spellMapping[affinity] = HashSet(8)
-		return spellMapping[affinity]!!
-	}
-	
-	fun getSpellsFor(affinity: EnumRace): ArrayList<SpellBase> {
-		val l = Lists.newArrayList(checkGet(affinity))
-		l.sortWith { s1, s2 -> s1.name.compareTo(s2.name) }
-		return l
+	fun getSpellsFor(affinity: EnumRace): List<SpellBase> {
+		return spellMapping.computeIfAbsent(affinity) { HashSet(8) }.sortedBy { it.name }
 	}
 	
 	fun getSpellInstance(name: String) = spells.firstOrNull { it.name == name }

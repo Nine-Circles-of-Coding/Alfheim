@@ -136,6 +136,7 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 	abstract fun getRelics(): Array<Pair<Achievement, Item>>
 	
 	override fun onLivingUpdate() {
+		clearActivePotions()
 		updateArmSwingProgress()
 		super.onLivingUpdate()
 		extinguish()
@@ -264,6 +265,9 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 			}
 			
 			shield -= lastHit
+			recentlyHit = 60
+			hurtTimeActual = 20
+			
 			if (shield >= 0) {
 				lastHit = 0f
 				maxHit = 0f
@@ -372,6 +376,7 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 		maxHit = 0f
 		
 		if (health > maxHealth * 0.5) return
+		if (worldObj.isRemote) return
 		
 		val pf = prevHealth / maxHealth
 		val cf = health / maxHealth

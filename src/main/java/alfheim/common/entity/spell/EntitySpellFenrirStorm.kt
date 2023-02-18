@@ -65,10 +65,8 @@ class EntitySpellFenrirStorm(world: World): Entity(world), ITimeStopSpecific {
 
 			area.fromAABB(getBoundingBox(-0.5, -0.5, -radius, 0.5, 0.5, radius))
 			area.translate(caster.posX, caster.posY + caster.eyeHeight, caster.posZ)
-			
-			// I have no fucking idea why radians but it works so DON'T TOUCH
-			area.rotateOX(Math.toRadians(caster.rotationPitch.D))
-			area.rotateOY(-Math.toRadians(caster.rotationYaw.D))
+			area.rotateOX(-caster.rotationPitch) // sign is ok!!!
+			area.rotateOY(caster.rotationYaw) // sign is ok!!!
 
 			val v = Vector3(caster.lookVec).mul(radius + 0.5)
 			area.translate(v.x, v.y, v.z)

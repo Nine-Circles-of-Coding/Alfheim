@@ -1,15 +1,5 @@
 Innovations:
- Domains can now be accessed only with it's entrance or via /tpdim command
- Disabled nether portal creation in Niflheim
- Thrym and Surtr now cannot have potions on them
-
  
+
 Fixes:
- Event banner popup persistence
- Manaflame crash
- Sun Slash attack area
- Fenrir Storm attack area (hopefully)
- Thrym and Surtr quick shield destruction
- Thrym second stage logic
- Harp render distance
- Redstone rod-related features crash in multiplayer
+ 

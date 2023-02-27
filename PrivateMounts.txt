@@ -1,4 +1,3 @@
-AlexSocol:FENRIR
 Kompotik:FENRIR
 Pelmeshkins:FENRIR
 krumplerban:FENRIR

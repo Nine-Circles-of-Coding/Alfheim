@@ -1,10 +1,10 @@
 [
 	{
-		"modid": "alfheim",
-		"name": "Alfheim",
+		"modid": "${modId}",
+    "name": "${modName}",
 		"description": "Botania addon allowing you to travel to Alfheim",
-		"version": "${version}",
-		"mcversion": "${mcversion}",
+		"version": "${modVersion}",
+    "mcversion": "${minecraftVersion}",
 		"url": "https://discord.gg/dqQXZHq",
 		"updateUrl": "https://discord.gg/dqQXZHq",
 		"authorList": [

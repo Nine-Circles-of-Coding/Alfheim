@@ -35,4 +35,18 @@
  */
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    api('com.github.GTNewHorizons:Baubles:1.0.1.16:dev')
+    api('com.github.GTNewHorizons:Botania:1.9.22-GTNH:dev')
+
+    compileOnly('com.github.GTNewHorizons:TravellersGearNeo:1.0:dev')
+    compileOnly('thaumcraft:Thaumcraft:1.7.10-4.2.3.5:dev')
+    compileOnly('com.github.GTNewHorizons:CodeChickenLib:1.1.6:dev')
+    compileOnly('com.github.GTNewHorizons:CodeChickenCore:1.1.10:dev')
+    compileOnly('com.github.GTNewHorizons:ForgeMultipart:1.2.7:dev') {transitive=false}
+    compileOnly('com.github.GTNewHorizons:NotEnoughItems:2.3.45-GTNH:dev')
+    compileOnly('com.github.GTNewHorizons:waila:1.6.0:dev')
+    compileOnly('com.github.GTNewHorizons:TinkersConstruct:1.9.30-GTNH:dev')
+    compileOnly('com.github.GTNewHorizons:Mantle:0.3.6:dev')
+    compileOnly('com.github.GTNewHorizons:CraftTweaker:3.2.12:dev')
 }

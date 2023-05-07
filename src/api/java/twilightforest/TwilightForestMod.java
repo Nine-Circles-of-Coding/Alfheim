@@ -1,5 +1,6 @@
 package twilightforest;
 
 public class TwilightForestMod {
-	public static int dimensionID;
+
+    public static int dimensionID;
 }

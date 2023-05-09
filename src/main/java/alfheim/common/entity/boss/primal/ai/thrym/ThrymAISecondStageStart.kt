@@ -2,6 +2,7 @@ package alfheim.common.entity.boss.primal.ai.thrym
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
+import alfheim.api.ModInfo
 import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.core.handler.*
 import alfheim.common.entity.boss.primal.EntityThrym
@@ -20,7 +21,10 @@ class ThrymAISecondStageStart(val host: EntityThrym): EntityAIBase() {
 	
 	override fun shouldExecute() = host.health <= host.maxHealth * 0.5 && host.stage < 2
 	
-	override fun startExecuting() = VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.FENRIR_AREA, host.dimension, host.posX, host.posY, host.posZ, 300.0)
+	override fun startExecuting() {
+		host.sucks = true
+		VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.FENRIR_AREA, host.dimension, host.posX, host.posY, host.posZ, 300.0)
+	}
 	
 	override fun continueExecuting() = ticks++ < 300
 	
@@ -29,7 +33,7 @@ class ThrymAISecondStageStart(val host: EntityThrym): EntityAIBase() {
 		
 		val list = getEntitiesWithinAABB(host.worldObj, EntityLivingBase::class.java, host.boundingBox(64))
 		list.remove(host)
-		list.removeAll { (it as? EntityPlayer)?.capabilities?.disableDamage == true }
+		list.removeAll { !host.canTarget(it) || (it as? EntityPlayer)?.capabilities?.disableDamage == true }
 		list.forEach {
 			val (x, y, z) = Vector3.fromEntity(it).sub(host).normalize().mul(0.08)
 			
@@ -41,10 +45,13 @@ class ThrymAISecondStageStart(val host: EntityThrym): EntityAIBase() {
 			if (Vector3.entityDistancePlane(it, host) > 3) return@forEach
 			
 			it.attackEntityFrom(host.defaultWeaponDamage(it), 1f)
+			it.playSoundAtEntity("${ModInfo.MODID}:thrym.icicle.hit", 1f, 1f)
 		}
 	}
 	
 	override fun resetTask() {
+		host.sucks = false
+		
 		ticks = 0
 		host.stage = 2
 		host.chunkAttackCounter += 2 + host.playersOnArena().size * 3

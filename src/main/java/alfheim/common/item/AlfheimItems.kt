@@ -7,6 +7,7 @@ import alfheim.common.core.handler.WorkInProgressItemsHandler.WIP
 import alfheim.common.core.util.AlfheimTab
 import alfheim.common.item.block.*
 import alfheim.common.item.creator.*
+import alfheim.common.item.equipment.armor.*
 import alfheim.common.item.equipment.armor.elemental.*
 import alfheim.common.item.equipment.armor.elvoruim.*
 import alfheim.common.item.equipment.armor.fenrir.*
@@ -19,14 +20,11 @@ import alfheim.common.item.material.*
 import alfheim.common.item.material.ElvenResourcesMetas.*
 import alfheim.common.item.relic.*
 import alfheim.common.item.rod.*
-import alfheim.common.item.equipment.armor.*
-import alfheim.common.item.material.ItemEventResource
 import net.minecraft.init.Items
 import net.minecraft.item.*
 import net.minecraftforge.oredict.OreDictionary
 import vazkii.botania.common.Botania
 import vazkii.botania.common.block.ModBlocks
-import vazkii.botania.common.item.ItemThornChakram
 import vazkii.botania.common.item.ModItems
 import vazkii.botania.common.item.record.ItemModRecord
 import vazkii.botania.common.item.relic.ItemDice
@@ -54,6 +52,12 @@ object AlfheimItems {
 	val crescentMoonAmulet: Item
 	val daolos: Item
 	val deathSeed: Item
+	val discFenrir: Item
+	val discFlugel: Item
+	val discFlugelMeme: Item
+	val discFlugelUltra: Item
+	val discSurtr: Item
+	val discThrym: Item
 	val dodgeRing: Item
 	val elementalBoots: Item
 	val elementalChestplate: Item
@@ -78,9 +82,8 @@ object AlfheimItems {
 	val fenrirHelmet: Item
 	val fenrirHelmetRevealing: Item?
 	val fenrirLeggings: Item
+	val fenrirLoot: Item
 	val fireGrenade: Item
-	val flugelDisc: Item
-	val flugelDisc2: Item
 	val flugelHead: Item
 	val flugelHead2: Item
 	val flugelSoul: Item
@@ -176,7 +179,7 @@ object AlfheimItems {
 		attributionBauble = ItemAttributionBauble()
 		auraRingElven = ItemAuraRingAlfheim("AuraRingElven")
 		auraRingGod = ItemAuraRingAlfheim("AuraRingGod", 2)
-		auraRingPink = ItemAuraRingAlfheim("AuraRingPink", 50)
+		auraRingPink = ItemAuraRingAlfheim("AuraRingPink", 50, 0.075f)
 		balanceCloak = ItemBalanceCloak()
 		cloudPendant = ItemCloudPendant()
 		cloudPendantSuper = ItemCloudPendant("SuperCloudPendant", 3)
@@ -187,6 +190,12 @@ object AlfheimItems {
 		crescentMoonAmulet = ItemCrescentMoonAmulet()
 		daolos = ItemDaolos()
 		deathSeed = ItemDeathSeed()
+		discFenrir = ItemModRecord("fenrir", "FenrirDisc").setCreativeTab(AlfheimTab)
+		discFlugel = ItemModRecord("flugel", "FlugelDisc").setCreativeTab(AlfheimTab)
+		discFlugelMeme = ItemModRecord("miku", "MikuDisc").setCreativeTab(null)
+		discFlugelUltra = ItemModRecord("flugel_ultra", "FlugelUltraDisc").setCreativeTab(AlfheimTab)
+		discSurtr = ItemModRecord("surtr", "SurtrDisc").setCreativeTab(AlfheimTab)
+		discThrym = ItemModRecord("thrym", "ThrymDisc").setCreativeTab(AlfheimTab)
 		dodgeRing = ItemDodgeRing()
 		fireGrenade = ItemFireGrenade()
 		elementalHelmet = ItemElementalWaterHelm()
@@ -212,8 +221,7 @@ object AlfheimItems {
 		fenrirLeggings = ItemFenrirArmor(2, "FenrirLeggings")
 		fenrirBoots = ItemFenrirArmor(3, "FenrirBoots")
 		fenrirClaws = ItemFenrirClaws()
-		flugelDisc = ItemModRecord("flugel", "FlugelDisc").setCreativeTab(AlfheimTab)
-		flugelDisc2 = ItemModRecord("miku", "MikuDisc").setCreativeTab(null)
+		fenrirLoot = ItemFenrirLoot()
 		flugelHead = ItemHeadFlugel()
 		flugelHead2 = ItemHeadMiku()
 		flugelSoul = ItemFlugelSoul()
@@ -232,7 +240,7 @@ object AlfheimItems {
 		manaMirrorImba = ItemManaMirrorImba()
 		manaRingElven = ItemManaStorageRing("ManaRingElven", 5.0)
 		manaRingGod = ItemManaStorageRing("ManaRingGod", 10.0)
-		manaRingPink = ItemManaStorageRing("ManaRingPink", 1.0)
+		manaRingPink = ItemManaStorageRing("ManaRingPink", 1.0, 0.075f)
 		manaStone = ItemManaStorage("ManaStone", 3.0)
 		manaStoneGreater = ItemManaStorage("ManaStoneGreater", 8.0)
 		mask = ItemTankMask()

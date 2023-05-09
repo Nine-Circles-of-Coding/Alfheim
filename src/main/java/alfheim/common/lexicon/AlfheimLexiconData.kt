@@ -489,9 +489,10 @@ object AlfheimLexiconData {
 		flowerWind.setLexiconPages(PageText("0"), PagePetalRecipe("1", AlfheimRecipes.recipeWindFlower)).icon = BotaniaAPI.internalHandler.getSubTileAsStack("windFlower")
 		
 		flugel.setLexiconPages(PageText("0"), PageText("1"), PageText("2")).icon = ItemStack(ModItems.flightTiara, 1, 1)
-		LexiconRecipeMappings.map(ItemStack(AlfheimItems.flugelDisc), flugel, 0)
+		LexiconRecipeMappings.map(ItemStack(AlfheimItems.discFlugel), flugel, 0)
+		LexiconRecipeMappings.map(ItemStack(AlfheimItems.discFlugelMeme), flugel, 0)
+		LexiconRecipeMappings.map(ItemStack(AlfheimItems.discFlugelUltra), flugel, 0)
 		LexiconRecipeMappings.map(ItemStack(AlfheimItems.flugelHead), flugel, 0)
-		LexiconRecipeMappings.map(ItemStack(AlfheimItems.flugelDisc2), flugel, 0)
 		LexiconRecipeMappings.map(ItemStack(AlfheimItems.flugelHead2), flugel, 0)
 		
 		fracturedSpace.setLexiconPages(PageText("0"), PageText("1"), PageText("2"), PageCraftingRecipe("3", AlfheimRecipes.recipeRodBlackhole))

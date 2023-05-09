@@ -163,12 +163,16 @@ open class ItemFenrirArmor(slot: Int, name: String): ItemManasteelArmor(slot, na
 		
 		@SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
 		fun onLivingAttack(e: LivingAttackEvent) {
+			val target = e.entityLiving
 			val attacker = e.source.entity as? EntityPlayer ?: return
 			val flagSet = hasSet(attacker)
 			val flagClaws = attacker.heldItem?.item is ItemFenrirClaws
 			if (e.source.damageType == "player" && ((flagSet && attacker.heldItem == null) || flagClaws)) {
 				e.source.setDamageBypassesArmor()
 				e.isCanceled = false
+				
+				if (ASJUtilities.chance(if (flagSet) 20 else 5))
+					target.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDBleeding, 100, if (flagSet) 3 else 1))
 			}
 		}
 		

@@ -2145,8 +2145,8 @@ object AlfheimRecipes {
 		addShapelessOreDictRecipe(ItemStack(lightRelay, 1, 3), lightRelay, animatedTorch)
 		recipeLuminizer3 = BotaniaAPI.getLatestAddedRecipe()
 		
-		addShapelessRecipe(ItemStack(brown_mushroom), mushroom)
-		addShapelessRecipe(ItemStack(red_mushroom), mushroom)
+		addShapelessRecipe(ItemStack(brown_mushroom), ItemStack(mushroom, 1, OreDictionary.WILDCARD_VALUE))
+		addShapelessRecipe(ItemStack(red_mushroom), ItemStack(mushroom, 1, OreDictionary.WILDCARD_VALUE))
 		
 		addShapelessRecipe(NiflheimBlockMetas.COBBLESTONE.stack, NiflheimBlockMetas.STONE.stack)
 		
@@ -2168,8 +2168,6 @@ object AlfheimRecipes {
 			if (i != 2)
 				addSmelting(ItemStack(altWood1, 1, i), ItemStack(coal, 1, 1), 0.15f)
 		}
-		
-		addSmelting(lit_redstone_ore, ItemStack(redstone), 0.7f)
 		
 		addSmelting(irisWood0, ItemStack(coal, 1, 1), 0.15f)
 		addSmelting(irisWood1, ItemStack(coal, 1, 1), 0.15f)

@@ -133,6 +133,13 @@ class EntitySurtr(world: World): EntityPrimalBoss(world), IMuspelheimEntity {
 		return super.attackEntityFrom(source, damage)
 	}
 	
+	override fun getHitSound() = ""
+	override fun getSpinningSound() = ""
+	override fun getStrikeSound() = ""
+	override fun getSwingSound() = ""
+	override fun getSuctionSound() = ""
+	override fun getWhirlwindSound() = ""
+	
 	override fun getAttributeValues() = doubleArrayOf(64.0, 0.95, 0.5, 3500.0)
 	override fun getEquipment() = equipment
 	override fun getRelics() = arrayOf(AlfheimAchievements.daolos to AlfheimItems.daolos, AlfheimAchievements.subspace to AlfheimItems.subspaceSpear)

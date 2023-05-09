@@ -2,7 +2,9 @@ package alfheim.common.entity.boss.primal
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.*
+import alfheim.api.ModInfo
 import alfheim.api.entity.INiflheimEntity
+import alfheim.client.sound.PrimalBossMovingSound
 import alfheim.common.achievement.AlfheimAchievements
 import alfheim.common.core.handler.*
 import alfheim.common.core.handler.CardinalSystem.KnowledgeSystem
@@ -21,10 +23,8 @@ import alfheim.common.potion.PotionEternity
 import cpw.mods.fml.relauncher.*
 import net.minecraft.entity.*
 import net.minecraft.entity.player.*
-import net.minecraft.item.Item
 import net.minecraft.network.play.server.S12PacketEntityVelocity
 import net.minecraft.potion.Potion
-import net.minecraft.stats.Achievement
 import net.minecraft.util.DamageSource
 import net.minecraft.world.World
 import java.awt.Rectangle
@@ -35,10 +35,16 @@ class EntityThrym(world: World): EntityPrimalBoss(world), INiflheimEntity {
 	override val whirlParticleSet = 0
 	override val arenaName = "Thrym"
 	
+	var sucks
+		get() = getFlag(8)
+		set(value) = setFlag(8, value)
+	
 	init {
 		tasks.addTask(0, ThrymAIThirdStageStart(this))
 		
 		tasks.addTask(1, ThrymAISecondStageStart(this))
+		
+		mc.soundHandler.playSound(PrimalBossMovingSound(this, getSuctionSound()) { host.ultAnimationTicks.also { volume = if (sucks || !ASJBitwiseHelper.getBit(it, 9) && it in 11..69) 1f else 0f } })
 	}
 	
 	override fun doRangedAttack(players: ArrayList<EntityPlayer>) {
@@ -47,9 +53,11 @@ class EntityThrym(world: World): EntityPrimalBoss(world), INiflheimEntity {
 			lookHelper.setLookPosition(target.posX, target.posY + target.eyeHeight, target.posZ, 10f, verticalFaceSpeed.F)
 			
 			EntityIcicle(worldObj, this).apply {
+				playSoundAtEntity("${ModInfo.MODID}:thrym.icicle.form", 1f, 1f)
 				this.target = target
 				setPosition(posX + Math.random() - 0.5, posY + Math.random() - 0.5, posZ + Math.random() - 0.5)
 				spawn()
+				playSoundAtEntity("${ModInfo.MODID}:thrym.icicle.shot", 1f, 1f)
 			}
 		}
 	}
@@ -82,6 +90,16 @@ class EntityThrym(world: World): EntityPrimalBoss(world), INiflheimEntity {
 		}
 	}
 	
+	override fun getDeathSound() = "${ModInfo.MODID}:thrym.death"
+	override fun getHurtSound() = "${ModInfo.MODID}:thrym.hurt"
+	
+	override fun getHitSound() = "${ModInfo.MODID}:thrym.axe.hit"
+	override fun getSpinningSound() = "${ModInfo.MODID}:thrym.axe.rotate"
+	override fun getStrikeSound() = "${ModInfo.MODID}:thrym.axe.strike"
+	override fun getSwingSound() = "${ModInfo.MODID}:thrym.axe.swing"
+	override fun getSuctionSound() = "${ModInfo.MODID}:thrym.suction"
+	override fun getWhirlwindSound() = "${ModInfo.MODID}:thrym.whirlwind"
+	
 	override fun getAttributeValues() = doubleArrayOf(64.0, 0.95, 0.5, 3000.0)
 	override fun getEquipment() = equipment
 	override fun getRelics() = arrayOf(AlfheimAchievements.mjolnir to AlfheimItems.mjolnir, AlfheimAchievements.gjallarhorn to AlfheimItems.gjallarhorn)
@@ -96,6 +114,7 @@ class EntityThrym(world: World): EntityPrimalBoss(world), INiflheimEntity {
 	override fun summonProtector() = EntityDedMoroz(worldObj, posX, posY, posZ).apply {
 		noLoot = true
 		forceSpawn = true
+		playSoundAtEntity("${ModInfo.MODID}:thrym.summon", 1f, 1f)
 		spawn()
 	}
 	

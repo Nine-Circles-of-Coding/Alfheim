@@ -3,10 +3,11 @@ package alfheim.common.entity.boss.primal
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.render.ICustomArmSwingEndEntity
-import alfheim.api.AlfheimAPI
+import alfheim.api.*
 import alfheim.api.boss.IBotaniaBossWithName
 import alfheim.api.entity.IIntersectAttackEntity
 import alfheim.client.render.world.VisualEffectHandlerClient
+import alfheim.client.sound.PrimalBossMovingSound
 import alfheim.common.core.handler.*
 import alfheim.common.core.util.DamageSourceSpell
 import alfheim.common.entity.*
@@ -99,6 +100,11 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 		targetTasks.addTask(0, PrimalAISelectTarget(this, 64, 16))
 		
 		addRandomArmor()
+		
+		if (ASJUtilities.isClient) {
+			mc.soundHandler.playSound(PrimalBossMovingSound(this, getSpinningSound()) { volume = if (host.ultAnimationTicks > 512) 1f else 0f })
+			mc.soundHandler.playSound(PrimalBossMovingSound(this, getWhirlwindSound()) { volume = if (host.whirl) 1f else 0f })
+		}
 	}
 	
 	override fun entityInit() {
@@ -189,7 +195,7 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 	
 	override fun swingItem() {
 		if (ultAnimationTicks > 0) return
-		
+		playSoundAtEntity(getSwingSound(), 1f, 1f)
 		super.swingItem()
 	}
 	
@@ -207,6 +213,7 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 		getEntitiesWithinAABB(worldObj, Entity::class.java, target.boundingBox(2)).forEach { around ->
 			if (around === this) return@forEach
 			if (!around.attackEntityFrom(defaultWeaponDamage(around), getEntityAttribute(SharedMonsterAttributes.attackDamage).attributeValue.F * if (stage > 1) 1.5f else 1f)) return@forEach
+			around.playSoundAtEntity(getHitSound(), 1f, 1f)
 			damaged = true
 			applyCustomWeaponDamage(around)
 		}
@@ -459,6 +466,13 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 	override fun getCustomArmSwingAnimationEnd() = 10
 	override fun getExtraReach() = 5.5
 	override fun isAIEnabled() = true
+	
+	abstract fun getHitSound(): String
+	abstract fun getSpinningSound(): String
+	abstract fun getStrikeSound(): String
+	abstract fun getSwingSound(): String
+	abstract fun getSuctionSound(): String
+	abstract fun getWhirlwindSound(): String
 	
 	override fun writeEntityToNBT(nbt: NBTTagCompound) {
 		super.writeEntityToNBT(nbt)

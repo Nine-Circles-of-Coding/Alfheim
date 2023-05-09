@@ -150,8 +150,12 @@ object SheerColdHandler {
 	
 	@SubscribeEvent
 	fun weakHands(e: PlayerInteractAdequateEvent) {
-		if (ItemPendant.canProtect(e.player, NIFLHEIM, 0)) return
-		if (abs(e.player.cold) > 90 && ASJUtilities.chance(0.5))
+		if (abs(e.player.cold) < 90) return
+
+		if (e.player.cold > 0 && ItemPendant.canProtect(e.player, NIFLHEIM, 0)) return
+		if (e.player.cold < 0 && ItemPendant.canProtect(e.player, MUSPELHEIM, 0)) return
+
+		if (ASJUtilities.chance(0.5))
 			e.player.dropOneItem(true)
 	}
 	

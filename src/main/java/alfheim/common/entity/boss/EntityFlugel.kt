@@ -324,7 +324,7 @@ class EntityFlugel(world: World): EntityCreature(world), IBotaniaBossWithName {
 				droppedRecord = true
 			}
 			
-			if (!droppedRecord && Math.random() < 0.2) entityDropItem(ItemStack(if (isMiku) AlfheimItems.flugelDisc2 else AlfheimItems.flugelDisc), 1f)
+			if (!droppedRecord && Math.random() < 0.2) entityDropItem(ItemStack(if (isMiku) AlfheimItems.discFlugelMeme else if (isUltraMode) AlfheimItems.discFlugelUltra else AlfheimItems.discFlugel), 1f)
 		}
 		
 		if (ConfigHandler.relicsEnabled && !hard) {
@@ -358,7 +358,7 @@ class EntityFlugel(world: World): EntityCreature(world), IBotaniaBossWithName {
 		if (players.isEmpty() && aiTask != AITask.NONE) dropState()
 		
 		if (ASJUtilities.isClient && !isDead && players.isNotEmpty() && !worldObj.isRecordPlaying(sx, sy, sz))
-			worldObj.playRecord((if (isMiku) AlfheimItems.flugelDisc2 else AlfheimItems.flugelDisc) as ItemRecord, sx, sy, sz)
+			worldObj.playRecord((if (isMiku) AlfheimItems.discFlugelMeme else if (isUltraMode) AlfheimItems.discFlugelUltra else AlfheimItems.discFlugel) as ItemRecord, sx, sy, sz)
 		
 		if (ticksExisted % 20 == 0) {
 			// PARTYKLZ!!!

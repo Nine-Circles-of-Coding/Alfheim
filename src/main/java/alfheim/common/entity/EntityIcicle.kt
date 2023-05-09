@@ -1,6 +1,7 @@
 package alfheim.common.entity
 
 import alexsocol.asjlib.*
+import alfheim.api.ModInfo
 import alfheim.common.core.handler.CardinalSystem
 import alfheim.common.core.util.DamageSourceSpell
 import cpw.mods.fml.relauncher.*
@@ -46,6 +47,7 @@ class EntityIcicle: Entity {
 		val dmg = DamageSourceSpell.nifleice(caster)
 //		if (rand.nextInt(10) == 0) dmg.setDamageBypassesArmor().setDamageIsAbsolute()
 		mop?.entityHit?.attackEntityFrom(dmg, 5f)
+		playSoundAtEntity("${ModInfo.MODID}:thrym.icicle.hit", 1f, 1f)
 		setDead()
 	}
 	

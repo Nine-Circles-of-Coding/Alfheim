@@ -159,19 +159,18 @@ object ElementalDamageAdapter {
 		setAir = false
 	}
 	
-	
 	@JvmStatic
 	@Hook(targetMethod = "inflictDamage")
 	fun inflictDamagePre(entity: EntityPrimalArrow, mop: MovingObjectPosition?): Boolean {
 		when (entity.type) {
-			0 -> ::setAir
-			1 -> ::setFire
-			2 -> ::setWater
-			3 -> ::setEarth
-			4 -> ::setLightness
-			5 -> ::setDarkness
+			0 -> setAir = true
+			1 -> setFire = true
+			2 -> setWater = true
+			3 -> setEarth = true
+			4 -> setLightness = true
+			5 -> setDarkness = true
 			else -> return false
-		}.set(true) // shitty hacks
+		}
 		
 		return false
 	}

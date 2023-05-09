@@ -2,6 +2,7 @@ package alfheim.common.entity.boss.primal.ai.thrym
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
+import alfheim.api.ModInfo
 import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.core.handler.*
 import alfheim.common.entity.boss.primal.EntityThrym
@@ -27,7 +28,9 @@ class ThrymAIThirdStageStart(val host: EntityThrym): EntityAIBase() {
 	override fun startExecuting() {
 		val src = host.source
 		
+		host.playSoundAtEntity("${ModInfo.MODID}:thrym.shield.teleport", 1f, 1f)
 		host.setPosition(src)
+		host.playSoundAtEntity("${ModInfo.MODID}:thrym.shield.form", 1f, 1f)
 		
 		inside = host.playersOnArena().apply { removeAll { it.health > it.maxHealth * 0.5 } }.mapTo(HashSet()) {
 			it.setPositionAndUpdate(host.posX, host.posY, host.posZ)
@@ -153,6 +156,7 @@ class ThrymAIThirdStageStart(val host: EntityThrym): EntityAIBase() {
 		shouldEnd = false
 		eternal = false
 		timer = 0
+		host.playSoundAtEntity("${ModInfo.MODID}:thrym.shield.break", 1f, 1f)
 	}
 	
 	override fun isInterruptible() = false

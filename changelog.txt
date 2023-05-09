@@ -1,5 +1,13 @@
 Innovations:
+ Set of new drops to Fenrir, designed and created by ChatGPT :D
+ Elementium mana and aura rings now can spawn a pixie
+ Fenrir claws now got a chance (higher with full Fenrir set) to impose bleeding on hit
+ Flugel music updated to remaster
+ Flugel tier 3 as well as Thrym, Surtr and Fenrir now got own music
+ Beast Within and Bleeding potions are now not MMO-mode exclusive (configs updated)
  
-
 Fixes:
- 
+ Removed recipe that caused crash with EtFR
+ Fixed WireAxe HRT abuse #259
+ Fixed mushroom recipes
+ Fixed overheat/cold weak hands effect

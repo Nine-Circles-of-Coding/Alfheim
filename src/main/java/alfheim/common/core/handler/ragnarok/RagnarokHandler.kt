@@ -195,6 +195,7 @@ object RagnarokHandler {
 			
 			server.configurationManager.playerEntityList.forEach { player -> player as EntityPlayerMP
 				ASJUtilities.say(player, "alfheimmisc.ragnarok.start", EnumChatFormatting.DARK_RED)
+				player.playSoundAtEntity("${ModInfo.MODID}:surtr.laugh", 1f, 1f)
 			}
 			
 			blizzards.iterator().onEach {

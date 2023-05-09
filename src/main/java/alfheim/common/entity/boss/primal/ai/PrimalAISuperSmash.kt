@@ -26,6 +26,7 @@ class PrimalAISuperSmash(val host: EntityPrimalBoss): EntityAIBase() {
 			return
 		}
 		
+		host.playSoundAtEntity(host.getStrikeSound(), 1f, 1f)
 		val list = getEntitiesWithinAABB(host.worldObj, EntityLivingBase::class.java, host.boundingBox().expand(9.0, 4.5, 9.0).offset(0.0, 4.5, 0.0))
 		list.removeAll { !host.canTarget(it) }
 		list.forEach(host::doSuperSmashAttack)

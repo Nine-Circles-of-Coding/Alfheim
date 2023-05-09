@@ -235,21 +235,24 @@ object AlfheimHookHandler {
 	@JvmStatic
 	@Hook(returnCondition = ON_TRUE)
 	fun transferPlayerToDimension(scm: ServerConfigurationManager, player: EntityPlayerMP, dimTo: Int, teleporter: Teleporter?): Boolean {
+		val let = false
+		val block = true
+		
 		if (allowtp) {
 			allowtp = false
-			return false
+			return let
 		}
 		
-		if (player.capabilities.isCreativeMode) return false
-		if (dimTo == dimensionIDHelheim) return false
-		if (dimTo == dimensionIDDomains) return true // only with TileDomainLobby
+		if (player.capabilities.isCreativeMode) return let
+		if (dimTo == dimensionIDHelheim) return let
+		if (dimTo == dimensionIDDomains) return block // only with TileDomainLobby
 		
 		return when (player.dimension) {
 			dimensionIDDomains  -> dimTo != (player.entityData.getIntArray(TileDomainLobby.TAG_DOMAIN_ENTRANCE).getOrNull(3) ?: dimTo)
 			dimensionIDAlfheim  -> dimTo != 0 && dimTo != dimensionIDNiflheim
 			dimensionIDNiflheim -> dimTo != dimensionIDAlfheim
-			dimensionIDHelheim  -> true // no way out except TileRainbowManaFlame#exitPlayer
-			else                -> false
+			dimensionIDHelheim  -> block // no way out except TileRainbowManaFlame#exitPlayer
+			else                -> let
 		}
 	}
 	
@@ -1023,7 +1026,7 @@ object AlfheimHookHandler {
 	
 	@JvmStatic
 	@Hook
-	fun onBlockPlacedBy(subtile: SubTileEntity, world: World, x: Int, y: Int, z: Int, entity: EntityLivingBase, stack: ItemStack) {
+	fun onBlockPlacedBy(subtile: SubTileEntity, world: World?, x: Int, y: Int, z: Int, entity: EntityLivingBase?, stack: ItemStack?) {
 		if (subtile is SubTileDaybloom && subtile.isPrime) subtile.setPrimusPosition()
 	}
 	

@@ -340,9 +340,9 @@ object AlfheimConfigHandler: ASJConfigHandler() {
 		materialIDs = loadProp(CATEGORY_INT_TiC, "TiC.materialIDs", materialIDs, true, "IDs for Elementium, Elvorium, Manasteel, Mauftrium, Terrasteel, Livingwood, Dreamwood, Livingrock, Redstring, Manastring materials respectively")
 		modifierIDs = loadProp(CATEGORY_INT_TiC, "TiC.modifierIDs", modifierIDs, true, "IDs for ManaCore modifiers respectively")
 		
-		potionIDBeastWithin = loadProp(CATEGORY_MMOP, "potionIDBeastWithin", potionIDBeastWithin, true, "Potion id Beast Within")
+		potionIDBeastWithin = loadProp(CATEGORY_POTIONS, "potionIDBeastWithin", potionIDBeastWithin, true, "Potion id Beast Within")
 		potionIDBerserk = loadProp(CATEGORY_POTIONS, "potionIDBerserk", potionIDBerserk, true, "Potion id for Berserk")
-		potionIDBleeding = loadProp(CATEGORY_MMOP, "potionIDBleeding", potionIDBleeding, true, "Potion id for Bleeding")
+		potionIDBleeding = loadProp(CATEGORY_POTIONS, "potionIDBleeding", potionIDBleeding, true, "Potion id for Bleeding")
 		potionIDButterShield = loadProp(CATEGORY_MMOP, "potionIDButterShield", potionIDButterShield, true, "Potion id for Butterfly Shield")
 		potionIDDeathMark = loadProp(CATEGORY_MMOP, "potionIDDeathMark", potionIDDeathMark, true, "Potion id for Death Mark")
 		potionIDDecay = loadProp(CATEGORY_MMOP, "potionIDDecay", potionIDDecay, true, "Potion id for Decay")

@@ -79,7 +79,6 @@ import net.minecraft.world.chunk.Chunk
 import net.minecraft.world.gen.structure.*
 import net.minecraftforge.common.util.ForgeDirection
 import net.minecraftforge.fluids.IFluidBlock
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import ru.vamig.worldengine.*
 import travellersgear.api.TravellersGearAPI
@@ -969,8 +968,7 @@ object AlfheimHookHandler {
 	@Hook(returnCondition = ON_TRUE, injectOnExit = true, returnAnotherMethod = "sizeCheck")
 	fun matches(recipe: RecipeManaInfusion, stack: ItemStack, @ReturnValue matches: Boolean): Boolean {
 		if (!matches) return false
-		if (recipe.input !is ItemStack) return false
-		return true
+		return recipe.input is ItemStack
 	}
 	
 	@JvmStatic

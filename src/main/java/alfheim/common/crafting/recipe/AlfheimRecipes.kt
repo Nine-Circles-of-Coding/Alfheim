@@ -41,7 +41,6 @@ import alfheim.api.lib.LibOreDict.SPLINTERS_THUNDERWOOD
 import alfheim.api.lib.LibOreDict.TWIG_NETHERWOOD
 import alfheim.api.lib.LibOreDict.TWIG_THUNDERWOOD
 import alfheim.api.lib.LibOreDict.WOOD
-import alfheim.common.block.AlfheimBlocks
 import alfheim.common.block.AlfheimBlocks.airyVirus
 import alfheim.common.block.AlfheimBlocks.alfStorage
 import alfheim.common.block.AlfheimBlocks.alfheimPortal
@@ -264,6 +263,7 @@ import alfheim.common.item.AlfheimItems.wiltedLotus
 import alfheim.common.item.block.*
 import alfheim.common.item.material.ElvenFoodMetas.*
 import alfheim.common.item.material.ElvenResourcesMetas.*
+import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.common.registry.GameRegistry.*
 import net.minecraft.block.Block
 import net.minecraft.init.*
@@ -276,14 +276,12 @@ import net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE
 import vazkii.botania.api.BotaniaAPI
 import vazkii.botania.api.recipe.*
 import vazkii.botania.common.Botania
-import vazkii.botania.common.block.ModBlocks
 import vazkii.botania.common.block.ModBlocks.*
 import vazkii.botania.common.block.ModFluffBlocks.*
 import vazkii.botania.common.block.tile.mana.TilePool
 import vazkii.botania.common.core.helper.ItemNBTHelper
 import vazkii.botania.common.crafting.*
 import vazkii.botania.common.crafting.ModCraftingRecipes.*
-import vazkii.botania.common.item.ModItems
 import vazkii.botania.common.item.ModItems.*
 import vazkii.botania.common.item.block.ItemBlockSpecialFlower
 import vazkii.botania.common.lib.LibBlockNames
@@ -824,7 +822,12 @@ object AlfheimRecipes {
 						 'P', icePendant)
 		recipeNiflheimPendant = BotaniaAPI.getLatestAddedRecipe()
 		
-		addRecipe(ItemStack(AlfheimBlocks.rainbowFlowerFloating),
+		addOreDictRecipe(ElvenFertilizer.stack(8),
+		                 "PPP", "PIP", "PPP",
+		                 'I', IFFESAL_DUST,
+						 'P', FLORAL_POWDER)
+		
+		addRecipe(ItemStack(rainbowFlowerFloating),
 		          "F", "S", "D",
 		          'F', ItemStack(rainbowGrass, 1, 3),
 		          'S', ItemStack(grassSeeds),
@@ -2145,8 +2148,8 @@ object AlfheimRecipes {
 		addShapelessOreDictRecipe(ItemStack(lightRelay, 1, 3), lightRelay, animatedTorch)
 		recipeLuminizer3 = BotaniaAPI.getLatestAddedRecipe()
 		
-		addShapelessRecipe(ItemStack(brown_mushroom), ItemStack(mushroom, 1, OreDictionary.WILDCARD_VALUE))
-		addShapelessRecipe(ItemStack(red_mushroom), ItemStack(mushroom, 1, OreDictionary.WILDCARD_VALUE))
+		addShapelessRecipe(ItemStack(brown_mushroom), ItemStack(mushroom, 1, WILDCARD_VALUE))
+		addShapelessRecipe(ItemStack(red_mushroom), ItemStack(mushroom, 1, WILDCARD_VALUE))
 		
 		addShapelessRecipe(NiflheimBlockMetas.COBBLESTONE.stack, NiflheimBlockMetas.STONE.stack)
 		
@@ -2430,6 +2433,8 @@ object AlfheimRecipes {
 		RecipeSorter.register("${ModInfo.MODID}:aesirCloak", RecipeAesirCloak::class.java, RecipeSorter.Category.SHAPED, "")
 		addRecipe(RecipeLensSplit)
 		RecipeSorter.register("${ModInfo.MODID}:lenssplit", RecipeLensSplit::class.java, RecipeSorter.Category.SHAPELESS, "")
+		addRecipe(RecipeSpecialFloatingFlower)
+		RecipeSorter.register("${ModInfo.MODID}:floatingSpecialFlower", RecipeSpecialFloatingFlower::class.java, RecipeSorter.Category.SHAPELESS, "")
 	}
 	
 	private fun banRetrades() {

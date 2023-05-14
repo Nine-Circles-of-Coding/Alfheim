@@ -17,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.*
 import net.minecraftforge.common.*
+import tconstruct.library.crafting.PatternBuilder
 import java.util.*
 import kotlin.collections.ArrayList
 

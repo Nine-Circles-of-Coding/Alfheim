@@ -11,6 +11,7 @@ import alfheim.common.core.handler.CardinalSystem.KnowledgeSystem
 import alfheim.common.core.handler.CardinalSystem.KnowledgeSystem.Knowledge
 import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.item.*
+import alfheim.common.item.equipment.bauble.faith.FaithHandlerSif
 import alfheim.common.item.material.ElvenResourcesMetas.*
 import alfheim.common.item.material.ElvenResourcesMetas.Companion.of
 import alfheim.common.world.dim.niflheim.ChunkProviderNiflheim
@@ -18,6 +19,7 @@ import cpw.mods.fml.common.IFuelHandler
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.relauncher.*
+import net.minecraft.block.IGrowable
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.Entity
@@ -238,8 +240,8 @@ class ItemElvenResource: ItemMod("ElvenItems"), IElvenItem, IFlowerComponent, IF
 	
 	override fun getItemStackLimit(stack: ItemStack) = if (stack.meta == WisdomBottle.I || stack.meta == DomainKey.I) 1 else 64
 	
-	override fun onItemUse(stack: ItemStack, player: EntityPlayer?, world: World, x: Int, y: Int, z: Int, side: Int, par8: Float, par9: Float, par10: Float): Boolean {
-		val block = world.getBlock(x, y, z)
+	override fun onItemUse(stack: ItemStack, player: EntityPlayer, world: World, x: Int, y: Int, z: Int, side: Int, par8: Float, par9: Float, par10: Float): Boolean {
+		var block = world.getBlock(x, y, z)
 		// Fabulous manapool
 		if (block === ModBlocks.pool && world.getBlockMetadata(x, y, z) == 0 && stack.meta == RainbowDust.I) {
 			world.setBlockMetadataWithNotify(x, y, z, 3, 2)
@@ -261,7 +263,7 @@ class ItemElvenResource: ItemMod("ElvenItems"), IElvenItem, IFlowerComponent, IF
 			return true
 		} else
 		// Burying petal
-		if (side == 1 && AlfheimBlocks.rainbowGrass.canBlockStay(world, x, y + 1, z) && stack.meta == RainbowPetal.I) {
+		if (side == 1 && block.isAir(world, x, y + 1, z) && AlfheimBlocks.rainbowGrass.canBlockStay(world, x, y + 1, z) && stack.meta == RainbowPetal.I) {
 			world.setBlock(x, y + 1, z, AlfheimBlocks.rainbowGrass, BlockRainbowGrass.BURIED, 3)
 			stack.stackSize--
 			return true
@@ -274,6 +276,17 @@ class ItemElvenResource: ItemMod("ElvenItems"), IElvenItem, IFlowerComponent, IF
 				if (!world.isRemote) ASJUtilities.say(player, "alfheimmisc.gaia.wrongitem")
 				false
 			}
+		} else
+		// apply fertilizer
+		if (stack.meta == ElvenFertilizer.I) {
+			var did = false
+			for (i in 0..2) {
+				did = (block is IGrowable && block.func_149851_a(world, x, y, z, world.isRemote) && FaithHandlerSif.bonemeal(world, block, x, y, z, player, stack, 0, false)) || did
+				block = world.getBlock(x, y, z)
+			}
+			if (did)
+				stack.stackSize--
+			return did
 		}
 		return false
 	}
@@ -347,6 +360,7 @@ enum class ElvenResourcesMetas {
 	RiftShardMuspelheim,
 	RiftShardNiflheim,
 	DomainKey,
+	ElvenFertilizer,
 	;
 	
 	val I get() = ordinal

@@ -4,10 +4,15 @@ Innovations:
  Fenrir claws now got a chance (higher with full Fenrir set) to impose bleeding on hit
  Flugel music updated to remaster
  Flugel tier 3 as well as Thrym, Surtr and Fenrir now got own music
+ Thrym got sounds for his actions
  Beast Within and Bleeding potions are now not MMO-mode exclusive (configs updated)
+ Elven fertilizer that is three times more potent that bonemeal
  
 Fixes:
- Removed recipe that caused crash with EtFR
- Fixed WireAxe HRT abuse #259
- Fixed mushroom recipes
- Fixed overheat/cold weak hands effect
+ Crash with EtFR
+ WireAxe HRT abuse #259
+ Floating bifrost flower flaws #266
+ IguanaTweaksTConstruct support #271
+ Bifrost petal block breaker #272
+ Mushroom recipes
+ Over- heat/cold weak hands effect

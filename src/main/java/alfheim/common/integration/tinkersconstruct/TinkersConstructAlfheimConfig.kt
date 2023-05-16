@@ -9,6 +9,7 @@ import alfheim.common.integration.ThermalFoundationIntegration
 import alfheim.common.item.AlfheimItems
 import alfheim.common.item.material.ElvenResourcesMetas
 import cpw.mods.fml.common.Loader
+import cpw.mods.fml.common.event.FMLInterModComms
 import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage
 import net.minecraft.block.Block
 import net.minecraft.init.Items
@@ -106,8 +107,8 @@ object TinkersConstructAlfheimConfig {
 	val iguanaShit = Loader.isModLoaded("IguanaTweaksTConstruct")
 	
 	// Hackery for stupid Iguana -_- because it ignores the presence of IMC
-	// Sorry, but go and optimize it with AT by yourself
-	var _IMCMessage by lazy {
+	// Sorry but go and "optimize" it with AT by yourself if you want to D:
+	val _IMCMessage by lazy {
 		IMCMessage::class.java.getDeclaredConstructor(String::class.java, Any::class.java).also { it.isAccessible = true }
 	}
 	

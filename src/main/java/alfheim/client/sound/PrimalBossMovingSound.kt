@@ -8,6 +8,8 @@ class PrimalBossMovingSound(val host: EntityPrimalBoss, sound: String, val updat
 	
 	init {
 		repeat = true
+		// starting at 0 because NEI (or something else) instantiates bosses and the sound is there on first world join
+		volume = 0f
 	}
 	
 	/**

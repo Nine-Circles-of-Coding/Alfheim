@@ -2,6 +2,7 @@ package alfheim.common.entity.boss.primal
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
+import alfheim.api.ModInfo
 import alfheim.api.entity.IMuspelheimEntity
 import alfheim.common.achievement.AlfheimAchievements
 import alfheim.common.core.handler.*
@@ -30,17 +31,29 @@ class EntitySurtr(world: World): EntityPrimalBoss(world), IMuspelheimEntity {
 	override val whirlParticleSet = 1
 	override val arenaName = "Surtr"
 	
+	var invulnerabilityTicks
+		get() = dataWatcher.getWatchableObjectInt(5)
+		set(value) = dataWatcher.updateObject(5, value)
+
 	var shouldSpinProtect
 		get() = getFlag(8)
 		set(value) = setFlag(8, value)
 	
-	var invulnerabilityTicks
-		get() = dataWatcher.getWatchableObjectInt(5)
-		set(value) = dataWatcher.updateObject(5, value)
+	var wall
+		get() = getFlag(9)
+		set(value) = setFlag(9, value)
 	
 	init {
 		tasks.addTask(0, SurtrAIThirdStageStart(this))
 		tasks.addTask(1, SurtrAISecondStageStart(this))
+		
+		if (ASJUtilities.isClient) {
+			mc.soundHandler.playSound(PrimalBossMovingSound(this, "${ModInfo.MODID}:surtr.wall.exist") { volume = if (wall) 1f else 0f })
+			mc.soundHandler.playSound(PrimalBossMovingSound(this, getChargeSound()) {
+				val ticks = host.ultAnimationTicks
+				volume = if (!ASJBitwiseHelper.getBit(ticks, 9) && ticks in 11..69) 1f else 0f
+			})
+		}
 	}
 	
 	override fun entityInit() {
@@ -66,6 +79,8 @@ class EntitySurtr(world: World): EntityPrimalBoss(world), IMuspelheimEntity {
 			health += 4f
 			shield += 8f
 		}
+		
+		if (ultAnimationTicks == 10) playSoundAtEntity(getChargeSound(), 1f, 1f)
 	}
 	
 	override fun doRangedAttack(players: ArrayList<EntityPlayer>) {
@@ -75,18 +90,22 @@ class EntitySurtr(world: World): EntityPrimalBoss(world), IMuspelheimEntity {
 			lookHelper.setLookPosition(target.posX, target.posY + target.eyeHeight, target.posZ, 10f, verticalFaceSpeed.F)
 			
 			EntitySpellFireball(worldObj, this).apply {
+				playSoundAtEntity("${ModInfo.MODID}:surtr.fireball.form", 0.1f, 1f)
 				this.target = target
 				noClip = false
 				setPosition(posX + Math.random() - 0.5, posY + Math.random() - 0.5, posZ + Math.random() - 0.5)
 				spawn()
+				playSoundAtEntity("${ModInfo.MODID}:thrym.fireball.form", 0.1f, 1f)
 			}
 		}
 	}
 	
 	override fun doSuperSmashAttack(target: EntityLivingBase) {
+		val attacked = target.attackEntityFrom(defaultWeaponDamage(target), 10f)
+		if (!attacked) return
+		
 		target.knockback(this, 10f)
 		if (target is EntityPlayerMP) target.playerNetServerHandler.sendPacket(S12PacketEntityVelocity(target))
-		target.attackEntityFrom(defaultWeaponDamage(target), 10f)
 		target.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDSoulburn, 100))
 	}
 	
@@ -105,10 +124,14 @@ class EntitySurtr(world: World): EntityPrimalBoss(world), IMuspelheimEntity {
 		val list = getEntitiesWithinAABB(worldObj, EntityLivingBase::class.java, aabb)
 		list.removeAll { !canTarget(it) || Vector3.entityDistance(this, it) > dist.D}
 		list.forEach {
+			val attacked = it.attackEntityFrom(defaultWeaponDamage(it), if (shouldSpinProtect) if (stage > 1) 2f else 1f else getEntityAttribute(SharedMonsterAttributes.attackDamage).attributeValue.F * 2 / 3 * if (stage > 1) 1.5f else 1f)
+			if (!attacked) return@forEach
+			
 			it.knockback(this, if (shouldSpinProtect) 0.5f else 7.5f)
 			if (it is EntityPlayerMP) it.playerNetServerHandler.sendPacket(S12PacketEntityVelocity(it))
-			it.attackEntityFrom(defaultWeaponDamage(it), if (shouldSpinProtect) if (stage > 1) 2f else 1f else getEntityAttribute(SharedMonsterAttributes.attackDamage).attributeValue.F * 2 / 3 * if (stage > 1) 1.5f else 1f)
 			if (!shouldSpinProtect) it.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDSoulburn, 50))
+			
+			playSoundAtEntity(getHitSound(), 1f, 1f)
 		}
 	}
 	
@@ -133,12 +156,15 @@ class EntitySurtr(world: World): EntityPrimalBoss(world), IMuspelheimEntity {
 		return super.attackEntityFrom(source, damage)
 	}
 	
-	override fun getHitSound() = ""
-	override fun getSpinningSound() = ""
-	override fun getStrikeSound() = ""
-	override fun getSwingSound() = ""
-	override fun getSuctionSound() = ""
-	override fun getWhirlwindSound() = ""
+	override fun getDeathSound() = "${ModInfo.MODID}:surtr.death"
+	override fun getHurtSound() = "${ModInfo.MODID}:surtr.hurt"
+	
+	override fun getChargeSound() = "${ModInfo.MODID}:surtr.sword.charge"
+	override fun getHitSound() = "${ModInfo.MODID}:surtr.sword.hit"
+	override fun getSpinningSound() = "${ModInfo.MODID}:surtr.sword.rotate"
+	override fun getStrikeSound() = "${ModInfo.MODID}:surtr.sword.strike"
+	override fun getSwingSound() = "${ModInfo.MODID}:thrym.axe.swing" // same
+	override fun getWhirlwindSound() = "${ModInfo.MODID}:surtr.whirlwind"
 	
 	override fun getAttributeValues() = doubleArrayOf(64.0, 0.95, 0.5, 3500.0)
 	override fun getEquipment() = equipment
@@ -156,6 +182,7 @@ class EntitySurtr(world: World): EntityPrimalBoss(world), IMuspelheimEntity {
 			setPosition(this@EntitySurtr)
 			noLoot = true
 			forceSpawn = true
+			playSoundAtEntity("${ModInfo.MODID}:surtr.summon", 1f, 1f)
 			spawn()
 		}
 	}
@@ -220,6 +247,8 @@ class EntitySurtr(world: World): EntityPrimalBoss(world), IMuspelheimEntity {
 	override fun getNameColor() = shieldColor.toInt()
 	
 	override val shieldColor = 0xFFFF4D00U
+	
+	override val battleMusicDisc get() = AlfheimItems.discSurtr
 	
 	companion object {
 		val equipment = arrayOf(AlfheimItems.surtrSword, AlfheimItems.volcanoBoots, AlfheimItems.volcanoLeggings, AlfheimItems.volcanoChest, AlfheimItems.volcanoHelmet)

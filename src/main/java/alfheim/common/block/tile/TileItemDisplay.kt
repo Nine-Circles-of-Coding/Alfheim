@@ -104,7 +104,7 @@ class TileItemDisplay: ASJTile(), ISidedInventory {
 	override fun openInventory() = Unit
 	override fun closeInventory() = Unit
 	override fun getInventoryStackLimit() = 1
-	override fun canUpdate() = true
+	override fun canUpdate() = false
 	override fun isItemValidForSlot(par1: Int, par2ItemStack: ItemStack?) = true
 	override fun getAccessibleSlotsFromSide(par1: Int) = slots
 	override fun canInsertItem(par1: Int, par2ItemStack: ItemStack?, par3: Int) = getStackInSlot(par1) == null

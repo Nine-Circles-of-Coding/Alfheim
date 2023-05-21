@@ -72,6 +72,7 @@ object AlfheimLexiconData {
 	lateinit var essences: LexiconEntry
 	lateinit var excaliber: LexiconEntry
 	lateinit var fenrir: LexiconEntry
+	lateinit var fenrirDrop: LexiconEntry
 	lateinit var flowerAconite: LexiconEntry
 	lateinit var flowerAquapanthus: LexiconEntry
 	lateinit var flowerBud: LexiconEntry
@@ -230,6 +231,7 @@ object AlfheimLexiconData {
 		essences = AlfheimLexiconEntry("essences", categoryAlfheim)
 		elvorium = AlfheimLexiconEntry("elvorium", categoryAlfheim)
 		fenrir = AlfheimLexiconEntry("fenrir", categoryAlfheim)
+		fenrirDrop = AlfheimLexiconEntry("fenrirDrop", categoryAlfheim)
 		flowerAconite = AlfheimLexiconEntry("aconite", categoryAlfheim)
 		flowerAquapanthus = AlfheimLexiconEntry("aquapanthus", categoryAlfheim)
 		flowerBud = AlfheimLexiconEntry("bud", categoryAlfheim)
@@ -447,7 +449,7 @@ object AlfheimLexiconData {
 								 PageCraftingRecipe("4", AlfheimRecipes.recipeElvoriumBoots)).icon = ItemStack(AlfheimItems.elvoriumHelmet)
 		AlfheimItems.elvoriumHelmetRevealing?.let { elvenSet.addExtraDisplayedRecipe(ItemStack(it)) }
 		
-		elves.setLexiconPages(PageText("0"), PageText("1"), PageText("2"), PageText("3"), PageText("4")).setPriority()
+		elves.setLexiconPages(*Array(5) { PageText("$it") }).setPriority()
 		
 		elvorium.setLexiconPages(PageText("0"), PageManaInfuserRecipe("1", AlfheimRecipes.recipeElvorium)).icon = ElvoriumIngot.stack
 		LexiconRecipeMappings.map(ItemStack(AlfheimBlocks.alfStorage, 1, 0), elvorium, 0)
@@ -477,6 +479,11 @@ object AlfheimLexiconData {
 		                       PageCraftingRecipe("6", AlfheimRecipes.recipeFenrirBoots)).setIcon(AlfheimItems.fenrirHelmet)
 		LexiconRecipeMappings.map(FenrirFur.stack, fenrir, 0)
 		
+		fenrirDrop.setLexiconPages(*Array(6) { PageText("$it") })
+		ItemFenrirLoot.FenrirLootMetas.values().forEach {
+			LexiconRecipeMappings.map(it.stack, fenrirDrop, it.ordinal + 1)
+		}
+		
 		flowerAconite.setLexiconPages(PageText("0"), PagePetalRecipe("1", AlfheimRecipes.recipeWitherAconite))
 		flowerAquapanthus.setLexiconPages(PageText("0"), PagePetalRecipe("1", AlfheimRecipes.recipeAquapanthus))
 		flowerBud.setLexiconPages(PageText("0"), PageText("1"), PagePetalRecipe("2", AlfheimRecipes.recipeBud))
@@ -488,14 +495,14 @@ object AlfheimLexiconData {
 		flowerStorm.setLexiconPages(PageText("0"), PagePetalRecipe("1", AlfheimRecipes.recipeStormFlower)).icon = BotaniaAPI.internalHandler.getSubTileAsStack("stormFlower")
 		flowerWind.setLexiconPages(PageText("0"), PagePetalRecipe("1", AlfheimRecipes.recipeWindFlower)).icon = BotaniaAPI.internalHandler.getSubTileAsStack("windFlower")
 		
-		flugel.setLexiconPages(PageText("0"), PageText("1"), PageText("2")).icon = ItemStack(ModItems.flightTiara, 1, 1)
+		flugel.setLexiconPages(*Array(3) { PageText("$it") }).icon = ItemStack(ModItems.flightTiara, 1, 1)
 		LexiconRecipeMappings.map(ItemStack(AlfheimItems.discFlugel), flugel, 0)
 		LexiconRecipeMappings.map(ItemStack(AlfheimItems.discFlugelMeme), flugel, 0)
 		LexiconRecipeMappings.map(ItemStack(AlfheimItems.discFlugelUltra), flugel, 0)
 		LexiconRecipeMappings.map(ItemStack(AlfheimItems.flugelHead), flugel, 0)
 		LexiconRecipeMappings.map(ItemStack(AlfheimItems.flugelHead2), flugel, 0)
 		
-		fracturedSpace.setLexiconPages(PageText("0"), PageText("1"), PageText("2"), PageCraftingRecipe("3", AlfheimRecipes.recipeRodBlackhole))
+		fracturedSpace.setLexiconPages(*Array(3) { PageText("$it") }, PageCraftingRecipe("3", AlfheimRecipes.recipeRodBlackhole))
 		
 		frozenStar.setLexiconPages(PageText("0"),
 								   PageCraftingRecipe("1", AlfheimRecipes.recipesStar),
@@ -564,7 +571,7 @@ object AlfheimLexiconData {
 		lamp.setLexiconPages(PageText("0"), PageCraftingRecipe("1", AlfheimRecipes.recipeLamp)).setIcon(AlfheimBlocks.irisLamp)
 		LexiconRecipeMappings.map(ItemStack(AlfheimBlocks.irisLamp), lamp, 1)
 		
-		legends.setLexiconPages(PageText("0"), PageText("1"), PageText("2"), PageText("3"), PageText("4"), PageText("5")).setPriority()
+		legends.setLexiconPages(*Array(6) { PageText("$it") }).setPriority()
 		LexiconRecipeMappings.map(YggFruit.stack, legends, 1)
 		legends.icon = null
 		
@@ -576,14 +583,14 @@ object AlfheimLexiconData {
 		
 		manaAccelerator.setLexiconPages(PageText("0"), PageCraftingRecipe("1", AlfheimRecipes.recipeItemHolder))
 		
-		manaImba.setLexiconPages(PageText("0"), PageText("1"), PageText("2"), PageCraftingRecipe("3", AlfheimRecipes.recipeManaMirrorImba))
+		manaImba.setLexiconPages(*Array(3) { PageText("$it") }, PageCraftingRecipe("3", AlfheimRecipes.recipeManaMirrorImba))
 		
 		manaLamp.setLexiconPages(PageText("0"), PageCraftingRecipe("1", AlfheimRecipes.recipeEnlighter))
 		LexiconRecipeMappings.map(ItemStack(AlfheimItems.enlighter, 1, 1), manaLamp, 1)
 		
 		mitten.setLexiconPages(PageText("0"), PageCraftingRecipe("1", AlfheimRecipes.recipeManaweaveGlove))
 		
-		mobs.setLexiconPages(PageText("0"), PageText("1"), PageText("2"), PageText("3"), PageText("4"), PageText("5"),
+		mobs.setLexiconPages(*Array(6) { PageText("$it") },
 		                    PageCraftingRecipe("6", AlfheimRecipes.recipeJellybread),
 		                    PageCraftingRecipe("7", AlfheimRecipes.recipeJellyfish))
 			.icon = ItemStack(ModItems.manaResource, 1, 8)
@@ -593,7 +600,7 @@ object AlfheimLexiconData {
 		
 		multbauble.setLexiconPages(PageText("0"), PageCraftingRecipe("1", AlfheimRecipes.recipeMultibauble))
 		
-		ores.setLexiconPages(PageText("0"), PageText("1"), PageText("2")).icon = ItemStack(AlfheimBlocks.elvenOre, 1, 4)
+		ores.setLexiconPages(*Array(3) { PageText("$it") }).icon = ItemStack(AlfheimBlocks.elvenOre, 1, 4)
 		for (i in 0 until (AlfheimBlocks.elvenOre as BlockModMeta).subtypes)
 			ores.addExtraDisplayedRecipe(ItemStack(AlfheimBlocks.elvenOre, 1, i))
 		
@@ -624,7 +631,7 @@ object AlfheimLexiconData {
 		
 		pixie.setLexiconPages(PageText("0"), PageCraftingRecipe("1", AlfheimRecipes.recipePixieAttractor)).icon = ItemStack(AlfheimItems.pixieAttractor)
 		
-		portal.setLexiconPages(PageText("0"), PageText("1"), PageText("2"),
+		portal.setLexiconPages(*Array(3) { PageText("$it") },
 							   PageCraftingRecipe("3", AlfheimRecipes.recipeAlfheimPortal),
 							   PageText("4"), PageElvenRecipe("5", AlfheimRecipes.recipeInterdimensional),
 							   PageMultiblock("6", AlfheimMultiblocks.portal),
@@ -654,7 +661,7 @@ object AlfheimLexiconData {
 		
 		ringSpider.setLexiconPages(PageText("0"), PageCraftingRecipe("1", AlfheimRecipes.recipeRingSpider))
 		
-		rodClick.setLexiconPages(PageText("0"), PageText("1"), PageText("2"), PageCraftingRecipe("3", AlfheimRecipes.recipeRodClicker))
+		rodClick.setLexiconPages(*Array(3) { PageText("$it") }, PageCraftingRecipe("3", AlfheimRecipes.recipeRodClicker))
 		
 		rodGreen.setLexiconPages(PageText("0"), PageCraftingRecipe("1", AlfheimRecipes.recipeRodGreen))
 		
@@ -716,9 +723,7 @@ object AlfheimLexiconData {
 									 else PageCraftingRecipe(if (AlfheimCore.stupidMode) "2s" else "2", AlfheimRecipes.recipeUberSpreader)).icon = ItemStack(ModBlocks.spreader, 1, 4)
 		LexiconRecipeMappings.map(ItemStack(ModBlocks.spreader, 1, 4), uberSpreader, 2)
 		
-		winery.setLexiconPages(PageText("0"), PageText("1"), PageText("2"), PageText("3"),
-							   PageText("4"), PageText("5"), PageText("6"), PageText("7"),
-							   PageText("8"), PageText("9"), PageText("10"), PageText("11"),
+		winery.setLexiconPages(*Array(12) { PageText("$it") },
 							   PageCraftingRecipe("12", AlfheimRecipes.recipeBarrel),
 							   PageCraftingRecipe("13", AlfheimRecipes.recipeJug))
 		winery.addExtraDisplayedRecipe(GrapeLeaf.stack)
@@ -857,11 +862,11 @@ object AlfheimLexiconData {
 		LexiconRecipeMappings.map(ItemStack(AlfheimBlocks.sealingSlabs), silencer, 4)
 		LexiconRecipeMappings.map(ItemStack(AlfheimBlocks.amplifier), amplifier, 1)
 		
-		HV.setLexiconPages(PageText("0"), PageText("1"), PageText("2"), PageText("3"), PageText("4"))
+		HV.setLexiconPages(*Array(5) { PageText("$it") })
 			.setKnowledgeType(BotaniaAPI.elvenKnowledge)
 			.icon = ItemStack(AlfheimItems.eventResource, 1, EventResourcesMetas.VolcanoRelic)
 		
-		WOTW.setLexiconPages(PageText("0"), PageText("1"), PageText("2"))
+		WOTW.setLexiconPages(*Array(3) { PageText("$it") })
 			.setKnowledgeType(BotaniaAPI.elvenKnowledge)
 			.icon = ItemStack(AlfheimItems.eventResource, 1, EventResourcesMetas.SnowRelic)
 		
@@ -904,7 +909,7 @@ object AlfheimLexiconData {
 		                      PageTextConditional("6") { ASJUtilities.isServer || "${Knowledge.MUSPELHEIM_POST}" in PlayerSegmentClient.knowledge }).setPriority()
 		
 		vafthrudnir.setLexiconPages(PageText("0"), PageText("1"), PageCraftingRecipe("2", AlfheimRecipes.recipeRealityAnchor), PageMultiblock("3", AlfheimMultiblocks.anchor),
-			                        PageText("4"), PageText("5"), PageText("6"), PageText("7"),
+		                            *Array(4) { PageText("${it+4}") },
 			                        PageText("8"), PageText("9"), PageManaInfusionRecipe("10", AlfheimRecipes.recipeRiftShard),
 		                            PageCraftingRecipe("11", AlfheimRecipes.recipesRealmCore),
 			                        PageCraftingRecipe("12", AlfheimRecipes.recipesRealmFrame),
@@ -1033,7 +1038,7 @@ object AlfheimLexiconData {
 	
 	fun initRelics() {
 		daolos = AlfheimRelicLexiconEntry("daolos", categoryDivinity, AlfheimItems.daolos)
-		daolos.setLexiconPages(PageText("0"), PageText("1"), PageText("2"), PageText("3"), PageText("4"), PageText("5"))
+		daolos.setLexiconPages(*Array(6) { PageText("$it") })
 		LexiconRecipeMappings.map(ItemStack(AlfheimItems.daolos), daolos, 0)
 		
 		excaliber = AlfheimRelicLexiconEntry("excaliber", categoryAlfheim, AlfheimItems.excaliber)
@@ -1077,9 +1082,7 @@ object AlfheimLexiconData {
 		LexiconRecipeMappings.map(ItemStack(AlfheimItems.priestRingSif), ringSif, 0)
 		
 		soul = AlfheimRelicLexiconEntry("soul", categoryAlfheim, AlfheimItems.flugelSoul)
-		soul.setLexiconPages(PageText("0"), PageText("1"), PageText("2"),
-							 PageText("3"), PageText("4"), PageText("5"),
-							 PageText("6"), PageText("7"), PageText("8"),
+		soul.setLexiconPages(*Array(9) { PageText("$it") },
 							 PageMultiblock("9", AlfheimMultiblocks.soul),
 							 PageText("10"), PageCraftingRecipe("11", AlfheimRecipes.recipeCleanPylon))
 		LexiconRecipeMappings.map(ItemStack(AlfheimItems.flugelSoul), soul, 0)
@@ -1110,7 +1113,7 @@ object AlfheimLexiconData {
 				.setLexiconPages(PageText("0"))
 		
 		if (races!!.pages.isEmpty())
-			races!!.setPriority().setLexiconPages(PageText("0"), PageText("1"), PageText("2"), PageText("3"), PageText("4"), PageText("5"))
+			races!!.setPriority().setLexiconPages(*Array(6) { PageText("$it") })
 		LexiconRecipeMappings.map(ItemStack(AlfheimBlocks.raceSelector), races, 0)
 		races?.icon = null
 		
@@ -1125,7 +1128,7 @@ object AlfheimLexiconData {
 		
 		if (spells!!.pages.isEmpty()) {
 			spells!!.setPriority()
-				.setLexiconPages(PageText("0"), PageText("1"), PageText("2"), PageText("3"))
+				.setLexiconPages(*Array(4) { PageText("$it") })
 			
 			val l = ArrayList(AlfheimAPI.spells)
 			l.sortBy { it.name }

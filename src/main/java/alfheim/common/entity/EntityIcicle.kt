@@ -47,7 +47,7 @@ class EntityIcicle: Entity {
 		val dmg = DamageSourceSpell.nifleice(caster)
 //		if (rand.nextInt(10) == 0) dmg.setDamageBypassesArmor().setDamageIsAbsolute()
 		mop?.entityHit?.attackEntityFrom(dmg, 5f)
-		playSoundAtEntity("${ModInfo.MODID}:thrym.icicle.hit", 1f, 1f)
+		playSoundAtEntity("${ModInfo.MODID}:thrym.icicle.hit", 0.1f, 1f)
 		setDead()
 	}
 	

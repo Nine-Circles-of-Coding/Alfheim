@@ -426,6 +426,5 @@ class TileLivingwoodFunnel: ASJTile(), IHopper {
 	override fun openInventory() = Unit
 	override fun closeInventory() = Unit
 	override fun getInventoryStackLimit() = 1
-	override fun canUpdate() = true
 	override fun isItemValidForSlot(par1: Int, par2ItemStack: ItemStack) = true
 }

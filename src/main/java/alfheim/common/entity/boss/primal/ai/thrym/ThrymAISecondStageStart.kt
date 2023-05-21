@@ -44,8 +44,8 @@ class ThrymAISecondStageStart(val host: EntityThrym): EntityAIBase() {
 			if (it is EntityPlayerMP) it.playerNetServerHandler.sendPacket(S12PacketEntityVelocity(it))
 			if (Vector3.entityDistancePlane(it, host) > 3) return@forEach
 			
-			it.attackEntityFrom(host.defaultWeaponDamage(it), 1f)
-			it.playSoundAtEntity("${ModInfo.MODID}:thrym.icicle.hit", 1f, 1f)
+			if (it.attackEntityFrom(host.defaultWeaponDamage(it), 1f))
+				it.playSoundAtEntity("${ModInfo.MODID}:thrym.icicle.hit", 0.1f, 1f)
 		}
 	}
 	

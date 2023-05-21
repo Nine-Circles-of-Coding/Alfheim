@@ -2,6 +2,7 @@ package alfheim.common.entity.boss.primal.ai.surtr
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
+import alfheim.api.ModInfo
 import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.core.handler.VisualEffectHandler
 import alfheim.common.entity.boss.primal.EntitySurtr
@@ -17,7 +18,8 @@ class SurtrAISecondStageStart(val host: EntitySurtr): EntityAIBase() {
 	override fun shouldExecute() = host.stage < 2 && host.health < host.maxHealth * 0.5
 	
 	override fun startExecuting() {
-		host.stage = 2
+		host.wall = true
+		host.playSoundAtEntity("${ModInfo.MODID}:surtr.wall.form", 10f, 1f)
 	}
 	
 	override fun continueExecuting() = timer++ < 300
@@ -38,6 +40,7 @@ class SurtrAISecondStageStart(val host: EntitySurtr): EntityAIBase() {
 	
 	override fun resetTask() {
 		timer = 0
+		host.stage = 2
 		
 		val (x, y, z) = Vector3.fromEntity(host)
 		host.worldObj.spawnParticle("hugeexplosion", x, y, z, 0.0, 0.0, 0.0)

@@ -3,10 +3,11 @@ Innovations:
  Elementium mana and aura rings now can spawn a pixie
  Fenrir claws now got a chance (higher with full Fenrir set) to impose bleeding on hit
  Flugel music updated to remaster
- Flugel tier 3 as well as Thrym, Surtr and Fenrir now got own music
- Thrym got sounds for his actions
+ Flugel tier 3 as well as Thrym, Surtr and Fenrir now got own bossfight music
+ Thrym and Surtr got sounds for their actions
  Beast Within and Bleeding potions are now not MMO-mode exclusive (configs updated)
  Elven fertilizer that is three times more potent that bonemeal
+ [WIP] Entity-blocks
  
 Fixes:
  Crash with EtFR

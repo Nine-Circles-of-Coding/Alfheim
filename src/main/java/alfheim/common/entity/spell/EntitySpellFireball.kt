@@ -2,6 +2,7 @@ package alfheim.common.entity.spell
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
+import alfheim.api.ModInfo
 import alfheim.api.spell.*
 import alfheim.client.render.world.VisualEffectHandlerClient.VisualEffects
 import alfheim.common.core.handler.*
@@ -65,8 +66,9 @@ class EntitySpellFireball(world: World): Entity(world), ITimeStopSpecific {
 		l.forEach {
 			it.attackEntityFrom(dmg, if (caster is EntitySurtr) 10f else SpellBase.over(caster, SpellFireball.damage.D))
 		}
-		
-		worldObj.playSoundEffect(posX, posY, posZ, "random.explode", 4f, (1f + (worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.2f) * 0.7f)
+
+		playSoundAtEntity("${ModInfo.MODID}:surtr.fireball.hit", 1f, 1f)
+//		worldObj.playSoundEffect(posX, posY, posZ, "random.explode", 4f, (1f + (worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.2f) * 0.7f)
 		VisualEffectHandler.sendPacket(VisualEffects.EXPL, this)
 		
 		setDead()

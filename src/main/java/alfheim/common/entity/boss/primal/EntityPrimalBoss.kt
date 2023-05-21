@@ -7,13 +7,17 @@ import alfheim.api.*
 import alfheim.api.boss.IBotaniaBossWithName
 import alfheim.api.entity.IIntersectAttackEntity
 import alfheim.client.render.world.VisualEffectHandlerClient
-import alfheim.client.sound.PrimalBossMovingSound
+import alfheim.client.sound.EntityBoundMovingSound
 import alfheim.common.core.handler.*
 import alfheim.common.core.util.DamageSourceSpell
 import alfheim.common.entity.*
 import alfheim.common.entity.ai.AIAttackOnIntersect
 import alfheim.common.entity.boss.*
+import alfheim.common.entity.boss.EntityFlugel.Companion.isRecordPlaying
+import alfheim.common.entity.boss.EntityFlugel.Companion.playRecord
+import alfheim.common.entity.boss.EntityFlugel.Companion.stopRecord
 import alfheim.common.entity.boss.primal.ai.*
+import alfheim.common.item.*
 import cpw.mods.fml.common.eventhandler.*
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.gui.ScaledResolution
@@ -31,6 +35,8 @@ import vazkii.botania.client.core.handler.BossBarHandler
 import vazkii.botania.common.item.relic.ItemRelic
 import java.awt.Rectangle
 import kotlin.math.*
+
+typealias PrimalBossMovingSound = EntityBoundMovingSound<EntityPrimalBoss>
 
 @Suppress("LeakingThis")
 abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBossWithName, IIntersectAttackEntity, ICustomArmSwingEndEntity, IForceKill {
@@ -152,14 +158,18 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 		if (attackTarget != null) navigator.tryMoveToEntityLiving(attackTarget, getEntityAttribute(SharedMonsterAttributes.movementSpeed).attributeValue)
 		
 		val s = Vector3(source)
+		val (sx, sy, sz) = s.I
 		if (Vector3.vecEntityDistance(s, this) > 100) {
-			ASJUtilities.sendToDimensionWithoutPortal(this, AlfheimConfigHandler.dimensionIDDomains, s.x, s.y, s.z)
+			ASJUtilities.sendToDimensionWithoutPortal(this, AlfheimConfigHandler.dimensionIDDomains, sx + 0.5, sy.D, sz + 0.5)
 		}
 		
 		val arenaBB = arenaBB
 		val players = playersOnArena(arenaBB)
 		
 		if (players.isEmpty() && ASJUtilities.isServer) return forceKill()
+		
+		if (ASJUtilities.isClient && !isDead && players.isNotEmpty() && !worldObj.isRecordPlaying(sx, sy, sz))
+			worldObj.playRecord(battleMusicDisc as ItemRecord, sx, sy, sz)
 		
 		players.forEach {
 			if (!it.capabilities.isCreativeMode) it.capabilities.isFlying = false
@@ -402,6 +412,10 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 	
 	override fun setDead() {
 		if (isAlive) return
+		
+		val (x, y, z) = source
+		worldObj.stopRecord(x, y, z)
+		
 		super.setDead()
 	}
 	
@@ -467,11 +481,11 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 	override fun getExtraReach() = 5.5
 	override fun isAIEnabled() = true
 	
+	abstract fun getChargeSound(): String
 	abstract fun getHitSound(): String
 	abstract fun getSpinningSound(): String
 	abstract fun getStrikeSound(): String
 	abstract fun getSwingSound(): String
-	abstract fun getSuctionSound(): String
 	abstract fun getWhirlwindSound(): String
 	
 	override fun writeEntityToNBT(nbt: NBTTagCompound) {
@@ -524,6 +538,8 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 	fun playersOnArena(bb: AxisAlignedBB = arenaBB) = selectEntitiesWithinAABB(worldObj, EntityPlayer::class.java, bb) { canTarget(it) }
 	
 	abstract val shieldColor: UInt
+	
+	abstract val battleMusicDisc: Item
 	
 	@SideOnly(Side.CLIENT)
 	var barRect: Rectangle? = null

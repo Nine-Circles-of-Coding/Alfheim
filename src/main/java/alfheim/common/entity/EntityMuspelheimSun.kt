@@ -2,12 +2,13 @@ package alfheim.common.entity
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
+import alfheim.api.ModInfo
+import alfheim.client.sound.EntityBoundMovingSound
 import alfheim.common.core.util.DamageSourceSpell
 import cpw.mods.fml.relauncher.*
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.util.DamageSource
 import net.minecraft.world.World
 
 class EntityMuspelheimSun(world: World?): Entity(world) {
@@ -33,6 +34,7 @@ class EntityMuspelheimSun(world: World?): Entity(world) {
 	
 	init {
 		setSize(18f, 18f)
+		mc.soundHandler.playSound(EntityBoundMovingSound(this, "${ModInfo.MODID}:surtr.sun.exist"))
 	}
 	
 	override fun onEntityUpdate() {
@@ -51,6 +53,7 @@ class EntityMuspelheimSun(world: World?): Entity(world) {
 				rotation = rand.nextFloat() * 360
 				setPosition(this@EntityMuspelheimSun, oY = radius)
 				spawn()
+				playSoundAtEntity("${ModInfo.MODID}:surtr.sun.shot", 10f, 1f)
 			}
 		}
 		

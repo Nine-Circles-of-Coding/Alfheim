@@ -15,7 +15,7 @@ class ASJClassTransformer: IClassTransformer {
 	var basicClass = byteArrayOf()
 	
 	override fun transform(name: String, transformedName: String, basicClass: ByteArray?): ByteArray? {
-		@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "KotlinConstantConditions")
+		@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 		transformedName as java.lang.String // fix of java.lang.ClassCircularityError: kotlin/text/StringsKt
 		
 		if (transformedName.startsWith("kotlin") || transformedName.startsWith("gloomyfolken")) return basicClass
@@ -208,6 +208,11 @@ class ASJClassTransformer: IClassTransformer {
 					super.visitMethodInsn(opcode, "java/lang/Integer", name, "(I)Ljava/lang/Integer;", itf)
 				else
 					super.visitMethodInsn(opcode, owner, name, desc, itf)
+			}
+			
+			override fun visitInsn(opcode: Int) {
+				if (opcode != I2B)
+					super.visitInsn(opcode)
 			}
 		}
 	}

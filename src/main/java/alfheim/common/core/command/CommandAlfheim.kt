@@ -5,7 +5,8 @@ import alfheim.AlfheimCore
 import alfheim.api.ModInfo
 import alfheim.api.event.AlfheimModeChangedEvent
 import alfheim.common.achievement.AlfheimAchievements
-import alfheim.common.block.BlockNiflheimPortal
+import alfheim.common.block.*
+import alfheim.common.block.tile.TileDomainLobby
 import alfheim.common.core.handler.*
 import alfheim.common.crafting.recipe.AlfheimRecipes
 import alfheim.common.network.Message3d
@@ -34,6 +35,7 @@ object CommandAlfheim: CommandBase() {
 			"mode" -> changeModes(sender, args)
 			"randgen" -> printRandGen(sender)
 			"knowledge" -> gainKnowledge(sender, args)
+			"surtrregen" -> regenerateSurtrDomain(sender, args)
 			else -> throw WrongUsageException(getCommandUsage(sender))
 		}
 	}
@@ -61,6 +63,7 @@ object CommandAlfheim: CommandBase() {
 		ASJUtilities.say(sender, "/$commandName mode <ESM|MMO> - change current game mode")
 		ASJUtilities.say(sender, "/$commandName randgen - print coordinates of random gen")
 		ASJUtilities.say(sender, "/$commandName knowledge <knowledge> [player] - add knowledge to player")
+		ASJUtilities.say(sender, "/$commandName surtrregen true - Reset Surtr domain data")
 	}
 	
 	fun changeModes(sender: ICommandSender, args: Array<String>) {
@@ -165,5 +168,26 @@ object CommandAlfheim: CommandBase() {
 				CardinalSystem.KnowledgeSystem.learn(target, it)
 			}
 		}
+	}
+	
+	fun regenerateSurtrDomain(sender: ICommandSender, args: Array<String>) {
+		if (args.size == 1) ASJUtilities.say(sender, "Reset Surtr domain data. Pass 'true' as next parameter to approve it.")
+		if (args.size != 2) throw WrongUsageException(getCommandUsage(sender))
+		
+		val world = MinecraftServer.getServer().worldServerForDimension(-1)
+		val data = world.customData
+		val structs = data.structures
+		if (!structs.containsKey("Surtr")) return
+		val y = data.data["SurtrY"]?.toInt() ?: return
+		
+		structs.get("Surtr").forEach { (x, z) ->
+			if (world.getTileEntity(x, y - 5, z + 30) !is TileDomainLobby) return@forEach
+			world.setBlockToAir(x, y - 5, z + 30)
+		}
+		
+		data.structures.removeAll("Surtr")
+		data.data.remove("SurtrY")
+		
+		ASJUtilities.say(sender, "Surtr domain data reset.")
 	}
 }

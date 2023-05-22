@@ -276,17 +276,6 @@ class ItemElvenResource: ItemMod("ElvenItems"), IElvenItem, IFlowerComponent, IF
 				if (!world.isRemote) ASJUtilities.say(player, "alfheimmisc.gaia.wrongitem")
 				false
 			}
-		} else
-		// apply fertilizer
-		if (stack.meta == ElvenFertilizer.I) {
-			var did = false
-			for (i in 0..2) {
-				did = (block is IGrowable && block.func_149851_a(world, x, y, z, world.isRemote) && FaithHandlerSif.bonemeal(world, block, x, y, z, player, stack, 0, false)) || did
-				block = world.getBlock(x, y, z)
-			}
-			if (did)
-				stack.stackSize--
-			return did
 		}
 		return false
 	}
@@ -360,7 +349,6 @@ enum class ElvenResourcesMetas {
 	RiftShardMuspelheim,
 	RiftShardNiflheim,
 	DomainKey,
-	ElvenFertilizer,
 	;
 	
 	val I get() = ordinal

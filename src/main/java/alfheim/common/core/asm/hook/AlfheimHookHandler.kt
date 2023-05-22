@@ -1115,7 +1115,7 @@ object AlfheimHookHandler {
 			5 -> ++x
 		}
 		
-		if (!player.canPlayerEdit(x, y, z, side, stack) || !world.isAirBlock(x, y, z)) return false
+		if (!player.canPlayerEdit(x, y, z, side, stack) || !world.getBlock(x, y, z).isReplaceable(world, x, y, z)) return false
 		
 		world.setBlock(x, y, z, AlfheimBlocks.manaFluidBlock)
 		stack.stackSize--
@@ -1755,4 +1755,10 @@ object AlfheimHookHandler {
 	fun spawnMuspelsonsInNetherFortress(gen: MapGenNetherBridge) {
 		gen.spawnList.add(BiomeGenBase.SpawnListEntry(EntityMuspelson::class.java, 6, 2, 3))
 	}
+	
+	@JvmStatic
+	@Hook(returnCondition = ON_TRUE, returnAnotherMethod = "getDigSpeed")
+	fun func_150893_a(item: ItemPickaxe, stack: ItemStack?, block: Block) = block.material === Material.glass
+	@JvmStatic
+	fun getDigSpeed(item: ItemPickaxe, stack: ItemStack?, block: Block) = item.func_150913_i().efficiencyOnProperMaterial
 }

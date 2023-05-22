@@ -822,11 +822,6 @@ object AlfheimRecipes {
 						 'P', icePendant)
 		recipeNiflheimPendant = BotaniaAPI.getLatestAddedRecipe()
 		
-		addOreDictRecipe(ElvenFertilizer.stack(8),
-		                 "PPP", "PIP", "PPP",
-		                 'I', IFFESAL_DUST,
-						 'P', FLORAL_POWDER)
-		
 		addRecipe(ItemStack(rainbowFlowerFloating),
 		          "F", "S", "D",
 		          'F', ItemStack(rainbowGrass, 1, 3),

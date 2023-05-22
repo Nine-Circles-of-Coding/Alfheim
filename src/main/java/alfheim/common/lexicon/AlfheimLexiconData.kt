@@ -697,7 +697,7 @@ object AlfheimLexiconData {
 		for (i in 1..4)
 			LexiconRecipeMappings.map(ItemStack(AlfheimBlocks.powerStone, 1, i), shrines, 1)
 		
-		soulSword.setLexiconPages(PageText("0"), PageText("1"), PageCraftingRecipe("2", AlfheimRecipes.recipeSoulSword))
+		soulSword.setLexiconPages(PageText("0"), PageText("1"), PageCraftingRecipe("2", AlfheimRecipes.recipeSoulSword), PageText("3"))
 		
 		specialAxe.setLexiconPages(PageText("0"), PageText("1")).icon = ItemStack(AlfheimItems.wireAxe)
 		LexiconRecipeMappings.map(ItemStack(AlfheimItems.wireAxe), specialAxe, 0)

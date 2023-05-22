@@ -762,7 +762,7 @@ object RagnarokHandler {
 		companion object {
 			
 			val aether1ID = if (Loader.isModLoaded("aether_legacy")) AetherIConfig.getAetherDimensionID() else null
-			val aether2ID = if (Loader.isModLoaded("aether_legacy")) AetherIIConfig.AetherDimensionID else null
+			val aether2ID = if (Loader.isModLoaded("aether")) AetherIIConfig.AetherDimensionID else null
 			val atumID = if (Loader.isModLoaded("atum")) AtumConfig.DIMENSION_ID else null
 			val betweenlandsID = if (Loader.isModLoaded("thebetweenlands")) BetweenlandsConfig.DIMENSION_ID else null
 			val chromaID = if (Loader.isModLoaded("ChromatiCraft")) ExtraChromaIDs.DIMID.value else null

@@ -1,12 +1,17 @@
 package alfheim.common.entity
 
 import alexsocol.asjlib.*
+import alfheim.common.core.util.DamageSourceSpell
 import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.relauncher.*
 import net.minecraft.block.Block
 import net.minecraft.entity.Entity
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
+import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.util.DamageSource
+import net.minecraft.util.EntityDamageSourceIndirect
 import net.minecraft.world.World
 
 class EntityBlock(world: World): Entity(world) {
@@ -43,6 +48,21 @@ class EntityBlock(world: World): Entity(world) {
 		rotationPitch = 0f
 	}
 	
+	override fun attackEntityFrom(src: DamageSource, damage: Float): Boolean {
+		if (worldObj.isRemote || src is EntityDamageSourceIndirect || src is DamageSourceSpell) return false
+		
+		val player = src.entity as? EntityPlayer ?: return false
+		val stack = player.heldItem ?: return false
+		if (stack.item.func_150893_a(stack, block) <= 1f) return false
+		
+		setDead()
+		entityDropItem(ItemStack(block, 1, meta), 0f)
+		stack.damageItem(1, player)
+		block = Blocks.air
+		
+		return true
+	}
+	
 	@SideOnly(Side.CLIENT)
 	override fun setPositionAndRotation2(x: Double, y: Double, z: Double, yaw: Float, pitch: Float, nope: Int) {
 		setPosition(x, y, z)
@@ -66,6 +86,7 @@ class EntityBlock(world: World): Entity(world) {
 		val ui = GameRegistry.findUniqueIdentifierFor(block) ?: return
 		nbt.setString(TAG_BLOCK_MODID, ui.modId)
 		nbt.setString(TAG_BLOCK_NAME, ui.name)
+		nbt.setInteger(TAG_META, meta)
 	}
 	
 	companion object {

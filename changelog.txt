@@ -6,14 +6,15 @@ Innovations:
  Flugel tier 3 as well as Thrym, Surtr and Fenrir now got own bossfight music
  Thrym and Surtr got sounds for their actions
  Beast Within and Bleeding potions are now not MMO-mode exclusive (configs updated)
- Elven fertilizer that is three times more potent that bonemeal
  [WIP] Entity-blocks
  
 Fixes:
  Crash with EtFR
+ Ragnarok crash with Aether Legacy
  WireAxe HRT abuse #259
  Floating bifrost flower flaws #266
  IguanaTweaksTConstruct support #271
  Bifrost petal block breaker #272
  Mushroom recipes
  Over- heat/cold weak hands effect
+ Liquid mana placing

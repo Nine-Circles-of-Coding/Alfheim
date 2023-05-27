@@ -1,9 +1,9 @@
 package alfheim.common.core.handler
 
 import alexsocol.asjlib.ASJUtilities
-import alfheim.AlfheimCore
 import alfheim.client.render.world.VisualEffectHandlerClient.VisualEffects
-import alfheim.common.network.MessageVisualEffect
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.MessageVisualEffect
 import net.minecraft.entity.Entity
 
 object VisualEffectHandler {
@@ -13,7 +13,7 @@ object VisualEffectHandler {
 	}
 	
 	fun sendPacket(s: VisualEffects, dimension: Int, vararg data: Double) {
-		if (ASJUtilities.isServer) AlfheimCore.network.sendToDimension(MessageVisualEffect(s.ordinal, *data), dimension)
+		if (ASJUtilities.isServer) NetworkService.sendToDim(MessageVisualEffect(s.ordinal, *data), dimension)
 	}
 	
 	fun sendError(dim: Int, x: Int, y: Int, z: Int) {

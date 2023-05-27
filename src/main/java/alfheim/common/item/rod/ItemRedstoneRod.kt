@@ -2,30 +2,34 @@ package alfheim.common.item.rod
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.render.ASJRenderHelper
-import alfheim.AlfheimCore
 import alfheim.api.ModInfo
-import alfheim.common.item.*
-import alfheim.common.network.MessageRedstoneSignalsSync
+import alfheim.common.item.AlfheimItems
+import alfheim.common.item.ItemMod
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.MessageRedstoneSignalsSync
 import cpw.mods.fml.common.FMLCommonHandler
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.gameevent.TickEvent
 import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent
-import gloomyfolken.hooklib.asm.*
+import gloomyfolken.hooklib.asm.Hook
 import gloomyfolken.hooklib.asm.Hook.ReturnValue
+import gloomyfolken.hooklib.asm.ReturnCondition
 import net.minecraft.block.Block
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.entity.RenderManager
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
-import net.minecraft.item.*
-import net.minecraft.nbt.*
-import net.minecraft.util.*
-import net.minecraft.world.*
+import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.nbt.NBTTagList
+import net.minecraft.util.AxisAlignedBB
+import net.minecraft.util.ChunkCoordinates
+import net.minecraft.util.MovingObjectPosition
+import net.minecraft.world.World
+import net.minecraft.world.WorldSavedData
 import net.minecraftforge.client.event.RenderWorldLastEvent
 import net.minecraftforge.common.DimensionManager
 import org.lwjgl.opengl.GL11.*
-import vazkii.botania.api.item.*
-import vazkii.botania.api.wand.*
 import vazkii.botania.common.item.equipment.bauble.ItemMonocle
 import java.awt.Color
 import kotlin.math.max
@@ -230,8 +234,8 @@ open class RedstoneSignalHandler(datakey: String = ID): WorldSavedData(datakey) 
 			i.remove()
 			updatePosition(world, x, y, z)
 		}
-		
-		AlfheimCore.network.sendToAll(MessageRedstoneSignalsSync(redstoneSignals))
+
+		NetworkService.sendToAll(MessageRedstoneSignalsSync(redstoneSignals))
 	}
 	
 	@Synchronized

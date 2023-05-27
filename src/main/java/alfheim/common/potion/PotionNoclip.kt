@@ -1,11 +1,11 @@
 package alfheim.common.potion
 
 import alexsocol.asjlib.*
-import alfheim.AlfheimCore
 import alfheim.common.block.AlfheimBlocks
 import alfheim.common.block.alt.BlockAltLeaves
 import alfheim.common.core.handler.AlfheimConfigHandler
-import alfheim.common.network.MessageEffect
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.MessageEffect
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.relauncher.*
 import net.minecraft.entity.EntityLivingBase
@@ -51,7 +51,7 @@ object PotionNoclip: PotionAlfheim(AlfheimConfigHandler.potionIDNoclip, "noclip"
 	override fun removeAttributesModifiersFromEntity(target: EntityLivingBase, attributes: BaseAttributeMap, amp: Int) {
 		if (!AlfheimConfigHandler.enableMMO) return
 		target.noClip = false
-		if (ASJUtilities.isServer) AlfheimCore.network.sendToAll(MessageEffect(target.entityId, this.id, 0, 0))
+		if (ASJUtilities.isServer) NetworkService.sendToAll(MessageEffect(target.entityId, this.id, 0, 0))
 	}
 	
 	object CommonEventHandler {

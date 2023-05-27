@@ -1,18 +1,31 @@
 package alfheim.common.core.helper
 
-import alexsocol.asjlib.*
-import alfheim.AlfheimCore
+import alexsocol.asjlib.ASJUtilities
+import alexsocol.asjlib.eventFML
+import alexsocol.asjlib.paired
 import alfheim.common.core.handler.AlfheimConfigHandler
-import alfheim.common.network.MessageContributor
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.MessageContributor
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
-import cpw.mods.fml.common.gameevent.*
-import net.minecraft.entity.player.*
+import cpw.mods.fml.common.gameevent.PlayerEvent
+import cpw.mods.fml.common.gameevent.TickEvent
+import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.server.MinecraftServer
 import java.net.URL
 import java.nio.charset.Charset
-import java.security.*
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
 import java.util.*
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter
+import kotlin.collections.HashMap
+import kotlin.collections.List
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.contains
+import kotlin.collections.forEach
+import kotlin.collections.removeAll
+import kotlin.collections.set
 
 object ContributorsPrivacyHelper {
 	
@@ -98,8 +111,8 @@ object ContributorsPrivacyHelper {
 		val player = e.player as? EntityPlayerMP ?: return
 		
 		if (MinecraftServer.getServer()?.isSinglePlayer == true) return
-		
-		AlfheimCore.network.sendTo(MessageContributor(isRequest = true), player)
+
+		NetworkService.sendTo(MessageContributor(isRequest = true), player)
 		
 		if (isRegistered(player.commandSenderName))
 			authTimeout[player.commandSenderName] = AlfheimConfigHandler.authTimeout

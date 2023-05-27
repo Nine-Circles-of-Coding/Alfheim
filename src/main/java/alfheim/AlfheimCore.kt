@@ -2,7 +2,6 @@ package alfheim
 
 import alexsocol.patcher.*
 import alfheim.api.ModInfo.MODID
-import alfheim.client.core.handler.PacketHandlerClient
 import alfheim.common.core.command.*
 import alfheim.common.core.handler.*
 import alfheim.common.core.handler.ragnarok.RagnarokHandler
@@ -14,6 +13,7 @@ import alfheim.common.integration.tinkersconstruct.TinkersConstructAlfheimConfig
 import alfheim.common.integration.travellersgear.TravellersGearAlfheimConfig
 import alfheim.common.integration.waila.WAILAAlfheimConfig
 import alfheim.common.network.*
+import alfheim.common.network.packet.*
 import cpw.mods.fml.common.*
 import cpw.mods.fml.common.Mod.*
 import cpw.mods.fml.common.Mod.EventHandler
@@ -33,8 +33,7 @@ object AlfheimCore {
 	
 	@Metadata(MODID)
 	lateinit var meta: ModMetadata
-	
-	lateinit var network: SimpleNetworkWrapper
+
 	var nextPacketID = 0
 	
 	var save = ""
@@ -73,11 +72,9 @@ object AlfheimCore {
 		
 		stupidMode = Loader.isModLoaded("Avaritia")
 		
-		network = NetworkRegistry.INSTANCE.newSimpleChannel(MODID)
-		
 		if (AlfheimConfigHandler.notifications) InfoLoader.start()
 		
-		registerPackets()
+		NetworkService.register()
 		
 		proxy.preInit()
 		if (Botania.thaumcraftLoaded) ThaumcraftAlfheimModule.preInit()
@@ -113,34 +110,5 @@ object AlfheimCore {
 		e.registerServerCommand(CommandAlfheim)
 		e.registerServerCommand(CommandDebug)
 		if (MineTweakerLoaded) e.registerServerCommand(CommandMTSpellInfo)
-	}
-	
-	fun registerPackets() {
-		network.registerMessage(PacketHandlerServer, Message0dS::class.java, nextPacketID++, Side.SERVER)
-		network.registerMessage(PacketHandlerServer, MessageContributor::class.java, nextPacketID++, Side.SERVER)
-		network.registerMessage(PacketHandlerServer, MessageHotSpellS::class.java, nextPacketID++, Side.SERVER)
-		network.registerMessage(PacketHandlerServer, MessageKeyBindS::class.java, nextPacketID++, Side.SERVER)
-		network.registerMessage(PacketHandlerServer, MessageRaceSelection::class.java, nextPacketID++, Side.SERVER)
-		network.registerMessage(PacketHandlerServer, MessageNI::class.java, nextPacketID++, Side.SERVER)
-		
-		network.registerMessage(PacketHandlerClient, Message0dC::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(PacketHandlerClient, Message1d::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(PacketHandlerClient, Message1l::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(PacketHandlerClient, Message2d::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(PacketHandlerClient, Message3d::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(PacketHandlerClient, MessageNI::class.java, nextPacketID++, Side.CLIENT)
-		
-		network.registerMessage(PacketHandlerClient, MessageContributor::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(PacketHandlerClient, MessageEffect::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(PacketHandlerClient, MessageGleipnirLeash::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(PacketHandlerClient, MessageHotSpellC::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(PacketHandlerClient, MessageParty::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(PacketHandlerClient, MessageRaceInfo::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(PacketHandlerClient, MessageRedstoneSignalsSync::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(PacketHandlerClient, MessageSkinInfo::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(PacketHandlerClient, MessageSpellParams::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(PacketHandlerClient, MessageTileItem::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(PacketHandlerClient, MessageTimeStop::class.java, nextPacketID++, Side.CLIENT)
-		network.registerMessage(PacketHandlerClient, MessageVisualEffect::class.java, nextPacketID++, Side.CLIENT)
 	}
 }

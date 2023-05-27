@@ -23,6 +23,9 @@ import alfheim.common.item.equipment.bauble.faith.ItemRagnarokEmblem
 import alfheim.common.item.equipment.tool.ItemSoulSword
 import alfheim.common.lexicon.AlfheimLexiconData
 import alfheim.common.network.*
+import alfheim.common.network.packet.Message1d
+import alfheim.common.network.packet.Message3d
+import alfheim.common.network.packet.MessageNI
 import alfheim.common.potion.PotionEternity
 import alfheim.common.world.dim.alfheim.biome.BiomeAlfheim
 import alfheim.common.world.dim.domains.gen.*
@@ -189,9 +192,9 @@ object RagnarokHandler {
 		
 		if (canStartRagnarokAndSummer()) {
 			startRagnarokAndSummer()
-			
-			AlfheimCore.network.sendToAll(Message1d(Message1d.M1d.NOSUNMOON, 1.0))
-			AlfheimCore.network.sendToAll(Message1d(Message1d.M1d.RAGNAROK, 0.999))
+
+			NetworkService.sendToAll(Message1d(M1d.NOSUNMOON, 1.0))
+			NetworkService.sendToAll(Message1d(M1d.RAGNAROK, 0.999))
 			
 			server.configurationManager.playerEntityList.forEach { player -> player as EntityPlayerMP
 				ASJUtilities.say(player, "alfheimmisc.ragnarok.start", EnumChatFormatting.DARK_RED)
@@ -199,7 +202,7 @@ object RagnarokHandler {
 			}
 			
 			blizzards.iterator().onEach {
-				AlfheimCore.network.sendToAll(MessageNI(MessageNI.Mni.BLIZZARD, -it.id))
+				NetworkService.sendToAll(MessageNI(Mni.BLIZZARD, -it.id))
 				remove()
 			}
 		}
@@ -340,7 +343,7 @@ object RagnarokHandler {
 	fun startGinnungagap() {
 		ginnungagap = true
 		
-		if (ASJUtilities.isServer) AlfheimCore.network.sendToAll(Message1d(Message1d.M1d.GINNUNGAGAP, 1.0))
+		if (ASJUtilities.isServer) NetworkService.sendToAll(Message1d(M1d.GINNUNGAGAP, 1.0))
 		
 		save()
 	}
@@ -356,7 +359,7 @@ object RagnarokHandler {
 		finished = true
 		blockedPowers = BooleanArray(6)
 		
-		if (ASJUtilities.isServer) AlfheimCore.network.sendToAll(Message1d(Message1d.M1d.RAGNAROK, -1.0))
+		if (ASJUtilities.isServer) NetworkService.sendToAll(Message1d(M1d.RAGNAROK, -1.0))
 
 		save()
 	}
@@ -366,7 +369,7 @@ object RagnarokHandler {
 	fun bringBackSunAndMoon() {
 		noSunAndMoon = false
 
-		if (ASJUtilities.isServer) AlfheimCore.network.sendToAll(Message1d(Message1d.M1d.NOSUNMOON, 0.0))
+		if (ASJUtilities.isServer) NetworkService.sendToAll(Message1d(M1d.NOSUNMOON, 0.0))
 		
 		if (canEndRagnarok()) endRagnarok()
 		
@@ -376,7 +379,7 @@ object RagnarokHandler {
 	fun endGinnungagap() {
 		ginnungagap = false
 		
-		if (ASJUtilities.isServer) AlfheimCore.network.sendToAll(Message1d(Message1d.M1d.GINNUNGAGAP, 0.0))
+		if (ASJUtilities.isServer) NetworkService.sendToAll(Message1d(M1d.GINNUNGAGAP, 0.0))
 		
 		save()
 	}
@@ -652,8 +655,8 @@ object RagnarokHandler {
 		e.world.thunderingStrength = 0f
 		info.thunderTime = 0
 		info.isThundering = false
-		
-		AlfheimCore.network.sendToDimension(Message3d(Message3d.M3d.WEATHER, if (time == 0) 1.0 else 0.0, time.D, time.D), e.world.provider.dimensionId)
+
+		NetworkService.sendToDim(Message3d(M3d.WEATHER, if (time == 0) 1.0 else 0.0, time.D, time.D), e.world.provider.dimensionId)
 	}
 	
 	@SubscribeEvent
@@ -1059,9 +1062,9 @@ object RagnarokHandler {
 	
 	@SubscribeEvent
 	fun informAboutRagnarok(e: PlayerEvent.PlayerLoggedInEvent) {
-		AlfheimCore.network.sendTo(Message1d(Message1d.M1d.GINNUNGAGAP, if (ginnungagap) 1.0 else 0.0), e.player as EntityPlayerMP)
-		AlfheimCore.network.sendTo(Message1d(Message1d.M1d.NOSUNMOON, if (noSunAndMoon) 1.0 else 0.0), e.player as EntityPlayerMP)
-		AlfheimCore.network.sendTo(Message1d(Message1d.M1d.RAGNAROK, if (finished) -1.0 else if (ragnarok) 0.0 else 1.0), e.player as EntityPlayerMP)
+		NetworkService.sendTo(Message1d(M1d.GINNUNGAGAP, if (ginnungagap) 1.0 else 0.0), e.player as EntityPlayerMP)
+		NetworkService.sendTo(Message1d(M1d.NOSUNMOON, if (noSunAndMoon) 1.0 else 0.0), e.player as EntityPlayerMP)
+		NetworkService.sendTo(Message1d(M1d.RAGNAROK, if (finished) -1.0 else if (ragnarok) 0.0 else 1.0), e.player as EntityPlayerMP)
 	}
 	
 	@SubscribeEvent
@@ -1096,7 +1099,7 @@ object RagnarokHandler {
 		
 		for (it in iter) {
 			if (--it.timeLeft <= 0) {
-				AlfheimCore.network.sendToAll(MessageNI(MessageNI.Mni.BLIZZARD, -it.id))
+				NetworkService.sendToAll(MessageNI(Mni.BLIZZARD, -it.id))
 				iter.remove()
 				continue
 			}
@@ -1115,7 +1118,7 @@ object RagnarokHandler {
 			val blizzard = BlizzardData(cx - 128, cz - 128, cx + 128, cz + 128).setup(e.world.rand)
 			blizzards.add(blizzard)
 			val (x1, z1, x2, z2, id) = blizzard
-			AlfheimCore.network.sendToAll(MessageNI(MessageNI.Mni.BLIZZARD, id, x1, z1, x2, z2))
+			NetworkService.sendToAll(MessageNI(Mni.BLIZZARD, id, x1, z1, x2, z2))
 		} while (--need > 0)
 	}
 	

@@ -1,9 +1,12 @@
 package alfheim.common.core.command
 
-import alfheim.AlfheimCore
 import alfheim.common.core.handler.AlfheimConfigHandler
-import alfheim.common.network.Message0dC
-import net.minecraft.command.*
+import alfheim.common.network.M0dc
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.Message0dC
+import net.minecraft.command.CommandBase
+import net.minecraft.command.ICommandSender
+import net.minecraft.command.WrongUsageException
 import net.minecraft.entity.player.EntityPlayerMP
 
 object CommandMTSpellInfo: CommandBase() {
@@ -19,6 +22,6 @@ object CommandMTSpellInfo: CommandBase() {
 		if (!AlfheimConfigHandler.enableMMO)
 			throw WrongUsageException("alfheim.commands.mtspell.wrong")
 		
-		AlfheimCore.network.sendTo(Message0dC(Message0dC.M0dc.MTSPELL), sender)
+		NetworkService.sendTo(Message0dC(M0dc.MTSPELL), sender)
 	}
 }

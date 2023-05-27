@@ -91,18 +91,16 @@ object ContributorsPrivacyHelper {
 	
 	fun isCorrect(user: String, contributor: String) = contributors[contributor] == user
 	
-	val authTimeout = HashMap<String, Int>()
+	val authTimeout = WeakHashMap<EntityPlayerMP, Int>()
 	
 	@SubscribeEvent
-	fun onServerTick(e: TickEvent.ServerTickEvent) {
-		for (name in authTimeout.keys) {
-			val timeLeft = authTimeout[name] ?: continue
-			if (timeLeft == -1) continue
-			
-			authTimeout[name] = timeLeft - 1
-			// no response in N seconds - kick
-			if (timeLeft == 0)
-				MinecraftServer.getServer()?.configurationManager?.func_152612_a(name)?.playerNetServerHandler?.kickPlayerFromServer("Authentication request timed out")
+	fun onPlayerTick(e: TickEvent.PlayerTickEvent) {
+		if (!e.player.worldObj.isRemote && e.phase == TickEvent.Phase.START) {
+			val playerMp = e.player as EntityPlayerMP
+			authTimeout.getOrElse(playerMp) { return }.let {
+				val time = it - 1
+				if (time < 0) playerMp.playerNetServerHandler.kickPlayerFromServer("Alfheim Contributor Authentication request timed out") else authTimeout[playerMp] = time
+			}
 		}
 	}
 	
@@ -115,13 +113,13 @@ object ContributorsPrivacyHelper {
 		NetworkService.sendTo(MessageContributor(isRequest = true), player)
 		
 		if (isRegistered(player.commandSenderName))
-			authTimeout[player.commandSenderName] = AlfheimConfigHandler.authTimeout
+			authTimeout[player] = AlfheimConfigHandler.authTimeout
 	}
 	
 	@SubscribeEvent
 	fun onPlayerLogout(e: PlayerEvent.PlayerLoggedOutEvent) {
 		if (MinecraftServer.getServer()?.isSinglePlayer == true) return
-		
+
 		contributors.values.removeAll { it == e.player.commandSenderName }
 	}
 }

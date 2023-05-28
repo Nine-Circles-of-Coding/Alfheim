@@ -5,7 +5,6 @@ import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.render.ASJRenderHelper
 import alexsocol.patcher.PatcherConfigHandler
 import alexsocol.patcher.event.EntityUpdateEvent
-import alfheim.AlfheimCore
 import alfheim.api.*
 import alfheim.api.entity.raceID
 import alfheim.api.lib.LibResourceLocations
@@ -19,8 +18,8 @@ import alfheim.client.render.particle.*
 import alfheim.client.render.world.*
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.helper.ContributorsPrivacyHelper
-import alfheim.common.network.MessageKeyBindS
-import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.MessageKeyBindSimport com.mojang.authlib.minecraft.MinecraftProfileTexture.Type
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.gameevent.TickEvent.*
 import cpw.mods.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent
@@ -97,7 +96,7 @@ object EventHandlerClient {
 		
 		if (PlayerSegmentClient.target !== mc.thePlayer && PlayerSegmentClient.target?.isInvisibleToPlayer(mc.thePlayer) == true) {
 			PlayerSegmentClient.target = null
-			AlfheimCore.network.sendToServer(MessageKeyBindS(KeyBindingHandlerClient.KeyBindingIDs.SEL.ordinal, false, -1))
+			NetworkService.sendToServer(MessageKeyBindS(KeyBindingHandlerClient.KeyBindingIDs.SEL.ordinal, false, -1))
 		}
 	}
 	

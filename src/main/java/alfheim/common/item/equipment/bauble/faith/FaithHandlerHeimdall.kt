@@ -3,19 +3,24 @@ package alfheim.common.item.equipment.bauble.faith
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.security.InteractionSecurity
-import alfheim.AlfheimCore
 import alfheim.api.item.ColorOverrideHelper
 import alfheim.common.core.handler.ragnarok.RagnarokHandler
-import alfheim.common.item.*
-import alfheim.common.item.equipment.bauble.*
-import alfheim.common.item.equipment.bauble.faith.IFaithHandler.FaithBauble.*
+import alfheim.common.item.AlfheimItems
+import alfheim.common.item.ItemIridescent
+import alfheim.common.item.equipment.bauble.ItemPriestCloak
+import alfheim.common.item.equipment.bauble.ItemPriestEmblem
+import alfheim.common.item.equipment.bauble.faith.IFaithHandler.FaithBauble.CLOAK
+import alfheim.common.item.equipment.bauble.faith.IFaithHandler.FaithBauble.EMBLEM
 import alfheim.common.item.relic.ItemHeimdallRing
-import alfheim.common.network.Message0dS
+import alfheim.common.network.M0ds
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.Message0dS
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
-import net.minecraft.potion.*
+import net.minecraft.potion.Potion
+import net.minecraft.potion.PotionEffect
 import net.minecraftforge.event.entity.living.LivingHurtEvent
 import net.minecraftforge.fluids.IFluidBlock
 import vazkii.botania.api.mana.ManaItemHandler
@@ -64,7 +69,7 @@ object FaithHandlerHeimdall: IFaithHandler {
 		
 		if (!player.worldObj.getBlock(x.I, y.I, z.I).isNormalCube && !player.worldObj.getBlock(x.I, y.I + 1, z.I).isNormalCube) {
 			player.isJumping = false
-			AlfheimCore.network.sendToServer(Message0dS(Message0dS.M0ds.HEIMBLINK))
+			NetworkService.sendToServer(Message0dS(M0ds.HEIMBLINK))
 		}
 	}
 	

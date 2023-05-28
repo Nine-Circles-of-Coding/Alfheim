@@ -3,13 +3,15 @@ package alfheim.common.entity.spell
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.security.InteractionSecurity
-import alfheim.AlfheimCore
 import alfheim.api.spell.ITimeStopSpecific
 import alfheim.client.render.world.VisualEffectHandlerClient
-import alfheim.common.core.handler.*
-import alfheim.common.network.MessageVisualEffect
+import alfheim.common.core.handler.AlfheimConfigHandler
+import alfheim.common.core.handler.CardinalSystem
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.MessageVisualEffect
 import alfheim.common.spell.illusion.SpellDarkness
-import net.minecraft.entity.*
+import net.minecraft.entity.Entity
+import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.potion.Potion
@@ -37,7 +39,7 @@ class EntitySpellDarkness(world: World?, val caster: EntityLivingBase?): Entity(
 		if (ticksExisted % 5 == 0)
 			for (player in worldObj.playerEntities)
 				if (player is EntityPlayerMP && player !== caster && !CardinalSystem.PartySystem.sameParty(player, caster))
-					AlfheimCore.network.sendTo(MessageVisualEffect(VisualEffectHandlerClient.VisualEffects.SMOKE.ordinal, posX, posY, posZ), player)
+					NetworkService.sendTo(MessageVisualEffect(VisualEffectHandlerClient.VisualEffects.SMOKE.ordinal, posX, posY, posZ), player)
 		
 		val l = getEntitiesWithinAABB(worldObj, EntityLivingBase::class.java, getBoundingBox(posX, posY, posZ).expand(SpellDarkness.radius))
 		l.removeAll { Vector3.entityDistance(caster, it) > SpellDarkness.radius }

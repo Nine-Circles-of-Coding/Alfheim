@@ -12,6 +12,8 @@ import alfheim.common.core.handler.*
 import alfheim.common.core.util.*
 import alfheim.common.item.AlfheimItems
 import alfheim.common.network.*
+import alfheim.common.network.packet.Message1d
+import alfheim.common.network.packet.MessageEffect
 import baubles.api.*
 import baubles.common.lib.PlayerHandler
 import cpw.mods.fml.common.Loader
@@ -174,7 +176,7 @@ class ItemTankMask: ItemRelicBauble("TankMask"), IBaubleRender, IManaUsingItem {
 			set(value) =
 				if (this is EntityPlayerMP) {
 					CardinalSystem.forPlayer(this).limbo = value
-					AlfheimCore.network.sendTo(Message1d(Message1d.M1d.LIMBO, value.D), this)
+					NetworkService.sendTo(Message1d(M1d.LIMBO, value.D), this)
 				} else {
 					CardinalSystemClient.PlayerSegmentClient.limbo = value
 				}
@@ -241,9 +243,9 @@ class ItemTankMask: ItemRelicBauble("TankMask"), IBaubleRender, IManaUsingItem {
 			player.getActivePotionEffect(Potion.damageBoost.id)?.let { if (it.amplifier == 0) it.duration = max(it.duration, 20) } ?: player.addPotionEffect(PotionEffectU(Potion.damageBoost.id, 20))
 			
 			player.getActivePotionEffect(Potion.resistance.id)?.let { if (it.amplifier == 0) it.duration = max(it.duration, 20) } ?: player.addPotionEffect(PotionEffectU(Potion.resistance.id, 20))
-			
-			AlfheimCore.network.sendToAll(MessageEffect(player, player.getActivePotionEffect(Potion.damageBoost.id)!!))
-			AlfheimCore.network.sendToAll(MessageEffect(player, player.getActivePotionEffect(Potion.resistance.id)!!))
+
+			NetworkService.sendToAll(MessageEffect(player, player.getActivePotionEffect(Potion.damageBoost.id)!!))
+			NetworkService.sendToAll(MessageEffect(player, player.getActivePotionEffect(Potion.resistance.id)!!))
 		}
 		
 		fun sendToHelheim(player: EntityPlayer) {

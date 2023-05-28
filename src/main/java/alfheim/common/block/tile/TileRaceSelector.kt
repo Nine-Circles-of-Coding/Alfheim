@@ -1,16 +1,23 @@
 package alfheim.common.block.tile
 
-import alexsocol.asjlib.*
+import alexsocol.asjlib.ASJUtilities
 import alexsocol.asjlib.extendables.block.ASJTile
-import alfheim.AlfheimCore
+import alexsocol.asjlib.getBoundingBox
 import alfheim.api.ModInfo
-import alfheim.api.entity.*
+import alfheim.api.entity.EnumRace
+import alfheim.api.entity.race
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.handler.CardinalSystem.ElvenStoryModeSystem
-import alfheim.common.network.*
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.MessageRaceInfo
+import alfheim.common.network.packet.MessageSkinInfo
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.ChunkCoordinates
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.component3
+import kotlin.collections.indices
 
 class TileRaceSelector: ASJTile() {
 	
@@ -24,9 +31,9 @@ class TileRaceSelector: ASJTile() {
 		if (ASJUtilities.isServer) {
 			ElvenStoryModeSystem.setGender(player, female)
 			ElvenStoryModeSystem.setCustomSkin(player, custom)
-			
-			AlfheimCore.network.sendToAll(MessageRaceInfo(player.commandSenderName, rotation + 1))
-			AlfheimCore.network.sendToAll(MessageSkinInfo(player.commandSenderName, female, custom))
+
+			NetworkService.sendToAll(MessageRaceInfo(player.commandSenderName, rotation + 1))
+			NetworkService.sendToAll(MessageSkinInfo(player.commandSenderName, female, custom))
 		}
 		
 		worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 0, 3)

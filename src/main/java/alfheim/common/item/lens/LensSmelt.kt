@@ -7,7 +7,7 @@ import net.minecraft.entity.projectile.EntityThrowable
 import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
 import net.minecraft.item.crafting.FurnaceRecipes
-import net.minecraft.util.*
+import net.minecraft.util.MovingObjectPosition
 import vazkii.botania.api.internal.IManaBurst
 import vazkii.botania.api.mana.IManaBlock
 import vazkii.botania.common.block.ModBlocks

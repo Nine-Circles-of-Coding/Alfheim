@@ -4,7 +4,7 @@ import alexsocol.asjlib.*
 import alexsocol.asjlib.extendables.block.ASJTile
 import alexsocol.asjlib.math.Vector3
 import alfheim.client.render.world.VisualEffectHandlerClient
-import alfheim.common.core.handler.*
+import alfheim.common.core.handler.VisualEffectHandler
 import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.core.handler.ragnarok.RagnarokHandler.isProtected
 import alfheim.common.item.relic.ItemTankMask

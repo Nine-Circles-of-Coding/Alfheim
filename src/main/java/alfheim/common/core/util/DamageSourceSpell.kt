@@ -1,7 +1,7 @@
 package alfheim.common.core.util
 
-import alfheim.common.core.helper.*
 import alfheim.common.core.helper.ElementalDamage.*
+import alfheim.common.core.helper.setTo
 import alfheim.common.entity.boss.EntityFenrir
 import alfheim.common.entity.spell.*
 import net.minecraft.entity.*

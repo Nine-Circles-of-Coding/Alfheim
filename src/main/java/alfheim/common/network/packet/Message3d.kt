@@ -1,8 +1,6 @@
 package alfheim.common.network.packet
 
-import alexsocol.asjlib.F
-import alexsocol.asjlib.I
-import alexsocol.asjlib.mc
+import alexsocol.asjlib.*
 import alexsocol.asjlib.network.ASJPacket
 import alfheim.api.network.AlfheimPacket
 import alfheim.client.core.handler.CardinalSystemClient

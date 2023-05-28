@@ -1,7 +1,6 @@
 package alfheim.client.render.entity
 
 import alexsocol.asjlib.*
-import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.render.ASJRenderHelper
 import alfheim.common.entity.EntityBlock
 import net.minecraft.client.renderer.Tessellator

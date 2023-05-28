@@ -1,6 +1,6 @@
 package alfheim.common.entity.boss.primal.ai
 
-import alexsocol.asjlib.*
+import alexsocol.asjlib.D
 import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.core.handler.VisualEffectHandler
 import alfheim.common.entity.boss.primal.EntityPrimalBoss

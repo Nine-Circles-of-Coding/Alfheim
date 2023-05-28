@@ -17,10 +17,7 @@ import alfheim.client.gui.GUISpells
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.helper.flight
 import alfheim.common.network.*
-import alfheim.common.network.packet.Message2d
-import alfheim.common.network.packet.MessageHotSpellS
-import alfheim.common.network.packet.MessageKeyBindS
-import alfheim.common.network.packet.MessageNI
+import alfheim.common.network.packet.*
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.settings.KeyBinding
 import net.minecraft.entity.player.EntityPlayer

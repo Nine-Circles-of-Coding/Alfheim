@@ -1,7 +1,6 @@
 package alfheim.client.render.entity
 
 import alexsocol.asjlib.D
-import alexsocol.asjlib.render.ASJRenderHelper
 import alexsocol.asjlib.render.ASJRenderHelper.discard
 import alexsocol.asjlib.render.ASJRenderHelper.setBlend
 import alexsocol.asjlib.render.ASJRenderHelper.setGlow

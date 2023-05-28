@@ -33,8 +33,7 @@ import cpw.mods.fml.relauncher.*
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.culling.ICamera
 import net.minecraft.entity.*
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.entity.player.EntityPlayerMP
+import net.minecraft.entity.player.*
 import net.minecraft.item.ItemStack
 import net.minecraft.network.play.server.S12PacketEntityVelocity
 import net.minecraft.util.MovingObjectPosition

@@ -8,21 +8,18 @@ import alfheim.api.event.PlayerInteractAdequateEvent
 import alfheim.common.core.util.DamageSourceSpell
 import alfheim.common.item.equipment.bauble.ItemPendant
 import alfheim.common.item.equipment.bauble.ItemPendant.Companion.EnumPrimalWorldType.*
-import alfheim.common.network.M1d
-import alfheim.common.network.NetworkService
+import alfheim.common.network.*
 import alfheim.common.network.packet.Message1d
 import cpw.mods.fml.common.eventhandler.*
 import cpw.mods.fml.relauncher.*
 import net.minecraft.entity.*
 import net.minecraft.entity.item.EntityItem
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.entity.player.EntityPlayerMP
+import net.minecraft.entity.player.*
 import net.minecraft.item.*
 import net.minecraft.potion.Potion
 import net.minecraft.util.MathHelper
 import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.event.entity.living.LivingDeathEvent
-import net.minecraftforge.event.entity.living.LivingEvent
+import net.minecraftforge.event.entity.living.*
 import net.minecraftforge.event.entity.living.LivingEvent.*
 import kotlin.math.*
 

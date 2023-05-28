@@ -5,7 +5,6 @@ import alexsocol.asjlib.math.*
 import alfheim.api.entity.IMuspelheimEntity
 import alfheim.client.render.entity.RenderEntityMuspelheimSunSlash
 import alfheim.common.core.util.DamageSourceSpell
-import alfheim.common.entity.boss.primal.EntitySurtr
 import net.minecraft.entity.*
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound

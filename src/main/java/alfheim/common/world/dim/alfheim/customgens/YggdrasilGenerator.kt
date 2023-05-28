@@ -1,6 +1,6 @@
 package alfheim.common.world.dim.alfheim.customgens
 
-import alexsocol.asjlib.*
+import alexsocol.asjlib.I
 import alfheim.AlfheimCore
 import alfheim.api.ModInfo
 import alfheim.common.block.AlfheimBlocks
@@ -8,7 +8,7 @@ import net.minecraft.block.Block
 import net.minecraft.init.Blocks
 import net.minecraft.util.MathHelper
 import ru.vamig.worldengine.additions.*
-import kotlin.math.*
+import kotlin.math.atan
 
 object YggdrasilGenerator: WE_CreateChunkGen() {
 	

@@ -10,8 +10,7 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.util.DamageSource
-import net.minecraft.util.EntityDamageSourceIndirect
+import net.minecraft.util.*
 import net.minecraft.world.World
 
 class EntityBlock(world: World): Entity(world) {

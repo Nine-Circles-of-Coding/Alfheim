@@ -19,7 +19,8 @@ import alfheim.client.render.world.*
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.helper.ContributorsPrivacyHelper
 import alfheim.common.network.NetworkService
-import alfheim.common.network.packet.MessageKeyBindSimport com.mojang.authlib.minecraft.MinecraftProfileTexture.Type
+import alfheim.common.network.packet.MessageKeyBindS
+import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.gameevent.TickEvent.*
 import cpw.mods.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent
@@ -34,8 +35,7 @@ import net.minecraft.potion.Potion
 import net.minecraftforge.client.event.*
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent
-import net.minecraftforge.event.entity.player.ItemTooltipEvent
-import net.minecraftforge.event.entity.player.PlayerEvent
+import net.minecraftforge.event.entity.player.*
 import org.lwjgl.opengl.GL11.*
 import vazkii.botania.common.Botania
 import vazkii.botania.common.item.ModItems

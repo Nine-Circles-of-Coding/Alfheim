@@ -4,8 +4,7 @@ import alexsocol.asjlib.*
 import alfheim.common.core.asm.hook.AlfheimHookHandler
 import alfheim.common.core.handler.*
 import alfheim.common.item.relic.ItemTankMask.Companion.limboCounter
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.entity.player.EntityPlayerMP
+import net.minecraft.entity.player.*
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.server.MinecraftServer
 import vazkii.botania.client.core.handler.ClientTickHandler

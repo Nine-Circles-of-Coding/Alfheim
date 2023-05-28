@@ -1,8 +1,7 @@
 package alfheim.common.item.equipment.bauble
 
 import alexsocol.asjlib.mc
-import alfheim.common.network.M0ds
-import alfheim.common.network.NetworkService
+import alfheim.common.network.*
 import alfheim.common.network.packet.Message0dS
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.entity.EntityPlayerSP

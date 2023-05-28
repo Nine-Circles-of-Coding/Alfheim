@@ -6,8 +6,7 @@ import alfheim.api.ModInfo
 import alfheim.client.sound.EntityBoundMovingSound
 import alfheim.common.core.util.DamageSourceSpell
 import cpw.mods.fml.relauncher.*
-import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityLivingBase
+import net.minecraft.entity.*
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.world.World
 

@@ -1,7 +1,7 @@
 package alfheim.common.block.tile
 
 import alexsocol.asjlib.*
-import alexsocol.asjlib.extendables.block.*
+import alexsocol.asjlib.extendables.block.TileImmobile
 import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.render.ASJRenderHelper.toVec3
 import alfheim.api.AlfheimAPI

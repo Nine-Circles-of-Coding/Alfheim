@@ -9,7 +9,6 @@ import alfheim.common.core.handler.AlfheimConfigHandler
 import cpw.mods.fml.common.IWorldGenerator
 import net.minecraft.world.World
 import net.minecraft.world.chunk.IChunkProvider
-import java.lang.RuntimeException
 import java.util.*
 import kotlin.math.abs
 

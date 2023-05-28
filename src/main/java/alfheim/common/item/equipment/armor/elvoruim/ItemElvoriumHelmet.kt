@@ -1,7 +1,6 @@
 package alfheim.common.item.equipment.armor.elvoruim
 
 import alexsocol.asjlib.*
-import alexsocol.asjlib.math.Vector3
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.potion.PotionEternity
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
@@ -14,13 +13,11 @@ import net.minecraft.potion.*
 import net.minecraft.util.*
 import net.minecraft.world.World
 import net.minecraftforge.client.event.RenderPlayerEvent
-import net.minecraftforge.common.util.FakePlayer
 import net.minecraftforge.event.entity.living.LivingHurtEvent
 import org.lwjgl.opengl.GL11.*
 import vazkii.botania.api.item.IAncientWillContainer
 import vazkii.botania.api.mana.*
 import vazkii.botania.client.core.helper.IconHelper
-import vazkii.botania.common.Botania
 import vazkii.botania.common.core.helper.ItemNBTHelper
 
 open class ItemElvoriumHelmet(name: String): ItemElvoriumArmor(0, name), IAncientWillContainer, IManaGivingItem {

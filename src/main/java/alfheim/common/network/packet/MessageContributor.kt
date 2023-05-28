@@ -1,10 +1,8 @@
 package alfheim.common.network.packet
 
 import alexsocol.asjlib.network.ASJPacket
-import alfheim.AlfheimCore
 import alfheim.api.network.AlfheimPacket
-import alfheim.common.core.helper.ContributorsPrivacyHelper
-import alfheim.common.core.helper.HashHelper
+import alfheim.common.core.helper.*
 import alfheim.common.network.NetworkService
 import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.server.MinecraftServer

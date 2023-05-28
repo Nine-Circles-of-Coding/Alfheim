@@ -1,23 +1,16 @@
 package alfheim.common.block.tile
 
-import alexsocol.asjlib.ASJUtilities
+import alexsocol.asjlib.*
 import alexsocol.asjlib.extendables.block.ASJTile
-import alexsocol.asjlib.getBoundingBox
 import alfheim.api.ModInfo
-import alfheim.api.entity.EnumRace
-import alfheim.api.entity.race
+import alfheim.api.entity.*
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.handler.CardinalSystem.ElvenStoryModeSystem
 import alfheim.common.network.NetworkService
-import alfheim.common.network.packet.MessageRaceInfo
-import alfheim.common.network.packet.MessageSkinInfo
+import alfheim.common.network.packet.*
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.ChunkCoordinates
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.component3
-import kotlin.collections.indices
 
 class TileRaceSelector: ASJTile() {
 	

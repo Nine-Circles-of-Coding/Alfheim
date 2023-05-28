@@ -2,8 +2,7 @@ package alfheim.common.core.helper
 
 import alexsocol.asjlib.*
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.item.Item
-import net.minecraft.item.ItemStack
+import net.minecraft.item.*
 import vazkii.botania.common.item.ModItems
 
 object DiceDropsHelper {

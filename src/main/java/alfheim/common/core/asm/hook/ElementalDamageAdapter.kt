@@ -8,12 +8,11 @@ import alfheim.common.entity.boss.EntityDedMoroz
 import gloomyfolken.hooklib.asm.*
 import gloomyfolken.hooklib.asm.Hook.ReturnValue
 import net.minecraft.entity.*
-import net.minecraft.entity.boss.EntityDragon
-import net.minecraft.entity.boss.EntityWither
+import net.minecraft.entity.boss.*
 import net.minecraft.entity.effect.EntityLightningBolt
 import net.minecraft.entity.monster.*
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.entity.projectile.*
+import net.minecraft.entity.projectile.EntitySnowball
 import net.minecraft.item.ItemStack
 import net.minecraft.util.*
 import thaumcraft.api.aspects.Aspect

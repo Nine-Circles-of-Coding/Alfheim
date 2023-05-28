@@ -35,7 +35,7 @@ import net.minecraftforge.common.*
 import net.minecraftforge.common.util.ForgeDirection
 import net.minecraftforge.oredict.OreDictionary.*
 import vazkii.botania.api.BotaniaAPI
-import vazkii.botania.api.lexicon.*
+import vazkii.botania.api.lexicon.ILexiconable
 import vazkii.botania.api.subtile.SubTileEntity
 import vazkii.botania.common.block.*
 import vazkii.botania.common.lexicon.LexiconData

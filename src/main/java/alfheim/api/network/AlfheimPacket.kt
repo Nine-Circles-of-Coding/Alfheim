@@ -1,8 +1,6 @@
 package alfheim.api.network
 
-import cpw.mods.fml.common.network.simpleimpl.IMessage
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler
-import cpw.mods.fml.common.network.simpleimpl.MessageContext
+import cpw.mods.fml.common.network.simpleimpl.*
 import net.minecraft.entity.player.EntityPlayerMP
 
 interface AlfheimPacket<T : AlfheimPacket<T>> : IMessage, IMessageHandler<T, T> {

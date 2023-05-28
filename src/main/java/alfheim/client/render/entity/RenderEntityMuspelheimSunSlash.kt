@@ -1,7 +1,7 @@
 package alfheim.client.render.entity
 
 import alexsocol.asjlib.*
-import alexsocol.asjlib.math.*
+import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.render.ASJRenderHelper.discard
 import alexsocol.asjlib.render.ASJRenderHelper.interpolatedTranslation
 import alexsocol.asjlib.render.ASJRenderHelper.interpolatedTranslationReverse

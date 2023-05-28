@@ -2,10 +2,9 @@ package alfheim.common.entity
 
 import alexsocol.asjlib.*
 import alfheim.api.entity.IMuspelheimEntity
-import alfheim.common.core.helper.*
+import alfheim.common.core.helper.ElementalDamage
 import alfheim.common.item.AlfheimItems
-import alfheim.common.item.material.ElvenResourcesMetas
-import alfheim.common.item.material.EventResourcesMetas
+import alfheim.common.item.material.*
 import net.minecraft.block.Block
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.*

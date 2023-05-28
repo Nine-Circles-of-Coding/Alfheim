@@ -9,7 +9,6 @@ import alfheim.common.core.util.DamageSourceSpell
 import alfheim.common.spell.fire.SpellFirewall
 import cpw.mods.fml.relauncher.*
 import net.minecraft.entity.*
-import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.DamageSource
 import net.minecraft.world.World

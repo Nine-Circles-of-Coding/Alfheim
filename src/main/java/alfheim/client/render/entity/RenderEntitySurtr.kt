@@ -20,7 +20,7 @@ import net.minecraft.entity.*
 import net.minecraft.util.ResourceLocation
 import org.lwjgl.opengl.GL11.*
 import vazkii.botania.client.core.handler.*
-import java.util.Random
+import java.util.*
 import kotlin.math.*
 
 object RenderEntitySurtr: RenderBiped(ModelEntitySurtr, 2f) {

@@ -9,12 +9,11 @@ import alfheim.api.lib.LibResourceLocations
 import alfheim.api.spell.SpellBase
 import alfheim.api.trees.*
 import alfheim.api.world.domain.Domain
-import com.google.common.collect.Lists
 import net.minecraft.block.Block
 import net.minecraft.init.*
 import net.minecraft.item.ItemStack
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.*
+import net.minecraft.util.EnumChatFormatting
 import net.minecraftforge.common.util.EnumHelper
 import vazkii.botania.api.recipe.RecipeElvenTrade
 

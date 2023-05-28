@@ -3,12 +3,12 @@ package alfheim.common.item.equipment.armor
 import alexsocol.asjlib.*
 import alfheim.api.ModInfo
 import alfheim.client.core.helper.IconHelper
+import alfheim.client.model.armor.ModelArmorVolcano
 import alfheim.common.core.handler.SheerColdHandler
 import alfheim.common.core.handler.ragnarok.RagnarokHandler
-import alfheim.common.item.AlfheimItems
-import alfheim.client.model.armor.ModelArmorVolcano
 import alfheim.common.core.util.AlfheimTab
 import alfheim.common.entity.EntitySnowSprite
+import alfheim.common.item.AlfheimItems
 import alfheim.common.item.material.*
 import cpw.mods.fml.common.eventhandler.*
 import cpw.mods.fml.relauncher.*

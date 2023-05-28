@@ -1,12 +1,9 @@
 package alfheim.common.core.command
 
 import alfheim.common.core.handler.AlfheimConfigHandler
-import alfheim.common.network.M0dc
-import alfheim.common.network.NetworkService
+import alfheim.common.network.*
 import alfheim.common.network.packet.Message0dC
-import net.minecraft.command.CommandBase
-import net.minecraft.command.ICommandSender
-import net.minecraft.command.WrongUsageException
+import net.minecraft.command.*
 import net.minecraft.entity.player.EntityPlayerMP
 
 object CommandMTSpellInfo: CommandBase() {

@@ -3,11 +3,11 @@ package alfheim.client.render.tile
 import alexsocol.asjlib.*
 import alexsocol.asjlib.render.*
 import alfheim.api.lib.LibResourceLocations
-import alfheim.common.block.*
+import alfheim.common.block.BlockAlfheimPylon
 import alfheim.common.block.tile.TileAlfheimPylon
 import net.minecraft.client.renderer.*
 import net.minecraft.client.renderer.texture.TextureMap
-import net.minecraft.client.renderer.tileentity.*
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.*
 import org.lwjgl.opengl.GL11.*

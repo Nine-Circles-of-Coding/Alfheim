@@ -3,7 +3,7 @@ package alfheim.common.crafting.recipe
 import alexsocol.asjlib.toItem
 import alfheim.common.block.AlfheimBlocks
 import net.minecraft.inventory.InventoryCrafting
-import net.minecraft.item.*
+import net.minecraft.item.ItemStack
 import net.minecraft.item.crafting.IRecipe
 import net.minecraft.world.World
 import vazkii.botania.common.block.ModBlocks

@@ -2,11 +2,11 @@ package alfheim.client.render.entity
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
-import alexsocol.asjlib.render.*
 import alexsocol.asjlib.render.ASJRenderHelper.discard
 import alexsocol.asjlib.render.ASJRenderHelper.interpolatedTranslation
 import alexsocol.asjlib.render.ASJRenderHelper.interpolatedTranslationReverse
 import alexsocol.asjlib.render.ASJRenderHelper.setBlend
+import alexsocol.asjlib.render.ASJShaderHelper
 import alfheim.api.lib.*
 import alfheim.client.core.proxy.RenderEntityIcicle
 import alfheim.client.model.entity.*
@@ -21,7 +21,7 @@ import net.minecraft.util.ResourceLocation
 import net.minecraftforge.client.event.RenderWorldLastEvent
 import org.lwjgl.opengl.GL11.*
 import vazkii.botania.client.core.handler.BossBarHandler
-import java.util.Random
+import java.util.*
 import kotlin.math.*
 
 object RenderEntityThrym: RenderBiped(ModelEntityThrym, 2f) {

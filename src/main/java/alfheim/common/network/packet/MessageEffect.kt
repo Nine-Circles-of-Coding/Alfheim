@@ -1,13 +1,10 @@
 package alfheim.common.network.packet
 
-import alexsocol.asjlib.getActivePotionEffect
-import alexsocol.asjlib.mc
+import alexsocol.asjlib.*
 import alexsocol.asjlib.network.ASJPacket
 import alfheim.api.network.AlfheimPacket
-import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityLivingBase
-import net.minecraft.potion.Potion
-import net.minecraft.potion.PotionEffect
+import net.minecraft.entity.*
+import net.minecraft.potion.*
 
 /**
  * @param state 1 - add, 0 - update, -1 - remove

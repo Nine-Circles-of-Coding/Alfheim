@@ -179,6 +179,10 @@ import alfheim.common.item.AlfheimItems.crescentMoonAmulet
 import alfheim.common.item.AlfheimItems.daolos
 import alfheim.common.item.AlfheimItems.deathSeed
 import alfheim.common.item.AlfheimItems.discFenrir
+import alfheim.common.item.AlfheimItems.discFlugel
+import alfheim.common.item.AlfheimItems.discFlugelUltra
+import alfheim.common.item.AlfheimItems.discSurtr
+import alfheim.common.item.AlfheimItems.discThrym
 import alfheim.common.item.AlfheimItems.dodgeRing
 import alfheim.common.item.AlfheimItems.elementalBoots
 import alfheim.common.item.AlfheimItems.elementalChestplate
@@ -199,12 +203,8 @@ import alfheim.common.item.AlfheimItems.fenrirChestplate
 import alfheim.common.item.AlfheimItems.fenrirClaws
 import alfheim.common.item.AlfheimItems.fenrirHelmet
 import alfheim.common.item.AlfheimItems.fenrirLeggings
-import alfheim.common.item.AlfheimItems.fireGrenade
-import alfheim.common.item.AlfheimItems.discFlugel
-import alfheim.common.item.AlfheimItems.discFlugelUltra
-import alfheim.common.item.AlfheimItems.discSurtr
-import alfheim.common.item.AlfheimItems.discThrym
 import alfheim.common.item.AlfheimItems.fenrirLoot
+import alfheim.common.item.AlfheimItems.fireGrenade
 import alfheim.common.item.AlfheimItems.flugelHead
 import alfheim.common.item.AlfheimItems.flugelSoul
 import alfheim.common.item.AlfheimItems.gaiaSlayer

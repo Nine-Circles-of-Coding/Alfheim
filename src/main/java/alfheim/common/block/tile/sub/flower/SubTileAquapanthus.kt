@@ -3,7 +3,6 @@ package alfheim.common.block.tile.sub.flower
 import alfheim.common.lexicon.AlfheimLexiconData
 import net.minecraft.util.IIcon
 import vazkii.botania.api.BotaniaAPI
-import vazkii.botania.api.lexicon.LexiconEntry
 import vazkii.botania.api.subtile.*
 
 class SubTileAquapanthus: SubTileFunctional() {

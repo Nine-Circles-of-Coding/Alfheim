@@ -10,7 +10,6 @@ import net.minecraft.block.material.Material
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.world.World
-import vazkii.botania.api.lexicon.*
 import java.io.File
 import java.util.*
 

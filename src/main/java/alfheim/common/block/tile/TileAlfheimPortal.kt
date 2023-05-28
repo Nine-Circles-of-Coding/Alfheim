@@ -14,7 +14,6 @@ import net.minecraft.init.Blocks
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.*
-import net.minecraft.world.World
 import vazkii.botania.api.lexicon.multiblock.*
 import vazkii.botania.common.Botania
 import vazkii.botania.common.block.ModBlocks

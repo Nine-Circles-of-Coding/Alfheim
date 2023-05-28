@@ -1,7 +1,7 @@
 package alfheim.client.render.entity
 
 import alexsocol.asjlib.*
-import alexsocol.asjlib.math.*
+import alexsocol.asjlib.math.Vector3
 import alfheim.common.entity.spell.EntitySpellFenrirStorm
 import net.minecraft.client.renderer.OpenGlHelper
 import net.minecraft.client.renderer.entity.Render

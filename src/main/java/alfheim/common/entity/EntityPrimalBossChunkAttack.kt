@@ -6,8 +6,8 @@ import alfheim.api.entity.*
 import alfheim.common.core.handler.SheerColdHandler
 import alfheim.common.core.util.DamageSourceSpell
 import alfheim.common.item.AlfheimItems
-import alfheim.common.item.equipment.bauble.ItemPendant
 import alfheim.common.item.equipment.armor.ItemSnowArmor
+import alfheim.common.item.equipment.bauble.ItemPendant
 import baubles.common.lib.PlayerHandler
 import cpw.mods.fml.common.eventhandler.*
 import net.minecraft.entity.*
@@ -22,7 +22,6 @@ import net.minecraftforge.event.entity.living.LivingHealEvent
 import vazkii.botania.api.mana.ManaItemHandler
 import vazkii.botania.common.Botania
 import vazkii.botania.common.item.ModItems
-import kotlin.collections.*
 import kotlin.math.abs
 
 class EntityPrimalBossChunkAttack(world: World, val summoner: EntityLivingBase?, target: EntityPlayer?): Entity(world) {

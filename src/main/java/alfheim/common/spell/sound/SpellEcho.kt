@@ -1,7 +1,6 @@
 package alfheim.common.spell.sound
 
-import alexsocol.asjlib.expand
-import alexsocol.asjlib.getEntitiesWithinAABB
+import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alfheim.api.entity.EnumRace
 import alfheim.api.spell.SpellBase
@@ -9,12 +8,10 @@ import alfheim.client.render.world.VisualEffectHandlerClient.VisualEffects
 import alfheim.common.core.handler.VisualEffectHandler
 import alfheim.common.network.NetworkService
 import alfheim.common.network.packet.MessageVisualEffect
-import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityLivingBase
+import net.minecraft.entity.*
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.entity.monster.IMob
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.entity.player.EntityPlayerMP
+import net.minecraft.entity.player.*
 
 object SpellEcho: SpellBase("echo", EnumRace.POOKA, 4000, 1500, 5) {
 	

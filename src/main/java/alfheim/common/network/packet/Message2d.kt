@@ -1,12 +1,9 @@
 package alfheim.common.network.packet
 
-import alexsocol.asjlib.ASJUtilities
-import alexsocol.asjlib.I
-import alexsocol.asjlib.mc
+import alexsocol.asjlib.*
 import alexsocol.asjlib.network.ASJPacket
 import alfheim.api.AlfheimAPI
-import alfheim.api.entity.EnumRace
-import alfheim.api.entity.raceID
+import alfheim.api.entity.*
 import alfheim.api.network.AlfheimPacket
 import alfheim.api.spell.SpellBase
 import alfheim.client.core.handler.CardinalSystemClient

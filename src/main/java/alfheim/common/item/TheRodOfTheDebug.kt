@@ -1,9 +1,9 @@
 package alfheim.common.item
 
-import alexsocol.asjlib.*
+import alexsocol.asjlib.ASJUtilities
 import alfheim.api.ModInfo
 import alfheim.api.entity.*
-import net.minecraft.entity.player.*
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.world.World

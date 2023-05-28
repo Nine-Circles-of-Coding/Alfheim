@@ -2,7 +2,7 @@ package alfheim.client.sound
 
 import net.minecraft.client.audio.MovingSound
 import net.minecraft.entity.Entity
-import net.minecraft.util.*
+import net.minecraft.util.ResourceLocation
 
 open class EntityBoundMovingSound<E : Entity>(val host: E, sound: String, val update: (EntityBoundMovingSound<E>.() -> Unit)? = null): MovingSound(ResourceLocation(sound)) {
 	

@@ -10,8 +10,7 @@ import alfheim.common.item.equipment.bauble.faith.ItemRagnarokEmblem
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.EnumChatFormatting
-import net.minecraft.util.StatCollector
+import net.minecraft.util.*
 import org.lwjgl.opengl.GL11.*
 
 object RenderTileDomainLobby: TileEntitySpecialRenderer() {

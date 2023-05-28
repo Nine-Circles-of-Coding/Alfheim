@@ -11,7 +11,6 @@ import alfheim.common.core.handler.CardinalSystem.KnowledgeSystem
 import alfheim.common.core.handler.CardinalSystem.KnowledgeSystem.Knowledge
 import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.item.*
-import alfheim.common.item.equipment.bauble.faith.FaithHandlerSif
 import alfheim.common.item.material.ElvenResourcesMetas.*
 import alfheim.common.item.material.ElvenResourcesMetas.Companion.of
 import alfheim.common.world.dim.niflheim.ChunkProviderNiflheim
@@ -19,7 +18,6 @@ import cpw.mods.fml.common.IFuelHandler
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.relauncher.*
-import net.minecraft.block.IGrowable
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.Entity

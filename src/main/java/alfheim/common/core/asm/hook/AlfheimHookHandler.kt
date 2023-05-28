@@ -18,11 +18,11 @@ import alfheim.common.block.alt.BlockAltLeaves
 import alfheim.common.block.colored.BlockAuroraDirt
 import alfheim.common.block.tile.*
 import alfheim.common.core.handler.*
-import alfheim.common.core.handler.AlfheimConfigHandler.increasedSpiritsRange
 import alfheim.common.core.handler.AlfheimConfigHandler.dimensionIDAlfheim
 import alfheim.common.core.handler.AlfheimConfigHandler.dimensionIDDomains
 import alfheim.common.core.handler.AlfheimConfigHandler.dimensionIDHelheim
 import alfheim.common.core.handler.AlfheimConfigHandler.dimensionIDNiflheim
+import alfheim.common.core.handler.AlfheimConfigHandler.increasedSpiritsRange
 import alfheim.common.core.handler.HilarityHandler.AttributionNameChecker.getCurrentNickname
 import alfheim.common.core.handler.SheerColdHandler.cold
 import alfheim.common.core.handler.ragnarok.RagnarokHandler.MAX_SUMMER_TICKS

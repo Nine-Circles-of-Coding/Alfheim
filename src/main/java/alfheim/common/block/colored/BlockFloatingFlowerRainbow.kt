@@ -5,11 +5,11 @@ import cpw.mods.fml.common.Optional
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.passive.EntitySheep
 import net.minecraft.item.*
-import net.minecraft.world.*
+import net.minecraft.world.World
 import thaumcraft.api.crafting.IInfusionStabiliser
-import vazkii.botania.api.lexicon.*
+import vazkii.botania.api.lexicon.ILexiconable
 import vazkii.botania.common.Botania
-import vazkii.botania.common.block.decor.*
+import vazkii.botania.common.block.decor.BlockFloatingFlower
 import vazkii.botania.common.core.handler.ConfigHandler
 import java.util.*
 

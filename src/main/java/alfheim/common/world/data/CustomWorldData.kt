@@ -4,9 +4,7 @@ import alexsocol.asjlib.*
 import alfheim.api.ModInfo
 import alfheim.common.core.handler.AlfheimConfigHandler
 import com.google.common.collect.*
-import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.nbt.NBTTagIntArray
-import net.minecraft.nbt.NBTTagList
+import net.minecraft.nbt.*
 import net.minecraft.util.ChunkCoordinates
 import net.minecraft.world.*
 

@@ -1,11 +1,11 @@
 package alfheim.client.model.entity
 
 import alexsocol.asjlib.*
-import alexsocol.asjlib.math.*
+import alexsocol.asjlib.math.Vector3
 import alfheim.AlfheimCore
 import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.entity.EntityPrimalMark
-import alfheim.common.entity.boss.primal.*
+import alfheim.common.entity.boss.primal.EntityPrimalBoss
 import net.minecraft.client.model.*
 import net.minecraft.entity.Entity
 import net.minecraft.util.MathHelper

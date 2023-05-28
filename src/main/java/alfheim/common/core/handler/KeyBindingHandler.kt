@@ -1,16 +1,12 @@
 package alfheim.common.core.handler
 
-import alexsocol.asjlib.ASJUtilities
-import alexsocol.asjlib.D
+import alexsocol.asjlib.*
 import alfheim.api.AlfheimAPI
-import alfheim.api.entity.EnumRace
-import alfheim.api.entity.race
+import alfheim.api.entity.*
 import alfheim.api.spell.SpellBase.SpellCastResult.DESYNC
-import alfheim.common.core.helper.ContributorsPrivacyHelper
-import alfheim.common.core.helper.ElvenFlightHelper
+import alfheim.common.core.helper.*
 import alfheim.common.item.AlfheimItems
-import alfheim.common.network.M2d
-import alfheim.common.network.NetworkService
+import alfheim.common.network.*
 import alfheim.common.network.packet.Message2d
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayerMP

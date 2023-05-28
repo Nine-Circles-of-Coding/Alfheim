@@ -6,23 +6,18 @@ import alfheim.api.ModInfo
 import alfheim.api.entity.EnumRace
 import alfheim.common.core.handler.CardinalSystem
 import alfheim.common.entity.EntityElf
-import alfheim.common.network.M1d
-import alfheim.common.network.NetworkService
+import alfheim.common.network.*
 import alfheim.common.network.packet.Message1d
 import com.google.gson.Gson
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.entity.player.EntityPlayerMP
+import net.minecraft.entity.player.*
 import net.minecraft.event.ClickEvent
-import net.minecraft.util.ChatComponentText
-import net.minecraft.util.ChatComponentTranslation
-import net.minecraft.util.EnumChatFormatting
+import net.minecraft.util.*
 import net.minecraftforge.event.ServerChatEvent
 import net.minecraftforge.event.entity.living.LivingEvent
-import java.io.File
-import java.io.Serializable
+import java.io.*
 import java.nio.file.*
-import java.util.stream.Stream
+import java.util.stream.*
 
 object EntityElfDialogLogic {
 	

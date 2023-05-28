@@ -2,12 +2,10 @@ package alfheim.common.network.packet
 
 import alexsocol.asjlib.network.ASJPacket
 import alfheim.api.network.AlfheimPacket
-import alfheim.common.item.rod.RedstoneSignal
-import alfheim.common.item.rod.RedstoneSignalHandlerClient
+import alfheim.common.item.rod.*
 import cpw.mods.fml.common.network.ByteBufUtils
 import io.netty.buffer.ByteBuf
-import net.minecraft.nbt.JsonToNBT
-import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.nbt.*
 
 class MessageRedstoneSignalsSync(var signals: HashSet<RedstoneSignal>): ASJPacket(), AlfheimPacket<MessageRedstoneSignalsSync> {
 

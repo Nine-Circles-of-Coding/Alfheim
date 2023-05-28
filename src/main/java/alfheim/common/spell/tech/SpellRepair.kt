@@ -6,7 +6,7 @@ import alfheim.api.spell.SpellBase
 import alfheim.common.core.handler.AlfheimConfigHandler
 import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.entity.EntityLivingBase
-import kotlin.math.*
+import kotlin.math.max
 
 object SpellRepair: SpellBase("repair", EnumRace.LEPRECHAUN, 25000, 100, 50) {
 	

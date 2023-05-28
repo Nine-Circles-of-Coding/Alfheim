@@ -5,13 +5,11 @@ import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.security.InteractionSecurity
 import alfheim.api.spell.ITimeStopSpecific
 import alfheim.client.render.world.VisualEffectHandlerClient
-import alfheim.common.core.handler.AlfheimConfigHandler
-import alfheim.common.core.handler.CardinalSystem
+import alfheim.common.core.handler.*
 import alfheim.common.network.NetworkService
 import alfheim.common.network.packet.MessageVisualEffect
 import alfheim.common.spell.illusion.SpellDarkness
-import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityLivingBase
+import net.minecraft.entity.*
 import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.potion.Potion

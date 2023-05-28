@@ -5,15 +5,13 @@ import alexsocol.asjlib.math.Vector3
 import alfheim.AlfheimCore
 import alfheim.api.boss.IBotaniaBossWithName
 import alfheim.api.entity.INiflheimEntity
-import alfheim.common.core.handler.AlfheimConfigHandler
+import alfheim.common.core.handler.*
 import alfheim.common.core.handler.EventHandler.isMagical
-import alfheim.common.item.AlfheimItems
-import alfheim.common.item.material.ElvenResourcesMetas
-import alfheim.common.potion.PotionEternity
-import alfheim.common.core.handler.WRATH_OF_THE_WINTER
 import alfheim.common.core.helper.*
 import alfheim.common.entity.EntitySniceBall
-import alfheim.common.item.material.EventResourcesMetas
+import alfheim.common.item.AlfheimItems
+import alfheim.common.item.material.*
+import alfheim.common.potion.PotionEternity
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.entity.*
@@ -27,7 +25,6 @@ import net.minecraft.util.DamageSource
 import net.minecraft.world.World
 import vazkii.botania.client.core.handler.BossBarHandler
 import java.awt.Rectangle
-import java.util.EnumSet
 import kotlin.math.max
 
 class EntityDedMoroz(world: World): EntityMob(world), IBotaniaBossWithName, INiflheimEntity {

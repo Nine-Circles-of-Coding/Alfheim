@@ -5,9 +5,9 @@ import alexsocol.asjlib.math.Vector3
 import alfheim.api.ModInfo
 import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.core.handler.*
+import alfheim.common.entity.EntitySnowSprite
 import alfheim.common.entity.boss.primal.EntityThrym
 import alfheim.common.potion.PotionEternity
-import alfheim.common.entity.EntitySnowSprite
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.ai.EntityAIBase
 import net.minecraft.entity.player.*

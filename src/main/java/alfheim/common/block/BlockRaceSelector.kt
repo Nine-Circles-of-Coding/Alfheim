@@ -1,8 +1,7 @@
 package alfheim.common.block
 
 import alexsocol.asjlib.ASJUtilities
-import alfheim.api.entity.EnumRace
-import alfheim.api.entity.race
+import alfheim.api.entity.*
 import alfheim.client.core.helper.IconHelper
 import alfheim.common.block.base.BlockContainerMod
 import alfheim.common.block.tile.TileRaceSelector

@@ -1,14 +1,10 @@
 package alfheim.common.network.packet
 
-import alexsocol.asjlib.I
-import alexsocol.asjlib.get
+import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.network.ASJPacket
-import alexsocol.asjlib.playSoundAtEntity
 import alfheim.api.network.AlfheimPacket
-import alfheim.common.item.equipment.bauble.ItemCloudPendant
-import alfheim.common.item.equipment.bauble.ItemDodgeRing
-import alfheim.common.item.equipment.bauble.ItemPriestCloak
+import alfheim.common.item.equipment.bauble.*
 import alfheim.common.network.M0ds
 import baubles.common.lib.PlayerHandler
 import cpw.mods.fml.common.network.simpleimpl.IMessage

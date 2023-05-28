@@ -18,9 +18,6 @@ import cpw.mods.fml.common.*
 import cpw.mods.fml.common.Mod.*
 import cpw.mods.fml.common.Mod.EventHandler
 import cpw.mods.fml.common.event.*
-import cpw.mods.fml.common.network.NetworkRegistry
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper
-import cpw.mods.fml.relauncher.Side
 import vazkii.botania.common.Botania
 import java.util.*
 
@@ -33,8 +30,6 @@ object AlfheimCore {
 	
 	@Metadata(MODID)
 	lateinit var meta: ModMetadata
-
-	var nextPacketID = 0
 	
 	var save = ""
 	

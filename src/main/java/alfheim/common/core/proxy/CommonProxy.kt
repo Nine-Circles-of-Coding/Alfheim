@@ -22,7 +22,6 @@ import alfheim.common.world.dim.domains.WorldProviderDomains
 import alfheim.common.world.dim.helheim.WorldProviderHelheim
 import alfheim.common.world.dim.niflheim.WorldProviderNiflheim
 import alfheim.common.world.mobspawn.MobSpawnHandler
-import alfheim.common.core.handler.HELLISH_VACATION
 import cpw.mods.fml.client.event.ConfigChangedEvent
 import cpw.mods.fml.common.*
 import cpw.mods.fml.common.eventhandler.*

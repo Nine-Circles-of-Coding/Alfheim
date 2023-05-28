@@ -3,11 +3,11 @@ package alfheim.common.integration
 import alexsocol.asjlib.*
 import alfheim.AlfheimCore
 import alfheim.common.core.handler.AlfheimConfigHandler
-import alfheim.common.integration.tinkersconstruct.*
+import alfheim.common.integration.tinkersconstruct.TinkersConstructAlfheimConfig
 import cpw.mods.fml.common.Loader
 import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.block.Block
-import net.minecraft.init.*
+import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
 import net.minecraftforge.fluids.FluidRegistry
 import net.minecraftforge.oredict.OreDictionary

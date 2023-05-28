@@ -5,8 +5,7 @@ import alfheim.api.entity.EnumRace
 import alfheim.api.spell.SpellBase
 import alfheim.common.core.handler.CardinalSystem
 import alfheim.common.entity.spell.EntitySpellFireball
-import alfheim.common.network.M2d
-import alfheim.common.network.NetworkService
+import alfheim.common.network.*
 import alfheim.common.network.packet.Message2d
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer

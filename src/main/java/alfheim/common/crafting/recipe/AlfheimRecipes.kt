@@ -263,11 +263,10 @@ import alfheim.common.item.AlfheimItems.wiltedLotus
 import alfheim.common.item.block.*
 import alfheim.common.item.material.ElvenFoodMetas.*
 import alfheim.common.item.material.ElvenResourcesMetas.*
-import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.common.registry.GameRegistry.*
 import net.minecraft.block.Block
-import net.minecraft.init.*
 import net.minecraft.init.Blocks.*
+import net.minecraft.init.Items
 import net.minecraft.init.Items.*
 import net.minecraft.item.*
 import net.minecraft.item.crafting.*

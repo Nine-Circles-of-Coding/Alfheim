@@ -8,12 +8,10 @@ import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.core.handler.*
 import alfheim.common.core.util.DamageSourceSpell
 import alfheim.common.spell.wind.SpellLeafStorm
-import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityLivingBase
+import net.minecraft.entity.*
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.potion.*
 import net.minecraft.world.World
-import java.awt.Color
 import java.util.*
 
 class EntitySpellLeafStorm(world: World, val caster: EntityLivingBase?): Entity(world), ITimeStopSpecific {

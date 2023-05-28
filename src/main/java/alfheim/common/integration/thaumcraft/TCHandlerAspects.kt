@@ -34,6 +34,7 @@ import alfheim.common.item.AlfheimItems.auraRingGod
 import alfheim.common.item.AlfheimItems.cloudPendant
 import alfheim.common.item.AlfheimItems.cloudPendantSuper
 import alfheim.common.item.AlfheimItems.creativeReachPendant
+import alfheim.common.item.AlfheimItems.discFlugel
 import alfheim.common.item.AlfheimItems.dodgeRing
 import alfheim.common.item.AlfheimItems.elementalBoots
 import alfheim.common.item.AlfheimItems.elementalChestplate
@@ -49,7 +50,6 @@ import alfheim.common.item.AlfheimItems.elvoriumHelmet
 import alfheim.common.item.AlfheimItems.elvoriumHelmetRevealing
 import alfheim.common.item.AlfheimItems.elvoriumLeggings
 import alfheim.common.item.AlfheimItems.excaliber
-import alfheim.common.item.AlfheimItems.discFlugel
 import alfheim.common.item.AlfheimItems.flugelSoul
 import alfheim.common.item.AlfheimItems.invisibilityCloak
 import alfheim.common.item.AlfheimItems.livingrockPickaxe

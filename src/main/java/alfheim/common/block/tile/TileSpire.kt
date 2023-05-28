@@ -1,11 +1,10 @@
 package alfheim.common.block.tile
 
-import alexsocol.asjlib.*
+import alexsocol.asjlib.SchemaUtils
 import alfheim.common.block.AlfheimBlocks
 import net.minecraft.block.Block
 import net.minecraft.tileentity.TileEntity
-import vazkii.botania.api.lexicon.multiblock.Multiblock
-import vazkii.botania.api.lexicon.multiblock.MultiblockSet
+import vazkii.botania.api.lexicon.multiblock.*
 import vazkii.botania.common.block.ModBlocks
 
 class TileSpire: TileEntity() {

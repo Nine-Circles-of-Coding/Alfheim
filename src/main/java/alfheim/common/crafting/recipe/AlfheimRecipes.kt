@@ -295,7 +295,6 @@ import vazkii.botania.common.item.ModItems.quartz as manaquartz
 object AlfheimRecipes {
 	
 	lateinit var recipeElvorium: RecipeManaInfuser
-	lateinit var recipeInterCore: RecipeManaInfuser
 	lateinit var recipeMauftrium: RecipeManaInfuser
 	lateinit var recipeManaStone: RecipeManaInfuser
 	lateinit var recipeManaStoneGreater: RecipeManaInfuser
@@ -2143,8 +2142,8 @@ object AlfheimRecipes {
 		addShapelessOreDictRecipe(ItemStack(lightRelay, 1, 3), lightRelay, animatedTorch)
 		recipeLuminizer3 = BotaniaAPI.getLatestAddedRecipe()
 		
-		addShapelessRecipe(ItemStack(brown_mushroom), ItemStack(mushroom, 1, WILDCARD_VALUE))
-		addShapelessRecipe(ItemStack(red_mushroom), ItemStack(mushroom, 1, WILDCARD_VALUE))
+		addShapelessRecipe(ItemStack(brown_mushroom), ItemStack(mushroom, 1, 12))
+		addShapelessRecipe(ItemStack(red_mushroom), ItemStack(mushroom, 1, 14))
 		
 		addShapelessRecipe(NiflheimBlockMetas.COBBLESTONE.stack, NiflheimBlockMetas.STONE.stack)
 		
@@ -2195,14 +2194,14 @@ object AlfheimRecipes {
 	}
 	
 	private fun registerManaInfusionRecipes() {
-		recipeInterCore = addInfuserRecipe(InterdimensionalGatewayCore.stack,
-		                                   TilePool.MAX_MANA,
-		                                   MANA_PEARL,
-		                                   ELVORIUM_INGOT,
-		                                   ManaInfusionCore.stack,
-		                                   RUNE[8], // mana
-		                                   TERRA_STEEL,
-		                                   DYES[16])
+//		addInfuserRecipe(InterdimensionalGatewayCore.stack,
+//		                                   TilePool.MAX_MANA,
+//		                                   MANA_PEARL,
+//		                                   ELVORIUM_INGOT,
+//		                                   ManaInfusionCore.stack,
+//		                                   RUNE[8], // mana
+//		                                   TERRA_STEEL,
+//		                                   DYES[16])
 		
 		recipeTerrasteel = addInfuserRecipe(ItemStack(manaResource, 1, 4),
 											TilePool.MAX_MANA / 2,

@@ -11,6 +11,7 @@ import alfheim.common.item.AlfheimItems
 import alfheim.common.item.material.ElvenResourcesMetas
 import alfheim.common.potion.PotionEternity
 import alfheim.common.core.handler.WRATH_OF_THE_WINTER
+import alfheim.common.core.helper.*
 import alfheim.common.entity.EntitySniceBall
 import alfheim.common.item.material.EventResourcesMetas
 import cpw.mods.fml.relauncher.*
@@ -26,6 +27,7 @@ import net.minecraft.util.DamageSource
 import net.minecraft.world.World
 import vazkii.botania.client.core.handler.BossBarHandler
 import java.awt.Rectangle
+import java.util.EnumSet
 import kotlin.math.max
 
 class EntityDedMoroz(world: World): EntityMob(world), IBotaniaBossWithName, INiflheimEntity {

@@ -46,14 +46,13 @@ class EntitySurtr(world: World): EntityPrimalBoss(world), IMuspelheimEntity {
 	init {
 		tasks.addTask(0, SurtrAIThirdStageStart(this))
 		tasks.addTask(1, SurtrAISecondStageStart(this))
+	}
+	
+	private fun playSounds() {
+		if (!ASJUtilities.isClient || ticksExisted != 1) return
 		
-		if (ASJUtilities.isClient) {
-			mc.soundHandler.playSound(PrimalBossMovingSound(this, "${ModInfo.MODID}:surtr.wall.exist") { volume = if (wall) 1f else 0f })
-			mc.soundHandler.playSound(PrimalBossMovingSound(this, getChargeSound()) {
-				val ticks = host.ultAnimationTicks
-				volume = if (!ASJBitwiseHelper.getBit(ticks, 9) && ticks in 11..69) 1f else 0f
-			})
-		}
+		mc.soundHandler.playSound(PrimalBossMovingSound(this, "${ModInfo.MODID}:surtr.wall.exist") { volume = if (wall) 0.1f else 0.01f })
+		mc.soundHandler.playSound(PrimalBossMovingSound(this, getChargeSound()) { volume = if (!ASJBitwiseHelper.getBit(host.ultAnimationTicks, 9) && host.ultAnimationTicks in 11..69) 1f else 0.01f })
 	}
 	
 	override fun entityInit() {
@@ -64,6 +63,8 @@ class EntitySurtr(world: World): EntityPrimalBoss(world), IMuspelheimEntity {
 	
 	override fun onLivingUpdate() {
 		super.onLivingUpdate()
+		
+		playSounds()
 		
 		if (invulnerabilityTicks > 0) --invulnerabilityTicks
 		
@@ -90,12 +91,12 @@ class EntitySurtr(world: World): EntityPrimalBoss(world), IMuspelheimEntity {
 			lookHelper.setLookPosition(target.posX, target.posY + target.eyeHeight, target.posZ, 10f, verticalFaceSpeed.F)
 			
 			EntitySpellFireball(worldObj, this).apply {
-				playSoundAtEntity("${ModInfo.MODID}:surtr.fireball.form", 0.1f, 1f)
+				playSoundAtEntity("${ModInfo.MODID}:surtr.fireball.form", 1f, 1f)
 				this.target = target
 				noClip = false
 				setPosition(posX + Math.random() - 0.5, posY + Math.random() - 0.5, posZ + Math.random() - 0.5)
 				spawn()
-				playSoundAtEntity("${ModInfo.MODID}:thrym.fireball.form", 0.1f, 1f)
+				playSoundAtEntity("${ModInfo.MODID}:surtr.fireball.shot", 1f, 1f)
 			}
 		}
 	}

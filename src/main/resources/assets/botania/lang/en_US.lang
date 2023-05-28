@@ -49,13 +49,13 @@ alfheim.page.pylons2=Creating &1Gaia Pylon&0
 alfheim.entry.portal=Portal to Alfheim
 alfheim.tagline.portal=We need to go even more deeper!
 alfheim.page.portal0=&6Mastray&0... He was a native of &4Alfheim&0 and created the first portal to &4Midgard&0, which laid the foundation for a great alliance. However, the portal itself was given to him with great difficulty. To build a portal there, some resources of &4Midgard&0 were needed... How ironic... It's good that &6Freyr&0 himself lived in &4Alfheim&0, because he was a race of &4vanir&0, another kind of gods...
-alfheim.page.portal1=He understood &6Mastray&0, and brought him &1Terrasteel&0 - the great alloy of &4Midgard&0. After that he quickly finished the portal and activated it. Apparently, if you build it in &4Midgard&0, it will also work...
+alfheim.page.portal1=He understood &6Mastray&0, and brought him &1Terrasteel&0 - the great alloy of &4Midgard&0. After that he quickly finished the portal and activated it. Apparently, if you build it in &4Midgard&0, it will also work, but will require more steps to set it up.
 alfheim.page.portal2=At the heart of the portal is &4Bifröst&0 - the legendary rainbow bridge that connects &4Asgard&0 to other worlds.
 alfheim.page.portal3=Creating &1Alfheim Portal Core&0
 alfheim.page.portal4=The next thing you need is a link that can set up the perfect connection between &4Alfheim&0 and &4Midgard&0. Elves will never tell the secret of making this link to humans, and for its manufacture will require the &1Netherstar&0 - the artifact of &4Muspelheim&0. It remains only to build the portal correctly and it's ready!
 alfheim.page.portal5=Creating &1Interdimensional Gateway Core&0
 alfheim.page.portal6=Portal to Alfheim
-alfheim.page.portal7=To activate the portal, you only need to use the &1Core&0 on the portal, and operating principle is identical to the portal of livingwood. The only difference is that in &4Alfheim&0 it doesn't require &4Mana&0 sources, since it takes energy from the world itself.
+alfheim.page.portal7=To activate the portal, you only need to use the &1Core&0 on the portal, and operating principle is identical to the portal of livingwood. The only difference is that in &4Alfheim&0 it doesn't require &4Mana&0 sources, since it takes energy from the world itself, and no core - the exit will be in a uncertain place in Midgard.
 alfheim.page.portal8=Unfortunately, it was impossible to create a stable and fully functioning portal even for &6Mastray&0. This version can no longer pass the inanimate objects, only beings mentally connected with higher creatures - players. But it successfully compensates temporal anomalies of &4Alfheim&0.
 
 alfheim.entry.worldgen=Worldgen
@@ -177,8 +177,8 @@ alfheim.page.triquetrum2=Creating &1Triquetrum&0
 
 alfheim.entry.corpSeq=Corporea Sequencer
 alfheim.tagline.corpSeq=Requests the creation of items when needed
-alfheim.page.corpSeq0=The &1Corporea Sequencer&0 is designed to move items from one inventory to another, which opens up many useful applications.
-alfheim.page.corpSeq1=First of all, the Sequencer must be connected to the &4Corporea network&0 using the &1Corporea spark&0. The request template is placed in the inventory above the Sequencer, and the requested item is placed in a frame on the Sequencer as a filter. Items from the template are placed in the inventory located two blocks below the Sequencer.
+alfheim.page.corpSeq0=The &1Corporea Sequencer&0 is designed to move items from one inventory to another, which opens up many useful applications. But it also has a number of limitations, for example, it always puts items only from top.
+alfheim.page.corpSeq1=First of all, the Sequencer must be connected to the &4Corporea network&0 using the &1Corporea spark&0. The request template is placed in the inventory above the Sequencer, and the requested item is placed in a frame on the Sequencer as a filter. Items from the template are placed in the inventory located one or two blocks below the Sequencer.
 alfheim.page.corpSeq2=For use in crafting automation, the number of items created per request is configured by clicking LMB and Shift-LMB. Pressing RMB with the wand on the Sequencer will reset the current request, and giving a redstone pulse will repeat the request for the expected item.
 alfheim.page.corpSeq3=Keep the order!
 

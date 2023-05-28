@@ -719,6 +719,11 @@ alfheimmisc.ragnarok.surtroffer=Sacrifice required to enter that Domain
 alfheimmisc.ragnarok.surtrofferok=Sacrifice accepted, Domain unlocked
 
 alfheimmisc.actuated=Ender Actuator has successfully synchronized with vibes of your soul!
+alfheimmisc.autocraft.INVALID_TARGET_SLOTS=Not all required target slots are available from the top
+alfheimmisc.autocraft.NO_PATTERN=Pattern inventory not found
+alfheimmisc.autocraft.NO_TARGET=Target inventory not found
+alfheimmisc.autocraft.NOT_ENOUGH_SLOTS=Target inventory has less slots than required
+alfheimmisc.autocraft.WAITING=Power with redstone pulse to retry getting items
 alfheimmisc.autocraft.request=Requested Item
 alfheimmisc.autocraft.waiting=Item Waiting
 alfheimmisc.craftresult=Craft output count: %s

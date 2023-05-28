@@ -13,17 +13,16 @@ import vazkii.botania.api.subtile.SubTileEntity
 class AlfheimClassTransformer: IClassTransformer {
 	
 	val additionalInterfaces = mapOf(
-		"alfheim/common/core/helper/IElementalEntity" to setOf(
-			"net.minecraft.entity.monster.EntityCreeper",
-			"thaumcraft.common.entities.monster.EntityWisp"
-															  )
+		"net.minecraft.entity.monster.EntityCreeper" to setOf("alfheim/common/core/helper/IElementalEntity"),
+		"thaumcraft.common.entities.monster.EntityWisp" to setOf("alfheim/common/core/helper/IElementalEntity"),
 									)
 	
+	/** name for logging */
 	var transformedName = ""
 	var basicClass = byteArrayOf()
 	
 	override fun transform(name: String, transformedName: String, basicClass: ByteArray?): ByteArray? {
-		@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "KotlinConstantConditions")
+		@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 		transformedName as java.lang.String // fix of java.lang.ClassCircularityError: kotlin/text/StringsKt
 		
 		if (transformedName.startsWith("kotlin") || transformedName.startsWith("gloomyfolken")) return basicClass
@@ -53,16 +52,6 @@ class AlfheimClassTransformer: IClassTransformer {
 			"net.minecraft.entity.EntityTrackerEntry"                          -> core { `EntityTrackerEntry$ClassVisitor`(it) }
 			"net.minecraft.potion.Potion"                                      -> core { `Potion$ClassVisitor`(it) }
 			"thaumcraft.common.items.ItemNugget"                               -> core { `ItemNugget$ClassVisitor`(it) }
-			"thaumcraft.common.entities.monster.boss.EntityEldritchWarden"     -> tree {
-				// for elemental damage hook
-				val mn = MethodNode(ACC_PUBLIC, if (OBF) "func_70652_k" else "attackEntityAsMob", "(Lnet/minecraft/entity/Entity;)Z", null, null)
-				mn.instructions.add(VarInsnNode(ALOAD, 0))
-				mn.instructions.add(VarInsnNode(ALOAD, 1))
-				mn.instructions.add(MethodInsnNode(INVOKESPECIAL, "net/minecraft/entity/monster/EntityMob", if (OBF) "func_70652_k" else "attackEntityAsMob", "(Lnet/minecraft/entity/Entity;)Z", false))
-				mn.instructions.add(InsnNode(IRETURN))
-				it.methods.add(mn)
-			}
-			
 			"vazkii.botania.client.core.handler.BaubleRenderHandler"           -> core { `BaubleRenderHandler$ClassVisitor`(it) }
 			"vazkii.botania.client.core.handler.LightningHandler"              -> core { `LightningHandler$ClassVisitor`(it) }
 			"vazkii.botania.client.core.handler.TooltipAdditionDisplayHandler" -> core { `TooltipAdditionDisplayHandler$ClassVisitor`(it) }

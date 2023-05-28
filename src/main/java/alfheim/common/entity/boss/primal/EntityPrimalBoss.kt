@@ -106,11 +106,17 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 		targetTasks.addTask(0, PrimalAISelectTarget(this, 64, 16))
 		
 		addRandomArmor()
+	}
+	
+	private fun playSounds() {
+		if (!ASJUtilities.isClient || ticksExisted != 1) return
 		
-		if (ASJUtilities.isClient) {
-			mc.soundHandler.playSound(PrimalBossMovingSound(this, getSpinningSound()) { volume = if (host.ultAnimationTicks > 512) 1f else 0f })
-			mc.soundHandler.playSound(PrimalBossMovingSound(this, getWhirlwindSound()) { volume = if (host.whirl) 1f else 0f })
-		}
+		mc.soundHandler.playSound(PrimalBossMovingSound(this, getSpinningSound()) { volume = if (host.ultAnimationTicks > 512) 1f else 0.01f })
+		mc.soundHandler.playSound(PrimalBossMovingSound(this, getWhirlwindSound()) { shouldSuckSound(this) })
+	}
+	
+	private fun shouldSuckSound(it: PrimalBossMovingSound) {
+		it.volume = if (it.host.whirl) 1f else 0.01f
 	}
 	
 	override fun entityInit() {
@@ -148,6 +154,8 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 	abstract fun getRelics(): Array<Pair<Achievement, Item>>
 	
 	override fun onLivingUpdate() {
+		playSounds()
+		
 		clearActivePotions()
 		updateArmSwingProgress()
 		super.onLivingUpdate()
@@ -433,9 +441,6 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 		if (!worldObj.isRemote && isFirstTime())
 			doFirstTimeStuff()
 		
-		val (x, y, z) = Vector3.fromEntity(this).mf()
-		
-		worldObj.playBroadcastSound(1018, x, y, z, 0)
 		worldObj.spawnParticle("hugeexplosion", posX, posY, posZ, 1.0, 0.0, 0.0)
 	}
 	
@@ -455,23 +460,30 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 	override fun dropEquipment(byPlayer: Boolean, looting: Int) {
 		if (worldObj.isRemote || isAlive || !byPlayer || isFirstTime()) return
 		
+		val oldState = captureDrops
 		captureDrops = true
+		val oldDrops = capturedDrops.toList()
+		capturedDrops.clear()
 		super.dropEquipment(true, looting)
 		captureDrops = false
 		
-		if (capturedDrops.isNotEmpty())
+		if (capturedDrops.isNotEmpty()) {
 			capturedDrops.forEach(EntityItem::spawn)
-		else {
+			capturedDrops.clear()
+		} else run {
 			playersOnArena().shuffled().forEach { player ->
-				val data = getRelics().firstOrNull { !player.hasAchievement(it.first) } ?: return@forEach
+				val data = getRelics().shuffled().firstOrNull { !player.hasAchievement(it.first) } ?: return@forEach
 				val stack = ItemStack(data.second)
 				
 				player.triggerAchievement(data.first)
 				ItemRelic.bindToPlayer(player, stack)
 				entityDropItem(stack, 0f)
-				return
+				return@run
 			}
 		}
+		
+		capturedDrops.addAll(oldDrops)
+		captureDrops = oldState
 	}
 	
 	override fun canBePushed() = false
@@ -499,7 +511,6 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 		nbt.setInteger(TAG_STAGE, stage)
 		nbt.setInteger(TAG_ULT_CD, ultCD)
 		nbt.setInteger(TAG_ULTS_COUNTER, ultsCounter)
-		nbt.setInteger(TAG_ULT_ANIMATION_TICKS, ultAnimationTicks)
 		nbt.setInteger(TAG_WHIRL_TICKS, whirlTicks)
 		nbt.setFloat(TAG_WHIRL_DAMAGE, whirledDamage)
 		
@@ -521,7 +532,6 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 		source = ChunkCoordinates(nbt.getInteger(TAG_SRC_X), nbt.getInteger(TAG_SRC_Y), nbt.getInteger(TAG_SRC_Z))
 		ultCD = nbt.getInteger(TAG_ULT_CD)
 		ultsCounter = nbt.getInteger(TAG_ULTS_COUNTER)
-		ultAnimationTicks = nbt.getInteger(TAG_ULT_ANIMATION_TICKS)
 		whirlTicks = nbt.getInteger(TAG_WHIRL_TICKS)
 		whirledDamage = nbt.getFloat(TAG_WHIRL_DAMAGE)
 		whirl = whirlTicks > 0
@@ -570,7 +580,6 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 		const val TAG_WHIRL_TICKS = "whirlTicks"
 		const val TAG_WHIRL_DAMAGE = "whirlDamage"
 		const val TAG_ULT_CD = "ultCD"
-		const val TAG_ULT_ANIMATION_TICKS = "ultAnimationTicks"
 		const val TAG_ULTS_COUNTER = "ultsCounter"
 		
 		fun summon(e: EntityPrimalBoss, x: Int, y: Int, z: Int, players: List<EntityPlayer>) {

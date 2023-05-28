@@ -72,7 +72,7 @@ class EntityElf(world: World): EntityCreature(world), INpc, IIntersectAttackEnti
 	var dialog: Dialog? = null
 	
 	init {
-		setSize(0.6f, 1.8f)
+		setSize(0.6f, 2f)
 		tasks.addTask(0, EntityAISwimming(this))
 		tasks.addTask(1, EntityAIAttackOnCollide(this, 1.0, true))
 		tasks.addTask(1, AIAttackOnIntersect(this))

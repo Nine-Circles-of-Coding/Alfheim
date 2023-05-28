@@ -712,6 +712,11 @@ alfheimmisc.ragnarok.surtroffer=Чтобы войти в этот Домен, н
 alfheimmisc.ragnarok.surtrofferok=Жертва принята, Домен разблокирован
 
 alfheimmisc.actuated=Интерфейс Края успешно синхронизировался с вибрациями Вашей души!
+alfheimmisc.autocraft.INVALID_TARGET_SLOTS=Не все требуемые целевые слоты доступны сверху
+alfheimmisc.autocraft.NO_PATTERN=Инвентарь шаблона не найден
+alfheimmisc.autocraft.NO_TARGET=Целевой инвентарь не найден
+alfheimmisc.autocraft.NOT_ENOUGH_SLOTS=В целевом инвентаре меньше слотов, чем требуется
+alfheimmisc.autocraft.WAITING=Подайте пульс сигнала красного камня для повторной попытки получить ингредиенты
 alfheimmisc.autocraft.request=Запрошенный предмет
 alfheimmisc.autocraft.waiting=Ожидание предмета
 alfheimmisc.craftresult=Количество создаваемых предметов: %s

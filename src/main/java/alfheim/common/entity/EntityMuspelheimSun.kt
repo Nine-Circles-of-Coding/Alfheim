@@ -34,11 +34,22 @@ class EntityMuspelheimSun(world: World?): Entity(world) {
 	
 	init {
 		setSize(18f, 18f)
-		mc.soundHandler.playSound(EntityBoundMovingSound(this, "${ModInfo.MODID}:surtr.sun.exist"))
+	}
+	
+	lateinit var sunSound: EntityBoundMovingSound<EntityMuspelheimSun>
+	
+	private fun playSounds() {
+		if (!ASJUtilities.isClient || (::sunSound.isInitialized && !sunSound.isDonePlaying))
+			return
+		
+		sunSound = EntityBoundMovingSound(this, "${ModInfo.MODID}:surtr.sun.exist").apply { volume = 1f }
+		mc.soundHandler.playSound(sunSound)
 	}
 	
 	override fun onEntityUpdate() {
 		super.onEntityUpdate()
+		
+		playSounds()
 		
 		if (worldObj.isRemote) return
 		

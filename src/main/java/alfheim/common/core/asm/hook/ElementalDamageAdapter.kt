@@ -9,9 +9,9 @@ import gloomyfolken.hooklib.asm.*
 import gloomyfolken.hooklib.asm.Hook.ReturnValue
 import net.minecraft.entity.*
 import net.minecraft.entity.boss.EntityDragon
+import net.minecraft.entity.boss.EntityWither
 import net.minecraft.entity.effect.EntityLightningBolt
-import net.minecraft.entity.monster.EntityCreeper
-import net.minecraft.entity.monster.EntitySlime
+import net.minecraft.entity.monster.*
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.projectile.*
 import net.minecraft.item.ItemStack
@@ -29,7 +29,7 @@ import vazkii.botania.common.item.equipment.tool.terrasteel.ItemTerraSword
 import vazkii.botania.common.item.relic.ItemRelic
 import java.util.*
 
-@Suppress("unused", "UNUSED_PARAMETER")
+@Suppress("unused", "UNUSED_PARAMETER") // TODO remove most hooks and use `EntityDamageSource$init` hook for functionality
 object ElementalDamageAdapter {
 	
 	var setAir = false
@@ -159,46 +159,41 @@ object ElementalDamageAdapter {
 		setAir = false
 	}
 	
+	
 	@JvmStatic
-	@Hook(targetMethod = "inflictDamage")
-	fun inflictDamagePre(entity: EntityPrimalArrow, mop: MovingObjectPosition?): Boolean {
-		when (entity.type) {
-			0 -> setAir = true
-			1 -> setFire = true
-			2 -> setWater = true
-			3 -> setEarth = true
-			4 -> setLightness = true
-			5 -> setDarkness = true
-			else -> return false
+	@Hook(targetMethod = "<init>", injectOnExit = true)
+	fun `EntityDamageSource$init`(thiz: EntityDamageSource, name: String?, entity: Entity?) {
+		when (entity) {
+			is EntityWither -> thiz.setTo(DARKNESS)
+			is EntitySlime -> thiz.setTo(NATURE)
+			is EntityDragon -> thiz.setTo(ALIEN)
+			is EntityEldritchGuardian -> thiz.setTo(ALIEN).setTo(DARKNESS)
+			is EntityEldritchWarden -> thiz.setTo(ALIEN).setTo(DARKNESS)
 		}
-		
-		return false
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "inflictDamage", injectOnExit = true)
-	fun inflictDamagePost(entity: EntityPrimalArrow, mop: MovingObjectPosition?): Boolean {
-		setAir = false
-		setFire = false
-		setWater = false
-		setEarth = false
-		setLightness = false
-		setDarkness = false
-		
-		return false
 	}
 	
 	
 	@JvmStatic
-	@Hook(targetMethod = "onImpact")
-	fun onImpactPre(entity: EntityFrostShard, mop: MovingObjectPosition?) {
-		setIce = true
+	@Hook(targetMethod = "<init>", injectOnExit = true)
+	fun `EntityDamageSourceIndirect$init`(thiz: EntityDamageSourceIndirect, name: String, entity: Entity, indirectEntity: Entity) {
+		when (entity) {
+			is EntityPrimalArrow -> setForPrimalArrow(thiz, entity)
+			is EntityFrostShard -> thiz.setTo(ICE)
+			is EntityShockOrb -> thiz.setTo(ELECTRIC)
+			is EntityPechBlast -> thiz.setTo(DARKNESS).setTo(NATURE)
+			is EntitySnowball -> thiz.setTo(ICE)
+		}
 	}
 	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact", injectOnExit = true)
-	fun onImpactPost(entity: EntityFrostShard, mop: MovingObjectPosition?) {
-		setIce = false
+	private fun setForPrimalArrow(src: DamageSource, entity: EntityPrimalArrow) {
+		when (entity.type) {
+			0 -> src.setTo(AIR)
+			1 -> src.setTo(FIRE)
+			2 -> src.setTo(WATER)
+			3 -> src.setTo(EARTH)
+			4 -> src.setTo(LIGHTNESS)
+			5 -> src.setTo(DARKNESS)
+		}
 	}
 	
 	
@@ -212,116 +207,6 @@ object ElementalDamageAdapter {
 	@Hook(targetMethod = "doLightningBolt", injectOnExit = true)
 	fun doLightningBoltPost(focus: ItemFocusShock, stack: ItemStack?, p: EntityPlayer?, count: Int) {
 		setElectric = false
-	}
-	
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact")
-	fun onImpactPre(entity: EntityShockOrb, mop: MovingObjectPosition?) {
-		setElectric = true
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact", injectOnExit = true)
-	fun onImpactPost(entity: EntityShockOrb, mop: MovingObjectPosition?) {
-		setElectric = false
-	}
-	
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact")
-	fun onImpactPre(entity: EntityPechBlast, mop: MovingObjectPosition?) {
-		setNature = true
-		setDarkness = true
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact", injectOnExit = true)
-	fun onImpactPost(entity: EntityPechBlast, mop: MovingObjectPosition?) {
-		setNature = false
-		setDarkness = false
-	}
-	
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact")
-	fun onImpactPre(entity: EntitySnowball, mop: MovingObjectPosition?) {
-		setIce = true
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact", injectOnExit = true)
-	fun onImpactPost(entity: EntitySnowball, mop: MovingObjectPosition?) {
-		setIce = false
-	}
-	
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact")
-	fun onImpactPre(entity: EntityWitherSkull, mop: MovingObjectPosition?) {
-		setDarkness = true
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact", injectOnExit = true)
-	fun onImpactPost(entity: EntityWitherSkull, mop: MovingObjectPosition?) {
-		setDarkness = false
-	}
-	
-	
-	@JvmStatic
-	@Hook(targetMethod = "onCollideWithPlayer")
-	fun onCollideWithPlayerPre(entity: EntitySlime, player: EntityPlayer?) {
-		setNature = true
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "onCollideWithPlayer", injectOnExit = true)
-	fun onCollideWithPlayerPost(entity: EntitySlime, player: EntityPlayer?) {
-		setNature = false
-	}
-	
-	
-	@JvmStatic
-	@Hook(targetMethod = "attackEntitiesInList")
-	fun attackEntitiesInListPre(entity: EntityDragon, list: List<Entity>) {
-		setAlien = true
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "attackEntitiesInList", injectOnExit = true)
-	fun attackEntitiesInListPost(entity: EntityDragon, list: List<Entity>) {
-		setAlien = false
-	}
-	
-	
-	@JvmStatic
-	@Hook(targetMethod = "attackEntityAsMob")
-	fun attackEntityAsMobPre(entity: EntityEldritchGuardian, target: Entity?) {
-		setAlien = true
-		setDarkness = true
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "attackEntityAsMob", injectOnExit = true)
-	fun attackEntityAsMobPost(entity: EntityEldritchGuardian, target: Entity?) {
-		setAlien = false
-		setDarkness = false
-	}
-	
-	
-	@JvmStatic
-	@Hook(targetMethod = "attackEntityAsMob")
-	fun attackEntityAsMobPre(entity: EntityEldritchWarden, target: Entity?) {
-		setAlien = true
-		setDarkness = true
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "attackEntityAsMob", injectOnExit = true)
-	fun attackEntityAsMobPost(entity: EntityEldritchWarden, target: Entity?) {
-		setAlien = false
-		setDarkness = false
 	}
 	
 	

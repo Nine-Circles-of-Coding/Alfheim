@@ -14,9 +14,10 @@ import net.minecraft.potion.*
 import net.minecraft.util.*
 import net.minecraft.world.World
 import ru.vamig.worldengine.*
+import java.util.*
 import kotlin.math.*
 
-class EntityJellyfish(world: World): EntityWaterMob(world) {
+class EntityJellyfish(world: World): EntityWaterMob(world), IElementalEntity {
 	
 	var jellyPitch = 0f
 	var prevJellyPitch = 0f
@@ -31,6 +32,8 @@ class EntityJellyfish(world: World): EntityWaterMob(world) {
 	private var randomMotionVecX = 0f
 	private var randomMotionVecY = 0f
 	private var randomMotionVecZ = 0f
+	
+	override val elements = EnumSet.of(ElementalDamage.WATER)!!
 	
 	override fun entityInit() {
 		super.entityInit()

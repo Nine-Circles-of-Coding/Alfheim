@@ -42,8 +42,17 @@ class EntityThrym(world: World): EntityPrimalBoss(world), INiflheimEntity {
 		tasks.addTask(0, ThrymAIThirdStageStart(this))
 		
 		tasks.addTask(1, ThrymAISecondStageStart(this))
+	}
+	
+	private fun playSounds() {
+		if (!ASJUtilities.isClient || ticksExisted != 1) return
 		
-		mc.soundHandler.playSound(PrimalBossMovingSound(this, getChargeSound()) { host.ultAnimationTicks.also { volume = if (sucks || !ASJBitwiseHelper.getBit(it, 9) && it in 11..69) 1f else 0f } })
+		mc.soundHandler.playSound(PrimalBossMovingSound(this, getChargeSound()) { host.ultAnimationTicks.also { volume = if (sucks || !ASJBitwiseHelper.getBit(it, 9) && it in 11..69) 1f else 0.01f } })
+	}
+	
+	override fun onLivingUpdate() {
+		super.onLivingUpdate()
+		playSounds()
 	}
 	
 	override fun doRangedAttack(players: ArrayList<EntityPlayer>) {

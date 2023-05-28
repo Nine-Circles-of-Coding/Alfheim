@@ -41,6 +41,7 @@ class SurtrAISecondStageStart(val host: EntitySurtr): EntityAIBase() {
 	override fun resetTask() {
 		timer = 0
 		host.stage = 2
+		host.wall = false
 		
 		val (x, y, z) = Vector3.fromEntity(host)
 		host.worldObj.spawnParticle("hugeexplosion", x, y, z, 0.0, 0.0, 0.0)

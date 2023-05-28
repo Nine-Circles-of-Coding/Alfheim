@@ -3,14 +3,23 @@
 package alfheim.common.core.helper
 
 import alexsocol.asjlib.*
+import alexsocol.asjlib.render.ASJRenderHelper
+import alfheim.api.ModInfo
 import alfheim.api.entity.*
 import alfheim.common.core.helper.ElementalDamage.*
 import alfheim.common.core.helper.ElementalDamageBridge.*
 import cpw.mods.fml.common.eventhandler.*
+import cpw.mods.fml.relauncher.*
+import net.minecraft.client.renderer.*
+import net.minecraft.client.renderer.entity.RenderManager
 import net.minecraft.entity.*
-import net.minecraft.util.DamageSource
+import net.minecraft.util.*
+import net.minecraftforge.client.event.RenderLivingEvent
 import net.minecraftforge.event.entity.living.*
+import org.lwjgl.opengl.GL11.*
+import vazkii.botania.common.item.equipment.bauble.ItemMonocle
 import java.util.*
+import kotlin.math.*
 
 object ElementalDamageHandler {
 	
@@ -37,10 +46,6 @@ object ElementalDamageHandler {
 		"Slime" to EnumSet.of(NATURE, WATER),
 		"VillagerGolem" to EnumSet.of(EARTH),
 		"WitherBoss" to EnumSet.of(DARKNESS),
-		"alfheim.Jellyfish" to EnumSet.of(WATER),
-		"alfheim.Muspelson" to EnumSet.of(FIRE, EARTH),
-		"alfheim.DedMoroz" to EnumSet.of(ICE),
-		"alfheim.SnowSprite" to EnumSet.of(ICE),
 		"Thaumcraft.EldritchGolem" to EnumSet.of(EARTH),
 		"Thaumcraft.EldritchGuardian" to EnumSet.of(ALIEN, DARKNESS, PSYCHIC),
 		"Thaumcraft.EldritchWarden" to EnumSet.of(ALIEN, DARKNESS, PSYCHIC),
@@ -52,13 +57,11 @@ object ElementalDamageHandler {
 		"ThermalFoundation.Blizz" to EnumSet.of(ICE),
 		"ThermalFoundation.Blitz" to EnumSet.of(ELECTRIC),
 		"ThermalFoundation.Basalz" to EnumSet.of(ICE),
-	                                                                          )
+	)
 	
-	val EntityLivingBase.elements: Set<ElementalDamage>
+	val EntityLivingBase.elements: EnumSet<ElementalDamage>
 		get() {
 			if (this is IElementalEntity) return elements
-			if (this is IMuspelheimEntity) return EnumSet.of(FIRE)
-			if (this is INiflheimEntity) return EnumSet.of(ICE)
 			
 			return elementalMobs[EntityList.getEntityString(this)] ?: EnumSet.of(COMMON)
 		}
@@ -76,8 +79,56 @@ object ElementalDamageHandler {
 		val targetEl = e.entityLiving.elements
 		val attackEl = e.source.elements()
 		
-		if (targetEl.any { attackEl.any(it::isVulnerable) } ) e.ammount *= 2f
 		if (targetEl.any { attackEl.any(it::isResistant) } ) e.ammount *= 0.5f
+		
+		if (e.entityLiving.isBurning) targetEl.add(FIRE)
+		if (e.entityLiving.isWet) targetEl.add(WATER)
+		
+		if (targetEl.any { attackEl.any(it::isVulnerable) } ) e.ammount *= 2f
+	}
+	
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	fun drawStatusIcons(e: RenderLivingEvent.Specials.Post) {
+		if (!ItemMonocle.hasMonocle(mc.thePlayer)) return
+		
+		val elements = e.entity.elements.filter { it != COMMON }
+		if (elements.isEmpty()) return
+		
+		val size = max(e.entity.width.D * 8, 8.0)
+		
+		val f1 = 0.02666667f
+		glPushMatrix()
+		glTranslated(e.x, e.y + e.entity.height + 0.03125 * size, e.z)
+		glNormal3f(0f, 1f, 0f)
+		glRotatef(-RenderManager.instance.playerViewY, 0f, 1f, 0f)
+		glRotatef(RenderManager.instance.playerViewX, 1f, 0f, 0f)
+		glScalef(-f1, -f1, f1)
+		glDisable(GL_LIGHTING)
+		glEnable(GL_BLEND)
+		OpenGlHelper.glBlendFunc(770, 771, 1, 0)
+		
+		glTranslatef(elements.size * size.F / -2, 0f, 0f)
+		val tes = Tessellator.instance
+		
+		for (element in elements) {
+			mc.renderEngine.bindTexture(ResourceLocation(ModInfo.MODID, "textures/misc/elements/${element.name}.png"))
+			ASJRenderHelper.glColor1u(ASJRenderHelper.addAlpha(element.color, 255))
+			
+			tes.startDrawingQuads()
+			tes.addVertexWithUV( 0.0,  0.0, 0.0, 0.0, 0.0)
+			tes.addVertexWithUV( 0.0, size, 0.0, 0.0, 1.0)
+			tes.addVertexWithUV(size, size, 0.0, 1.0, 1.0)
+			tes.addVertexWithUV(size,  0.0, 0.0, 1.0, 0.0)
+			tes.draw()
+			
+			glTranslatef(size.F, 0f, 0f)
+		}
+		
+		glEnable(GL_LIGHTING)
+		glDisable(GL_BLEND)
+		glColor4f(1f, 1f, 1f, 1f)
+		glPopMatrix()
 	}
 }
 
@@ -86,19 +137,19 @@ private enum class ElementalDamageBridge {
 	val real get() = ElementalDamage.values()[ordinal]
 }
 
-enum class ElementalDamage(private val x2: Array<ElementalDamageBridge>, private val x05: Array<ElementalDamageBridge>) {
-	COMMON(arrayOf(), arrayOf()),
-	FIRE(arrayOf(WATER_, EARTH_), arrayOf(NATURE_, ICE_)),
-	WATER(arrayOf(ELECTRIC_, NATURE_), arrayOf(FIRE_, ICE_)),
-	AIR(arrayOf(ELECTRIC_, ICE_), arrayOf(EARTH_, NATURE_)),
-	EARTH(arrayOf(WATER_, NATURE_), arrayOf(FIRE_, ELECTRIC_)),
-	ICE(arrayOf(FIRE_, ELECTRIC_), arrayOf(PSYCHIC_, NATURE_)),
-	ELECTRIC(arrayOf(FIRE_, ICE_), arrayOf(NATURE_, AIR_)),
-	NATURE(arrayOf(FIRE_, ICE_), arrayOf(WATER_, EARTH_)),
-	LIGHTNESS(arrayOf(DARKNESS_), arrayOf(PSYCHIC_)),
-	DARKNESS(arrayOf(LIGHTNESS_), arrayOf(ALIEN_)),
-	PSYCHIC(arrayOf(LIGHTNESS_, DARKNESS_), arrayOf(COMMON_)),
-	ALIEN(arrayOf(LIGHTNESS_), arrayOf(DARKNESS_));
+enum class ElementalDamage(private val x2: Array<ElementalDamageBridge>, private val x05: Array<ElementalDamageBridge>, val color: Int) {
+	COMMON(arrayOf(), arrayOf(), 0xFFFFFF),
+	FIRE(arrayOf(WATER_, EARTH_), arrayOf(NATURE_, ICE_), 0xFF5A01),
+	WATER(arrayOf(ELECTRIC_, NATURE_), arrayOf(FIRE_, ICE_), 0x3CD4FC),
+	AIR(arrayOf(ELECTRIC_, ICE_), arrayOf(EARTH_, NATURE_), 0xFFFF7E),
+	EARTH(arrayOf(WATER_, NATURE_), arrayOf(FIRE_, ELECTRIC_), 0x56C000),
+	ICE(arrayOf(FIRE_, ELECTRIC_), arrayOf(PSYCHIC_, NATURE_), 0xE1FFFF),
+	ELECTRIC(arrayOf(FIRE_, ICE_), arrayOf(NATURE_, AIR_), 0xAA00FF),
+	NATURE(arrayOf(FIRE_, ICE_), arrayOf(WATER_, EARTH_), 0x01AC00),
+	LIGHTNESS(arrayOf(DARKNESS_), arrayOf(PSYCHIC_), 0xDDDDDD),
+	DARKNESS(arrayOf(LIGHTNESS_), arrayOf(ALIEN_), 0x222222),
+	PSYCHIC(arrayOf(LIGHTNESS_, DARKNESS_), arrayOf(COMMON_), 0xFFC2B3),
+	ALIEN(arrayOf(LIGHTNESS_), arrayOf(DARKNESS_), 0x805080);
 	
 	fun isVulnerable(type: ElementalDamage): Boolean {
 		return ElementalDamageBridge.values()[type.ordinal] in x2

@@ -7,7 +7,6 @@ import alfheim.api.entity.raceID
 import alfheim.common.block.AlfheimBlocks
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.item.material.ElvenResourcesMetas
-import com.google.common.base.Function
 import net.minecraft.block.Block
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.entity.player.EntityPlayer
@@ -15,6 +14,7 @@ import net.minecraft.init.Blocks
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.*
+import net.minecraft.world.World
 import vazkii.botania.api.lexicon.multiblock.*
 import vazkii.botania.common.Botania
 import vazkii.botania.common.block.ModBlocks
@@ -38,7 +38,7 @@ class TileAlfheimPortal: ASJTile() {
 	
 	val validMetadata: Int
 		get() {
-			if (checkConverter(null))
+			if (checkConverter(CONVERTER_NOP))
 				return 1
 			
 			return if (checkConverter(CONVERTER_X_Z)) 2 else 0
@@ -73,27 +73,9 @@ class TileAlfheimPortal: ASJTile() {
 				if (player.isDead) return@forEach
 				
 				if (player.dimension == AlfheimConfigHandler.dimensionIDAlfheim) {
-					val midgard = MinecraftServer.getServer().worldServerForDimension(0)
-					val coords = player.getBedLocation(0) ?: midgard.spawnPoint ?: ChunkCoordinates()
-					
-					val bb = player.boundingBox.expand(0).offset(-player.posX, -player.posY, -player.posZ).offset(coords.posX, coords.posY, coords.posZ)
-					if (midgard.func_147461_a(bb).isNotEmpty())
-						coords.posY = midgard.getTopSolidOrLiquidBlock(coords.posX, coords.posZ)
-					
-					ASJUtilities.sendToDimensionWithoutPortal(player, 0, coords.posX + 0.5, coords.posY + 0.5, coords.posZ + 0.5)
+					sendToMidgard(player)
 				} else {
-					val alfheim = MinecraftServer.getServer().worldServerForDimension(AlfheimConfigHandler.dimensionIDAlfheim)
-					
-					val coords = if (AlfheimConfigHandler.enableElvenStory) {
-						val race = player.raceID - 1 // for array length
-						
-						if (race in 0..8) {
-							val (x, y, z) = AlfheimConfigHandler.zones[race].I
-							ChunkCoordinates(x, y, z)
-						} else alfheim.spawnPoint
-					} else alfheim.spawnPoint
-					
-					ASJUtilities.sendToDimensionWithoutPortal(player, AlfheimConfigHandler.dimensionIDAlfheim, coords.posX + 0.5, coords.posY + 0.5, coords.posZ + 0.5)
+					sendToAlfheim(player)
 				}
 			}
 		} else
@@ -121,14 +103,69 @@ class TileAlfheimPortal: ASJTile() {
 		hasUnloadedParts = false
 	}
 	
+	private fun sendToAlfheim(player: EntityPlayer) {
+		val alfheim = MinecraftServer.getServer().worldServerForDimension(AlfheimConfigHandler.dimensionIDAlfheim)
+		
+		val coords = if (AlfheimConfigHandler.enableElvenStory) {
+			val race = player.raceID - 1 // for array length
+			
+			if (race in 0..8) {
+				val (x, y, z) = AlfheimConfigHandler.zones[race].I
+				ChunkCoordinates(x, y, z)
+			} else alfheim.spawnPoint
+		} else alfheim.spawnPoint
+		
+		ASJUtilities.sendToDimensionWithoutPortal(player, AlfheimConfigHandler.dimensionIDAlfheim, coords.posX + 0.5, coords.posY + 0.5, coords.posZ + 0.5)
+	}
+	
+	private fun sendToMidgard(player: EntityPlayer) {
+		val midgard = MinecraftServer.getServer().worldServerForDimension(0)
+		
+		var checkBB = true
+		val coords = run {
+			if (!AlfheimConfigHandler.grabMidgardPortal) return@run null
+			
+			midgard.loadedTileEntityList
+				.filterIsInstance<TileAlfheimPortal>()
+				.filter(TileAlfheimPortal::activated)
+				.shuffled()
+				.firstNotNullOfOrNull { tile ->
+					val (x, y, z) = Vector3.fromTileEntity(tile).mf()
+					(if (tile.getBlockMetadata() == 2) VALID_TELEPORTATION_SPOTS.map(CONVERTER_X_Z) else VALID_TELEPORTATION_SPOTS)
+						.firstNotNullOfOrNull findSpot@{
+							val (i, _, k) = it
+							val X = x + i
+							val Z = z + k
+							for (j in 0..3) {
+								val Y = y + j
+//								if (!World.doesBlockHaveSolidTopSurface(tile.worldObj, X, Y - 1, Z)) continue
+								val bb = player.boundingBox.copy().offset(-player.posX, -player.posY, -player.posZ).offset(X, Y, Z).offset(0.5)
+								if (!tile.worldObj.checkNoEntityCollision(bb) || tile.worldObj.func_147461_a(bb).isNotEmpty() || tile.worldObj.isAnyLiquid(bb)) continue
+								checkBB = false
+								return@findSpot ChunkCoordinates(X, Y, Z)
+							}
+							return@findSpot null
+						}
+				}
+		} ?: midgard.spawnPoint ?: ChunkCoordinates()
+		
+		if (checkBB) {
+			val bb = player.boundingBox.expand(0).offset(-player.posX, -player.posY, -player.posZ).offset(coords.posX, coords.posY, coords.posZ)
+			if (midgard.func_147461_a(bb).isNotEmpty())
+				coords.posY = midgard.getTopSolidOrLiquidBlock(coords.posX, coords.posZ)
+		}
+		
+		ASJUtilities.sendToDimensionWithoutPortal(player, 0, coords.posX + 0.5, coords.posY + 0.5, coords.posZ + 0.5)
+	}
+	
 	private fun blockParticle(meta: Int) {
 		val i = worldObj.rand.nextInt(AIR_POSITIONS.size)
-		var pos: DoubleArray? = doubleArrayOf((AIR_POSITIONS[i][0] + 0.5f).D, (AIR_POSITIONS[i][1] + 0.5f).D, (AIR_POSITIONS[i][2] + 0.5f).D)
+		var pos = doubleArrayOf((AIR_POSITIONS[i][0] + 0.5f).D, (AIR_POSITIONS[i][1] + 0.5f).D, (AIR_POSITIONS[i][2] + 0.5f).D)
 		if (meta == 2)
-			pos = CONVERTER_X_Z_FP.apply(pos)
+			pos = CONVERTER_X_Z_FP(pos)
 		
 		val motionMul = 0.2f
-		Botania.proxy.wispFX(worldObj, xCoord + pos!![0], yCoord + pos[1], zCoord + pos[2],
+		Botania.proxy.wispFX(worldObj, xCoord + pos[0], yCoord + pos[1], zCoord + pos[2],
 							 Math.random().F * 0.25f + 0.5f, Math.random().F * 0.25f + 0.5f, Math.random().F * 0.25f,
 							 (Math.random() * 0.15f + 0.1f).F,
 							 (Math.random() - 0.5f).F * motionMul, (Math.random() - 0.5f).F * motionMul, (Math.random() - 0.5f).F * motionMul)
@@ -155,10 +192,10 @@ class TileAlfheimPortal: ASJTile() {
 		activated = nbt.getBoolean(TAG_ACTIVATED)
 	}
 	
-	private fun checkConverter(baseConverter: Function<IntArray, IntArray>?) =
+	private fun checkConverter(baseConverter: (IntArray) -> IntArray) =
 		checkMultipleConverters(arrayOf(baseConverter)) || checkMultipleConverters(arrayOf(CONVERTER_Z_SWAP, baseConverter))
 	
-	private fun checkMultipleConverters(converters: Array<Function<IntArray, IntArray>?>?): Boolean {
+	private fun checkMultipleConverters(converters: Array<(IntArray) -> IntArray>): Boolean {
 		if (wrong2DArray(AIR_POSITIONS, Blocks.air, -1, converters))
 			return false
 		if (wrong2DArray(DREAMWOOD_POSITIONS, ModBlocks.dreamwood, 0, converters))
@@ -174,7 +211,7 @@ class TileAlfheimPortal: ASJTile() {
 		return true
 	}
 	
-	private fun lightPylons(converters: Array<Function<IntArray, IntArray>?>?) {
+	private fun lightPylons(converters: Array<(IntArray) -> IntArray>) {
 		if (ticksOpen < 50)
 			return
 		
@@ -182,7 +219,7 @@ class TileAlfheimPortal: ASJTile() {
 		
 		for (pp in PYLON_POSITIONS) {
 			var pos = pp
-			converters?.forEach { pos = it?.apply(pos) ?: pos }
+			converters.forEach { pos = it(pos) }
 			
 			var tile = worldObj.getTileEntity(xCoord + pos[0], yCoord + pos[1], zCoord + pos[2])
 			if (tile is TileAlfheimPylon) {
@@ -222,11 +259,11 @@ class TileAlfheimPortal: ASJTile() {
 		}
 	}
 	
-	private fun wrong2DArray(positions: Array<IntArray>, block: Block, meta: Int, converters: Array<Function<IntArray, IntArray>?>?): Boolean {
+	private fun wrong2DArray(positions: Array<IntArray>, block: Block, meta: Int, converters: Array<(IntArray) -> IntArray>): Boolean {
 		for (pp in positions) {
 			var pos = pp
 			
-			converters?.forEach { pos = it?.apply(pos) ?: pos }
+			converters.forEach { pos = it(pos) }
 			
 			if (!checkPosition(pos, block, meta))
 				return true
@@ -265,17 +302,21 @@ class TileAlfheimPortal: ASJTile() {
 		private val POOL_POSITIONS = arrayOf(intArrayOf(-3, 0, 3), intArrayOf(3, 0, 3))
 		private val AIR_POSITIONS = arrayOf(intArrayOf(-1, 1, 0), intArrayOf(0, 1, 0), intArrayOf(1, 1, 0), intArrayOf(-1, 2, 0), intArrayOf(0, 2, 0), intArrayOf(1, 2, 0), intArrayOf(-1, 3, 0), intArrayOf(0, 3, 0), intArrayOf(1, 3, 0))
 		
+		private val VALID_TELEPORTATION_SPOTS = listOf(intArrayOf(0, 0, 1), intArrayOf(0, 0, -1), intArrayOf(1, 0, 1), intArrayOf(-1, 0, 1), intArrayOf(1, 0, -1), intArrayOf(-1, 0, -1))
+		
 		private const val TAG_TICKS_OPEN = "ticksOpen"
 		private const val TAG_ACTIVATED = "activated"
 		
 		private const val activation = 75000
 		private const val idle = 2
 		
-		private val CONVERTER_X_Z = Function<IntArray, IntArray> { input -> intArrayOf(input!![2], input[1], input[0]) }
+		private val CONVERTER_NOP = { input: IntArray -> input }
 		
-		private val CONVERTER_X_Z_FP = Function<DoubleArray, DoubleArray> { input -> doubleArrayOf(input!![2], input[1], input[0]) }
+		private val CONVERTER_X_Z = { input: IntArray -> intArrayOf(input[2], input[1], input[0]) }
 		
-		private val CONVERTER_Z_SWAP = Function<IntArray, IntArray> { input -> intArrayOf(input!![0], input[1], -input[2]) }
+		private val CONVERTER_X_Z_FP = { input: DoubleArray -> doubleArrayOf(input[2], input[1], input[0]) }
+		
+		private val CONVERTER_Z_SWAP = { input: IntArray -> intArrayOf(input[0], input[1], -input[2]) }
 		
 		fun makeMultiblockSet(): MultiblockSet {
 			val mb = Multiblock()

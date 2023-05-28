@@ -85,7 +85,7 @@ class ItemFenrirLoot: ItemMod("FenrirLoot"), ILensEffect {
 						
 						world.setBlock(x, y, z, AlfheimBlocks.rainbowFlame, 0, 3)
 						val tile = world.getTileEntity(x, y, z) as? TileRainbowManaFlame ?: continue
-						tile.color = 0xDD0000
+						tile.color = 0xD9E4FF // brightest moon pixel color
 						tile.invisible = true
 					}
 		} finally {

@@ -6,6 +6,11 @@ Innovations:
  Flugel tier 3 as well as Thrym, Surtr and Fenrir now got own bossfight music
  Thrym and Surtr got sounds for their actions
  Beast Within and Bleeding potions are now not MMO-mode exclusive (configs updated)
+ Little tuning for Corporea Sequencer and more informative wand HUD
+ Alfheim->Midgard teleportation now can link to ranom exisiting portal (config)
+ Increased nighttime spirits quantity in Alfheim (configurable)
+ Visualization for entity elements when wearing monocle
+ Removed Interdimensional Gateway Core infusion recipe
  [WIP] Entity-blocks
  
 Fixes:
@@ -18,3 +23,5 @@ Fixes:
  Mushroom recipes
  Over- heat/cold weak hands effect
  Liquid mana placing
+ Thrym, Surtr and Fenrir relic drops
+ Purification and Smelt lenses behaviour and display

@@ -3,7 +3,7 @@ apply plugin: 'kotlin'
 apply plugin: 'idea'
 
 buildscript {
-	ext.kotlinVersion = '1.8.10'
+	ext.kotlinVersion = '1.8.21'
 	
 	repositories {
 		mavenCentral()

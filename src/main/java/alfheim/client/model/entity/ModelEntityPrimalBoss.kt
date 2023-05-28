@@ -116,6 +116,8 @@ abstract class ModelEntityPrimalBoss: ModelBiped() {
 					mc.theWorld.spawnParticle("blockdust_${ getSuperSmashParticlesBlockIDs().random(entity.rng) }_0", x, y + 0.5, z, VisualEffectHandlerClient.v.x, VisualEffectHandlerClient.v.y, VisualEffectHandlerClient.v.z)
 				}
 				
+				entity.ultAnimationTicks++
+				
 				EntityPrimalMark(mc.theWorld, x, y, z, entity).apply {
 					isSpecial = true
 					ticksExisted = 49

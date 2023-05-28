@@ -1,6 +1,7 @@
 package alfheim.common.entity
 
 import alexsocol.asjlib.*
+import alfheim.api.ModInfo
 import alfheim.api.entity.*
 import alfheim.common.core.handler.SheerColdHandler
 import alfheim.common.core.util.DamageSourceSpell
@@ -95,6 +96,8 @@ class EntityPrimalBossChunkAttack(world: World, val summoner: EntityLivingBase?,
 	}
 	
 	override fun onUpdate() {
+		if (ticksExisted == 1 && !isIce) playSoundAtEntity("${ModInfo.MODID}:surtr.chunk", 1f, 1f)
+		
 		if (ticksExisted > 150) return setDead()
 		if (!worldObj.isRemote) return
 		for (i in 0..if (isIce) 63 else 127) {

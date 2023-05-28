@@ -63,6 +63,18 @@ class BlockCorporeaAutocrafter: BlockContainerMod(Material.iron), ILexiconable, 
 		val request = tile.request ?: return
 		
 		run {
+			val state = tile.state
+			if (state == TileCorporeaAutocrafter.EnumState.OK) return@run
+			
+			val xc = res.scaledWidth / 2
+			val yc = res.scaledHeight / 2 - 45
+			
+			val text = StatCollector.translateToLocal("alfheimmisc.autocraft.${state.name}")
+			
+			mc.fontRenderer.drawString(text, xc - mc.fontRenderer.getStringWidth(text) / 2, yc, state.color)
+		}
+		
+		run {
 			val size = when {
 				tile.buffer.size < 2  -> tile.buffer.size
 				tile.buffer.size < 5  -> 2

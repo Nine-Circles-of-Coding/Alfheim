@@ -18,6 +18,7 @@ import alfheim.common.block.alt.BlockAltLeaves
 import alfheim.common.block.colored.BlockAuroraDirt
 import alfheim.common.block.tile.*
 import alfheim.common.core.handler.*
+import alfheim.common.core.handler.AlfheimConfigHandler.increasedSpiritsRange
 import alfheim.common.core.handler.AlfheimConfigHandler.dimensionIDAlfheim
 import alfheim.common.core.handler.AlfheimConfigHandler.dimensionIDDomains
 import alfheim.common.core.handler.AlfheimConfigHandler.dimensionIDHelheim
@@ -52,6 +53,7 @@ import gloomyfolken.hooklib.asm.ReturnCondition.*
 import net.minecraft.block.*
 import net.minecraft.block.material.Material
 import net.minecraft.client.gui.*
+import net.minecraft.client.multiplayer.WorldClient
 import net.minecraft.client.renderer.*
 import net.minecraft.client.renderer.texture.*
 import net.minecraft.command.*
@@ -124,7 +126,7 @@ import vazkii.botania.common.lib.LibBlockNames
 import java.awt.Color
 import java.util.*
 import java.util.regex.*
-import kotlin.math.sin
+import kotlin.math.*
 
 @Suppress("UNUSED_PARAMETER", "NAME_SHADOWING", "unused", "FunctionName")
 object AlfheimHookHandler {
@@ -633,16 +635,40 @@ object AlfheimHookHandler {
 	@JvmStatic
 	@Hook(injectOnExit = true)
 	fun updateTick(grass: BlockGrass, world: World, x: Int, y: Int, z: Int, random: Random) {
-		if (AlfheimCore.winter && world.provider.dimensionId == dimensionIDAlfheim && world.rand.nextInt(20) == 0 && !world.isRemote && world.getPrecipitationHeight(x, z) <= y) {
+		if (AlfheimCore.winter && world.provider.dimensionId == dimensionIDAlfheim && world.rand.nextInt(20) == 0 && !world.isRemote && world.getPrecipitationHeight(x, z) <= y)
 			world.setBlock(x, y, z, AlfheimBlocks.snowGrass)
-		}
 	}
 	
 	@JvmStatic
 	@Hook(createMethod = true, returnCondition = ALWAYS)
+	@SideOnly(CLIENT)
 	fun randomDisplayTick(grass: BlockGrass, world: World, x: Int, y: Int, z: Int, rand: Random) {
-		if (world.provider.dimensionId == dimensionIDAlfheim)
+		if (!increasedSpiritsRange && world.provider.dimensionId == dimensionIDAlfheim)
 			BlockAltLeaves.spawnRandomSpirit(world, x, y + 1 + rand.nextInt(5), z, rand, rand.nextFloat(), 1f, 0f)
+	}
+	
+	@JvmStatic
+	@Hook
+	@SideOnly(CLIENT)
+	fun doVoidFogParticles(world: WorldClient, i: Int, j: Int, k: Int) {
+		if (!increasedSpiritsRange || world.provider.dimensionId != dimensionIDAlfheim || world.worldTime % 24000 !in 13333..22666) return
+		
+		val random = Random()
+		val range = max(4, mc.gameSettings.renderDistanceChunks - 2) * 16
+		val max = (1312.5 * range - 20000).I
+		
+		for (l in 0..max) {
+			val x = i + ASJUtilities.randInBounds(-range, range, world.rand)
+			val y = j + ASJUtilities.randInBounds(-range, range, world.rand)
+			val z = k + ASJUtilities.randInBounds(-range, range, world.rand)
+			
+			val block = world.getBlock(x, y, z)
+			
+			if (block === Blocks.grass) {
+				BlockAltLeaves.spawnRandomSpirit(world, x, y + 1 + random.nextInt(5), z, random, random.nextFloat(), 1f, 0f)
+			} else if (block === AlfheimBlocks.altLeaves && world.getBlockMetadata(x, y, z) % 8 == 7)
+				BlockAltLeaves.spawnRandomSpirit(world, x, y, z, random, 0f, random.nextFloat() * 0.25f + 0.5f, 1f)
+		}
 	}
 	
 	@JvmStatic
@@ -794,6 +820,17 @@ object AlfheimHookHandler {
 		
 		if (player.worldObj.isRemote && player === mc.thePlayer)
 			ItemsRemainingRenderHandler.set(ItemStack(block, 1, meta), count)
+	}
+	
+	@JvmStatic
+	@Hook(returnCondition = ON_NOT_NULL)
+	fun onItemRightClick(item: ItemMissileRod, stack: ItemStack?, world: World?, player: EntityPlayer): ItemStack? {
+		if (player.commandSenderName.startsWith("Avatar-Clicker_")) {
+			item.onUsingTick(stack, player, 2)
+			return stack
+		}
+		
+		return null
 	}
 	
 	@JvmStatic

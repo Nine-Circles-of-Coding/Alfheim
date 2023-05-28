@@ -4,10 +4,10 @@ import alexsocol.asjlib.*
 import alexsocol.asjlib.ItemNBTHelper.getInt
 import alexsocol.asjlib.ItemNBTHelper.setInt
 import alexsocol.asjlib.math.Vector3
-import alfheim.AlfheimCore
 import alfheim.common.core.util.AlfheimTab
-import alfheim.common.network.Message0dS
-import alfheim.common.network.Message0dS.M0ds
+import alfheim.common.network.M0ds
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.Message0dS
 import baubles.api.BaubleType
 import baubles.common.lib.PlayerHandler
 import cpw.mods.fml.common.FMLCommonHandler
@@ -89,8 +89,8 @@ class ItemDodgeRing: ItemBauble("DodgeRing") {
 			player.motionX = sideVec.x
 			player.motionY = sideVec.y
 			player.motionZ = sideVec.z
-			
-			AlfheimCore.network.sendToServer(Message0dS(M0ds.DODGE))
+
+			NetworkService.sendToServer(Message0dS(M0ds.DODGE))
 			// stupid singleplayer NBT autosync -_-
 			if (!mc.isSingleplayer) setInt(stack, TAG_DODGE_COOLDOWN, MAX_CD)
 		}

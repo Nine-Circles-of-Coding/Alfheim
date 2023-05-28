@@ -1,14 +1,16 @@
 package alfheim.common.block.tile
 
-import alexsocol.asjlib.*
+import alexsocol.asjlib.ASJUtilities
 import alexsocol.asjlib.extendables.block.TileItemContainer
-import alfheim.AlfheimCore
-import alfheim.common.network.MessageTileItem
+import alexsocol.asjlib.spawn
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.MessageTileItem
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.item.ItemStack
 import vazkii.botania.api.mana.IManaItem
 import vazkii.botania.client.core.handler.LightningHandler
-import vazkii.botania.common.block.tile.mana.*
+import vazkii.botania.common.block.tile.mana.TileBellows
+import vazkii.botania.common.block.tile.mana.TilePool
 import vazkii.botania.common.core.handler.ConfigHandler
 import vazkii.botania.common.core.helper.Vector3
 import vazkii.botania.common.lib.LibMisc
@@ -99,7 +101,7 @@ class TileManaAccelerator: TileItemContainer() {
 					
 					if (worldObj.totalWorldTime % 20 == 0L) {
 						worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType())
-						if (ASJUtilities.isServer) AlfheimCore.network.sendToDimension(MessageTileItem(xCoord, yCoord, zCoord, stack), worldObj.provider.dimensionId)
+						if (ASJUtilities.isServer) NetworkService.sendToDim(MessageTileItem(xCoord, yCoord, zCoord, stack), worldObj.provider.dimensionId)
 					}
 					
 					//stack.item.onUpdate(stack, worldObj, dummy, -1, false)

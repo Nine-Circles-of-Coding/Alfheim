@@ -2,16 +2,16 @@ package alfheim.common.core.handler
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
-import alfheim.AlfheimCore
 import alfheim.api.*
 import alfheim.api.entity.*
 import alfheim.api.event.PlayerInteractAdequateEvent
 import alfheim.common.core.util.DamageSourceSpell
 import alfheim.common.item.equipment.bauble.ItemPendant
 import alfheim.common.item.equipment.bauble.ItemPendant.Companion.EnumPrimalWorldType.*
-import alfheim.common.network.Message1d
+import alfheim.common.network.M1d
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.Message1d
 import cpw.mods.fml.common.eventhandler.*
-import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.relauncher.*
 import net.minecraft.entity.*
 import net.minecraft.entity.item.EntityItem
@@ -19,7 +19,6 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.item.*
 import net.minecraft.potion.Potion
-import net.minecraft.potion.PotionEffect
 import net.minecraft.util.MathHelper
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.entity.living.LivingDeathEvent
@@ -37,7 +36,7 @@ object SheerColdHandler {
 			entityData.setFloat(TAG_SHEER_COLD, value)
 			
 			if (this is EntityPlayerMP)
-				AlfheimCore.network.sendTo(Message1d(Message1d.M1d.COLD, value.D), this)
+				NetworkService.sendTo(Message1d(M1d.COLD, value.D), this)
 		}
 	
 	@SubscribeEvent

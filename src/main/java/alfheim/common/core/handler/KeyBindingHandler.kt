@@ -1,13 +1,17 @@
 package alfheim.common.core.handler
 
-import alexsocol.asjlib.*
-import alfheim.AlfheimCore
+import alexsocol.asjlib.ASJUtilities
+import alexsocol.asjlib.D
 import alfheim.api.AlfheimAPI
-import alfheim.api.entity.*
+import alfheim.api.entity.EnumRace
+import alfheim.api.entity.race
 import alfheim.api.spell.SpellBase.SpellCastResult.DESYNC
-import alfheim.common.core.helper.*
+import alfheim.common.core.helper.ContributorsPrivacyHelper
+import alfheim.common.core.helper.ElvenFlightHelper
 import alfheim.common.item.AlfheimItems
-import alfheim.common.network.Message2d
+import alfheim.common.network.M2d
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.Message2d
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.init.Items
@@ -50,7 +54,7 @@ object KeyBindingHandler {
 		val seg = CardinalSystem.forPlayer(player)
 		val spell = AlfheimAPI.getSpellByIDs(ids shr 28 and 0xF, ids and 0xFFFFFFF)
 		if (spell == null)
-			AlfheimCore.network.sendTo(Message2d(Message2d.M2d.COOLDOWN, ids.D, (-DESYNC.ordinal).D), player)
+			NetworkService.sendTo(Message2d(M2d.COOLDOWN, ids.D, (-DESYNC.ordinal).D), player)
 		else {
 			seg.ids = ids
 			seg.init = if (player.capabilities.isCreativeMode) 1 else spell.getCastTime()

@@ -1,13 +1,14 @@
 package alfheim.common.block
 
 import alexsocol.asjlib.ASJUtilities
-import alfheim.AlfheimCore
-import alfheim.api.entity.*
+import alfheim.api.entity.EnumRace
+import alfheim.api.entity.race
 import alfheim.client.core.helper.IconHelper
 import alfheim.common.block.base.BlockContainerMod
 import alfheim.common.block.tile.TileRaceSelector
 import alfheim.common.lexicon.AlfheimLexiconData
-import alfheim.common.network.MessageRaceSelection
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.MessageRaceSelection
 import net.minecraft.block.material.Material
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.entity.player.EntityPlayer
@@ -41,8 +42,8 @@ class BlockRaceSelector: BlockContainerMod(Material.glass), ILexiconable {
 			tile.custom = res.second.custom
 			tile.female = res.second.female
 			tile.timer = res.second.timer
-			
-			AlfheimCore.network.sendToServer(MessageRaceSelection(res.second.meta.first, res.second.custom, res.second.female, res.second.giveRace, res.second.meta.second, res.second.rotation, res.second.actRot, res.second.timer, x, y, z, world.provider.dimensionId))
+
+			NetworkService.sendToServer(MessageRaceSelection(res.second.meta.first, res.second.custom, res.second.female, res.second.giveRace, res.second.meta.second, res.second.rotation, res.second.actRot, res.second.timer, x, y, z, world.provider.dimensionId))
 		}
 		
 		return res.first

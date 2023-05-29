@@ -51,7 +51,7 @@ class EntitySurtr(world: World): EntityPrimalBoss(world), IMuspelheimEntity {
 	private fun playSounds() {
 		if (!ASJUtilities.isClient || ticksExisted != 1) return
 		
-		mc.soundHandler.playSound(PrimalBossMovingSound(this, "${ModInfo.MODID}:surtr.wall.exist") { volume = if (wall) 0.1f else 0.01f })
+		mc.soundHandler.playSound(PrimalBossMovingSound(this, "${ModInfo.MODID}:surtr.wall.exist") { volume = if (wall) 1f else 0.01f })
 		mc.soundHandler.playSound(PrimalBossMovingSound(this, getChargeSound()) { volume = if (!ASJBitwiseHelper.getBit(host.ultAnimationTicks, 9) && host.ultAnimationTicks in 11..69) 1f else 0.01f })
 	}
 	
@@ -91,7 +91,6 @@ class EntitySurtr(world: World): EntityPrimalBoss(world), IMuspelheimEntity {
 			lookHelper.setLookPosition(target.posX, target.posY + target.eyeHeight, target.posZ, 10f, verticalFaceSpeed.F)
 			
 			EntitySpellFireball(worldObj, this).apply {
-				playSoundAtEntity("${ModInfo.MODID}:surtr.fireball.form", 1f, 1f)
 				this.target = target
 				noClip = false
 				setPosition(posX + Math.random() - 0.5, posY + Math.random() - 0.5, posZ + Math.random() - 0.5)
@@ -162,6 +161,7 @@ class EntitySurtr(world: World): EntityPrimalBoss(world), IMuspelheimEntity {
 	
 	override fun getChargeSound() = "${ModInfo.MODID}:surtr.sword.charge"
 	override fun getHitSound() = "${ModInfo.MODID}:surtr.sword.hit"
+	override fun getRangedFormSound() = "${ModInfo.MODID}:surtr.fireball.form"
 	override fun getSpinningSound() = "${ModInfo.MODID}:surtr.sword.rotate"
 	override fun getStrikeSound() = "${ModInfo.MODID}:surtr.sword.strike"
 	override fun getSwingSound() = "${ModInfo.MODID}:thrym.axe.swing" // same

@@ -61,7 +61,6 @@ class EntityThrym(world: World): EntityPrimalBoss(world), INiflheimEntity {
 			lookHelper.setLookPosition(target.posX, target.posY + target.eyeHeight, target.posZ, 10f, verticalFaceSpeed.F)
 			
 			EntityIcicle(worldObj, this).apply {
-				playSoundAtEntity("${ModInfo.MODID}:thrym.icicle.form", 0.1f, 1f)
 				this.target = target
 				setPosition(posX + Math.random() - 0.5, posY + Math.random() - 0.5, posZ + Math.random() - 0.5)
 				spawn()
@@ -109,6 +108,7 @@ class EntityThrym(world: World): EntityPrimalBoss(world), INiflheimEntity {
 	
 	override fun getChargeSound() = "${ModInfo.MODID}:thrym.suction"
 	override fun getHitSound() = "${ModInfo.MODID}:thrym.axe.hit"
+	override fun getRangedFormSound() = "${ModInfo.MODID}:thrym.icicle.form"
 	override fun getSpinningSound() = "${ModInfo.MODID}:thrym.axe.rotate"
 	override fun getStrikeSound() = "${ModInfo.MODID}:thrym.axe.strike"
 	override fun getSwingSound() = "${ModInfo.MODID}:thrym.axe.swing"

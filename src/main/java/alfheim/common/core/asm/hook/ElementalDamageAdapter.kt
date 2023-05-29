@@ -1,5 +1,6 @@
 package alfheim.common.core.asm.hook
 
+import alfheim.AlfheimCore
 import alfheim.common.core.helper.ElementalDamage.*
 import alfheim.common.core.helper.setTo
 import alfheim.common.core.util.DamageSourceSpell
@@ -23,6 +24,7 @@ import thaumcraft.common.entities.projectile.*
 import thaumcraft.common.items.equipment.ItemElementalSword
 import thaumcraft.common.items.wands.foci.ItemFocusShock
 import vazkii.botania.api.internal.IManaBurst
+import vazkii.botania.common.Botania
 import vazkii.botania.common.entity.*
 import vazkii.botania.common.item.equipment.tool.ItemThunderSword
 import vazkii.botania.common.item.equipment.tool.terrasteel.ItemTerraSword
@@ -165,10 +167,13 @@ object ElementalDamageAdapter {
 	fun `EntityDamageSource$init`(thiz: EntityDamageSource, name: String?, entity: Entity?) {
 		when (entity) {
 			is EntityWither -> thiz.setTo(DARKNESS)
-			is EntitySlime -> thiz.setTo(NATURE)
+			is EntitySlime  -> thiz.setTo(NATURE)
 			is EntityDragon -> thiz.setTo(ALIEN)
+		}
+		
+		if (Botania.thaumcraftLoaded) when (entity) {
 			is EntityEldritchGuardian -> thiz.setTo(ALIEN).setTo(DARKNESS)
-			is EntityEldritchWarden -> thiz.setTo(ALIEN).setTo(DARKNESS)
+			is EntityEldritchWarden   -> thiz.setTo(ALIEN).setTo(DARKNESS)
 		}
 	}
 	
@@ -177,11 +182,14 @@ object ElementalDamageAdapter {
 	@Hook(targetMethod = "<init>", injectOnExit = true)
 	fun `EntityDamageSourceIndirect$init`(thiz: EntityDamageSourceIndirect, name: String, entity: Entity, indirectEntity: Entity) {
 		when (entity) {
+			is EntitySnowball -> thiz.setTo(ICE)
+		}
+		
+		if (Botania.thaumcraftLoaded) when (entity) {
 			is EntityPrimalArrow -> setForPrimalArrow(thiz, entity)
 			is EntityFrostShard -> thiz.setTo(ICE)
 			is EntityShockOrb -> thiz.setTo(ELECTRIC)
 			is EntityPechBlast -> thiz.setTo(DARKNESS).setTo(NATURE)
-			is EntitySnowball -> thiz.setTo(ICE)
 		}
 	}
 	

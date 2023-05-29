@@ -98,7 +98,8 @@ object RenderEntitySurtr: RenderBiped(ModelEntitySurtr, 2f) {
 	
 	fun renderSwordCircle(surtr: EntitySurtr) {
 		if (surtr.ultAnimationTicks < 512) return
-
+		
+		glColor4f(1f, 1f, 1f, 1f)
 		if (surtr.shouldSpinProtect)
 			renderDefence(surtr)
 		else
@@ -111,7 +112,7 @@ object RenderEntitySurtr: RenderBiped(ModelEntitySurtr, 2f) {
 		interpolatedTranslation(surtr)
 		glRotatef(sin(ClientTickHandler.total / 10) * 5f, 1f, 0f, 0f)
 		glTranslatef(0f, 1.5f, 0f)
-		glRotatef(ClientTickHandler.total * 3, 0f, 1f, 0f)
+		glRotatef(ClientTickHandler.total * 5, 0f, 1f, 0f)
 		
 		repeat(2) {
 			if (it == 1) setGlow()

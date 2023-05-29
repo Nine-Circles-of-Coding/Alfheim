@@ -9,7 +9,6 @@ import alfheim.common.core.util.AlfheimTab
 import alfheim.common.entity.*
 import alfheim.common.item.relic.ShootHelper.isLookingAtMoon
 import com.google.common.collect.Multimap
-import com.sun.xml.internal.fastinfoset.stax.events.AttributeBase
 import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.block.Block
 import net.minecraft.client.renderer.texture.IIconRegister
@@ -49,11 +48,11 @@ class ItemMoonlightBow: ItemBow(), IRelic {
 		unlocalizedName = "MoonlightBow"
 	}
 	
-	override fun getAttributeModifiers(stack: ItemStack): Multimap<String, AttributeBase> {
+	override fun getAttributeModifiers(stack: ItemStack): Multimap<String, AttributeModifier> {
 		val attrib = super.getAttributeModifiers(stack)
 		val uuid = UUID(unlocalizedName.hashCode().toLong(), 0)
 		attrib.put(SharedMonsterAttributes.attackDamage.attributeUnlocalizedName, AttributeModifier(uuid, "Weapon modifier", 5.0, 0))
-		return attrib as Multimap<String, AttributeBase>
+		return attrib as Multimap<String, AttributeModifier>
 	}
 	
 	override fun onItemRightClick(stack: ItemStack, world: World, player: EntityPlayer): ItemStack {

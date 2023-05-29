@@ -40,6 +40,8 @@ object RenderEntityThrym: RenderBiped(ModelEntityThrym, 2f) {
 	fun renderFlyingAxe(thrym: EntityThrym) {
 		if (thrym.ultAnimationTicks < 512) return
 		
+		glColor4f(1f, 1f, 1f, 1f)
+		
 		val ticks = thrym.ultAnimationTicks - 512 + mc.timer.renderPartialTicks
 //		val corpseAngle = ASJRenderHelper.interpolate(thrym.prevRenderYawOffset.D, thrym.renderYawOffset.D).F
 		

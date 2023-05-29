@@ -495,6 +495,7 @@ abstract class EntityPrimalBoss(world: World): EntityCreature(world), IBotaniaBo
 	
 	abstract fun getChargeSound(): String
 	abstract fun getHitSound(): String
+	abstract fun getRangedFormSound(): String
 	abstract fun getSpinningSound(): String
 	abstract fun getStrikeSound(): String
 	abstract fun getSwingSound(): String

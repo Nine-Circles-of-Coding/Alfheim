@@ -1,5 +1,5 @@
 Innovations:
- Set of new drops to Fenrir, designed and created by ChatGPT :D
+ Set of new drops to Fenrir, created and designed by ChatGPT :D
  Elementium mana and aura rings now can spawn a pixie
  Fenrir claws now got a chance (higher with full Fenrir set) to impose bleeding on hit
  Flugel music updated to remaster
@@ -9,7 +9,9 @@ Innovations:
  Little tuning for Corporea Sequencer and more informative wand HUD
  Alfheim->Midgard teleportation now can link to ranom exisiting portal (config)
  Increased nighttime spirits quantity in Alfheim (configurable)
- Visualization for entity elements when wearing monocle
+ Visualization for mob elements when wearing monocle
+ Config for mob elements (not for Alfheim ones tho)
+ Rebalanced elemental reactions
  Removed Interdimensional Gateway Core infusion recipe
  [WIP] Entity-blocks
  

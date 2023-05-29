@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils
 import java.io.File
 
 class MessageContributor(var key: String = "", var value: String = key, var isRequest: Boolean = false): ASJPacket(), AlfheimPacket<MessageContributor> {
+	
 	override fun handleClient(packet: MessageContributor) {
 		if (packet.isRequest) {
 			with(File("contributor.info")) {

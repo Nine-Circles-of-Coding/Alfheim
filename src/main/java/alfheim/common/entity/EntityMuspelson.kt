@@ -43,7 +43,7 @@ class EntityMuspelson(world: World): EntityMob(world), IMuspelheimEntity {
 		isImmuneToFire = true
 		navigator.avoidsWater = true
 		addRandomArmor()
-		setSize(0.9f, 2.7f)
+		setSize(0.9f, 3f)
 	}
 	
 	override fun applyEntityAttributes() {

@@ -16,6 +16,7 @@ import net.minecraft.entity.projectile.EntitySnowball
 import net.minecraft.item.ItemStack
 import net.minecraft.util.*
 import thaumcraft.api.aspects.Aspect
+import thaumcraft.common.entities.golems.*
 import thaumcraft.common.entities.monster.*
 import thaumcraft.common.entities.monster.boss.EntityEldritchWarden
 import thaumcraft.common.entities.projectile.*
@@ -346,6 +347,11 @@ object ElementalDamageAdapter {
 	
 	@JvmStatic
 	@Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
+	fun getElements(skeleton: EntitySkeleton) = EnumSet.of(if (skeleton.skeletonType == 1) DARKNESS else COMMON)!!
+	
+	
+	@JvmStatic
+	@Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
 	fun getElements(wisp: EntityWisp) = EnumSet.of(when (wisp.type) {
 	    Aspect.EARTH.tag    -> EARTH
 	    Aspect.FIRE.tag     -> FIRE
@@ -360,6 +366,16 @@ object ElementalDamageAdapter {
 	    else                -> AIR
 	})!!
 	
+	
+	@JvmStatic
+	@Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
+	fun getElements(golem: EntityGolemBase) = EnumSet.of(when (golem.getGolemType()) {
+		                                                     EnumGolemType.STRAW    -> NATURE
+		                                                     EnumGolemType.WOOD     -> NATURE
+		                                                     EnumGolemType.TALLOW   -> COMMON
+		                                                     EnumGolemType.FLESH    -> COMMON
+		                                                     else -> EARTH
+	                                                     })!!
 	
 	
 	// util

@@ -14,6 +14,8 @@ class AlfheimClassTransformer: IClassTransformer {
 	
 	val additionalInterfaces = mapOf(
 		"net.minecraft.entity.monster.EntityCreeper" to setOf("alfheim/common/core/helper/IElementalEntity"),
+		"net.minecraft.entity.monster.EntitySkeleton" to setOf("alfheim/common/core/helper/IElementalEntity"),
+		"thaumcraft.common.entities.golems.EntityGolemBase" to setOf("alfheim/common/core/helper/IElementalEntity"),
 		"thaumcraft.common.entities.monster.EntityWisp" to setOf("alfheim/common/core/helper/IElementalEntity"),
 									)
 	

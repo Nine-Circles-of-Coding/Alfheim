@@ -1026,7 +1026,7 @@ class EntityFlugel(world: World): EntityCreature(world), IBotaniaBossWithName {
 		}
 		
 		fun World.playRecord(record: ItemRecord, x: Int, y: Int, z: Int) {
-			// playRecord("records." + record.recordName, x, y, z)
+			playRecord("records." + record.recordName, x, y, z)
 		}
 		
 		fun World.stopRecord(x: Int, y: Int, z: Int) {

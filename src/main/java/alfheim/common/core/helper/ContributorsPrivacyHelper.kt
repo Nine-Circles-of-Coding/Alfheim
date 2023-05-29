@@ -82,12 +82,16 @@ object ContributorsPrivacyHelper {
 	
 	@SubscribeEvent
 	fun onPlayerTick(e: TickEvent.PlayerTickEvent) {
-		if (!e.player.worldObj.isRemote && e.phase == TickEvent.Phase.START) {
-			val playerMp = e.player as EntityPlayerMP
-			authTimeout.getOrElse(playerMp) { return }.let {
-				val time = it - 1
-				if (time < 0) playerMp.playerNetServerHandler.kickPlayerFromServer("Alfheim Contributor Authentication request timed out") else authTimeout[playerMp] = time
-			}
+		if (ASJUtilities.isClient || e.phase != TickEvent.Phase.START) return
+		
+		val player = e.player as EntityPlayerMP
+		authTimeout[player]?.let {
+			val time = it - 1
+			
+			if (time < 0)
+				player.playerNetServerHandler.kickPlayerFromServer("Authentication request timed out")
+			else
+				authTimeout[player] = time
 		}
 	}
 	

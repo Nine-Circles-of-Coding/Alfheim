@@ -27,3 +27,4 @@ Fixes:
  Liquid mana placing
  Thrym, Surtr and Fenrir relic drops
  Purification and Smelt lenses behaviour and display
+ ESM/MMO modes sync across SP worlds (#273)

@@ -259,7 +259,7 @@ object ClientProxy : CommonProxy() {
 	}
 	
 	fun enableESM() {
-		if (AlfheimConfigHandler.enableElvenStory) return
+//		if (AlfheimConfigHandler.enableElvenStory) return
 		AlfheimConfigHandler.enableElvenStory = true
 		AlfheimLexiconData.reEnableESM()
 //		if (Botania.thaumcraftLoaded) ThaumcraftAlfheimModule.addESMRecipes()
@@ -269,7 +269,7 @@ object ClientProxy : CommonProxy() {
 	}
 	
 	fun disableESM() {
-		if (!AlfheimConfigHandler.enableElvenStory) return
+//		if (!AlfheimConfigHandler.enableElvenStory) return
 		AlfheimConfigHandler.enableElvenStory = false
 		AlfheimLexiconData.disableESM()
 //		if (Botania.thaumcraftLoaded) ThaumcraftAlfheimModule.removeESMRecipes()
@@ -279,7 +279,7 @@ object ClientProxy : CommonProxy() {
 	}
 	
 	fun enableMMO() {
-		if (AlfheimConfigHandler.enableMMO) return
+//		if (AlfheimConfigHandler.enableMMO) return
 		AlfheimConfigHandler.enableMMO = true
 		AlfheimLexiconData.reEnableMMO()
 		AlfheimRecipes.addMMORecipes()
@@ -289,7 +289,7 @@ object ClientProxy : CommonProxy() {
 	}
 	
 	fun disableMMO() {
-		if (!AlfheimConfigHandler.enableMMO) return
+//		if (!AlfheimConfigHandler.enableMMO) return
 		AlfheimConfigHandler.enableMMO = false
 		AlfheimLexiconData.disableMMO()
 		AlfheimRecipes.removeMMORecipes()
@@ -308,7 +308,7 @@ object ClientProxy : CommonProxy() {
 		} else {
 			AlfheimLexiconData.disableESM()
 			removeESMKeyBinds()
-			if (mmoOld != mmo) toggleMMO(false, mmo, esmOld, mmoOld)
+			if (mmoOld != mmo) toggleMMO(false, mmo, true, mmoOld)
 		}
 	}
 	
@@ -320,7 +320,7 @@ object ClientProxy : CommonProxy() {
 			AlfheimLexiconData.reEnableMMO()
 			enableMMOGUIs()
 			addMMOKeyBinds()
-			if (mmoOld != esm) toggleESM(esm, true, esmOld, mmoOld)
+			if (esm) toggleESM(true, true, esmOld, false)
 		} else {
 			AlfheimLexiconData.disableMMO()
 			disableMMOGUIs()

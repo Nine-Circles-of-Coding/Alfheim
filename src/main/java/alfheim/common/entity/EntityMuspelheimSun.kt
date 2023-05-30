@@ -7,6 +7,7 @@ import alfheim.client.sound.EntityBoundMovingSound
 import alfheim.common.core.util.DamageSourceSpell
 import cpw.mods.fml.relauncher.*
 import net.minecraft.entity.*
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.world.World
 
@@ -35,13 +36,13 @@ class EntityMuspelheimSun(world: World?): Entity(world) {
 		setSize(18f, 18f)
 	}
 	
-	lateinit var sunSound: EntityBoundMovingSound<EntityMuspelheimSun>
+	lateinit var sunSound: EntityBoundMovingSound<out EntityPlayer>
 	
 	private fun playSounds() {
 		if (!ASJUtilities.isClient || (::sunSound.isInitialized && !sunSound.isDonePlaying))
 			return
 		
-		sunSound = EntityBoundMovingSound(this, "${ModInfo.MODID}:surtr.sun.exist").apply { volume = 1f }
+		sunSound = EntityBoundMovingSound(mc.thePlayer, "${ModInfo.MODID}:surtr.sun.exist") { isDonePlaying = this@EntityMuspelheimSun.isDead }.apply { volume = 1f }
 		mc.soundHandler.playSound(sunSound)
 	}
 	

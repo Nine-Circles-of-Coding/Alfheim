@@ -25,7 +25,7 @@ import vazkii.botania.common.entity.EntityManaBurst
 import java.awt.Color
 
 // All functional (feature-related) code was created by ChatGPT, I just adapted it
-class ItemFenrirLoot: ItemMod("FenrirLoot"), ILensEffect {
+class ItemFenrirLoot: ItemMod("FenrirLoot"), ILensEffect, IManaUsingItem {
 	
 	lateinit var icons: List<IIcon>
 	lateinit var iconsCD: List<IIcon>
@@ -55,22 +55,31 @@ class ItemFenrirLoot: ItemMod("FenrirLoot"), ILensEffect {
 	private fun doHatiEye(stack: ItemStack, world: World, player: EntityPlayer) {
 		// Play sound and particles
 		world.playSoundEffect(player.posX, player.posY, player.posZ, "mob.wolf.growl", 1f, 1f)
-		world.spawnParticle("fireworksSpark", player.posX, player.posY, player.posZ, 0.0, 0.0, 0.0)
+		world.spawnParticle("fireworksSpark", player.posX, player.posY, player.posZ, 0.0, 0.1, 0.0)
 		
 		var did = false
 		
 		// Blind nearby enemies
 		try {
 			val range = 10
-			getEntitiesWithinAABB(world, EntityLivingBase::class.java, player.boundingBox.expand(range)).forEach { target ->
-				if (target === player || Vector3.entityDistance(target, player) > range) return@forEach
+			
+			run {
+				if (!ManaItemHandler.requestManaExactForTool(stack, player, 5000, false)) return@run
 				
-				target.addPotionEffect(PotionEffect(Potion.blindness.id, 200))
-				did = true
+				getEntitiesWithinAABB(world, EntityLivingBase::class.java, player.boundingBox.expand(range)).forEach { target ->
+					if (target === player || Vector3.entityDistance(target, player) > range) return@forEach
+					
+					target.addPotionEffect(PotionEffect(Potion.blindness.id, 200))
+					did = true
+				}
+				
+				if (did) ManaItemHandler.requestManaExactForTool(stack, player, 5000, true)
 			}
 			
 			// light up dark areas
 			if (!player.isSneaking) return
+			
+			if (!ManaItemHandler.requestManaExactForTool(stack, player, 1000, false)) return
 			
 			val (i, j, k) = Vector3.fromEntity(player).mf()
 			for (x in i.bidiRange(range))
@@ -80,6 +89,7 @@ class ItemFenrirLoot: ItemMod("FenrirLoot"), ILensEffect {
 						if (!at.isAir(world, x, y, z)) continue
 						if (world.getBlockLightValue(x, y, z) > 8) continue
 						if (!at.isReplaceable(world, x, y, z)) continue
+						if (!World.doesBlockHaveSolidTopSurface(world, x, y, z)) continue
 						
 						did = true
 						
@@ -88,6 +98,8 @@ class ItemFenrirLoot: ItemMod("FenrirLoot"), ILensEffect {
 						tile.color = 0xD9E4FF // brightest moon pixel color
 						tile.invisible = true
 					}
+			
+			if (did) ManaItemHandler.requestManaExactForTool(stack, player, 1000, true)
 		} finally {
 			if (did) stack.cooldown = 100
 		}
@@ -96,9 +108,13 @@ class ItemFenrirLoot: ItemMod("FenrirLoot"), ILensEffect {
 	// region: Skoll Bane things
 	
 	private fun doSkollBane(stack: ItemStack, player: EntityPlayer) {
+		if (!ManaItemHandler.requestManaExactForTool(stack, player, 5000, false)) return
+		
 		getBurst(player, stack).spawn()
 		player.worldObj.playSoundEffect(player.posX, player.posY, player.posZ, "mob.wolf.growl", 1f, 1f)
 		stack.cooldown = 50
+		
+		ManaItemHandler.requestManaExactForTool(stack, player, 5000, true)
 	}
 	
 	fun getBurst(player: EntityPlayer, stack: ItemStack): EntityManaBurst {
@@ -137,7 +153,7 @@ class ItemFenrirLoot: ItemMod("FenrirLoot"), ILensEffect {
 		entities.forEach {
 			if (it is EntityPlayer && !(it !== attacker && (MinecraftServer.getServer() == null || MinecraftServer.getServer().isPVPEnabled))) return@forEach
 			if (it.hurtTime != 0) return@forEach
-			val damage = if (it.isEntityUndead) 20f else 10f
+			val damage = if (it.isEntityUndead) 30f else 15f
 			val did = it.attackEntityFrom(if (attacker == null) DamageSource.magic else DamageSource.causePlayerDamage(attacker).setDamageBypassesArmor().setMagicDamage().setFireDamage().setTo(ElementalDamage.LIGHTNESS), damage)
 			if (!did) return@forEach
 			if (attacker != null) it.knockback(attacker, 2f)
@@ -151,6 +167,8 @@ class ItemFenrirLoot: ItemMod("FenrirLoot"), ILensEffect {
 	// endregion
 	
 	private fun doHowlingCharm(stack: ItemStack, world: World, player: EntityPlayer) {
+		if (!ManaItemHandler.requestManaExactForTool(stack, player, 20000, false)) return
+		
 		world.playSoundAtEntity(player, "mob.wolf.growl", 1f, 1f)
 		
 		var did = false
@@ -161,30 +179,38 @@ class ItemFenrirLoot: ItemMod("FenrirLoot"), ILensEffect {
 			if (Vector3.entityDistance(entity, player) > range) continue
 			
 			// Damage the enemy
-			entity.attackEntityFrom(DamageSource.causePlayerDamage(player).setTo(ElementalDamage.AIR), 10f)
+			entity.attackEntityFrom(DamageSource.causePlayerDamage(player).setTo(ElementalDamage.AIR), 5f)
 			// Stun the enemy
 			(entity as? EntityLiving)?.attackTarget = null
-			entity.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDEternity, 50, PotionEternity.STUN or PotionEternity.IRREMOVABLE))
+			entity.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDEternity, 100, PotionEternity.STUN or PotionEternity.IRREMOVABLE))
 			
 			did = true
 		}
 		
-		if (did) stack.cooldown = 200
+		if (did) {
+			stack.cooldown = 250
+			ManaItemHandler.requestManaExactForTool(stack, player, 20000, true)
+		}
 	}
 	
 	private fun doWolfBloodPotion(stack: ItemStack, player: EntityPlayer) {
+		if (!ManaItemHandler.requestManaExact(stack, player, 2000, false)) return
+		
 		player.addPotionEffect(PotionEffect(Potion.damageBoost.id, 2400, 1))
 		player.addPotionEffect(PotionEffect(Potion.moveSpeed.id, 2400, 1))
 		player.addPotionEffect(PotionEffect(Potion.jump.id, 2400, 1))
 		player.addPotionEffect(PotionEffect(AlfheimConfigHandler.potionIDBeastWithin, 2400))
 		
 		// Inform the player that the potion has been consumed
-		player.addChatMessage(ChatComponentText(EnumChatFormatting.YELLOW.toString() + "You feel the power of the wolf blood course through your veins!"))
+		player.addChatMessage(ChatComponentTranslation("alfheimmisc.wolfblood", EnumChatFormatting.YELLOW))
 		
-		stack.cooldown = 12000
+		stack.cooldown = 6000
+		ManaItemHandler.requestManaExact(stack, player, 2000, true)
 	}
 	
 	private fun doFenrisulfrHeart(stack: ItemStack, player: EntityPlayer) {
+		if (!ManaItemHandler.requestManaExact(stack, player, 20000, false)) return
+		
 		player.addPotionEffect(PotionEffect(Potion.damageBoost.id, 2400, 3))
 		player.addPotionEffect(PotionEffect(Potion.regeneration.id, 1200, 2))
 		player.addPotionEffect(PotionEffect(Potion.resistance.id, 3600, 4))
@@ -192,7 +218,8 @@ class ItemFenrirLoot: ItemMod("FenrirLoot"), ILensEffect {
 		
 		player.playSoundAtEntity("mob.enderdragon.growl", 1.0f, 1.0f)
 		
-		stack.cooldown = 6000
+		stack.cooldown = 12000
+		ManaItemHandler.requestManaExact(stack, player, 20000, true)
 	}
 	
 	// common things
@@ -218,6 +245,8 @@ class ItemFenrirLoot: ItemMod("FenrirLoot"), ILensEffect {
 	}
 	
 	override fun shouldRotateAroundWhenRendering() = mc.gameSettings.thirdPersonView != 0
+	
+	override fun usesMana(stack: ItemStack?) = true
 	
 	companion object {
 		

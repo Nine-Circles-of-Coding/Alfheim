@@ -31,7 +31,7 @@ class PrimalAIRangedAttack(val host: EntityPrimalBoss): EntityAIBase() {
 		
 		VisualEffectHandler.sendPacket(VisualEffectHandlerClient.VisualEffects.PRIMAL_BOSS_ATTACK, host.dimension, host.entityId.D)
 		
-		if (timer == 20) host.playSoundAtEntity(host.getRangedFormSound(), 1f, 1f)
+		if (timer == 10) host.playSoundAtEntity(host.getRangedFormSound(), 1f, 1f)
 		if (timer-- > 0) return
 		timer = 60
 		

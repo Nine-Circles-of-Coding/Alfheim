@@ -28,11 +28,16 @@ class ThrymAIThirdStageStart(val host: EntityThrym): EntityAIBase() {
 	override fun startExecuting() {
 		val src = host.source
 		
-		host.playSoundAtEntity("${ModInfo.MODID}:thrym.shield.teleport", 1f, 1f)
+		val players = host.playersOnArena()
+		
+		players.forEach {
+			it.playSoundAtEntity("${ModInfo.MODID}:thrym.shield.teleport", 1f, 1f)
+		}
+		
 		host.setPosition(src)
 		host.playSoundAtEntity("${ModInfo.MODID}:thrym.shield.form", 1f, 1f)
 		
-		inside = host.playersOnArena().apply { removeAll { it.health > it.maxHealth * 0.5 } }.mapTo(HashSet()) {
+		inside = players.apply { removeAll { it.health > it.maxHealth * 0.5 } }.mapTo(HashSet()) {
 			it.setPositionAndUpdate(host.posX, host.posY, host.posZ)
 			it.commandSenderName
 		}

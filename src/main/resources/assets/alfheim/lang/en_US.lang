@@ -740,6 +740,7 @@ alfheimmisc.teamnotmob=Party member cannot be selected as enemy target.
 alfheimmisc.tgtooltip=Press &b%s&7 to open the Traveller's Gear menu
 alfheimmisc.unknownMaterials=Unknown materials
 alfheimmisc.update=O-oh, it seems you are playing on an outdated version (%s). Perhaps you should update to %s?
+alfheimmisc.wolfblood=You feel the power of the wolf blood course through your veins!
 
 alfheimmisc.area=Area: %s x %s x %s
 alfheimmisc.offset=Offset: %s, %s, %s

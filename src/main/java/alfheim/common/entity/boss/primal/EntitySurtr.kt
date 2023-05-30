@@ -4,6 +4,7 @@ import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alfheim.api.ModInfo
 import alfheim.api.entity.IMuspelheimEntity
+import alfheim.client.sound.EntityBoundMovingSound
 import alfheim.common.achievement.AlfheimAchievements
 import alfheim.common.core.handler.*
 import alfheim.common.core.handler.CardinalSystem.KnowledgeSystem
@@ -51,7 +52,10 @@ class EntitySurtr(world: World): EntityPrimalBoss(world), IMuspelheimEntity {
 	private fun playSounds() {
 		if (!ASJUtilities.isClient || ticksExisted != 1) return
 		
-		mc.soundHandler.playSound(PrimalBossMovingSound(this, "${ModInfo.MODID}:surtr.wall.exist") { volume = if (wall) 1f else 0.01f })
+		mc.soundHandler.playSound(EntityBoundMovingSound(mc.thePlayer, "${ModInfo.MODID}:surtr.wall.exist") {
+			volume = if (wall) 1f else 0.01f
+			isDonePlaying = this@EntitySurtr.isDead
+		})
 		mc.soundHandler.playSound(PrimalBossMovingSound(this, getChargeSound()) { volume = if (!ASJBitwiseHelper.getBit(host.ultAnimationTicks, 9) && host.ultAnimationTicks in 11..69) 1f else 0.01f })
 	}
 	

@@ -30,4 +30,8 @@ open class EntityBoundMovingSound<E : Entity>(val host: E, sound: String, val up
 	fun setVolume(new: Float) {
 		volume = new
 	}
+	
+	fun setDonePlaying(done: Boolean) {
+		donePlaying = done
+	}
 }

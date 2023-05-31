@@ -22,11 +22,12 @@ object NetworkService {
 		registerPacket(Message1l::class, Side.CLIENT)
 		registerPacket(Message2d::class, Side.CLIENT)
 		registerPacket(Message3d::class, Side.CLIENT)
+		registerPacket(MessageNI::class, Side.CLIENT)
+		
 		registerPacket(MessageContributor::class, Side.CLIENT)
 		registerPacket(MessageEffect::class, Side.CLIENT)
 		registerPacket(MessageGleipnirLeash::class, Side.CLIENT)
 		registerPacket(MessageHotSpellC::class, Side.CLIENT)
-		registerPacket(MessageNI::class, Side.CLIENT)
 		registerPacket(MessageParty::class, Side.CLIENT)
 		registerPacket(MessageRaceInfo::class, Side.CLIENT)
 		registerPacket(MessageRedstoneSignalsSync::class, Side.CLIENT)
@@ -41,6 +42,7 @@ object NetworkService {
 		registerPacket(MessageHotSpellS::class, Side.SERVER)
 		registerPacket(MessageKeyBindS::class, Side.SERVER)
 		registerPacket(MessageNI::class, Side.SERVER)
+		registerPacket(MessageRaceSelection::class, Side.SERVER)
 	}
 
 	private fun <T : AlfheimPacket<T>> registerPacket(clazz: KClass<out T>, side: Side) {

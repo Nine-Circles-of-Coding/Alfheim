@@ -80,6 +80,7 @@ import net.minecraft.world.biome.*
 import net.minecraft.world.chunk.Chunk
 import net.minecraft.world.gen.structure.*
 import net.minecraftforge.common.util.ForgeDirection
+import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.fluids.IFluidBlock
 import org.lwjgl.opengl.GL11.*
 import ru.vamig.worldengine.*
@@ -118,6 +119,7 @@ import vazkii.botania.common.entity.*
 import vazkii.botania.common.item.*
 import vazkii.botania.common.item.block.ItemBlockSpecialFlower
 import vazkii.botania.common.item.equipment.bauble.ItemBauble
+import vazkii.botania.common.item.equipment.tool.ToolCommons
 import vazkii.botania.common.item.lens.LensFirework
 import vazkii.botania.common.item.material.ItemManaResource
 import vazkii.botania.common.item.relic.*
@@ -154,11 +156,7 @@ object AlfheimHookHandler {
 	
 	@JvmStatic
 	@Hook(returnCondition = ON_TRUE)
-	fun createBonusChest(world: WorldServer): Boolean {
-		if (!AlfheimConfigHandler.enableElvenStory) return false
-		
-		return true
-	}
+	fun createBonusChest(world: WorldServer) = AlfheimConfigHandler.enableElvenStory
 	
 	@JvmStatic
 	@Hook(injectOnExit = true, targetMethod = "<init>")
@@ -1152,7 +1150,9 @@ object AlfheimHookHandler {
 			5 -> ++x
 		}
 		
-		if (!player.canPlayerEdit(x, y, z, side, stack) || !world.getBlock(x, y, z).isReplaceable(world, x, y, z)) return false
+		val at = world.getBlock(x, y, z)
+		if (!player.canPlayerEdit(x, y, z, side, stack) || !at.isReplaceable(world, x, y, z)) return false
+		if (at === AlfheimBlocks.manaFluidBlock && world.getBlockMetadata(x, y, z) == 0) return false
 		
 		world.setBlock(x, y, z, AlfheimBlocks.manaFluidBlock)
 		stack.stackSize--
@@ -1798,4 +1798,27 @@ object AlfheimHookHandler {
 	fun func_150893_a(item: ItemPickaxe, stack: ItemStack?, block: Block) = block.material === Material.glass
 	@JvmStatic
 	fun getDigSpeed(item: ItemPickaxe, stack: ItemStack?, block: Block) = item.func_150913_i().efficiencyOnProperMaterial
+	
+	@JvmStatic
+	@Hook(targetMethod = "onPlayerInteract")
+	fun onPlayerInteractPre(item: ItemManaResource, event: PlayerInteractEvent?) {
+		hookRaytrace = true
+	}
+	
+	var hookRaytrace = false
+	
+	@JvmStatic
+	@Hook(returnCondition = ON_NOT_NULL)
+	fun raytraceFromEntity(static: ToolCommons?, world: World?, player: Entity?, stopOnLiquid: Boolean, range: Double): MovingObjectPosition? {
+		if (!hookRaytrace) return null
+		hookRaytrace = false
+		
+		return ToolCommons.raytraceFromEntity(world, player, true, range)
+	}
+	
+	@JvmStatic
+	@Hook(targetMethod = "onPlayerInteract", injectOnExit = true)
+	fun onPlayerInteractPost(item: ItemManaResource, event: PlayerInteractEvent?) {
+		hookRaytrace = false
+	}
 }

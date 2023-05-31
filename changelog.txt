@@ -13,6 +13,7 @@ Innovations:
  Config for mob elements (not for Alfheim ones tho)
  Rebalanced elemental reactions
  Removed Interdimensional Gateway Core infusion recipe
+ Booba render for female elves
  [WIP] Entity-blocks
  
 Fixes:
@@ -28,3 +29,6 @@ Fixes:
  Thrym, Surtr and Fenrir relic drops
  Purification and Smelt lenses behaviour and display
  ESM/MMO modes sync across SP worlds (#273)
+ At last, livingcobble furnace texture :o
+ Botania dupe
+ Elemental Chestplate effect in inventory

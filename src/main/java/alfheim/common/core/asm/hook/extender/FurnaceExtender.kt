@@ -1,18 +1,17 @@
 package alfheim.common.core.asm.hook.extender
 
 import alexsocol.asjlib.*
-import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.relauncher.*
 import gloomyfolken.hooklib.asm.*
 import gloomyfolken.hooklib.asm.Hook.ReturnValue
-import net.minecraft.block.BlockFurnace
+import net.minecraft.block.*
+import net.minecraft.client.renderer.RenderBlocks
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
 import net.minecraft.util.*
 import net.minecraft.world.World
-import net.minecraftforge.event.entity.player.ItemTooltipEvent
 import java.util.*
 
 @Suppress("UNUSED_PARAMETER")
@@ -60,10 +59,27 @@ object FurnaceExtender {
 	}
 	
 	@JvmStatic
+	@Hook(targetMethod = "renderBlockAsItem")
+	@SideOnly(Side.CLIENT)
+	fun renderBlockAsItemPre(renderer: RenderBlocks, block: Block, meta: Int, colorMultiplier: Float) {
+		forceMeta = block === Blocks.furnace && meta >= 8
+	}
+	
+	var forceMeta = false
+	
+	@JvmStatic
 	@Hook(returnCondition = ReturnCondition.ON_NOT_NULL)
 	@SideOnly(Side.CLIENT)
 	fun getIcon(furnace: BlockFurnace, side: Int, meta: Int): IIcon? {
-		return if (meta < 8) null else if (side == 0 || side == 1) iconTop else if (side != (meta - 8)) iconSide else if (furnace.field_149932_b) iconFrontLit else iconFrontUnlit
+		val actualMeta = if (forceMeta) 11 else meta
+		return if (actualMeta < 8) null else if (side == 0 || side == 1) iconTop else if (side != (actualMeta - 8)) iconSide else if (furnace.field_149932_b) iconFrontLit else iconFrontUnlit
+	}
+	
+	@JvmStatic
+	@Hook(targetMethod = "renderBlockAsItem", injectOnExit = true)
+	@SideOnly(Side.CLIENT)
+	fun renderBlockAsItemPost(renderer: RenderBlocks, block: Block, meta: Int, colorMultiplier: Float) {
+		forceMeta = false
 	}
 	
 	@JvmStatic
@@ -106,33 +122,4 @@ object FurnaceExtender {
 		} else
 			result
 	}
-}
-
-object FurnaceHandler {
-	
-	init {
-		eventForge()
-	}
-	
-	// Instead of icon because minecraft is shitcoded
-	
-	@SubscribeEvent
-	fun onTooltip(e: ItemTooltipEvent) {
-		if (e.itemStack.item.toBlock() === Blocks.furnace && e.itemStack.meta > 7)
-			e.toolTip[0] = e.toolTip[0].replace(StatCollector.translateToLocal("tile.furnace.name"), StatCollector.translateToLocal("tile.furnace_living.name"))
-	}
-
-//	@SubscribeEvent
-//	fun onTextureStitch(e: TextureStitchEvent) {
-//		if (e.map.textureType == 0)
-//			FurnaceExtender.iconFrontLit = RenderBlocks.getInstance().getIconSafe(forName (e.map, "furnace_front_on_living"))
-//	}
-//
-//	private fun forName(map: TextureMap, name: String): IIcon? {
-//		val localIcon = InterpolatedIcon("minecraft:$name")
-//		if (map.setTextureEntry("minecraft:$name", localIcon)) {
-//			return localIcon
-//		}
-//		return null
-//	}
 }

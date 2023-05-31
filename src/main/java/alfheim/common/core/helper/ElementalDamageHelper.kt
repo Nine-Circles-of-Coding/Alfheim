@@ -14,6 +14,7 @@ import cpw.mods.fml.relauncher.*
 import net.minecraft.client.renderer.*
 import net.minecraft.client.renderer.entity.RenderManager
 import net.minecraft.entity.*
+import net.minecraft.entity.passive.EntityWaterMob
 import net.minecraft.util.*
 import net.minecraftforge.client.event.RenderLivingEvent
 import net.minecraftforge.event.entity.living.*
@@ -55,8 +56,8 @@ object ElementalDamageHandler {
 		get() {
 			val set = EnumSet.noneOf(ElementalDamage::class.java)
 			
-			if (isBurning) set.add(FIRE)
-			if (isWet) set.add(WATER)
+			if (isBurning && !isImmuneToFire) set.add(FIRE)
+			if (isWet && this !is EntityWaterMob) set.add(WATER)
 			if (cold > 50) set.add(ICE)
 			
 			return set

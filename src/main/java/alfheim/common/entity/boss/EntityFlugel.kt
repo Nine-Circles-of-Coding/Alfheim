@@ -784,9 +784,9 @@ class EntityFlugel(world: World): EntityCreature(world), IBotaniaBossWithName {
 		if (mop.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY) return
 		
 		val shadowChance = when {
-			isUltraMode -> 20
-			isHardMode  -> 10
-			else        -> 5
+			isUltraMode -> 40
+			isHardMode  -> 20
+			else        -> 10
 		}
 		val shadow = ASJUtilities.chance(shadowChance)
 		

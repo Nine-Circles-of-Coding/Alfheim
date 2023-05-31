@@ -149,6 +149,7 @@ object EventHandlerClient {
 	@SideOnly(Side.CLIENT)
 	fun onPlayerSpecialPostRender(e: RenderPlayerEvent.Specials.Post) {
 		RenderItemFlugelHead.render(e, e.entityPlayer)
+		RenderBooba.render(e.entityPlayer)
 		RenderWings.render(e.entityPlayer)
 		RenderContributors.render(e, e.entityPlayer)
 	}

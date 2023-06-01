@@ -53,7 +53,7 @@ class EntitySurtr(world: World): EntityPrimalBoss(world), IMuspelheimEntity {
 		if (!ASJUtilities.isClient || ticksExisted != 1) return
 		
 		mc.soundHandler.playSound(EntityBoundMovingSound(mc.thePlayer, "${ModInfo.MODID}:surtr.wall.exist") {
-			volume = if (wall) 1f else 0.01f
+			volume = if (wall) 0.5f else 0.01f
 			isDonePlaying = this@EntitySurtr.isDead
 		})
 		mc.soundHandler.playSound(PrimalBossMovingSound(this, getChargeSound()) { volume = if (!ASJBitwiseHelper.getBit(host.ultAnimationTicks, 9) && host.ultAnimationTicks in 11..69) 1f else 0.01f })

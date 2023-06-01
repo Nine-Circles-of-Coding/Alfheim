@@ -84,7 +84,7 @@ open class CommonProxy {
 		ChestGenHandler
 		HilarityHandler
 		RagnarokHandler
-		SoulRestructurizationHandler.eventForge()
+		SoulRestructuringHandler.eventForge()
 		MobSpawnHandler
 		ElementalDamageHandler.eventForge()
 		CardinalSystem.eventForge().eventFML()

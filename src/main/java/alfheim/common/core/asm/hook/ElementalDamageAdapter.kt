@@ -1,8 +1,7 @@
 package alfheim.common.core.asm.hook
 
-import alfheim.AlfheimCore
+import alfheim.common.core.helper.*
 import alfheim.common.core.helper.ElementalDamage.*
-import alfheim.common.core.helper.setTo
 import alfheim.common.core.util.DamageSourceSpell
 import alfheim.common.entity.EntityMuspelson
 import alfheim.common.entity.boss.EntityDedMoroz
@@ -16,7 +15,9 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.projectile.EntitySnowball
 import net.minecraft.item.ItemStack
 import net.minecraft.util.*
+import net.minecraftforge.client.event.RenderLivingEvent
 import thaumcraft.api.aspects.Aspect
+import thaumcraft.client.renderers.entity.RenderWisp
 import thaumcraft.common.entities.golems.*
 import thaumcraft.common.entities.monster.*
 import thaumcraft.common.entities.monster.boss.EntityEldritchWarden
@@ -403,5 +404,14 @@ object ElementalDamageAdapter {
 	@Hook(returnCondition = ReturnCondition.ALWAYS)
 	fun onStruckByLightning(entity: Entity, bolt: EntityLightningBolt?) {
 		entity.attackEntityFrom(DamageSourceSpell.lightning, 5f)
+	}
+	
+	// wisp elements render fix
+	@JvmStatic
+	@Hook(injectOnExit = true)
+	fun doRender(render: RenderWisp, wisp: Entity?, x: Double, y: Double, z: Double, yaw: Float, ticks: Float) {
+		wisp as EntityLivingBase
+		if (wisp.health <= 0f) return
+		ElementalDamageHandler.drawStatusIcons(RenderLivingEvent.Specials.Post(wisp, null, x, y, z))
 	}
 }

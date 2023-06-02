@@ -27,7 +27,6 @@ import org.lwjgl.opengl.GL12
 import vazkii.botania.api.mana.ManaItemHandler
 import vazkii.botania.common.core.helper.ItemNBTHelper.*
 import vazkii.botania.common.item.relic.ItemRelic
-import kotlin.collections.random
 import kotlin.math.max
 
 class ItemAkashicRecords: ItemRelic("AkashicRecords") {
@@ -144,12 +143,12 @@ class ItemAkashicRecords: ItemRelic("AkashicRecords") {
 			if (contains == MAX_RECORDS) return false
 			if (contains > MAX_RECORDS) throw IllegalArgumentException("Records count in Akashik Records cannot be greater than $MAX_RECORDS. Holder: ${player.commandSenderName}")
 			
-			var record: AkashicRecord = records.values.random() // stupid IntelliJ -_-
+			var record = records.values.random()!! // stupid IntelliJ -_-
 			var tries = 32
 			
 			while (tries-- > 0) {
 				if (record.canGet(player, stack)) break
-				record = records.values.random()
+				record = records.values.random()!!
 			}
 			
 			if (tries < 0) return false

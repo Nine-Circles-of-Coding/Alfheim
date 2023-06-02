@@ -11,7 +11,6 @@ import net.minecraft.block.material.Material
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.util.IIcon
 import net.minecraftforge.client.event.TextureStitchEvent
-import net.minecraftforge.common.MinecraftForge
 
 class BlockRealmPowerCollector: BlockModMeta(Material.wood, 4, ModInfo.MODID, "RealmPowerCollector", AlfheimTab, 10f, "axe", 0) {
 	

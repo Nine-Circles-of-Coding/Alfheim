@@ -4,7 +4,6 @@ import alexsocol.asjlib.*
 import alfheim.api.lib.LibRenderIDs
 import alfheim.client.core.helper.IconHelper
 import alfheim.common.core.util.AlfheimTab
-import alfheim.common.item.AlfheimItems
 import alfheim.common.item.block.ItemBlockGrapeWhite
 import alfheim.common.item.material.ElvenFoodMetas
 import alfheim.common.lexicon.AlfheimLexiconData

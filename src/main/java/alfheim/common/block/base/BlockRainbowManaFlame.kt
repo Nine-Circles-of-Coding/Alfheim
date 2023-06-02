@@ -26,6 +26,9 @@ class BlockRainbowManaFlame: BlockMod(Material.cloth), ILexiconable {
 		setStepSound(soundTypeCloth)
 	}
 	
+	override fun isReplaceable(world: IBlockAccess, x: Int, y: Int, z: Int) =
+		(world.getTileEntity(x, y, z) as? TileRainbowManaFlame)?.invisible == true
+	
 	@Suppress("OVERRIDE_DEPRECATION", "DEPRECATION") // stupid WAILA uses deprecated method -_-
 	override fun getPickBlock(target: MovingObjectPosition?, world: World, x: Int, y: Int, z: Int): ItemStack {
 		val stack = super.getPickBlock(target, world, x, y, z)

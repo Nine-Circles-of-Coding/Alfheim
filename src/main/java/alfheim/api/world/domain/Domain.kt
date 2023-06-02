@@ -5,11 +5,9 @@ import alfheim.api.AlfheimAPI
 import alfheim.common.entity.boss.IForceKill
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.util.AxisAlignedBB
-import net.minecraft.util.ChunkCoordinates
+import net.minecraft.util.*
 import net.minecraft.world.World
 import net.minecraftforge.client.IRenderHandler
-import java.lang.IllegalArgumentException
 
 abstract class Domain(val modid: String, val name: String, val minPlayers: Int, val boundBox: AxisAlignedBB, val genOffset: ChunkCoordinates = ChunkCoordinates()) {
 	

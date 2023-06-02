@@ -56,7 +56,7 @@ abstract class BlockLeavesMod: BlockLeaves(), IShearable, ILexiconable {
 	@SideOnly(Side.CLIENT)
 	override fun getIcon(side: Int, meta: Int): IIcon? {
 		setGraphicsLevel(mc.gameSettings.fancyGraphics)
-		return icons[if (field_150121_P) 0 else 1]
+		return icons[field_150127_b]
 	}
 	
 	private fun removeLeaves(world: World, x: Int, y: Int, z: Int) {

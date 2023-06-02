@@ -2,9 +2,9 @@ package alfheim.common.entity
 
 import alexsocol.asjlib.*
 import alfheim.api.entity.IMuspelheimEntity
+import alfheim.common.core.helper.ElementalDamage
 import alfheim.common.item.AlfheimItems
-import alfheim.common.item.material.ElvenResourcesMetas
-import alfheim.common.item.material.EventResourcesMetas
+import alfheim.common.item.material.*
 import net.minecraft.block.Block
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.*
@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.potion.*
 import net.minecraft.util.DamageSource
 import net.minecraft.world.World
+import java.util.*
 
 class EntityMuspelson(world: World): EntityMob(world), IMuspelheimEntity {
 	
@@ -26,6 +27,8 @@ class EntityMuspelson(world: World): EntityMob(world), IMuspelheimEntity {
 			setFlag(6, value)
 			if (value) experienceValue = 0
 		}
+	
+	override val elements = EnumSet.of(ElementalDamage.FIRE, ElementalDamage.EARTH)!!
 	
 	init {
 		tasks.addTask(4, EntityAIAttackOnCollide(this, EntityLivingBase::class.java, 1.2, false))
@@ -40,7 +43,7 @@ class EntityMuspelson(world: World): EntityMob(world), IMuspelheimEntity {
 		isImmuneToFire = true
 		navigator.avoidsWater = true
 		addRandomArmor()
-		setSize(0.9f, 2.7f)
+		setSize(0.9f, 3f)
 	}
 	
 	override fun applyEntityAttributes() {

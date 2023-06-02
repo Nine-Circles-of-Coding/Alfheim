@@ -1,11 +1,11 @@
 package alfheim.common.world.dim.domains.gen
 
-import alexsocol.asjlib.*
+import alexsocol.asjlib.getBoundingBox
 import alfheim.api.ModInfo
 import alfheim.api.world.domain.Domain
 import alfheim.client.render.world.SkyRendererDomains
 import alfheim.common.core.handler.ragnarok.RagnarokHandler
-import alfheim.common.entity.boss.*
+import alfheim.common.entity.boss.EntityFenrir
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.ChunkCoordinates
 import net.minecraft.world.World

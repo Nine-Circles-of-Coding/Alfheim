@@ -7,7 +7,6 @@ import net.minecraft.init.Items
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.IIcon
 import vazkii.botania.api.BotaniaAPI
-import vazkii.botania.api.lexicon.LexiconEntry
 import vazkii.botania.api.subtile.RadiusDescriptor.Square
 import vazkii.botania.api.subtile.SubTileGenerating
 

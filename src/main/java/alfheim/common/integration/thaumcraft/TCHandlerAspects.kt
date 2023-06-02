@@ -34,6 +34,7 @@ import alfheim.common.item.AlfheimItems.auraRingGod
 import alfheim.common.item.AlfheimItems.cloudPendant
 import alfheim.common.item.AlfheimItems.cloudPendantSuper
 import alfheim.common.item.AlfheimItems.creativeReachPendant
+import alfheim.common.item.AlfheimItems.discFlugel
 import alfheim.common.item.AlfheimItems.dodgeRing
 import alfheim.common.item.AlfheimItems.elementalBoots
 import alfheim.common.item.AlfheimItems.elementalChestplate
@@ -49,7 +50,6 @@ import alfheim.common.item.AlfheimItems.elvoriumHelmet
 import alfheim.common.item.AlfheimItems.elvoriumHelmetRevealing
 import alfheim.common.item.AlfheimItems.elvoriumLeggings
 import alfheim.common.item.AlfheimItems.excaliber
-import alfheim.common.item.AlfheimItems.flugelDisc
 import alfheim.common.item.AlfheimItems.flugelSoul
 import alfheim.common.item.AlfheimItems.invisibilityCloak
 import alfheim.common.item.AlfheimItems.livingrockPickaxe
@@ -161,7 +161,7 @@ object TCHandlerAlfheimAspects {
 		ThaumcraftApi.registerObjectTag(ItemStack(excaliber), AspectList().add(Aspect.getAspect("motus"), 16).add(Aspect.getAspect("potentia"), 16).add(Aspect.getAspect("praecantatio"), 16).add(Aspect.getAspect("telum"), 16))
 		ThaumcraftApi.registerObjectTag(ItemStack(mask), AspectList().add(Aspect.getAspect("alienis"), 16).add(Aspect.getAspect("fames"), 16).add(Aspect.getAspect("sano"), 16).add(Aspect.getAspect("tenebrae"), 16).add(Aspect.getAspect("tutamen"), 16).add(Aspect.getAspect("vacuos"), 16))
 		ThaumcraftApi.registerObjectTag(ItemStack(flugelSoul), AspectList().add(Aspect.getAspect("auram"), 16).add(Aspect.getAspect("alienis"), 16).add(Aspect.getAspect("iter"), 16).add(Aspect.getAspect("ordo"), 16).add(Aspect.getAspect("praecantatio"), 16).add(Aspect.getAspect("spiritus"), 16))
-		ThaumcraftApi.registerObjectTag(ItemStack(flugelDisc), AspectList().add(Aspect.getAspect("aer"), 4).add(Aspect.getAspect("lucrum"), 4).add(Aspect.getAspect("sensus"), 4).add(Aspect.getAspect("lux"), 2).add(Aspect.getAspect("auram"), 2))
+		ThaumcraftApi.registerObjectTag(ItemStack(discFlugel), AspectList().add(Aspect.getAspect("aer"), 4).add(Aspect.getAspect("lucrum"), 4).add(Aspect.getAspect("sensus"), 4).add(Aspect.getAspect("lux"), 2).add(Aspect.getAspect("auram"), 2))
 		ThaumcraftApi.registerObjectTag(ItemStack(elfFirePendant), AspectList().add(Aspect.getAspect("praecantatio"), 24).add(Aspect.getAspect("auram"), 8).add(Aspect.getAspect("tutamen"), 6).add(Aspect.getAspect("ignis"), 8))
 		ThaumcraftApi.registerObjectTag(ItemStack(elfIcePendant), AspectList().add(Aspect.getAspect("praecantatio"), 24).add(Aspect.getAspect("auram"), 8).add(Aspect.getAspect("tutamen"), 6).add(Aspect.getAspect("gelum"), 8))
 		ThaumcraftApi.registerObjectTag(ItemStack(pixieAttractor), AspectList().add(Aspect.getAspect("praecantatio"), 12).add(Aspect.getAspect("metallum"), 12).add(Aspect.getAspect("vitreus"), 4).add(Aspect.getAspect("fames"), 2))

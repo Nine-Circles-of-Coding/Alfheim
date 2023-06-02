@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
-import net.minecraft.potion.*
+import net.minecraft.potion.Potion
 import net.minecraftforge.client.event.RenderPlayerEvent
 import vazkii.botania.api.item.IBaubleRender
 import vazkii.botania.api.mana.*

@@ -5,7 +5,6 @@ import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.render.ASJRenderHelper.discard
 import alexsocol.asjlib.render.ASJRenderHelper.glColor1u
 import alexsocol.asjlib.render.ASJRenderHelper.interpolateColor
-import alexsocol.asjlib.render.ASJRenderHelper.setBlend
 import alexsocol.asjlib.render.ASJRenderHelper.setGlow
 import alexsocol.asjlib.render.ASJRenderHelper.setTwoside
 import alfheim.api.lib.LibResourceLocations

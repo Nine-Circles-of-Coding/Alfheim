@@ -10,12 +10,15 @@ import alfheim.common.block.tile.*
 import alfheim.common.core.handler.VisualEffectHandler
 import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.core.util.*
+import alfheim.common.entity.EntitySniceBall
+import alfheim.common.entity.boss.EntityFlugel.Companion.isRecordPlaying
+import alfheim.common.entity.boss.EntityFlugel.Companion.playRecord
+import alfheim.common.entity.boss.EntityFlugel.Companion.stopRecord
 import alfheim.common.entity.boss.ai.fenrir.*
 import alfheim.common.entity.boss.ai.fenrir.EntityAIFenrirLeapAtTarget.Companion.leapTo
 import alfheim.common.entity.spell.*
-import alfheim.common.item.AlfheimItems
+import alfheim.common.item.*
 import alfheim.common.item.material.ElvenResourcesMetas
-import alfheim.common.entity.EntitySniceBall
 import alfheim.common.world.dim.domains.gen.FenrirDomain
 import cpw.mods.fml.relauncher.*
 import net.minecraft.block.Block
@@ -23,7 +26,7 @@ import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.entity.*
 import net.minecraft.entity.ai.*
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.item.ItemStack
+import net.minecraft.item.*
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.*
 import net.minecraft.world.*
@@ -102,6 +105,10 @@ class EntityFenrir(world: World): EntityCreature(world), IBotaniaBossWithName {
 		super.onLivingUpdate()
 		
 		val (x, y, z) = Vector3(source).add(0.5)
+		val (sx, sy, sz) = Vector3(source).mf()
+		
+		if (ASJUtilities.isClient && !isDead && !worldObj.isRecordPlaying(sx, sy, sz))
+			worldObj.playRecord(AlfheimItems.discFenrir as ItemRecord, sx, sy, sz)
 		
 		if (stage == 0 && health <= maxHealth / 2) {
 			stage = 1
@@ -110,7 +117,7 @@ class EntityFenrir(world: World): EntityCreature(world), IBotaniaBossWithName {
 		
 		if (stage > 0) {
 			if (onGround) {
-				setPositionAndUpdate(x.D, y.D - 0.5, z.D)
+				setPositionAndUpdate(x, y - 0.5, z)
 				navigator.clearPathEntity()
 			}
 			
@@ -378,6 +385,9 @@ class EntityFenrir(world: World): EntityCreature(world), IBotaniaBossWithName {
 	override fun onDeath(src: DamageSource?) {
 		super.onDeath(src)
 		
+		val (sx, sy, sz) = Vector3(source).mf()
+		worldObj.stopRecord(sx, sy, sz)
+		
 		if (RagnarokHandler.canBringBackSunAndMoon())
 			RagnarokHandler.bringBackSunAndMoon()
 	}
@@ -387,10 +397,9 @@ class EntityFenrir(world: World): EntityCreature(world), IBotaniaBossWithName {
 	override fun dropFewItems(gotHit: Boolean, looting: Int) {
 		entityDropItem(ElvenResourcesMetas.FenrirFur.stack(rand.nextInt(looting * 2 + 2) + 3), 5f)
 		
-		val relics = arrayOf(AlfheimAchievements.gungnir to AlfheimItems.gungnir, AlfheimAchievements.gleipnir to AlfheimItems.gleipnir)
-		
-		getEntitiesWithinAABB(worldObj, EntityPlayer::class.java, FenrirDomain.boundBox).shuffled().forEach { player ->
-			val data = relics.firstOrNull { !player.hasAchievement(it.first) } ?: return@forEach
+		val (x, y, z) = Vector3(source).mf()
+		getEntitiesWithinAABB(worldObj, EntityPlayer::class.java, FenrirDomain.boundBox.copy().offset(x, y, z)).shuffled().forEach { player ->
+			val data = relics.shuffled().firstOrNull { !player.hasAchievement(it.first) } ?: return@forEach
 			val stack = ItemStack(data.second)
 			
 			player.triggerAchievement(data.first)
@@ -399,7 +408,7 @@ class EntityFenrir(world: World): EntityCreature(world), IBotaniaBossWithName {
 			return
 		}
 		
-		if (ASJUtilities.chance(5 + looting * 0.01)) entityDropItem(ItemStack(AlfheimItems.fenrirClaws), 0f)
+		if (ASJUtilities.chance(5 + looting * 0.01)) entityDropItem(lightRelics.random().copy(), 0f)
 	}
 	
 	override fun isAIEnabled() = true
@@ -492,6 +501,9 @@ class EntityFenrir(world: World): EntityCreature(world), IBotaniaBossWithName {
 		
 		const val TAG_SOURCE = "source"
 		const val TAG_STAGE = "stage"
+		
+		val relics = arrayOf(AlfheimAchievements.gungnir to AlfheimItems.gungnir, AlfheimAchievements.gleipnir to AlfheimItems.gleipnir)
+		val lightRelics = arrayOf(ItemStack(AlfheimItems.fenrirClaws), *ItemFenrirLoot.FenrirLootMetas.values().map(ItemFenrirLoot.FenrirLootMetas::stack).toTypedArray())
 		
 		var barRect: Rectangle? = null
 		var hpBarRect: Rectangle? = null

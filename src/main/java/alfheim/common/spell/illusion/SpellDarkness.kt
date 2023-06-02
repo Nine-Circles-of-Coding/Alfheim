@@ -4,7 +4,7 @@ import alexsocol.asjlib.spawn
 import alfheim.api.entity.EnumRace
 import alfheim.api.spell.SpellBase
 import alfheim.client.render.world.SpellVisualizations
-import alfheim.common.entity.spell.*
+import alfheim.common.entity.spell.EntitySpellDarkness
 import net.minecraft.entity.EntityLivingBase
 
 object SpellDarkness: SpellBase("darkness", EnumRace.SPRIGGAN, 256000, 75000, 100, true) {

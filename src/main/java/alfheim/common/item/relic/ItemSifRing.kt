@@ -14,7 +14,6 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
 import net.minecraft.util.ChunkCoordinates
-import net.minecraft.world.biome.BiomeGenBase
 import net.minecraftforge.event.entity.living.LivingEvent
 import vazkii.botania.api.mana.ManaItemHandler
 import vazkii.botania.common.item.ModItems

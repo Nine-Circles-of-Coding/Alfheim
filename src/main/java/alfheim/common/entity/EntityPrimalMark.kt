@@ -42,13 +42,9 @@ class EntityPrimalMark @JvmOverloads constructor(world: World, val summoner: Ent
 		val attack = ticksExisted == 50
 		
 		if (attack) {
-			val sound = if (ice) "mob.zombie.remedy" else "fire.fire"
+			playSoundAtEntity(if (ice) "mob.zombie.remedy" else "fire.fire", 0.6f, 1f)
 			
 			val (x, y, z) = Vector3.fromEntity(this)
-			
-			if (worldObj.isRemote) worldObj.playSound(x, y, z, sound, 1f, 1f, false)
-			else worldObj.playSoundAtEntity(this, sound, 1f, 1f)
-			
 			if (!ice && !isSpecial && !worldObj.isRemote) EntityLargeFireball(worldObj).apply {
 				// fuck you sideonly
 				setLocationAndAngles(x, y + 10, z, 0f, 0f)

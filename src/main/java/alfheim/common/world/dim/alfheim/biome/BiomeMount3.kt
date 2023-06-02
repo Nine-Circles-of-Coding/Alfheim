@@ -7,7 +7,7 @@ import alfheim.common.world.dim.alfheim.customgens.*
 import net.minecraft.init.Blocks
 import net.minecraftforge.common.BiomeDictionary
 import net.minecraftforge.common.BiomeDictionary.Type
-import ru.vamig.worldengine.standardcustomgen.*
+import ru.vamig.worldengine.standardcustomgen.WE_BiomeLayer
 import vazkii.botania.common.block.ModBlocks
 
 object BiomeMount3: BiomeAlfheim() {

@@ -1,7 +1,7 @@
 package alfheim.common.lexicon
 
 import alexsocol.asjlib.*
-import net.minecraft.item.*
+import net.minecraft.item.Item
 import net.minecraft.stats.Achievement
 import vazkii.botania.api.BotaniaAPI
 import vazkii.botania.api.item.IRelic

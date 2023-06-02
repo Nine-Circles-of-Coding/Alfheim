@@ -2,6 +2,7 @@ package alfheim.common.entity.boss.primal
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.*
+import alfheim.api.ModInfo
 import alfheim.api.entity.INiflheimEntity
 import alfheim.common.achievement.AlfheimAchievements
 import alfheim.common.core.handler.*
@@ -21,10 +22,8 @@ import alfheim.common.potion.PotionEternity
 import cpw.mods.fml.relauncher.*
 import net.minecraft.entity.*
 import net.minecraft.entity.player.*
-import net.minecraft.item.Item
 import net.minecraft.network.play.server.S12PacketEntityVelocity
 import net.minecraft.potion.Potion
-import net.minecraft.stats.Achievement
 import net.minecraft.util.DamageSource
 import net.minecraft.world.World
 import java.awt.Rectangle
@@ -35,10 +34,25 @@ class EntityThrym(world: World): EntityPrimalBoss(world), INiflheimEntity {
 	override val whirlParticleSet = 0
 	override val arenaName = "Thrym"
 	
+	var sucks
+		get() = getFlag(8)
+		set(value) = setFlag(8, value)
+	
 	init {
 		tasks.addTask(0, ThrymAIThirdStageStart(this))
 		
 		tasks.addTask(1, ThrymAISecondStageStart(this))
+	}
+	
+	private fun playSounds() {
+		if (!ASJUtilities.isClient || ticksExisted != 1) return
+		
+		mc.soundHandler.playSound(PrimalBossMovingSound(this, getChargeSound()) { host.ultAnimationTicks.also { volume = if (sucks || !ASJBitwiseHelper.getBit(it, 9) && it in 11..69) 1f else 0.01f } })
+	}
+	
+	override fun onLivingUpdate() {
+		super.onLivingUpdate()
+		playSounds()
 	}
 	
 	override fun doRangedAttack(players: ArrayList<EntityPlayer>) {
@@ -50,14 +64,17 @@ class EntityThrym(world: World): EntityPrimalBoss(world), INiflheimEntity {
 				this.target = target
 				setPosition(posX + Math.random() - 0.5, posY + Math.random() - 0.5, posZ + Math.random() - 0.5)
 				spawn()
+				playSoundAtEntity("${ModInfo.MODID}:thrym.icicle.shot", 0.1f, 1f)
 			}
 		}
 	}
 	
 	override fun doSuperSmashAttack(target: EntityLivingBase) {
+		val attacked = target.attackEntityFrom(defaultWeaponDamage(target), getEntityAttribute(SharedMonsterAttributes.attackDamage).attributeValue.F * if (stage > 1) 2f else 1.5f)
+		if (!attacked) return
+		
 		target.knockback(this, 10f)
 		if (target is EntityPlayerMP) target.playerNetServerHandler.sendPacket(S12PacketEntityVelocity(target))
-		target.attackEntityFrom(defaultWeaponDamage(target), getEntityAttribute(SharedMonsterAttributes.attackDamage).attributeValue.F * if (stage > 1) 2f else 1.5f)
 		target.addPotionEffect(PotionEffectU(Potion.moveSlowdown.id, 100, 4))
 		target.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDIceLens, 100))
 	}
@@ -75,12 +92,27 @@ class EntityThrym(world: World): EntityPrimalBoss(world), INiflheimEntity {
 		val list = getEntitiesWithinAABB(worldObj, EntityLivingBase::class.java, obb.toAABB())
 		list.removeAll { !canTarget(it) || !obb.intersectsWith(it.boundingBox) }
 		list.forEach {
+			val attacked = it.attackEntityFrom(defaultWeaponDamage(it), getEntityAttribute(SharedMonsterAttributes.attackDamage).attributeValue.F * 2 / 3 * if (stage > 1) 1.5f else 1f)
+			if (!attacked) return@forEach
+			
 			it.knockback(this, 7.5f)
 			if (it is EntityPlayerMP) it.playerNetServerHandler.sendPacket(S12PacketEntityVelocity(it))
-			it.attackEntityFrom(defaultWeaponDamage(it), getEntityAttribute(SharedMonsterAttributes.attackDamage).attributeValue.F * 2 / 3 * if (stage > 1) 1.5f else 1f)
 			it.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDEternity, 50, PotionEternity.ATTACK))
+			
+			playSoundAtEntity(getHitSound(), 1f, 1f)
 		}
 	}
+	
+	override fun getDeathSound() = "${ModInfo.MODID}:thrym.death"
+	override fun getHurtSound() = "${ModInfo.MODID}:thrym.hurt"
+	
+	override fun getChargeSound() = "${ModInfo.MODID}:thrym.suction"
+	override fun getHitSound() = "${ModInfo.MODID}:thrym.axe.hit"
+	override fun getRangedFormSound() = "${ModInfo.MODID}:thrym.icicle.form"
+	override fun getSpinningSound() = "${ModInfo.MODID}:thrym.axe.rotate"
+	override fun getStrikeSound() = "${ModInfo.MODID}:thrym.axe.strike"
+	override fun getSwingSound() = "${ModInfo.MODID}:thrym.axe.swing"
+	override fun getWhirlwindSound() = "${ModInfo.MODID}:thrym.whirlwind"
 	
 	override fun getAttributeValues() = doubleArrayOf(64.0, 0.95, 0.5, 3000.0)
 	override fun getEquipment() = equipment
@@ -96,6 +128,7 @@ class EntityThrym(world: World): EntityPrimalBoss(world), INiflheimEntity {
 	override fun summonProtector() = EntityDedMoroz(worldObj, posX, posY, posZ).apply {
 		noLoot = true
 		forceSpawn = true
+		playSoundAtEntity("${ModInfo.MODID}:thrym.summon", 1f, 1f)
 		spawn()
 	}
 	
@@ -144,6 +177,8 @@ class EntityThrym(world: World): EntityPrimalBoss(world), INiflheimEntity {
 	override fun getNameColor() = 0x99A6BF
 	
 	override val shieldColor = 0xFFBFF4FFU
+	
+	override val battleMusicDisc get() = AlfheimItems.discThrym
 	
 	companion object {
 		

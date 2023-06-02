@@ -2,7 +2,6 @@ package alfheim.common.core.handler
 
 import alexsocol.asjlib.*
 import alexsocol.patcher.event.*
-import alfheim.AlfheimCore
 import alfheim.api.ModInfo
 import alfheim.api.entity.EnumRace.*
 import alfheim.api.entity.race
@@ -10,6 +9,7 @@ import alfheim.client.core.handler.CardinalSystemClient.PlayerSegmentClient
 import alfheim.common.core.command.CommandAlfheim
 import alfheim.common.core.helper.*
 import alfheim.common.network.*
+import alfheim.common.network.packet.*
 import cpw.mods.fml.common.eventhandler.*
 import cpw.mods.fml.common.gameevent.PlayerEvent.*
 import cpw.mods.fml.common.gameevent.TickEvent
@@ -205,7 +205,7 @@ object ESMHandler {
 		effect.amplifier = amp
 		effect.duration = dur
 		
-		if (!player.worldObj.isRemote) AlfheimCore.network.sendToAll(MessageEffect(player.entityId, id, dur, amp))
+		if (!player.worldObj.isRemote) NetworkService.sendToAll(MessageEffect(player.entityId, id, dur, amp))
 	}
 	
 	fun doSylph(player: EntityPlayer) {
@@ -343,7 +343,7 @@ object ElvenFlightHandler {
 	fun onPlayerChangeDimension(e: PlayerChangedDimensionEvent) {
 		if (!AlfheimConfigHandler.enableElvenStory) return
 		if (e.player !is EntityPlayerMP) return
-		AlfheimCore.network.sendTo(Message2d(Message2d.M2d.ATTRIBUTE, 1.0, e.player.flight), e.player as EntityPlayerMP)
+		NetworkService.sendTo(Message2d(M2d.ATTRIBUTE, 1.0, e.player.flight), e.player as EntityPlayerMP)
 	}
 	
 	@SubscribeEvent

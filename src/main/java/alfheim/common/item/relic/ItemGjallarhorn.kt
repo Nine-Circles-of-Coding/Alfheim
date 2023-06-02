@@ -2,12 +2,10 @@ package alfheim.common.item.relic
 
 import alexsocol.asjlib.*
 import alfheim.api.ModInfo
-import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.entity.EntityElf
-import alfheim.common.item.equipment.bauble.ItemPriestEmblem
 import net.minecraft.entity.Entity
-import net.minecraft.entity.player.*
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.*
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.StatCollector

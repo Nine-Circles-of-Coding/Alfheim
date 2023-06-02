@@ -1,7 +1,6 @@
 package alfheim.api.trees
 
 import net.minecraft.block.Block
-import java.util.*
 
 class IridescentSaplingBaseVariant(var soil: Block, var wood: Block, var leaves: Block): IIridescentSaplingVariant {
 	

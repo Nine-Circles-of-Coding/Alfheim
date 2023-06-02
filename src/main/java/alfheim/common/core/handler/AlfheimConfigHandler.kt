@@ -55,6 +55,8 @@ object AlfheimConfigHandler: ASJConfigHandler() {
 	// - ALFHEIM
 	var dimensionIDAlfheim = -105
 	var enableAlfheimRespawn = true
+	var grabMidgardPortal = false
+	var increasedSpiritsRange = true
 	var rainbowPolys = 360
 	
 	// - NIFLHEIM
@@ -115,13 +117,14 @@ object AlfheimConfigHandler: ASJConfigHandler() {
 	var lightningsSpeed = 20
 	var longSeasons = true
 	var looniumOverseed = false
-	var mountAlfheimOnly = false
-	var mountCost = 1000
-	var mountLife = 600
+	var mobElements = arrayOf("Blaze:FIRE", "EnderDragon:ALIEN", "Enderman:ALIEN", "Ghast:AIR,PSYCHIC", "LavaSlime:FIRE", "MushroomCow:NATURE", "SnowMan:ICE", "Slime:NATURE,WATER", "VillagerGolem:EARTH", "WitherBoss:DARKNESS", "Thaumcraft.EldritchCrab:ALIEN,DARKNESS", "Thaumcraft.EldritchGolem:EARTH", "Thaumcraft.EldritchGuardian:ALIEN,DARKNESS,PSYCHIC", "Thaumcraft.EldritchWarden:ALIEN,DARKNESS,PSYCHIC", "Thaumcraft.Firebat:FIRE", "Thaumcraft.Golem:EARTH", "Thaumcraft.MindSpider:PSYCHIC", "Thaumcraft.ThaumSlime:WATER,DARKNESS", "Thaumcraft.Wisp:AIR", "ThermalFoundation.Blizz:ICE", "ThermalFoundation.Blitz:ELECTRIC", "ThermalFoundation.Basalz:ICE")
 	var minimalGraphics = false
 	var mobPriests = true
 	var moonbowMaxDmg = 20
 	var moonbowVelocity = 0.5f
+	var mountAlfheimOnly = false
+	var mountCost = 1000
+	var mountLife = 600
 	var multibaubleBlacklist = emptyArray<String>()
 	var multibaubleCount = 6
 	var notifications = true
@@ -242,6 +245,8 @@ object AlfheimConfigHandler: ASJConfigHandler() {
 		
 		dimensionIDAlfheim = loadProp(CATEGORY_ALFHEIM, "dimensionIDAlfheim", dimensionIDAlfheim, true, "Dimension ID for Alfheim")
 		enableAlfheimRespawn = loadProp(CATEGORY_ALFHEIM, "enableAlfheimRespawn", enableAlfheimRespawn, false, "Set this to false to disable respawning in Alfheim")
+		grabMidgardPortal = loadProp(CATEGORY_ALFHEIM, "grabMidgardPortal", grabMidgardPortal, false, "Set this to true to teleport near existing active loaded portal when leaving Alfheim instead of world spawn")
+		increasedSpiritsRange = loadProp(CATEGORY_ALFHEIM, "increasedSpiritsRange", increasedSpiritsRange, false, "Set this to false to reduce nighttime spirits spawn in Alfheim (may increase FPS)")
 		rainbowPolys = loadProp(CATEGORY_ALFHEIM, "rainbowPolys", rainbowPolys, false, "How smooth will rainbow and rays in Alfheim sky be (higher number - more polygons)")
 		
 		dimensionIDNiflheim = loadProp(CATEGORY_NIFLHEIM, "dimensionIDNiflheim", dimensionIDNiflheim, true, "Dimension ID for Niflheim")
@@ -294,6 +299,7 @@ object AlfheimConfigHandler: ASJConfigHandler() {
 		longSeasons = loadProp(CATEGORY_GENERAL, "longSeasons", longSeasons, true, "Set this to false to make seasons last 1 real day instead of 3")
 		looniumOverseed = loadProp(CATEGORY_GENERAL, "looniumOverseed", looniumOverseed, true, "Set this to true to make loonium spawn overgrowth seeds (for servers with limited dungeons so all players can craft Gaia pylons)")
 		minimalGraphics = loadProp(CATEGORY_GENERAL, "minimalGraphics", minimalGraphics, true, "Set this to true to disable .obj models and shaders")
+		mobElements = loadProp(CATEGORY_GENERAL, "mobElements", mobElements, true, "Array of mob names to the list of their elements", false)
 		mobPriests = loadProp(CATEGORY_GENERAL, "mobPriests", mobPriests, false, "Set this to false so that only players can be priests")
 		moonbowMaxDmg = loadProp(CATEGORY_GENERAL, "moonbowMaxDmg", moonbowMaxDmg, false, "Max base damage for Phoebus Catastrophe")
 		moonbowVelocity = loadProp(CATEGORY_GENERAL, "moonbowVelocity", moonbowVelocity.D, false, "Phoebus Catastrophe charge speed").F
@@ -340,9 +346,9 @@ object AlfheimConfigHandler: ASJConfigHandler() {
 		materialIDs = loadProp(CATEGORY_INT_TiC, "TiC.materialIDs", materialIDs, true, "IDs for Elementium, Elvorium, Manasteel, Mauftrium, Terrasteel, Livingwood, Dreamwood, Livingrock, Redstring, Manastring materials respectively")
 		modifierIDs = loadProp(CATEGORY_INT_TiC, "TiC.modifierIDs", modifierIDs, true, "IDs for ManaCore modifiers respectively")
 		
-		potionIDBeastWithin = loadProp(CATEGORY_MMOP, "potionIDBeastWithin", potionIDBeastWithin, true, "Potion id Beast Within")
+		potionIDBeastWithin = loadProp(CATEGORY_POTIONS, "potionIDBeastWithin", potionIDBeastWithin, true, "Potion id Beast Within")
 		potionIDBerserk = loadProp(CATEGORY_POTIONS, "potionIDBerserk", potionIDBerserk, true, "Potion id for Berserk")
-		potionIDBleeding = loadProp(CATEGORY_MMOP, "potionIDBleeding", potionIDBleeding, true, "Potion id for Bleeding")
+		potionIDBleeding = loadProp(CATEGORY_POTIONS, "potionIDBleeding", potionIDBleeding, true, "Potion id for Bleeding")
 		potionIDButterShield = loadProp(CATEGORY_MMOP, "potionIDButterShield", potionIDButterShield, true, "Potion id for Butterfly Shield")
 		potionIDDeathMark = loadProp(CATEGORY_MMOP, "potionIDDeathMark", potionIDDeathMark, true, "Potion id for Death Mark")
 		potionIDDecay = loadProp(CATEGORY_MMOP, "potionIDDecay", potionIDDecay, true, "Potion id for Decay")

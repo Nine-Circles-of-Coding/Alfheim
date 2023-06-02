@@ -8,7 +8,8 @@ import alexsocol.asjlib.render.ASJRenderHelper.interpolatedTranslationReverse
 import alexsocol.asjlib.render.ASJRenderHelper.setBlend
 import alexsocol.asjlib.render.ASJShaderHelper
 import alfheim.api.lib.*
-import alfheim.client.model.entity.ModelEntityThrym
+import alfheim.client.core.proxy.RenderEntityIcicle
+import alfheim.client.model.entity.*
 import alfheim.client.model.item.ModelThrymAxe
 import alfheim.client.render.world.SpellVisualizations
 import alfheim.common.entity.boss.primal.EntityThrym
@@ -20,6 +21,7 @@ import net.minecraft.util.ResourceLocation
 import net.minecraftforge.client.event.RenderWorldLastEvent
 import org.lwjgl.opengl.GL11.*
 import vazkii.botania.client.core.handler.BossBarHandler
+import java.util.*
 import kotlin.math.*
 
 object RenderEntityThrym: RenderBiped(ModelEntityThrym, 2f) {
@@ -31,11 +33,14 @@ object RenderEntityThrym: RenderBiped(ModelEntityThrym, 2f) {
 	override fun doRender(living: EntityLiving?, x: Double, y: Double, z: Double, f1: Float, f2: Float) {
 		super.doRender(living, x, y, z, f1, f2)
 		renderFlyingAxe(living as EntityThrym)
+		renderIcicles(living)
 		RenderEntitySurtr.renderShield(living)
 	}
 	
 	fun renderFlyingAxe(thrym: EntityThrym) {
 		if (thrym.ultAnimationTicks < 512) return
+		
+		glColor4f(1f, 1f, 1f, 1f)
 		
 		val ticks = thrym.ultAnimationTicks - 512 + mc.timer.renderPartialTicks
 //		val corpseAngle = ASJRenderHelper.interpolate(thrym.prevRenderYawOffset.D, thrym.renderYawOffset.D).F
@@ -59,6 +64,46 @@ object RenderEntityThrym: RenderBiped(ModelEntityThrym, 2f) {
 		ModelThrymAxe.render(0.0625f)
 		
 		glPopMatrix()
+	}
+	
+	private val rand = Random()
+	
+	fun renderIcicles(thrym: EntityThrym) {
+		if (!thrym.sucks) return
+		
+		mc.renderEngine.bindTexture(LibResourceLocations.nifleice)
+		rand.setSeed(thrym.entityId.toLong())
+		
+		setBlend()
+		
+		glPushMatrix()
+		
+		interpolatedTranslationReverse(mc.thePlayer)
+		interpolatedTranslation(thrym)
+		
+		val mul = if (RenderEntityIcicle.model != null) 10f else 1f
+		glScalef(1f / mul)
+		glRotatef(-90f, 1f, 0f, 0f)
+		
+		for (i in 1..28) {
+			glPushMatrix()
+			
+			val reverse = rand.nextBoolean()
+			glRotatef((rand.nextFloat() * 360f + (thrym.ticksExisted + mc.timer.renderPartialTicks) * (rand.nextFloat() * 10 + 15)) * if (reverse) -1f else 1f, 0f, 0f, 1f)
+			glTranslatef(rand.nextFloat() * 2 * mul + mul, 0f, i * mul / 4)
+			glRotatef(if (reverse) 180f else 0f, 0f, 0f, 1f)
+			glRotatef(30f, 0f, 0f, 1f)
+			
+			RenderEntityIcicle.model?.renderAll() ?: run {
+				glRotatef(180f, 1f, 0f, 0f)
+				glTranslatef(0f, -1f, 0f)
+				ModelIcicle.render(0.0625f)
+			}
+			
+			glPopMatrix()
+		}
+		glPopMatrix()
+		discard()
 	}
 	
 	override fun getEntityTexture(entity: Entity?): ResourceLocation {

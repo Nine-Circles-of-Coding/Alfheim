@@ -2,10 +2,9 @@ package alfheim.client.render.entity
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
-import alexsocol.asjlib.render.*
+import alexsocol.asjlib.render.ASJRenderHelper
 import alfheim.api.lib.LibResourceLocations
 import alfheim.client.model.entity.ModelIcicle
-import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.client.render.world.VisualEffectHandlerClient.v
 import alfheim.common.entity.EntityPrimalMark
 import net.minecraft.client.renderer.entity.Render

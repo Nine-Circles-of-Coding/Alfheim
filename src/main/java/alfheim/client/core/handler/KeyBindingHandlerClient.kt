@@ -1,7 +1,6 @@
 package alfheim.client.core.handler
 
 import alexsocol.asjlib.*
-import alfheim.AlfheimCore
 import alfheim.api.AlfheimAPI
 import alfheim.api.entity.*
 import alfheim.api.event.PlayerInteractAdequateEvent.*
@@ -18,7 +17,7 @@ import alfheim.client.gui.GUISpells
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.helper.flight
 import alfheim.common.network.*
-import alfheim.common.network.Message2d.M2d
+import alfheim.common.network.packet.*
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.settings.KeyBinding
 import net.minecraft.entity.player.EntityPlayer
@@ -79,7 +78,7 @@ object KeyBindingHandlerClient {
 		if (safeKeyDown(ClientProxy.keyLolicorn.keyCode)) {
 			if (!toggleCorn) {
 				toggleCorn = true
-				AlfheimCore.network.sendToServer(MessageKeyBindS(CORN.ordinal, false, 0))
+				NetworkService.sendToServer(MessageKeyBindS(CORN.ordinal, false, 0))
 			}
 		} else if (toggleCorn) {
 			toggleCorn = false
@@ -101,7 +100,7 @@ object KeyBindingHandlerClient {
 					if (AlfheimConfigHandler.enableElvenStory) {
 						PlayerSegmentClient.esmAbility = !PlayerSegmentClient.esmAbility
 						ASJUtilities.say(mc.thePlayer, "alfheimmisc.elvenAbility.${PlayerSegmentClient.esmAbility}")
-						AlfheimCore.network.sendToServer(MessageKeyBindS(ESMABIL.ordinal, false, 0))
+						NetworkService.sendToServer(MessageKeyBindS(ESMABIL.ordinal, false, 0))
 					}
 				}
 			} else if (toggleESMAbility) {
@@ -138,22 +137,22 @@ object KeyBindingHandlerClient {
 							GUISpells.fadeOut = 5f
 							if (safeKeyDown(Keyboard.KEY_LSHIFT)) {
 								PlayerSegmentClient.hotSpells[i] = raceID and 0xF shl 28 or (spellID and 0xFFFFFFF)
-								AlfheimCore.network.sendToServer(MessageHotSpellS(i, PlayerSegmentClient.hotSpells[i]))
+								NetworkService.sendToServer(MessageHotSpellS(i, PlayerSegmentClient.hotSpells[i]))
 							} else {
 								if (PlayerSegmentClient.hotSpells[i] == 0) {
 									PlayerSegmentClient.hotSpells[i] = raceID and 0xF shl 28 or (spellID and 0xFFFFFFF)
-									AlfheimCore.network.sendToServer(MessageHotSpellS(i, PlayerSegmentClient.hotSpells[i]))
+									NetworkService.sendToServer(MessageHotSpellS(i, PlayerSegmentClient.hotSpells[i]))
 								}
 								
 								val spell = AlfheimAPI.getSpellByIDs(raceID, spellID)
 								if (spell == null)
-									PacketHandlerClient.handle(Message2d(M2d.COOLDOWN, 0.0, (-DESYNC.ordinal).D))
+									Message2d(M2d.COOLDOWN, 0.0, (-DESYNC.ordinal).D).apply { handleClient(this) }
 								else if (!player.capabilities.isCreativeMode && !SpellBase.consumeMana(player, spell.getManaCost(), false) && !player.isPotionActive(AlfheimConfigHandler.potionIDLeftFlame)) {
-									PacketHandlerClient.handle(Message2d(M2d.COOLDOWN, 0.0, (-NOMANA.ordinal).D))
+									Message2d(M2d.COOLDOWN, 0.0, (-NOMANA.ordinal).D).apply { handleClient(this) }
 									return@run
 								}
-								
-								AlfheimCore.network.sendToServer(MessageKeyBindS(CAST.ordinal, true, i))
+
+								NetworkService.sendToServer(MessageKeyBindS(CAST.ordinal, true, i))
 								PlayerSegmentClient.initM = if (player.capabilities.isCreativeMode) 1 else AlfheimAPI.getSpellByIDs(PlayerSegmentClient.hotSpells[i] shr 28 and 0xF, PlayerSegmentClient.hotSpells[i] and 0xFFFFFFF)!!.getCastTime()
 								PlayerSegmentClient.init = PlayerSegmentClient.initM
 							}
@@ -217,14 +216,14 @@ object KeyBindingHandlerClient {
 							
 							val spell = AlfheimAPI.getSpellByIDs(raceID, spellID)
 							if (spell == null)
-								PacketHandlerClient.handle(Message2d(M2d.COOLDOWN, 0.0, (-DESYNC.ordinal).D))
+								Message2d(M2d.COOLDOWN, 0.0, (-DESYNC.ordinal).D).apply { handleClient(this) }
 							else if (!player.capabilities.isCreativeMode && !SpellBase.consumeMana(player, spell.getManaCost(), false) && !player.isPotionActive(AlfheimConfigHandler.potionIDLeftFlame)) {
-								PacketHandlerClient.handle(Message2d(M2d.COOLDOWN, 0.0, (-NOMANA.ordinal).D))
+								Message2d(M2d.COOLDOWN, 0.0, (-NOMANA.ordinal).D).apply { handleClient(this) }
 								return@run
 							}
 							
 							val i = raceID and 0xF shl 28 or (spellID and 0xFFFFFFF)
-							AlfheimCore.network.sendToServer(MessageKeyBindS(CAST.ordinal, false, i))
+							NetworkService.sendToServer(MessageKeyBindS(CAST.ordinal, false, i))
 							PlayerSegmentClient.initM = if (player.capabilities.isCreativeMode) 1 else AlfheimAPI.getSpellByIDs(raceID, spellID)!!.getCastTime()
 							PlayerSegmentClient.init = PlayerSegmentClient.initM
 						}
@@ -237,7 +236,7 @@ object KeyBindingHandlerClient {
 			if (safeKeyDown(ClientProxy.keyUnCast.keyCode)) {
 				if (!toggleUnCast) {
 					toggleUnCast = true
-					AlfheimCore.network.sendToServer(MessageKeyBindS(UNCAST.ordinal, false, 0))
+					NetworkService.sendToServer(MessageKeyBindS(UNCAST.ordinal, false, 0))
 					PlayerSegmentClient.initM = 0
 					PlayerSegmentClient.init = 0
 				}
@@ -255,8 +254,8 @@ object KeyBindingHandlerClient {
 						PlayerSegmentClient.partyIndex = -1
 					} else if (!TargetingSystemClient.selectMob())
 						return@run
-					
-					AlfheimCore.network.sendToServer(MessageKeyBindS(SEL.ordinal, PlayerSegmentClient.isParty, PlayerSegmentClient.target?.entityId ?: -1))
+
+					NetworkService.sendToServer(MessageKeyBindS(SEL.ordinal, PlayerSegmentClient.isParty, PlayerSegmentClient.target?.entityId ?: -1))
 				}
 			} else if (toggleSelMob) {
 				toggleSelMob = false
@@ -265,7 +264,7 @@ object KeyBindingHandlerClient {
 			if (safeKeyDown(ClientProxy.keySelTeam.keyCode)) {
 				if (!toggleSelTeam) {
 					toggleSelTeam = true
-					if (TargetingSystemClient.selectTeam()) AlfheimCore.network.sendToServer(MessageKeyBindS(SEL.ordinal, PlayerSegmentClient.isParty, PlayerSegmentClient.partyIndex))
+					if (TargetingSystemClient.selectTeam()) NetworkService.sendToServer(MessageKeyBindS(SEL.ordinal, PlayerSegmentClient.isParty, PlayerSegmentClient.partyIndex))
 				}
 			} else if (toggleSelTeam) {
 				toggleSelTeam = false
@@ -275,7 +274,7 @@ object KeyBindingHandlerClient {
 		if (Keyboard.isKeyDown(Keyboard.KEY_U)) {
 			if (!toggleSecret) {
 				toggleSecret = true
-				AlfheimCore.network.sendToServer(MessageKeyBindS(SECRET.ordinal, false, 0))
+				NetworkService.sendToServer(MessageKeyBindS(SECRET.ordinal, false, 0))
 			}
 		} else if (toggleSecret) {
 			toggleSecret = false
@@ -310,15 +309,15 @@ object KeyBindingHandlerClient {
 		}
 		
 		MinecraftForge.EVENT_BUS.post(if (left) LeftClick(player, type as LeftClick.Action, mop?.blockX ?: -1, mop?.blockY ?: -1, mop?.blockZ ?: -1, mop?.sideHit ?: -1, mop?.entityHit) else RightClick(player, type as RightClick.Action, mop?.blockX ?: -1, mop?.blockY ?: -1, mop?.blockZ ?: -1, mop?.sideHit ?: -1, mop?.entityHit))
-		
-		AlfheimCore.network.sendToServer(MessageNI(MessageNI.Mni.INTERACTION, if (left) 1 else 0, type.ordinal, mop?.blockX ?: -1, mop?.blockY ?: -1, mop?.blockZ ?: -1, mop?.sideHit ?: -1, mop?.entityHit?.entityId ?: -1))
+
+		NetworkService.sendToServer(MessageNI(Mni.INTERACTION, if (left) 1 else 0, type.ordinal, mop?.blockX ?: -1, mop?.blockY ?: -1, mop?.blockZ ?: -1, mop?.sideHit ?: -1, mop?.entityHit?.entityId ?: -1))
 	}
 	
 	fun toggleFlight(boost: Boolean) {
 		if (!PlayerSegmentClient.esmAbility) return
 		
 		mc.thePlayer.sendPlayerAbilities()
-		AlfheimCore.network.sendToServer(MessageKeyBindS(FLIGHT.ordinal, boost, 0))
+		NetworkService.sendToServer(MessageKeyBindS(FLIGHT.ordinal, boost, 0))
 	}
 	
 	enum class KeyBindingIDs {

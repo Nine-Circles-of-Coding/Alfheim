@@ -2,7 +2,7 @@ package alfheim.common.entity
 
 import alexsocol.asjlib.*
 import alfheim.client.render.particle.EntityFXSmoke
-import alfheim.common.block.*
+import alfheim.common.block.AlfheimFluffBlocks
 import alfheim.common.core.handler.ragnarok.RagnarokHandler.isProtected
 import net.minecraft.entity.Entity
 import net.minecraft.entity.item.EntityFallingBlock

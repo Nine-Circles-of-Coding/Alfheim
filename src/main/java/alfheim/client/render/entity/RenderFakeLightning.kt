@@ -1,7 +1,7 @@
 package alfheim.client.render.entity
 
 import alexsocol.asjlib.D
-import alfheim.common.entity.*
+import alfheim.common.entity.FakeLightning
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.entity.Render
 import net.minecraft.entity.Entity

@@ -14,7 +14,6 @@ import net.minecraft.world.World
 import net.minecraftforge.common.util.ForgeDirection
 import vazkii.botania.common.core.helper.ItemNBTHelper
 import java.awt.Color
-import java.util.*
 
 /**
  * @author WireSegal

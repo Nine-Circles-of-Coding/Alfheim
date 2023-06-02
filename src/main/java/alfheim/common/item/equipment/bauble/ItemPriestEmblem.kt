@@ -5,13 +5,14 @@ import alfheim.api.ModInfo
 import alfheim.api.item.equipment.bauble.IManaDiscountBauble
 import alfheim.client.core.helper.IconHelper
 import alfheim.client.render.world.VisualEffectHandlerClient
-import alfheim.common.core.handler.VisualEffectHandler
+import alfheim.common.core.handler.*
 import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.core.handler.ragnarok.RagnarokHandler.timesDied
 import alfheim.common.core.util.*
 import alfheim.common.item.AlfheimItems
 import alfheim.common.item.equipment.bauble.faith.IFaithHandler.Companion.getFaithHandler
 import alfheim.common.item.equipment.bauble.faith.IFaithHandler.FaithBauble.EMBLEM
+import alfheim.common.potion.PotionEternity
 import baubles.api.BaubleType
 import baubles.common.lib.PlayerHandler
 import cpw.mods.fml.relauncher.*
@@ -154,7 +155,7 @@ class ItemPriestEmblem: ItemBauble("priestEmblem"), IBaubleRender, IManaUsingIte
 		if (ASJUtilities.isClient) return
 		
 		if (!(!isDangerous(stack) || (player is EntityPlayer && player.capabilities.isCreativeMode))) {
-			player.attackEntityFrom(DamageSourceSpell.faith, 6f)
+			player.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDEternity, 150, PotionEternity.ATTACK or PotionEternity.IRREMOVABLE))
 			player.addPotionEffect(PotionEffectU(Potion.blindness.id, 150))
 			player.addPotionEffect(PotionEffectU(Potion.confusion.id, 150, 2))
 			player.addPotionEffect(PotionEffectU(Potion.moveSlowdown.id, 300, 2))

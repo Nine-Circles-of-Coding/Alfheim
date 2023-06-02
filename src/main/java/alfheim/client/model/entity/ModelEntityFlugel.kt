@@ -7,10 +7,9 @@ import alfheim.AlfheimCore
 import alfheim.api.ModInfo
 import alfheim.api.lib.LibResourceLocations
 import alfheim.client.render.entity.RenderEntityFlugel
-import alfheim.common.core.handler.AlfheimConfigHandler
+import alfheim.common.core.handler.*
 import alfheim.common.entity.boss.EntityFlugel
 import alfheim.common.item.material.ItemElvenResource
-import alfheim.common.core.handler.HELLISH_VACATION
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.renderer.*
 import net.minecraft.client.renderer.texture.TextureMap

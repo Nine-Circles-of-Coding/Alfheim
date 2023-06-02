@@ -8,7 +8,6 @@ import alfheim.client.render.world.VisualEffectHandlerClient.VisualEffects
 import alfheim.common.core.handler.*
 import alfheim.common.core.handler.CardinalSystem.TargetingSystem
 import net.minecraft.entity.EntityLivingBase
-import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.potion.*
 
 object SpellDispel: SpellBase("dispel", EnumRace.SALAMANDER, 1000, 600, 25) {

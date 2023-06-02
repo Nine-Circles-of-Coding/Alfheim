@@ -4,7 +4,6 @@ import alexsocol.asjlib.*
 import alfheim.common.block.tile.TileAnimatedTorch
 import cpw.mods.fml.relauncher.*
 import gloomyfolken.hooklib.asm.*
-import net.minecraft.block.Block
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.creativetab.CreativeTabs

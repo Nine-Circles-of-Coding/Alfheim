@@ -17,7 +17,6 @@ import vazkii.botania.api.BotaniaAPI
 import vazkii.botania.api.recipe.RecipeElvenTrade
 import vazkii.botania.client.lib.LibResources
 import java.awt.Rectangle
-import java.util.*
 
 class RecipeHandlerTradePortal: TemplateRecipeHandler() {
 	

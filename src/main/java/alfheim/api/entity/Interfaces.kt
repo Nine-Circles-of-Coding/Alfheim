@@ -1,10 +1,16 @@
 package alfheim.api.entity
 
+import alfheim.common.core.helper.*
 import net.minecraft.entity.Entity
+import java.util.*
 
-interface IMuspelheimEntity
+interface IMuspelheimEntity: IElementalEntity {
+	override val elements get() = EnumSet.of(ElementalDamage.FIRE)!!
+}
 
-interface INiflheimEntity
+interface INiflheimEntity: IElementalEntity {
+	override val elements get() = EnumSet.of(ElementalDamage.ICE)!!
+}
 
 interface IIntersectAttackEntity {
 	fun getExtraReach(): Double

@@ -7,7 +7,7 @@ import alfheim.common.entity.EntityLolicorn
 import alfheim.common.entity.EntityLolicorn.Companion.EnumMountType
 import net.minecraft.client.renderer.entity.RenderLiving
 import net.minecraft.entity.*
-import org.lwjgl.opengl.GL11.*
+import org.lwjgl.opengl.GL11.glColor4f
 import kotlin.math.sin
 
 object RenderEntityLolicorn: RenderLiving(ModelEntityLolicorn, 0.5f) {

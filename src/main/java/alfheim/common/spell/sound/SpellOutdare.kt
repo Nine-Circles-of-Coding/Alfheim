@@ -8,7 +8,6 @@ import alfheim.api.spell.SpellBase
 import alfheim.common.entity.boss.EntityFlugel
 import net.minecraft.entity.*
 import net.minecraft.entity.player.EntityPlayer
-import kotlin.collections.set
 
 object SpellOutdare: SpellBase("outdare", EnumRace.POOKA, 6000, 2400, 20) {
 	

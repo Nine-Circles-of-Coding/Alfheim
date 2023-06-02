@@ -38,6 +38,8 @@ object VisualEffectHandlerClient {
 	val b = Bector3()
 	
 	fun select(s: VisualEffects, d: DoubleArray) {
+		if (mc.theWorld == null) return
+		
 		when (s) {
 			ACID               -> spawnAcid(d[0], d[1], d[2])
 			AQUABIND           -> spawnAquaBind(d[0], d[1], d[2])

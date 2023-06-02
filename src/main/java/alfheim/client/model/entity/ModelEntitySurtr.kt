@@ -4,10 +4,9 @@ import alexsocol.asjlib.*
 import alfheim.common.block.AlfheimBlocks
 import alfheim.common.entity.boss.primal.EntitySurtr
 import net.minecraft.block.Block
-import net.minecraft.client.model.*
+import net.minecraft.client.model.ModelRenderer
 import net.minecraft.entity.Entity
 import net.minecraft.init.Blocks
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 
 object ModelEntitySurtr: ModelEntityPrimalBoss() {

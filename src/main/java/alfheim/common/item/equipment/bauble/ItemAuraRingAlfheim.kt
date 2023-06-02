@@ -5,10 +5,11 @@ import baubles.api.BaubleType
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
+import vazkii.botania.api.item.IPixieSpawner
 import vazkii.botania.api.mana.*
 import vazkii.botania.common.item.equipment.bauble.ItemBauble
 
-open class ItemAuraRingAlfheim(name: String, val delay: Int = 5): ItemBauble(name), IManaGivingItem {
+open class ItemAuraRingAlfheim(name: String, val delay: Int = 5, val pixieChance: Float = 0f): ItemBauble(name), IManaGivingItem, IPixieSpawner {
 	
 	init {
 		creativeTab = AlfheimTab
@@ -24,4 +25,6 @@ open class ItemAuraRingAlfheim(name: String, val delay: Int = 5): ItemBauble(nam
 	override fun getBaubleType(itemstack: ItemStack): BaubleType {
 		return BaubleType.RING
 	}
+	
+	override fun getPixieChance(stack: ItemStack?) = pixieChance
 }

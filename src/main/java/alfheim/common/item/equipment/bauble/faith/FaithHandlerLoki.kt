@@ -4,7 +4,6 @@ import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alfheim.api.event.PlayerInteractAdequateEvent
 import alfheim.api.item.ColorOverrideHelper
-import alfheim.common.core.asm.hook.fixes.GodAttributesHooks
 import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import alfheim.common.entity.*
 import alfheim.common.item.AlfheimItems

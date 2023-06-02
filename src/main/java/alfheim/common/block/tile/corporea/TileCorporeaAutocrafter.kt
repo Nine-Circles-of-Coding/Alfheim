@@ -2,11 +2,12 @@ package alfheim.common.block.tile.corporea
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.extendables.block.ASJTile
+import alfheim.common.block.tile.corporea.TileCorporeaAutocrafter.EnumState.*
 import alfheim.common.core.helper.CorporeaAdvancedHelper.getFilters
 import alfheim.common.core.helper.CorporeaAdvancedHelper.putOrDrop
 import alfheim.common.core.helper.CorporeaAdvancedHelper.requestMatches
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.inventory.IInventory
+import net.minecraft.inventory.*
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.tileentity.TileEntity
@@ -27,6 +28,8 @@ class TileCorporeaAutocrafter: ASJTile(), ICorporeaInterceptor, IInventory {
 	var requestX = 0
 	var requestY = -1
 	var requestZ = 0
+	
+	var state = OK
 	
 	/** how many items will be produced from this autocrafter */
 	var craftResult = 1
@@ -101,7 +104,11 @@ class TileCorporeaAutocrafter: ASJTile(), ICorporeaInterceptor, IInventory {
 	}
 	
 	var buffer = arrayOfNulls<ItemStack?>(27)
-	var waitingForIngredient = false
+	var waitingForIngredient
+		get() = state == WAITING
+		set(value) {
+			state = if (value) WAITING else OK
+		}
 	
 	/** Used for HUD only */
 	var awaitedIngredient: ItemStack? = null
@@ -109,9 +116,21 @@ class TileCorporeaAutocrafter: ASJTile(), ICorporeaInterceptor, IInventory {
 	fun doAutocraft() {
 		if (waitingForIngredient) return
 		
-		val spark = spark
-		
 		val patterns = updateBufferSize() ?: return
+		val down = InventoryHelper.getInventory(worldObj, xCoord, yCoord - 1, zCoord) ?: InventoryHelper.getInventory(worldObj, xCoord, yCoord - 2, zCoord)
+		           ?: return changeState(NO_TARGET)
+		
+		// not enough slots in container below
+		if (down.sizeInventory < (0 until patterns.sizeInventory).indexOfLast { patterns[it] != null })
+			return changeState(NOT_ENOUGH_SLOTS)
+		
+		// not all slots can be inserted from above
+		if (down is ISidedInventory && (0 until patterns.sizeInventory).filterTo(mutableListOf()) { patterns[it] != null }.apply { removeAll(down.getAccessibleSlotsFromSide(1).asList()) }.isNotEmpty())
+			return changeState(INVALID_TARGET_SLOTS)
+		
+		changeState(OK)
+		
+		val spark = spark
 		
 		for (i in 0 until patterns.sizeInventory) {
 			val pattern = patterns[i] ?: continue
@@ -135,8 +154,6 @@ class TileCorporeaAutocrafter: ASJTile(), ICorporeaInterceptor, IInventory {
 		}
 		
 		// buffer is filled and everything can be passed to crafter
-		
-		val down = InventoryHelper.getInventory(worldObj, xCoord, yCoord - 1, zCoord) ?: InventoryHelper.getInventory(worldObj, xCoord, yCoord - 2, zCoord) ?: return
 		
 		for (i in 0 until patterns.sizeInventory) {
 			patterns[i] ?: continue
@@ -174,6 +191,10 @@ class TileCorporeaAutocrafter: ASJTile(), ICorporeaInterceptor, IInventory {
 		onWanded()
 	}
 	
+	fun changeState(state: EnumState) {
+		this.state = state
+	}
+	
 	fun onWanded(): Boolean {
 		pendingRequest = false
 		request = null
@@ -190,6 +211,8 @@ class TileCorporeaAutocrafter: ASJTile(), ICorporeaInterceptor, IInventory {
 		
 		buffer.forEach { putOrDrop(this, spark, it) }
 		buffer.fill(null)
+		
+		changeState(OK)
 		
 		updateBufferSize()
 		ASJUtilities.dispatchTEToNearbyPlayers(this)
@@ -215,8 +238,11 @@ class TileCorporeaAutocrafter: ASJTile(), ICorporeaInterceptor, IInventory {
 		if (inv == null) {
 			buffer.forEach { putOrDrop(this, spark, it) }
 			buffer = emptyArray()
+			changeState(NO_PATTERN)
 			return null
 		}
+		
+		changeState(OK)
 		
 		buffer = if (inv.sizeInventory < buffer.size) {
 			buffer.sliceArray(inv.sizeInventory until buffer.size).forEach { putOrDrop(this, spark, it) }
@@ -256,7 +282,7 @@ class TileCorporeaAutocrafter: ASJTile(), ICorporeaInterceptor, IInventory {
 		nbt.setInteger(TAG_REQUEST_Y, requestY)
 		nbt.setInteger(TAG_REQUEST_Z, requestZ)
 		
-		nbt.setBoolean(TAG_IS_WAITING, waitingForIngredient)
+		nbt.setString(TAG_STATE, state.toString())
 		
 		val awaitData = NBTTagCompound()
 		nbt.setTag(TAG_AWAITED_CONTENT, awaitedIngredient?.writeToNBT(awaitData) ?: awaitData)
@@ -291,7 +317,8 @@ class TileCorporeaAutocrafter: ASJTile(), ICorporeaInterceptor, IInventory {
 		requestY = nbt.getInteger(TAG_REQUEST_Y)
 		requestZ = nbt.getInteger(TAG_REQUEST_Z)
 		
-		waitingForIngredient = nbt.getBoolean(TAG_IS_WAITING)
+		state = EnumState.valueOf(nbt.getString(TAG_STATE))
+		
 		awaitedIngredient = ItemStack.loadItemStackFromNBT(nbt.getTag(TAG_AWAITED_CONTENT) as NBTTagCompound)
 		
 		val invNbt = nbt.getTag("TAG_INVENTORY") as NBTTagCompound
@@ -299,6 +326,10 @@ class TileCorporeaAutocrafter: ASJTile(), ICorporeaInterceptor, IInventory {
 		buffer = arrayOfNulls(invNbt.getInteger("TAG_COUNT"))
 		for (i in buffer.indices)
 			buffer[i] = if (invNbt.hasKey("TAG_SLOT_$i")) ItemStack.loadItemStackFromNBT(invNbt.getTag("TAG_SLOT_$i") as NBTTagCompound) else null
+	}
+	
+	enum class EnumState(val color: Int = 0xFF0000) {
+		OK(0x0), NO_PATTERN, NO_TARGET, NOT_ENOUGH_SLOTS, INVALID_TARGET_SLOTS, WAITING(0xFFFF00)
 	}
 	
 	companion object {
@@ -314,9 +345,8 @@ class TileCorporeaAutocrafter: ASJTile(), ICorporeaInterceptor, IInventory {
 		const val TAG_REQUEST_Y = "requestY"
 		const val TAG_REQUEST_Z = "requestZ"
 		
-		const val TAG_REDSTONE = "redstone"
-		const val TAG_IS_WAITING = "isWaiting"
 		const val TAG_AWAITED_CONTENT = "waitingFor"
+		const val TAG_STATE = "state"
 		
 		const val REQUEST_NULL = 0
 		const val REQUEST_ITEMSTACK = 1

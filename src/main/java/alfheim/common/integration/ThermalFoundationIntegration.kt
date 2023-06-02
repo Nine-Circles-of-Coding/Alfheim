@@ -2,11 +2,12 @@ package alfheim.common.integration
 
 import alexsocol.asjlib.*
 import alfheim.AlfheimCore
-import alfheim.common.integration.tinkersconstruct.*
+import alfheim.common.core.handler.AlfheimConfigHandler
+import alfheim.common.integration.tinkersconstruct.TinkersConstructAlfheimConfig
 import cpw.mods.fml.common.Loader
 import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.block.Block
-import net.minecraft.init.*
+import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
 import net.minecraftforge.fluids.FluidRegistry
 import net.minecraftforge.oredict.OreDictionary
@@ -42,7 +43,7 @@ object ThermalFoundationIntegration {
 		if (loaded) return
 		if (!AlfheimCore.TiCLoaded) return // just in case
 		
-		TinkersConstructAlfheimConfig.addSmelteryMeltCastGroup(TinkerSmeltery.moltenMithrilFluid, ModBlocks.storage, 0, ModItems.manaResource, 0, ModItems.manaResource, 17)
+		TinkersConstructAlfheimConfig.addSmelteryMeltCastGroup(AlfheimConfigHandler.materialIDs[TinkersConstructAlfheimConfig.MANASTEEL], TinkerSmeltery.moltenMithrilFluid, ModBlocks.storage, 0, ModItems.manaResource, 0, ModItems.manaResource, 17)
 	}
 	
 	@Suppress("unused")

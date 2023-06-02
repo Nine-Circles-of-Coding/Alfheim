@@ -1,4 +1,22 @@
 {
+	"music.fenrir": {
+		"category": "record",
+		"sounds": [
+			{
+				"name": "music/AttackTheAbysmal",
+				"stream": true
+			}
+		]
+	},
+	"music.flugel_ultra": {
+		"category": "record",
+		"sounds": [
+			{
+				"name": "music/ChallengeNihil",
+				"stream": true
+			}
+		]
+	},
 	"music.flugel": {
 		"category": "record",
 		"sounds": [
@@ -13,6 +31,24 @@
 		"sounds": [
 			{
 				"name": "music/Senbonzakura",
+				"stream": true
+			}
+		]
+	},
+	"music.surtr": {
+		"category": "record",
+		"sounds": [
+			{
+				"name": "music/RandomInc",
+				"stream": true
+			}
+		]
+	},
+	"music.thrym": {
+		"category": "record",
+		"sounds": [
+			{
+				"name": "music/SuperiorConflict",
 				"stream": true
 			}
 		]

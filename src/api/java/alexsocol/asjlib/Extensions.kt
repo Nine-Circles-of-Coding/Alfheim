@@ -182,8 +182,8 @@ fun AxisAlignedBB.expand(x: Number, y: Number, z: Number) = expand(x.D, y.D, z.D
 
 fun AxisAlignedBB.offset(x: Number, y: Number, z: Number) = offset(x.D, y.D, z.D)!!
 
-fun Entity.playSoundAtEntity(sound: String, volume: Float, duration: Float) {
-	worldObj.playSoundAtEntity(this, sound, volume, duration)
+fun Entity.playSoundAtEntity(sound: String, volume: Float, pitch: Float) {
+	worldObj.playSoundAtEntity(this, sound, volume, pitch)
 }
 
 fun Entity.setPosition(e: Entity, oX: Double = 0.0, oY: Double = 0.0, oZ: Double = 0.0) = setPosition(e.posX + oX, e.posY + oY, e.posZ + oZ)

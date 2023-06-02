@@ -2,11 +2,12 @@ package alfheim.common.entity.boss.primal.ai.thrym
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
+import alfheim.api.ModInfo
 import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.core.handler.*
+import alfheim.common.entity.EntitySnowSprite
 import alfheim.common.entity.boss.primal.EntityThrym
 import alfheim.common.potion.PotionEternity
-import alfheim.common.entity.EntitySnowSprite
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.ai.EntityAIBase
 import net.minecraft.entity.player.*
@@ -27,9 +28,16 @@ class ThrymAIThirdStageStart(val host: EntityThrym): EntityAIBase() {
 	override fun startExecuting() {
 		val src = host.source
 		
-		host.setPosition(src)
+		val players = host.playersOnArena()
 		
-		inside = host.playersOnArena().apply { removeAll { it.health > it.maxHealth * 0.5 } }.mapTo(HashSet()) {
+		players.forEach {
+			it.playSoundAtEntity("${ModInfo.MODID}:thrym.shield.teleport", 1f, 1f)
+		}
+		
+		host.setPosition(src)
+		host.playSoundAtEntity("${ModInfo.MODID}:thrym.shield.form", 1f, 1f)
+		
+		inside = players.apply { removeAll { it.health > it.maxHealth * 0.5 } }.mapTo(HashSet()) {
 			it.setPositionAndUpdate(host.posX, host.posY, host.posZ)
 			it.commandSenderName
 		}
@@ -153,6 +161,7 @@ class ThrymAIThirdStageStart(val host: EntityThrym): EntityAIBase() {
 		shouldEnd = false
 		eternal = false
 		timer = 0
+		host.playSoundAtEntity("${ModInfo.MODID}:thrym.shield.break", 1f, 1f)
 	}
 	
 	override fun isInterruptible() = false

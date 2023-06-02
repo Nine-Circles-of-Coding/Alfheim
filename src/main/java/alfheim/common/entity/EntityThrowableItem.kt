@@ -9,9 +9,6 @@ import net.minecraft.entity.projectile.EntityThrowable
 import net.minecraft.init.Blocks
 import net.minecraft.util.*
 import net.minecraft.world.World
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.component3
 
 class EntityThrowableItem: EntityThrowable {
 	

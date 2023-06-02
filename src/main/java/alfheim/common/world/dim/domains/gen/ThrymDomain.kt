@@ -5,12 +5,9 @@ import alfheim.api.ModInfo
 import alfheim.api.world.domain.Domain
 import alfheim.client.render.world.SkyRendererDomains
 import alfheim.common.core.handler.ragnarok.RagnarokHandler
-import alfheim.common.entity.boss.IForceKill
 import alfheim.common.entity.boss.primal.EntityThrym
 import alfheim.common.item.equipment.bauble.faith.ItemRagnarokEmblem
-import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.init.Blocks
 import net.minecraft.world.World
 
 object ThrymDomain: Domain(ModInfo.MODID, "Thrym", 2, getBoundingBox(-45, -5, -75, 45, 50, 10)) {

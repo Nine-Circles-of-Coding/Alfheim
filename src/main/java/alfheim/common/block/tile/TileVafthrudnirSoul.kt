@@ -5,8 +5,7 @@ import alexsocol.asjlib.math.Vector3
 import alfheim.common.core.handler.*
 import alfheim.common.core.handler.ragnarok.RagnarokHandler
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.entity.player.EntityPlayerMP
+import net.minecraft.entity.player.*
 import net.minecraft.server.MinecraftServer
 import net.minecraftforge.event.ServerChatEvent
 import java.awt.Color

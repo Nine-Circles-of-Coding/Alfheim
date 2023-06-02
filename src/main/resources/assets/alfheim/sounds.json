@@ -99,10 +99,214 @@
 		]
 	},
 	"wind": {
-		"category": "master",
+		"category": "player",
 		"sounds": [
 			"wind1",
 			"wind2"
+		]
+	},
+	"calm": {
+		"category": "player",
+		"sounds": [
+			"calm"
+		]
+	},
+	"surtr.fireball.form": {
+		"category": "hostile",
+		"sounds": [
+			"surtr/fireball/form"
+		]
+	},
+	"surtr.fireball.hit": {
+		"category": "hostile",
+		"sounds": [
+			"surtr/fireball/hit"
+		]
+	},
+	"surtr.fireball.shot": {
+		"category": "hostile",
+		"sounds": [
+			"surtr/fireball/shot"
+		]
+	},
+	"surtr.sun.exist": {
+		"category": "hostile",
+		"sounds": [
+			"surtr/sun/exist"
+		]
+	},
+	"surtr.sun.form": {
+		"category": "hostile",
+		"sounds": [
+			"surtr/sun/form"
+		]
+	},
+	"surtr.sun.shot": {
+		"category": "hostile",
+		"sounds": [
+			"surtr/sun/shot"
+		]
+	},
+	"surtr.sword.charge": {
+		"category": "hostile",
+		"sounds": [
+			"surtr/sword/charge"
+		]
+	},
+	"surtr.sword.hit": {
+		"category": "hostile",
+		"sounds": [
+			"surtr/sword/hit"
+		]
+	},
+	"surtr.sword.rotate": {
+		"category": "hostile",
+		"sounds": [
+			"surtr/sword/rotate"
+		]
+	},
+	"surtr.sword.strike": {
+		"category": "hostile",
+		"sounds": [
+			"surtr/sword/strike"
+		]
+	},
+	"surtr.wall.exist": {
+		"category": "hostile",
+		"sounds": [
+			"surtr/wall/exist"
+		]
+	},
+	"surtr.wall.form": {
+		"category": "hostile",
+		"sounds": [
+			"surtr/wall/form"
+		]
+	},
+	"surtr.chunk": {
+		"category": "hostile",
+		"sounds": [
+			"surtr/chunk"
+		]
+	},
+	"surtr.death": {
+		"category": "hostile",
+		"sounds": [
+			"surtr/death"
+		]
+	},
+	"surtr.hurt": {
+		"category": "hostile",
+		"sounds": [
+			"surtr/hurt"
+		]
+	},
+	"surtr.laugh": {
+		"category": "master",
+		"sounds": [
+			"surtr/laugh"
+		]
+	},
+	"surtr.summon": {
+		"category": "hostile",
+		"sounds": [
+			"surtr/summon"
+		]
+	},
+	"surtr.whirlwind": {
+		"category": "hostile",
+		"sounds": [
+			"surtr/whirlwind"
+		]
+	},
+	"thrym.axe.rotate": {
+		"category": "hostile",
+		"sounds": [
+			"thrym/axe/rotate"
+		]
+	},
+	"thrym.axe.hit": {
+		"category": "hostile",
+		"sounds": [
+			"thrym/axe/hit"
+		]
+	},
+	"thrym.axe.strike": {
+		"category": "hostile",
+		"sounds": [
+			"thrym/axe/strike"
+		]
+	},
+	"thrym.axe.swing": {
+		"category": "hostile",
+		"sounds": [
+			"thrym/axe/swing"
+		]
+	},
+	"thrym.icicle.form": {
+		"category": "hostile",
+		"sounds": [
+			"thrym/icicle/form"
+		]
+	},
+	"thrym.icicle.hit": {
+		"category": "hostile",
+		"sounds": [
+			"thrym/icicle/hit"
+		]
+	},
+	"thrym.icicle.shot": {
+		"category": "hostile",
+		"sounds": [
+			"thrym/icicle/shot"
+		]
+	},
+	"thrym.shield.break": {
+		"category": "hostile",
+		"sounds": [
+			"thrym/shield/break"
+		]
+	},
+	"thrym.shield.form": {
+		"category": "hostile",
+		"sounds": [
+			"thrym/shield/form"
+		]
+	},
+	"thrym.shield.teleport": {
+		"category": "hostile",
+		"sounds": [
+			"thrym/shield/teleport"
+		]
+	},
+	"thrym.death": {
+		"category": "hostile",
+		"sounds": [
+			"thrym/death"
+		]
+	},
+	"thrym.hurt": {
+		"category": "hostile",
+		"sounds": [
+			"thrym/hurt"
+		]
+	},
+	"thrym.suction": {
+		"category": "hostile",
+		"sounds": [
+			"thrym/suction"
+		]
+	},
+	"thrym.summon": {
+		"category": "hostile",
+		"sounds": [
+			"thrym/summon"
+		]
+	},
+	"thrym.whirlwind": {
+		"category": "hostile",
+		"sounds": [
+			"thrym/whirlwind"
 		]
 	}
 }

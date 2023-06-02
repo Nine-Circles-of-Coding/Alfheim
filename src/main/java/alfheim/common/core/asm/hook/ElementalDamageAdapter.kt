@@ -1,35 +1,38 @@
 package alfheim.common.core.asm.hook
 
+import alfheim.common.core.helper.*
 import alfheim.common.core.helper.ElementalDamage.*
-import alfheim.common.core.helper.setTo
 import alfheim.common.core.util.DamageSourceSpell
 import alfheim.common.entity.EntityMuspelson
 import alfheim.common.entity.boss.EntityDedMoroz
 import gloomyfolken.hooklib.asm.*
 import gloomyfolken.hooklib.asm.Hook.ReturnValue
 import net.minecraft.entity.*
-import net.minecraft.entity.boss.EntityDragon
+import net.minecraft.entity.boss.*
 import net.minecraft.entity.effect.EntityLightningBolt
-import net.minecraft.entity.monster.EntityCreeper
-import net.minecraft.entity.monster.EntitySlime
+import net.minecraft.entity.monster.*
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.entity.projectile.*
+import net.minecraft.entity.projectile.EntitySnowball
 import net.minecraft.item.ItemStack
 import net.minecraft.util.*
+import net.minecraftforge.client.event.RenderLivingEvent
 import thaumcraft.api.aspects.Aspect
+import thaumcraft.client.renderers.entity.RenderWisp
+import thaumcraft.common.entities.golems.*
 import thaumcraft.common.entities.monster.*
 import thaumcraft.common.entities.monster.boss.EntityEldritchWarden
 import thaumcraft.common.entities.projectile.*
 import thaumcraft.common.items.equipment.ItemElementalSword
 import thaumcraft.common.items.wands.foci.ItemFocusShock
 import vazkii.botania.api.internal.IManaBurst
+import vazkii.botania.common.Botania
 import vazkii.botania.common.entity.*
 import vazkii.botania.common.item.equipment.tool.ItemThunderSword
 import vazkii.botania.common.item.equipment.tool.terrasteel.ItemTerraSword
 import vazkii.botania.common.item.relic.ItemRelic
 import java.util.*
 
-@Suppress("unused", "UNUSED_PARAMETER")
+@Suppress("unused", "UNUSED_PARAMETER") // TODO remove most hooks and use `EntityDamageSource$init` hook for functionality
 object ElementalDamageAdapter {
 	
 	var setAir = false
@@ -161,45 +164,45 @@ object ElementalDamageAdapter {
 	
 	
 	@JvmStatic
-	@Hook(targetMethod = "inflictDamage")
-	fun inflictDamagePre(entity: EntityPrimalArrow, mop: MovingObjectPosition?): Boolean {
+	@Hook(targetMethod = "<init>", injectOnExit = true)
+	fun `EntityDamageSource$init`(thiz: EntityDamageSource, name: String?, entity: Entity?) {
+		when (entity) {
+			is EntityWither -> thiz.setTo(DARKNESS)
+			is EntitySlime  -> thiz.setTo(NATURE)
+			is EntityDragon -> thiz.setTo(ALIEN)
+		}
+		
+		if (Botania.thaumcraftLoaded) when (entity) {
+			is EntityEldritchGuardian -> thiz.setTo(ALIEN).setTo(DARKNESS)
+			is EntityEldritchWarden   -> thiz.setTo(ALIEN).setTo(DARKNESS)
+		}
+	}
+	
+	
+	@JvmStatic
+	@Hook(targetMethod = "<init>", injectOnExit = true)
+	fun `EntityDamageSourceIndirect$init`(thiz: EntityDamageSourceIndirect, name: String, entity: Entity, indirectEntity: Entity) {
+		when (entity) {
+			is EntitySnowball -> thiz.setTo(ICE)
+		}
+		
+		if (Botania.thaumcraftLoaded) when (entity) {
+			is EntityPrimalArrow -> setForPrimalArrow(thiz, entity)
+			is EntityFrostShard -> thiz.setTo(ICE)
+			is EntityShockOrb -> thiz.setTo(ELECTRIC)
+			is EntityPechBlast -> thiz.setTo(DARKNESS).setTo(NATURE)
+		}
+	}
+	
+	private fun setForPrimalArrow(src: DamageSource, entity: EntityPrimalArrow) {
 		when (entity.type) {
-			0 -> ::setAir
-			1 -> ::setFire
-			2 -> ::setWater
-			3 -> ::setEarth
-			4 -> ::setLightness
-			5 -> ::setDarkness
-			else -> return false
-		}.set(true) // shitty hacks
-		
-		return false
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "inflictDamage", injectOnExit = true)
-	fun inflictDamagePost(entity: EntityPrimalArrow, mop: MovingObjectPosition?): Boolean {
-		setAir = false
-		setFire = false
-		setWater = false
-		setEarth = false
-		setLightness = false
-		setDarkness = false
-		
-		return false
-	}
-	
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact")
-	fun onImpactPre(entity: EntityFrostShard, mop: MovingObjectPosition?) {
-		setIce = true
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact", injectOnExit = true)
-	fun onImpactPost(entity: EntityFrostShard, mop: MovingObjectPosition?) {
-		setIce = false
+			0 -> src.setTo(AIR)
+			1 -> src.setTo(FIRE)
+			2 -> src.setTo(WATER)
+			3 -> src.setTo(EARTH)
+			4 -> src.setTo(LIGHTNESS)
+			5 -> src.setTo(DARKNESS)
+		}
 	}
 	
 	
@@ -213,116 +216,6 @@ object ElementalDamageAdapter {
 	@Hook(targetMethod = "doLightningBolt", injectOnExit = true)
 	fun doLightningBoltPost(focus: ItemFocusShock, stack: ItemStack?, p: EntityPlayer?, count: Int) {
 		setElectric = false
-	}
-	
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact")
-	fun onImpactPre(entity: EntityShockOrb, mop: MovingObjectPosition?) {
-		setElectric = true
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact", injectOnExit = true)
-	fun onImpactPost(entity: EntityShockOrb, mop: MovingObjectPosition?) {
-		setElectric = false
-	}
-	
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact")
-	fun onImpactPre(entity: EntityPechBlast, mop: MovingObjectPosition?) {
-		setNature = true
-		setDarkness = true
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact", injectOnExit = true)
-	fun onImpactPost(entity: EntityPechBlast, mop: MovingObjectPosition?) {
-		setNature = false
-		setDarkness = false
-	}
-	
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact")
-	fun onImpactPre(entity: EntitySnowball, mop: MovingObjectPosition?) {
-		setIce = true
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact", injectOnExit = true)
-	fun onImpactPost(entity: EntitySnowball, mop: MovingObjectPosition?) {
-		setIce = false
-	}
-	
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact")
-	fun onImpactPre(entity: EntityWitherSkull, mop: MovingObjectPosition?) {
-		setDarkness = true
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "onImpact", injectOnExit = true)
-	fun onImpactPost(entity: EntityWitherSkull, mop: MovingObjectPosition?) {
-		setDarkness = false
-	}
-	
-	
-	@JvmStatic
-	@Hook(targetMethod = "onCollideWithPlayer")
-	fun onCollideWithPlayerPre(entity: EntitySlime, player: EntityPlayer?) {
-		setNature = true
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "onCollideWithPlayer", injectOnExit = true)
-	fun onCollideWithPlayerPost(entity: EntitySlime, player: EntityPlayer?) {
-		setNature = false
-	}
-	
-	
-	@JvmStatic
-	@Hook(targetMethod = "attackEntitiesInList")
-	fun attackEntitiesInListPre(entity: EntityDragon, list: List<Entity>) {
-		setAlien = true
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "attackEntitiesInList", injectOnExit = true)
-	fun attackEntitiesInListPost(entity: EntityDragon, list: List<Entity>) {
-		setAlien = false
-	}
-	
-	
-	@JvmStatic
-	@Hook(targetMethod = "attackEntityAsMob")
-	fun attackEntityAsMobPre(entity: EntityEldritchGuardian, target: Entity?) {
-		setAlien = true
-		setDarkness = true
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "attackEntityAsMob", injectOnExit = true)
-	fun attackEntityAsMobPost(entity: EntityEldritchGuardian, target: Entity?) {
-		setAlien = false
-		setDarkness = false
-	}
-	
-	
-	@JvmStatic
-	@Hook(targetMethod = "attackEntityAsMob")
-	fun attackEntityAsMobPre(entity: EntityEldritchWarden, target: Entity?) {
-		setAlien = true
-		setDarkness = true
-	}
-	
-	@JvmStatic
-	@Hook(targetMethod = "attackEntityAsMob", injectOnExit = true)
-	fun attackEntityAsMobPost(entity: EntityEldritchWarden, target: Entity?) {
-		setAlien = false
-		setDarkness = false
 	}
 	
 	
@@ -463,6 +356,11 @@ object ElementalDamageAdapter {
 	
 	@JvmStatic
 	@Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
+	fun getElements(skeleton: EntitySkeleton) = EnumSet.of(if (skeleton.skeletonType == 1) DARKNESS else COMMON)!!
+	
+	
+	@JvmStatic
+	@Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
 	fun getElements(wisp: EntityWisp) = EnumSet.of(when (wisp.type) {
 	    Aspect.EARTH.tag    -> EARTH
 	    Aspect.FIRE.tag     -> FIRE
@@ -477,6 +375,16 @@ object ElementalDamageAdapter {
 	    else                -> AIR
 	})!!
 	
+	
+	@JvmStatic
+	@Hook(createMethod = true, returnCondition = ReturnCondition.ALWAYS)
+	fun getElements(golem: EntityGolemBase) = EnumSet.of(when (golem.getGolemType()) {
+		                                                     EnumGolemType.STRAW    -> NATURE
+		                                                     EnumGolemType.WOOD     -> NATURE
+		                                                     EnumGolemType.TALLOW   -> COMMON
+		                                                     EnumGolemType.FLESH    -> COMMON
+		                                                     else -> EARTH
+	                                                     })!!
 	
 	
 	// util
@@ -496,5 +404,14 @@ object ElementalDamageAdapter {
 	@Hook(returnCondition = ReturnCondition.ALWAYS)
 	fun onStruckByLightning(entity: Entity, bolt: EntityLightningBolt?) {
 		entity.attackEntityFrom(DamageSourceSpell.lightning, 5f)
+	}
+	
+	// wisp elements render fix
+	@JvmStatic
+	@Hook(injectOnExit = true)
+	fun doRender(render: RenderWisp, wisp: Entity?, x: Double, y: Double, z: Double, yaw: Float, ticks: Float) {
+		wisp as EntityLivingBase
+		if (wisp.health <= 0f) return
+		ElementalDamageHandler.drawStatusIcons(RenderLivingEvent.Specials.Post(wisp, null, x, y, z))
 	}
 }

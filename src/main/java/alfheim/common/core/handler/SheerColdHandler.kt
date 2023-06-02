@@ -2,28 +2,24 @@ package alfheim.common.core.handler
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
-import alfheim.AlfheimCore
 import alfheim.api.*
 import alfheim.api.entity.*
 import alfheim.api.event.PlayerInteractAdequateEvent
 import alfheim.common.core.util.DamageSourceSpell
 import alfheim.common.item.equipment.bauble.ItemPendant
 import alfheim.common.item.equipment.bauble.ItemPendant.Companion.EnumPrimalWorldType.*
-import alfheim.common.network.Message1d
+import alfheim.common.network.*
+import alfheim.common.network.packet.Message1d
 import cpw.mods.fml.common.eventhandler.*
-import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.relauncher.*
 import net.minecraft.entity.*
 import net.minecraft.entity.item.EntityItem
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.entity.player.EntityPlayerMP
+import net.minecraft.entity.player.*
 import net.minecraft.item.*
 import net.minecraft.potion.Potion
-import net.minecraft.potion.PotionEffect
 import net.minecraft.util.MathHelper
 import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.event.entity.living.LivingDeathEvent
-import net.minecraftforge.event.entity.living.LivingEvent
+import net.minecraftforge.event.entity.living.*
 import net.minecraftforge.event.entity.living.LivingEvent.*
 import kotlin.math.*
 
@@ -37,7 +33,7 @@ object SheerColdHandler {
 			entityData.setFloat(TAG_SHEER_COLD, value)
 			
 			if (this is EntityPlayerMP)
-				AlfheimCore.network.sendTo(Message1d(Message1d.M1d.COLD, value.D), this)
+				NetworkService.sendTo(Message1d(M1d.COLD, value.D), this)
 		}
 	
 	@SubscribeEvent
@@ -150,8 +146,12 @@ object SheerColdHandler {
 	
 	@SubscribeEvent
 	fun weakHands(e: PlayerInteractAdequateEvent) {
-		if (ItemPendant.canProtect(e.player, NIFLHEIM, 0)) return
-		if (abs(e.player.cold) > 90 && ASJUtilities.chance(0.5))
+		if (abs(e.player.cold) < 90) return
+
+		if (e.player.cold > 0 && ItemPendant.canProtect(e.player, NIFLHEIM, 0)) return
+		if (e.player.cold < 0 && ItemPendant.canProtect(e.player, MUSPELHEIM, 0)) return
+
+		if (ASJUtilities.chance(0.5))
 			e.player.dropOneItem(true)
 	}
 	

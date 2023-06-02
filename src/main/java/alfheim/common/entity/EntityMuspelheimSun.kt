@@ -2,12 +2,13 @@ package alfheim.common.entity
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
+import alfheim.api.ModInfo
+import alfheim.client.sound.EntityBoundMovingSound
 import alfheim.common.core.util.DamageSourceSpell
 import cpw.mods.fml.relauncher.*
-import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityLivingBase
+import net.minecraft.entity.*
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.util.DamageSource
 import net.minecraft.world.World
 
 class EntityMuspelheimSun(world: World?): Entity(world) {
@@ -35,8 +36,20 @@ class EntityMuspelheimSun(world: World?): Entity(world) {
 		setSize(18f, 18f)
 	}
 	
+	lateinit var sunSound: EntityBoundMovingSound<out EntityPlayer>
+	
+	private fun playSounds() {
+		if (!ASJUtilities.isClient || (::sunSound.isInitialized && !sunSound.isDonePlaying))
+			return
+		
+		sunSound = EntityBoundMovingSound(mc.thePlayer, "${ModInfo.MODID}:surtr.sun.exist") { isDonePlaying = this@EntityMuspelheimSun.isDead }.apply { volume = 1f }
+		mc.soundHandler.playSound(sunSound)
+	}
+	
 	override fun onEntityUpdate() {
 		super.onEntityUpdate()
+		
+		playSounds()
 		
 		if (worldObj.isRemote) return
 		
@@ -51,6 +64,7 @@ class EntityMuspelheimSun(world: World?): Entity(world) {
 				rotation = rand.nextFloat() * 360
 				setPosition(this@EntityMuspelheimSun, oY = radius)
 				spawn()
+				playSoundAtEntity("${ModInfo.MODID}:surtr.sun.shot", 10f, 1f)
 			}
 		}
 		

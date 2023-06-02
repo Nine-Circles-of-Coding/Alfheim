@@ -6,7 +6,6 @@ import alfheim.api.spell.SpellBase
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.handler.CardinalSystem.TargetingSystem
 import net.minecraft.entity.EntityLivingBase
-import net.minecraft.entity.player.EntityPlayer
 
 object SpellButterflyShield: SpellBase("butterflyshield", EnumRace.CAITSITH, 8000, 12000, 30) {
 	

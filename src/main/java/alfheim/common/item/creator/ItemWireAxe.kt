@@ -92,12 +92,11 @@ class ItemWireAxe(val name: String = "axeRevelation", val toolMaterial: ToolMate
 	override fun isFull3D() = true
 	
 	override fun onPlayerStoppedUsing(stack: ItemStack, world: World, player: EntityPlayer, inUseTicks: Int) {
-		if (!ManaItemHandler.requestManaExact(stack, player, 100, false)) return
+		if (!ManaItemHandler.requestManaExact(stack, player, 1, false)) return
 		
 		val range = min(getMaxItemUseDuration(stack) - inUseTicks, 200) / 20 + 1
 		val entities = getEntitiesWithinAABB(world, EntityPlayer::class.java, player.boundingBox(range))
 		entities.remove(player)
-		if (!player.capabilities.isCreativeMode) stack.damageStack(1, player)
 		
 		var count = 0
 		entities.forEach {
@@ -105,17 +104,13 @@ class ItemWireAxe(val name: String = "axeRevelation", val toolMaterial: ToolMate
 			if (!it.attackEntityFrom(DamageSource.causePlayerDamage(player).setTo(ElementalDamage.LIGHTNESS), 0.001f)) return@forEach
 			count++
 			if (!world.isRemote) ASJUtilities.say(it, "misc.${ModInfo.MODID}.wayOfUndoing")
-//			it.addPotionEffect(PotionEffect(AlfheimConfigHandler.potionIDManaVoid, 10, 0, true))
 			ManaItemHandler.dispatchMana(stack, player, ManaItemHandler.requestMana(stack, it, 1000, true), true)
 		}
 		
 		if (count > 0) {
 			player.playSoundAtEntity("botania:enchanterEnchant", 1f, 1f)
-			if (!world.isRemote) player.addChatMessage(ChatComponentText(StatCollector.translateToLocal("misc.${ModInfo.MODID}.wayOfUndoing").replace('&', '\u00a7')))
-			stack.damageStack(5, player)
+			if (!player.capabilities.isCreativeMode) stack.damageStack(count, player)
 			if (!world.isRemote) VisualEffectHandler.sendPacket(VisualEffects.WIRE, player.dimension, player.posX, player.posY - player.yOffset + player.height / 2.0, player.posZ, range.D, 0.0, 0.0)
-//			player.addPotionEffect(PotionEffect(AlfheimConfigHandler.potionIDManaVoid, 2 * count, 0, true))
-			ManaItemHandler.requestManaExact(stack, player, 100, true)
 		}
 	}
 	
@@ -150,8 +145,9 @@ class ItemWireAxe(val name: String = "axeRevelation", val toolMaterial: ToolMate
 		val damage = ModifiableAttributeInstance(ServersideAttributeMap(), godSlayingDamage).apply { stack.attributeModifiers[godSlayingDamage.attributeUnlocalizedName].forEach { applyModifier(it as AttributeModifier) } }.attributeValue
 		if (damage <= 0 || !entity.canAttackWithItem() || entity.hitByEntity(player)) return false
 		
+		val reset = entity.hurtResistantTime == 0
 		attackEntity(player, entity, damage, DamageSourceSpell.godslayer(player, AlfheimConfigHandler.wireoverpowered))
-		entity.hurtResistantTime = 0
+		if (reset) entity.hurtResistantTime = 0
 		
 		return false
 	}

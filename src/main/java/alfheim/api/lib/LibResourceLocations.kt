@@ -40,6 +40,8 @@ object LibResourceLocations {
 	val dedMorozEyes = ResourceLocationIL(ModInfo.MODID, "textures/model/entity/DedMorozEyes.png")
 	val domainDoor = ResourceLocationIL(ModInfo.MODID, "textures/blocks/DomainLobbyCoreFull.png")
 	val elementiumBlock = ResourceLocationIL("botania", "textures/blocks/storage2.png")
+	val elements = ResourceLocationIL(ModInfo.MODID, "textures/misc/elements.png")
+	val elementsUI = ResourceLocationIL(ModInfo.MODID, "textures/misc/elementsUI.png")
 	val elf = ResourceLocationIL(ModInfo.MODID, "textures/model/entity/Elf.png")
 	var elvenPylon = ResourceLocationIL("botania", "textures/model/pylon2.png")
 	var elvenPylonOld = ResourceLocationIL("botania", "textures/model/pylonOld2.png")

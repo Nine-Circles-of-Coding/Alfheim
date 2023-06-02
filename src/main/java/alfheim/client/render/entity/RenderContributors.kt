@@ -161,7 +161,7 @@ object RenderContributors {
 			ASJRenderHelper.glColor1u(Color.HSBtoRGB(Botania.proxy.worldElapsedTicks * 2 % 360 / 360f, 1f, 1f))
 			mc.renderEngine.bindTexture(auraTextures[match])
 			
-			glScaled(0.5)
+			if (!ContributorsPrivacyHelper.isCorrect(player, "KAIIIAK")) glScaled(0.5)
 			
 			val tes = Tessellator.instance
 			tes.startDrawingQuads()

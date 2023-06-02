@@ -1,6 +1,6 @@
 package alfheim.client.model.armor
 
-import alexsocol.asjlib.*
+import alexsocol.asjlib.F
 import alexsocol.asjlib.render.ASJRenderHelper
 import net.minecraft.client.model.*
 import net.minecraft.entity.*

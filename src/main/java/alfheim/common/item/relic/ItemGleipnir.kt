@@ -16,7 +16,6 @@ import alexsocol.asjlib.render.ASJRenderHelper.setGlow
 import alexsocol.asjlib.render.ASJRenderHelper.setTwoside
 import alexsocol.asjlib.security.InteractionSecurity
 import alexsocol.patcher.event.RenderEntityPostEvent
-import alfheim.AlfheimCore
 import alfheim.api.ModInfo
 import alfheim.api.event.SpellCastEvent
 import alfheim.api.lib.LibResourceLocations
@@ -26,15 +25,15 @@ import alfheim.common.core.util.AlfheimTab
 import alfheim.common.entity.EntityGleipnir
 import alfheim.common.item.relic.LeashingHandler.isLeashed
 import alfheim.common.item.relic.LeashingHandler.leashedTo
-import alfheim.common.network.MessageGleipnirLeash
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.MessageGleipnirLeash
 import alfheim.common.potion.PotionEternity
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.relauncher.*
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.culling.ICamera
 import net.minecraft.entity.*
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.entity.player.EntityPlayerMP
+import net.minecraft.entity.player.*
 import net.minecraft.item.ItemStack
 import net.minecraft.network.play.server.S12PacketEntityVelocity
 import net.minecraft.util.MovingObjectPosition
@@ -270,12 +269,12 @@ object LeashingHandler {
 				entityData.removeTag(TAG_LEASHED)
 				
 				if (ASJUtilities.isServer)
-					AlfheimCore.network.sendToAll(MessageGleipnirLeash(entityId.toString(), ""))
+					NetworkService.sendToAll(MessageGleipnirLeash(entityId.toString(), ""))
 			} else {
 				entityData.setString(TAG_LEASHED, player.commandSenderName)
 				
 				if (ASJUtilities.isServer)
-					AlfheimCore.network.sendToAll(MessageGleipnirLeash(entityId.toString(), player.commandSenderName))
+					NetworkService.sendToAll(MessageGleipnirLeash(entityId.toString(), player.commandSenderName))
 			}
 		}
 	

@@ -9,7 +9,7 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.effect.EntityWeatherEffect
 import net.minecraft.init.Blocks
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.world.*
+import net.minecraft.world.World
 
 class EntityBlackBolt(world: World): EntityWeatherEffect(world) {
 	

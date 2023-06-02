@@ -32,9 +32,6 @@ class TileAnomalyHarvester: ASJTile() {
 		subTiles.add(sub)
 	}
 	
-	// omg Forge seriously null worldObj when calling this?
-	override fun canUpdate() = worldObj?.totalWorldTime != tick
-	
 	val tunnels = setOf("Antigrav", "Gravity")
 	
 	override fun updateEntity() {

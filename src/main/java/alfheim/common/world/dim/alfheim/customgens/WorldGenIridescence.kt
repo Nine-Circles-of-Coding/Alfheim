@@ -10,7 +10,7 @@ import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
 import net.minecraft.world.World
 import net.minecraft.world.chunk.IChunkProvider
-import vazkii.botania.common.item.*
+import vazkii.botania.common.item.ModItems
 import java.util.*
 
 class WorldGenIridescence: IWorldGenerator {

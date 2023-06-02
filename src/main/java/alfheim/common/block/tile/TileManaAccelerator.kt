@@ -2,8 +2,8 @@ package alfheim.common.block.tile
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.extendables.block.TileItemContainer
-import alfheim.AlfheimCore
-import alfheim.common.network.MessageTileItem
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.MessageTileItem
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.item.ItemStack
 import vazkii.botania.api.mana.IManaItem
@@ -99,7 +99,7 @@ class TileManaAccelerator: TileItemContainer() {
 					
 					if (worldObj.totalWorldTime % 20 == 0L) {
 						worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType())
-						if (ASJUtilities.isServer) AlfheimCore.network.sendToDimension(MessageTileItem(xCoord, yCoord, zCoord, stack), worldObj.provider.dimensionId)
+						if (ASJUtilities.isServer) NetworkService.sendToDim(MessageTileItem(xCoord, yCoord, zCoord, stack), worldObj.provider.dimensionId)
 					}
 					
 					//stack.item.onUpdate(stack, worldObj, dummy, -1, false)

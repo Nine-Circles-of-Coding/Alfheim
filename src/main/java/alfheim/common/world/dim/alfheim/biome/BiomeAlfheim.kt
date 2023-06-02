@@ -2,19 +2,13 @@ package alfheim.common.world.dim.alfheim.biome
 
 import alfheim.AlfheimCore
 import alfheim.common.block.AlfheimBlocks
-import alfheim.common.core.handler.AlfheimConfigHandler
-import alfheim.common.entity.EntityElf
 import alfheim.common.world.dim.alfheim.structure.StructureDreamsTree
 import net.minecraft.entity.EnumCreatureType
-import net.minecraft.entity.passive.*
 import net.minecraft.init.Blocks
 import net.minecraft.world.biome.BiomeGenBase
 import net.minecraftforge.common.BiomeDictionary
 import net.minecraftforge.common.BiomeDictionary.Type
 import ru.vamig.worldengine.*
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.component3
 
 abstract class BiomeAlfheim: WE_Biome(WE_WorldProvider.we_id) {
 	

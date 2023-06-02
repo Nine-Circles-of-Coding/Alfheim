@@ -18,7 +18,6 @@ import alfheim.client.render.particle.*
 import alfheim.client.render.tile.*
 import alfheim.common.block.AlfheimBlocks
 import alfheim.common.block.tile.*
-import alfheim.common.core.asm.hook.extender.FurnaceHandler
 import alfheim.common.core.handler.*
 import alfheim.common.core.proxy.CommonProxy
 import alfheim.common.crafting.recipe.AlfheimRecipes
@@ -123,6 +122,7 @@ object ClientProxy : CommonProxy() {
 		
 		RenderingRegistry.registerEntityRenderingHandler(EntityAlfheimPixie::class.java, RenderEntityAlfheimPixie)
 		RenderingRegistry.registerEntityRenderingHandler(EntityBlackBolt::class.java, RenderEntityBlackBolt)
+		RenderingRegistry.registerEntityRenderingHandler(EntityBlock::class.java, RenderEntityBlock)
 		RenderingRegistry.registerEntityRenderingHandler(EntityButterfly::class.java, RenderEntityButterfly)
 		RenderingRegistry.registerEntityRenderingHandler(EntityDedMoroz::class.java, RenderEntityDedMoroz)
 		RenderingRegistry.registerEntityRenderingHandler(EntityElf::class.java, RenderEntityElf)
@@ -173,7 +173,6 @@ object ClientProxy : CommonProxy() {
 	override fun initializeAndRegisterHandlers() {
 		super.initializeAndRegisterHandlers()
 		EventHandlerClient
-		FurnaceHandler
 		ItemsRemainingRenderHandler
 		
 		HUDCorporeaRat.eventForge()
@@ -258,7 +257,7 @@ object ClientProxy : CommonProxy() {
 	}
 	
 	fun enableESM() {
-		if (AlfheimConfigHandler.enableElvenStory) return
+//		if (AlfheimConfigHandler.enableElvenStory) return
 		AlfheimConfigHandler.enableElvenStory = true
 		AlfheimLexiconData.reEnableESM()
 //		if (Botania.thaumcraftLoaded) ThaumcraftAlfheimModule.addESMRecipes()
@@ -268,7 +267,7 @@ object ClientProxy : CommonProxy() {
 	}
 	
 	fun disableESM() {
-		if (!AlfheimConfigHandler.enableElvenStory) return
+//		if (!AlfheimConfigHandler.enableElvenStory) return
 		AlfheimConfigHandler.enableElvenStory = false
 		AlfheimLexiconData.disableESM()
 //		if (Botania.thaumcraftLoaded) ThaumcraftAlfheimModule.removeESMRecipes()
@@ -278,7 +277,7 @@ object ClientProxy : CommonProxy() {
 	}
 	
 	fun enableMMO() {
-		if (AlfheimConfigHandler.enableMMO) return
+//		if (AlfheimConfigHandler.enableMMO) return
 		AlfheimConfigHandler.enableMMO = true
 		AlfheimLexiconData.reEnableMMO()
 		AlfheimRecipes.addMMORecipes()
@@ -288,7 +287,7 @@ object ClientProxy : CommonProxy() {
 	}
 	
 	fun disableMMO() {
-		if (!AlfheimConfigHandler.enableMMO) return
+//		if (!AlfheimConfigHandler.enableMMO) return
 		AlfheimConfigHandler.enableMMO = false
 		AlfheimLexiconData.disableMMO()
 		AlfheimRecipes.removeMMORecipes()
@@ -307,7 +306,7 @@ object ClientProxy : CommonProxy() {
 		} else {
 			AlfheimLexiconData.disableESM()
 			removeESMKeyBinds()
-			if (mmoOld != mmo) toggleMMO(false, mmo, esmOld, mmoOld)
+			if (mmoOld != mmo) toggleMMO(false, mmo, true, mmoOld)
 		}
 	}
 	
@@ -319,7 +318,7 @@ object ClientProxy : CommonProxy() {
 			AlfheimLexiconData.reEnableMMO()
 			enableMMOGUIs()
 			addMMOKeyBinds()
-			if (mmoOld != esm) toggleESM(esm, true, esmOld, mmoOld)
+			if (esm) toggleESM(true, true, esmOld, false)
 		} else {
 			AlfheimLexiconData.disableMMO()
 			disableMMOGUIs()

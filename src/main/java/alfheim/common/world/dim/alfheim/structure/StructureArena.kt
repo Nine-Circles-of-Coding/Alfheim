@@ -4,7 +4,7 @@ import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alfheim.api.ModInfo
 import alfheim.common.world.data.CustomWorldData.Companion.customData
-import alfheim.common.world.dim.alfheim.biome.*
+import alfheim.common.world.dim.alfheim.biome.BiomeField
 import net.minecraft.init.Blocks
 import net.minecraft.world.World
 import ru.vamig.worldengine.*

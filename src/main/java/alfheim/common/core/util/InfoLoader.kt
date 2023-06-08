@@ -7,7 +7,6 @@ import net.minecraft.util.StatCollector
 import net.minecraftforge.common.MinecraftForge
 import org.w3c.dom.Node
 import java.net.URL
-import java.util.*
 import javax.xml.parsers.DocumentBuilderFactory
 
 object InfoLoader {

@@ -9,7 +9,7 @@ import alfheim.common.block.AlfheimBlocks
 import alfheim.common.core.handler.*
 import alfheim.common.core.helper.*
 import alfheim.common.core.helper.ElementalDamage.*
-import alfheim.common.core.util.*
+import alfheim.common.core.util.DamageSourceSpell
 import alfheim.common.entity.ai.AIAttackOnIntersect
 import alfheim.common.entity.ai.elf.*
 import alfheim.common.entity.spell.EntitySpellFenrirStorm
@@ -28,8 +28,7 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.projectile.EntityLargeFireball
 import net.minecraft.init.*
 import net.minecraft.item.*
-import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.nbt.NBTTagString
+import net.minecraft.nbt.*
 import net.minecraft.potion.*
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.*
@@ -72,7 +71,7 @@ class EntityElf(world: World): EntityCreature(world), INpc, IIntersectAttackEnti
 	var dialog: Dialog? = null
 	
 	init {
-		setSize(0.6f, 1.8f)
+		setSize(0.6f, 2f)
 		tasks.addTask(0, EntityAISwimming(this))
 		tasks.addTask(1, EntityAIAttackOnCollide(this, 1.0, true))
 		tasks.addTask(1, AIAttackOnIntersect(this))

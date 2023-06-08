@@ -104,46 +104,44 @@ class ItemExcaliber: ItemManasteelSword(AlfheimAPI.EXCALIBER, "Excaliber"), IRel
 	override fun collideBurst(burst: IManaBurst, pos: MovingObjectPosition, isManaBlock: Boolean, dead: Boolean, stack: ItemStack) = dead
 	
 	override fun updateBurst(burst: IManaBurst, stack: ItemStack) {
-		val entity = burst as EntityThrowable
-		val axis = getBoundingBox(entity.posX, entity.posY, entity.posZ, entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ).expand(1)
+		burst as EntityThrowable
+		
+		val axis = getBoundingBox(burst.posX, burst.posY, burst.posZ, burst.lastTickPosX, burst.lastTickPosY, burst.lastTickPosZ).expand(1)
 		
 		val attacker = ItemNBTHelper.getString(burst.sourceLens, TAG_ATTACKER_USERNAME, "")
 		var homeID = ItemNBTHelper.getInt(stack, TAG_HOME_ID, -1)
 		if (homeID == -1) {
-			val axis1 = getBoundingBox(entity.posX, entity.posY, entity.posZ, entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ).expand(5)
-			val entities = getEntitiesWithinAABB(entity.worldObj, EntityLivingBase::class.java, axis1)
+			val axis1 = getBoundingBox(burst.posX, burst.posY, burst.posZ, burst.lastTickPosX, burst.lastTickPosY, burst.lastTickPosZ).expand(5)
+			val entities = getEntitiesWithinAABB(burst.worldObj, EntityLivingBase::class.java, axis1)
 			entities.forEach {
 				if (it is EntityPlayer || it !is IMob || it.hurtTime != 0) return@forEach
 				homeID = it.entityId
 				ItemNBTHelper.setInt(stack, TAG_HOME_ID, homeID)
 			}
 		}
-		val entities = getEntitiesWithinAABB(entity.worldObj, EntityLivingBase::class.java, axis)
+		val entities = getEntitiesWithinAABB(burst.worldObj, EntityLivingBase::class.java, axis)
 		val home: Entity?
 		if (homeID != -1) {
-			home = entity.worldObj.getEntityByID(homeID)
+			home = burst.worldObj.getEntityByID(homeID)
 			if (home != null) {
-				val vecMotion = Vector3.fromEntityCenter(home).sub(Vector3.fromEntityCenter(entity))
-				vecMotion.normalize().mul(Vector3(entity.motionX, entity.motionY, entity.motionZ).length())
+				val vecMotion = Vector3.fromEntityCenter(home).sub(Vector3.fromEntityCenter(burst))
+				vecMotion.normalize().mul(Vector3(burst.motionX, burst.motionY, burst.motionZ).length())
 				burst.setMotion(vecMotion.x, vecMotion.y, vecMotion.z)
 			}
 		}
 		
+		if (burst.isFake || burst.worldObj.isRemote) return
+		
 		entities.forEach {
 			if (it is EntityPlayer && !(it.commandSenderName != attacker && (MinecraftServer.getServer() == null || MinecraftServer.getServer().isPVPEnabled))) return@forEach
 			if (it.hurtTime != 0) return@forEach
-			val cost = 1
-			val mana = burst.mana
-			if (mana < cost) return@forEach
-			burst.mana = mana - cost
 			var damage = 4f + AlfheimAPI.EXCALIBER.damageVsEntity
-			if (burst.isFake || entity.worldObj.isRemote) return@forEach
 			val player = it.worldObj.getPlayerEntityByName(attacker)
 			val mod = player?.getAttributeMap()?.getAttributeInstance(SharedMonsterAttributes.attackDamage)?.attributeValue?.F
 			damage = mod ?: damage
 			if (player != null) damage += EnchantmentHelper.getEnchantmentModifierLiving(player, it)
 			it.attackEntityFrom(if (player == null) DamageSource.magic else DamageSource.causePlayerDamage(player).setDamageBypassesArmor().setMagicDamage().setTo(ElementalDamage.LIGHTNESS), damage)
-			entity.setDead()
+			burst.setDead()
 			return
 		}
 	}
@@ -156,7 +154,7 @@ class ItemExcaliber: ItemManasteelSword(AlfheimAPI.EXCALIBER, "Excaliber"), IRel
 		
 		val uuid = UUID.fromString("7d5ddaf0-15d2-435c-8310-bdfc5fd1522d")!!
 		
-		const val TAG_ATTACKER_USERNAME = "attackerUsername"
-		const val TAG_HOME_ID = "homeID"
+		private const val TAG_ATTACKER_USERNAME = "attackerUsername"
+		private const val TAG_HOME_ID = "homeID"
 	}
 }

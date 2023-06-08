@@ -1,10 +1,10 @@
 package alfheim.client.render.entity
 
-import alexsocol.asjlib.*
-import alexsocol.asjlib.math.*
+import alexsocol.asjlib.glScaled
+import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.render.ASJRenderHelper
 import alfheim.api.lib.LibResourceLocations
-import alfheim.client.model.entity.*
+import alfheim.client.model.entity.ModelEntityFenrir
 import alfheim.common.entity.boss.EntityFenrir
 import net.minecraft.client.renderer.entity.RenderLiving
 import net.minecraft.entity.*

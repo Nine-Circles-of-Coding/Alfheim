@@ -1,19 +1,15 @@
 package alfheim.common.entity
 
-import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alfheim.common.core.util.DamageSourceSpell
 import alfheim.common.entity.boss.EntityFlugel
 import alfheim.common.entity.boss.ai.flugel.AIEnergy
 import alfheim.common.entity.spell.EntitySpellIsaacMissile
-import alfheim.common.spell.sound.SpellIsaacStorm
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.util.*
-import net.minecraft.util.MovingObjectPosition.MovingObjectType
 import net.minecraft.world.World
 import vazkii.botania.common.Botania
 import vazkii.botania.common.entity.EntityThrowableCopy
-import kotlin.math.abs
 
 class EntityCharge(world: World, val flugel: EntityFlugel?, val target: EntityLivingBase?, ai: AIEnergy?): EntityThrowableCopy(world) {
 	

@@ -2,7 +2,6 @@ package alfheim.common.block.corporea
 
 import alfheim.common.block.base.BlockContainerMod
 import alfheim.common.block.tile.corporea.TileCorporeaRat
-import alfheim.common.core.util.AlfheimTab
 import alfheim.common.lexicon.AlfheimLexiconData
 import net.minecraft.block.material.Material
 import net.minecraft.entity.player.EntityPlayer

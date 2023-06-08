@@ -8,7 +8,6 @@ import alfheim.client.render.world.VisualEffectHandlerClient.VisualEffects
 import alfheim.common.core.handler.CardinalSystem.TargetingSystem
 import alfheim.common.core.handler.VisualEffectHandler
 import net.minecraft.entity.EntityLivingBase
-import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.potion.*
 
 object SpellConfusion: SpellBase("confusion", EnumRace.SPRIGGAN, 4000, 1200, 15) {

@@ -8,7 +8,6 @@ import alfheim.client.render.world.VisualEffectHandlerClient.VisualEffects
 import alfheim.common.core.handler.*
 import alfheim.common.core.handler.CardinalSystem.TargetingSystem
 import net.minecraft.entity.EntityLivingBase
-import net.minecraft.entity.player.EntityPlayer
 
 object SpellDeathMark: SpellBase("deathmark", EnumRace.IMP, 24000, 3000, 10) {
 	

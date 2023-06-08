@@ -6,7 +6,6 @@ import alexsocol.asjlib.math.Vector3
 import alfheim.api.ModInfo
 import alfheim.common.block.AlfheimBlocks
 import alfheim.common.core.asm.hook.extender.SparkExtender.attachTile
-import com.google.gson.Gson
 import net.minecraft.block.Block
 import net.minecraft.item.ItemStack
 import net.minecraftforge.fluids.BlockFluidBase

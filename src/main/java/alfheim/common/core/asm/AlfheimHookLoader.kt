@@ -4,7 +4,7 @@ import alexsocol.asjlib.asm.ASJASM
 import alexsocol.patcher.asm.ASJHookLoader
 import alfheim.api.ModInfo
 import alfheim.common.core.handler.AlfheimConfigHandler
-import cpw.mods.fml.relauncher.*
+import cpw.mods.fml.relauncher.FMLRelaunchLog
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.MCVersion
 import gloomyfolken.hooklib.minecraft.HookLoader
 import org.apache.commons.io.FileUtils

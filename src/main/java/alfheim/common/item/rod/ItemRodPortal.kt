@@ -19,9 +19,6 @@ import net.minecraft.world.World
 import vazkii.botania.common.block.ModBlocks
 import vazkii.botania.common.block.tile.TileBifrost
 import vazkii.botania.common.core.helper.ItemNBTHelper
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.component3
 import kotlin.math.abs
 
 class ItemRodPortal: ItemMod("rodPortal") {

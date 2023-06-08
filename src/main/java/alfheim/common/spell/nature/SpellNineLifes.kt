@@ -7,7 +7,6 @@ import alfheim.client.render.world.VisualEffectHandlerClient.VisualEffects
 import alfheim.common.core.handler.*
 import alfheim.common.core.handler.CardinalSystem.TargetingSystem
 import net.minecraft.entity.EntityLivingBase
-import net.minecraft.entity.player.EntityPlayer
 
 object SpellNineLifes: SpellBase("ninelifes", EnumRace.CAITSITH, 16000, 3000, 30) {
 	

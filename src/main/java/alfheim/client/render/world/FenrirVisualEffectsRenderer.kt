@@ -5,9 +5,6 @@ import alexsocol.asjlib.render.ASJRenderHelper
 import alfheim.api.lib.LibResourceLocations
 import net.minecraft.client.renderer.Tessellator
 import org.lwjgl.opengl.GL11.*
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.component3
 
 object FenrirVisualEffectsRenderer {
 	

@@ -10,7 +10,7 @@ import net.minecraft.potion.Potion
 import net.minecraft.world.World
 import net.minecraftforge.event.entity.living.LivingDeathEvent
 import vazkii.botania.common.Botania
-import vazkii.botania.common.item.*
+import vazkii.botania.common.item.ItemKeepIvy
 
 class ItemDeathSeed: ItemMod("DeathSeed") {
 	

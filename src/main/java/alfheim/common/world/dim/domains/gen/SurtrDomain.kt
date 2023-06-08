@@ -10,8 +10,8 @@ import alfheim.common.entity.boss.primal.EntitySurtr
 import alfheim.common.item.AlfheimItems
 import alfheim.common.item.equipment.bauble.ItemPriestEmblem
 import alfheim.common.item.equipment.bauble.faith.ItemRagnarokEmblem
-import alfheim.common.world.data.CustomWorldData.Companion.customData
 import alfheim.common.item.material.EventResourcesMetas
+import alfheim.common.world.data.CustomWorldData.Companion.customData
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.world.World

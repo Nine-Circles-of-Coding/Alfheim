@@ -3,7 +3,7 @@ package alfheim.common.spell.sound
 import alexsocol.asjlib.spawn
 import alfheim.api.entity.EnumRace
 import alfheim.api.spell.SpellBase
-import alfheim.common.entity.spell.*
+import alfheim.common.entity.spell.EntitySpellNoteshot
 import net.minecraft.entity.EntityLivingBase
 
 object SpellNoteshot: SpellBase("noteshot", EnumRace.POOKA, 1000, 50, 10) {

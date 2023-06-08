@@ -20,8 +20,7 @@ import net.minecraft.world.*
 import net.minecraft.world.gen.feature.WorldGenerator
 import net.minecraftforge.common.EnumPlantType
 import net.minecraftforge.common.util.ForgeDirection
-import vazkii.botania.api.lexicon.ILexiconable
-import vazkii.botania.api.lexicon.LexiconEntry
+import vazkii.botania.api.lexicon.*
 import java.util.*
 
 @Suppress("LeakingThis")

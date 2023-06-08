@@ -1,15 +1,34 @@
 Innovations:
- Domains can now be accessed only with it's entrance or via /tpdim command
- Disabled nether portal creation in Niflheim
- Thrym and Surtr now cannot have potions on them
-
+ Set of new drops to Fenrir, created and designed by ChatGPT :D
+ Elementium mana and aura rings now can spawn a pixie
+ Fenrir claws now got a chance (higher with full Fenrir set) to impose bleeding on hit
+ Flugel music updated to remaster
+ Flugel tier 3 as well as Thrym, Surtr and Fenrir now got own bossfight music
+ Thrym and Surtr got sounds for their actions
+ Beast Within and Bleeding potions are now not MMO-mode exclusive (configs updated)
+ Little tuning for Corporea Sequencer and more informative wand HUD
+ Alfheim->Midgard teleportation now can link to ranom exisiting portal (config)
+ Increased nighttime spirits quantity in Alfheim (configurable)
+ Visualization for mob elements when wearing monocle
+ Config for mob elements (not for Alfheim ones tho)
+ Rebalanced elemental reactions
+ Removed Interdimensional Gateway Core infusion recipe
+ Booba render for female elves
+ [WIP] Entity-blocks
  
 Fixes:
- Event banner popup persistence
- Manaflame crash
- Sun Slash attack area
- Fenrir Storm attack area (hopefully)
- Thrym and Surtr quick shield destruction
- Thrym second stage logic
- Harp render distance
- Redstone rod-related features crash in multiplayer
+ Crash with EtFR
+ Ragnarok crash with Aether Legacy
+ WireAxe HRT abuse #259
+ Floating bifrost flower flaws #266
+ IguanaTweaksTConstruct support #271
+ Bifrost petal block breaker #272
+ Mushroom recipes
+ Over- heat/cold weak hands effect
+ Liquid mana placing
+ Thrym, Surtr and Fenrir relic drops
+ Purification and Smelt lenses behaviour and display
+ ESM/MMO modes sync across SP worlds (#273)
+ At last, livingcobble furnace texture :o
+ Botania dupe
+ Elemental Chestplate effect in inventory

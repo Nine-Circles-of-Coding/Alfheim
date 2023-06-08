@@ -3,7 +3,6 @@ package alfheim.common.block.magtrees.calico
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.world.ExplosionEvent
 
 object EventHandlerCalico {

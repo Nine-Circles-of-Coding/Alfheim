@@ -3,7 +3,7 @@ package alfheim.common.spell.wind
 import alexsocol.asjlib.spawn
 import alfheim.api.entity.EnumRace
 import alfheim.api.spell.SpellBase
-import alfheim.common.entity.spell.*
+import alfheim.common.entity.spell.EntitySpellLeafStorm
 import net.minecraft.entity.EntityLivingBase
 
 object SpellLeafStorm: SpellBase("leafstorm", EnumRace.SYLPH, 30000, 36000, 60) {

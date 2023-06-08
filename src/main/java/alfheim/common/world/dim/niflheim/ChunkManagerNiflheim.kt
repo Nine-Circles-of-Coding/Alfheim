@@ -1,7 +1,6 @@
 package alfheim.common.world.dim.niflheim
 
-import alexsocol.asjlib.*
-import alfheim.common.core.handler.AlfheimConfigHandler
+import alexsocol.asjlib.F
 import alfheim.common.world.dim.niflheim.biome.*
 import alfheim.common.world.dim.niflheim.biome.BiomeGenSnow
 import net.minecraft.world.*

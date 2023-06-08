@@ -25,7 +25,6 @@ import net.minecraft.world.World
 import vazkii.botania.api.mana.ManaItemHandler
 import java.awt.Color
 import java.util.*
-import kotlin.collections.HashMap
 
 class EntityLolicorn(world: World): EntityRidableFlying(world), ITimeStopSpecific {
 	

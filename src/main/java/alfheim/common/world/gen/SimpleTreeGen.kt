@@ -1,6 +1,6 @@
 package alfheim.common.world.gen
 
-import alfheim.api.*
+import alfheim.api.AlfheimAPI
 import net.minecraft.block.Block
 import net.minecraft.world.World
 import net.minecraft.world.gen.feature.WorldGenAbstractTree

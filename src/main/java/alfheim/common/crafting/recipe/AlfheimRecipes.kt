@@ -41,7 +41,6 @@ import alfheim.api.lib.LibOreDict.SPLINTERS_THUNDERWOOD
 import alfheim.api.lib.LibOreDict.TWIG_NETHERWOOD
 import alfheim.api.lib.LibOreDict.TWIG_THUNDERWOOD
 import alfheim.api.lib.LibOreDict.WOOD
-import alfheim.common.block.AlfheimBlocks
 import alfheim.common.block.AlfheimBlocks.airyVirus
 import alfheim.common.block.AlfheimBlocks.alfStorage
 import alfheim.common.block.AlfheimBlocks.alfheimPortal
@@ -266,8 +265,8 @@ import alfheim.common.item.material.ElvenFoodMetas.*
 import alfheim.common.item.material.ElvenResourcesMetas.*
 import cpw.mods.fml.common.registry.GameRegistry.*
 import net.minecraft.block.Block
-import net.minecraft.init.*
 import net.minecraft.init.Blocks.*
+import net.minecraft.init.Items
 import net.minecraft.init.Items.*
 import net.minecraft.item.*
 import net.minecraft.item.crafting.*
@@ -276,14 +275,12 @@ import net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE
 import vazkii.botania.api.BotaniaAPI
 import vazkii.botania.api.recipe.*
 import vazkii.botania.common.Botania
-import vazkii.botania.common.block.ModBlocks
 import vazkii.botania.common.block.ModBlocks.*
 import vazkii.botania.common.block.ModFluffBlocks.*
 import vazkii.botania.common.block.tile.mana.TilePool
 import vazkii.botania.common.core.helper.ItemNBTHelper
 import vazkii.botania.common.crafting.*
 import vazkii.botania.common.crafting.ModCraftingRecipes.*
-import vazkii.botania.common.item.ModItems
 import vazkii.botania.common.item.ModItems.*
 import vazkii.botania.common.item.block.ItemBlockSpecialFlower
 import vazkii.botania.common.lib.LibBlockNames
@@ -297,7 +294,6 @@ import vazkii.botania.common.item.ModItems.quartz as manaquartz
 object AlfheimRecipes {
 	
 	lateinit var recipeElvorium: RecipeManaInfuser
-	lateinit var recipeInterCore: RecipeManaInfuser
 	lateinit var recipeMauftrium: RecipeManaInfuser
 	lateinit var recipeManaStone: RecipeManaInfuser
 	lateinit var recipeManaStoneGreater: RecipeManaInfuser
@@ -824,7 +820,7 @@ object AlfheimRecipes {
 						 'P', icePendant)
 		recipeNiflheimPendant = BotaniaAPI.getLatestAddedRecipe()
 		
-		addRecipe(ItemStack(AlfheimBlocks.rainbowFlowerFloating),
+		addRecipe(ItemStack(rainbowFlowerFloating),
 		          "F", "S", "D",
 		          'F', ItemStack(rainbowGrass, 1, 3),
 		          'S', ItemStack(grassSeeds),
@@ -2145,8 +2141,8 @@ object AlfheimRecipes {
 		addShapelessOreDictRecipe(ItemStack(lightRelay, 1, 3), lightRelay, animatedTorch)
 		recipeLuminizer3 = BotaniaAPI.getLatestAddedRecipe()
 		
-		addShapelessRecipe(ItemStack(brown_mushroom), mushroom)
-		addShapelessRecipe(ItemStack(red_mushroom), mushroom)
+		addShapelessRecipe(ItemStack(brown_mushroom), ItemStack(mushroom, 1, 12))
+		addShapelessRecipe(ItemStack(red_mushroom), ItemStack(mushroom, 1, 14))
 		
 		addShapelessRecipe(NiflheimBlockMetas.COBBLESTONE.stack, NiflheimBlockMetas.STONE.stack)
 		
@@ -2168,8 +2164,6 @@ object AlfheimRecipes {
 			if (i != 2)
 				addSmelting(ItemStack(altWood1, 1, i), ItemStack(coal, 1, 1), 0.15f)
 		}
-		
-		addSmelting(lit_redstone_ore, ItemStack(redstone), 0.7f)
 		
 		addSmelting(irisWood0, ItemStack(coal, 1, 1), 0.15f)
 		addSmelting(irisWood1, ItemStack(coal, 1, 1), 0.15f)
@@ -2199,14 +2193,14 @@ object AlfheimRecipes {
 	}
 	
 	private fun registerManaInfusionRecipes() {
-		recipeInterCore = addInfuserRecipe(InterdimensionalGatewayCore.stack,
-		                                   TilePool.MAX_MANA,
-		                                   MANA_PEARL,
-		                                   ELVORIUM_INGOT,
-		                                   ManaInfusionCore.stack,
-		                                   RUNE[8], // mana
-		                                   TERRA_STEEL,
-		                                   DYES[16])
+//		addInfuserRecipe(InterdimensionalGatewayCore.stack,
+//		                                   TilePool.MAX_MANA,
+//		                                   MANA_PEARL,
+//		                                   ELVORIUM_INGOT,
+//		                                   ManaInfusionCore.stack,
+//		                                   RUNE[8], // mana
+//		                                   TERRA_STEEL,
+//		                                   DYES[16])
 		
 		recipeTerrasteel = addInfuserRecipe(ItemStack(manaResource, 1, 4),
 											TilePool.MAX_MANA / 2,
@@ -2432,6 +2426,8 @@ object AlfheimRecipes {
 		RecipeSorter.register("${ModInfo.MODID}:aesirCloak", RecipeAesirCloak::class.java, RecipeSorter.Category.SHAPED, "")
 		addRecipe(RecipeLensSplit)
 		RecipeSorter.register("${ModInfo.MODID}:lenssplit", RecipeLensSplit::class.java, RecipeSorter.Category.SHAPELESS, "")
+		addRecipe(RecipeSpecialFloatingFlower)
+		RecipeSorter.register("${ModInfo.MODID}:floatingSpecialFlower", RecipeSpecialFloatingFlower::class.java, RecipeSorter.Category.SHAPELESS, "")
 	}
 	
 	private fun banRetrades() {

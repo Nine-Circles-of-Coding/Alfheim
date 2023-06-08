@@ -4,13 +4,12 @@ import alexsocol.asjlib.*
 import alexsocol.asjlib.security.InteractionSecurity
 import alfheim.api.ModInfo
 import alfheim.client.core.helper.IconHelper
+import alfheim.client.model.armor.ModelSnowArmor
 import alfheim.common.core.handler.SheerColdHandler
 import alfheim.common.core.handler.ragnarok.RagnarokHandler
-import alfheim.common.item.AlfheimItems
-import alfheim.common.item.material.ElvenResourcesMetas
-import alfheim.client.model.armor.ModelSnowArmor
 import alfheim.common.core.util.AlfheimTab
-import alfheim.common.item.material.EventResourcesMetas
+import alfheim.common.item.AlfheimItems
+import alfheim.common.item.material.*
 import baubles.common.lib.PlayerHandler
 import cpw.mods.fml.common.eventhandler.*
 import cpw.mods.fml.relauncher.*

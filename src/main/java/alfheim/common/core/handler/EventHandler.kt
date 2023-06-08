@@ -5,7 +5,6 @@ package alfheim.common.core.handler
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
 import alexsocol.patcher.event.*
-import alfheim.AlfheimCore
 import alfheim.api.entity.*
 import alfheim.api.spell.SpellBase
 import alfheim.client.render.world.VisualEffectHandlerClient
@@ -21,14 +20,14 @@ import alfheim.common.item.AlfheimItems
 import alfheim.common.item.equipment.tool.ItemSoulSword
 import alfheim.common.item.relic.ItemTankMask
 import alfheim.common.network.*
-import alfheim.common.network.Message2d.M2d
+import alfheim.common.network.packet.*
 import alfheim.common.spell.darkness.SpellDecay
 import cpw.mods.fml.common.IFuelHandler
 import cpw.mods.fml.common.eventhandler.*
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent
 import cpw.mods.fml.common.gameevent.TickEvent.*
 import net.minecraft.enchantment.*
-import net.minecraft.entity.*
+import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.entity.monster.IMob
 import net.minecraft.entity.player.*
@@ -73,11 +72,11 @@ object EventHandler {
 		}
 		
 		if (player is EntityPlayerMP) {
-			AlfheimCore.network.sendTo(Message2d(M2d.MODES, (if (AlfheimConfigHandler.enableElvenStory) 1 else 0).D, (if (AlfheimConfigHandler.enableMMO) 1 else 0).D), player)
+			NetworkService.sendTo(Message2d(M2d.MODES, (if (AlfheimConfigHandler.enableElvenStory) 1 else 0).D, (if (AlfheimConfigHandler.enableMMO) 1 else 0).D), player)
 			CardinalSystem.transfer(player)
 			if (AlfheimConfigHandler.enableElvenStory) {
-				AlfheimCore.network.sendTo(Message1d(Message1d.M1d.ELVEN_FLIGHT_MAX, ElvenFlightHelper.max), player)
-				AlfheimCore.network.sendTo(MessageNI(MessageNI.Mni.WINGS_BL, *AlfheimConfigHandler.wingsBlackList), player)
+				NetworkService.sendTo(Message1d(M1d.ELVEN_FLIGHT_MAX, ElvenFlightHelper.max), player)
+				NetworkService.sendTo(MessageNI(Mni.WINGS_BL, *AlfheimConfigHandler.wingsBlackList), player)
 				if (!player.hasAchievement(AlfheimAchievements.alfheim) && player.dimension != AlfheimConfigHandler.dimensionIDAlfheim) {
 					val (x, y, z) = MinecraftServer.getServer().worldServerForDimension(AlfheimConfigHandler.dimensionIDAlfheim).provider.spawnPoint
 					ASJUtilities.sendToDimensionWithoutPortal(player, AlfheimConfigHandler.dimensionIDAlfheim, x + 0.5, y + 0.5, z + 0.5)
@@ -92,7 +91,7 @@ object EventHandler {
 				}
 				
 				if (AlfheimConfigHandler.enableMMO)
-					AlfheimCore.network.sendTo(Message1d(Message1d.M1d.DEATH_TIMER, AlfheimConfigHandler.deathScreenAddTime.D), player)
+					NetworkService.sendTo(Message1d(M1d.DEATH_TIMER, AlfheimConfigHandler.deathScreenAddTime.D), player)
 			}
 		}
 	}
@@ -107,7 +106,7 @@ object EventHandler {
 		
 		val player = e.entity as? EntityPlayerMP ?: return
 		val seed = player.worldObj.seed
-		AlfheimCore.network.sendTo(Message1l(Message1l.M1l.SEED, seed), player)
+		NetworkService.sendTo(Message1l(M1l.SEED, seed), player)
 	}
 	
 	// additional checks in AlfheimHookHandler#noDupe<Pre/Post>
@@ -241,7 +240,7 @@ object EventHandler {
 							if (e.source.damageType == DamageSource.wither.damageType && target.worldObj.rand.nextBoolean()) return@nl
 							pe.amplifier = 0
 							pe.duration = 100
-							if (ASJUtilities.isServer) AlfheimCore.network.sendToAll(MessageEffect(target.entityId, pe.potionID, pe.duration, pe.amplifier))
+							if (ASJUtilities.isServer) NetworkService.sendToAll(MessageEffect(target.entityId, pe.potionID, pe.duration, pe.amplifier))
 							e.isCanceled = true
 							return
 						}
@@ -266,7 +265,7 @@ object EventHandler {
 			if (pe != null && pe.duration > 0 && e.source.isMagical && !e.source.isDamageAbsolute) {
 				e.isCanceled = true
 				if (--pe.amplifier <= 0) pe.duration = 0 // target.removePotionEffect(AlfheimRegistry.butterShield.id) <- ConcurrentModificationException :(
-				if (ASJUtilities.isServer) AlfheimCore.network.sendToAll(MessageEffect(target.entityId, pe.potionID, pe.duration, pe.amplifier))
+				if (ASJUtilities.isServer) NetworkService.sendToAll(MessageEffect(target.entityId, pe.potionID, pe.duration, pe.amplifier))
 				return
 			}
 			
@@ -277,7 +276,7 @@ object EventHandler {
 				e.ammount /= 2f
 				pe.duration -= (e.ammount * 20).I
 				val dur = max(pe.duration, 0)
-				if (ASJUtilities.isServer) AlfheimCore.network.sendToAll(MessageEffect(target.entityId, pe.potionID, dur, pe.amplifier))
+				if (ASJUtilities.isServer) NetworkService.sendToAll(MessageEffect(target.entityId, pe.potionID, dur, pe.amplifier))
 			}
 		}
 	}
@@ -369,7 +368,7 @@ object EventHandler {
 	
 	@SubscribeEvent
 	fun onNewPotionEffect(e: LivingPotionEvent.Add.Post) {
-		if (ASJUtilities.isServer) AlfheimCore.network.sendToAll(MessageEffect(e.entityLiving.entityId, e.effect.potionID, e.effect.duration, e.effect.amplifier, false, 1))
+		if (ASJUtilities.isServer) NetworkService.sendToAll(MessageEffect(e.entityLiving.entityId, e.effect.potionID, e.effect.duration, e.effect.amplifier, false, 1))
 		
 		onlyOneStoneEffect(e)
 	}
@@ -388,12 +387,12 @@ object EventHandler {
 	
 	@SubscribeEvent
 	fun onChangedPotionEffect(e: LivingPotionEvent.Change.Post) {
-		if (ASJUtilities.isServer) AlfheimCore.network.sendToAll(MessageEffect(e.entityLiving.entityId, e.effect.potionID, e.effect.duration, e.effect.amplifier, e.update, 0))
+		if (ASJUtilities.isServer) NetworkService.sendToAll(MessageEffect(e.entityLiving.entityId, e.effect.potionID, e.effect.duration, e.effect.amplifier, e.update, 0))
 	}
 	
 	@SubscribeEvent
 	fun onFinishedPotionEffect(e: LivingPotionEvent.Remove.Post) {
-		if (ASJUtilities.isServer) AlfheimCore.network.sendToAll(MessageEffect(e.entityLiving.entityId, e.effect.potionID, e.effect.duration, e.effect.amplifier, false, -1))
+		if (ASJUtilities.isServer) NetworkService.sendToAll(MessageEffect(e.entityLiving.entityId, e.effect.potionID, e.effect.duration, e.effect.amplifier, false, -1))
 	}
 	
 //	@SubscribeEvent

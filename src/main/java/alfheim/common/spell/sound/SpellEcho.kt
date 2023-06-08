@@ -2,12 +2,12 @@ package alfheim.common.spell.sound
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
-import alfheim.AlfheimCore
 import alfheim.api.entity.EnumRace
 import alfheim.api.spell.SpellBase
 import alfheim.client.render.world.VisualEffectHandlerClient.VisualEffects
 import alfheim.common.core.handler.VisualEffectHandler
-import alfheim.common.network.MessageVisualEffect
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.MessageVisualEffect
 import net.minecraft.entity.*
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.entity.monster.IMob
@@ -34,7 +34,7 @@ object SpellEcho: SpellBase("echo", EnumRace.POOKA, 4000, 1500, 5) {
 			}
 		}
 		
-		if (caster is EntityPlayerMP) AlfheimCore.network.sendTo(MessageVisualEffect(VisualEffects.ECHO.ordinal, caster.posX, caster.posY, caster.posZ), caster)
+		if (caster is EntityPlayerMP) NetworkService.sendTo(MessageVisualEffect(VisualEffects.ECHO.ordinal, caster.posX, caster.posY, caster.posZ), caster)
 		return result
 	}
 }

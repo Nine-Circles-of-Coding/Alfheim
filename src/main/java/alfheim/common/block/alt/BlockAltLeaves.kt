@@ -6,24 +6,21 @@ import alfheim.api.lib.LibOreDict.ALT_TYPES
 import alfheim.client.core.helper.IconHelper
 import alfheim.common.block.AlfheimBlocks
 import alfheim.common.block.base.BlockLeavesMod
-import alfheim.common.core.handler.CardinalSystem
-import alfheim.common.item.AlfheimItems
-import alfheim.common.item.block.*
+import alfheim.common.core.handler.AlfheimConfigHandler
+import alfheim.common.item.block.ItemUniqueSubtypedBlockMod
 import alfheim.common.item.material.ElvenFoodMetas
 import alfheim.common.lexicon.AlfheimLexiconData
 import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.Entity
-import net.minecraft.entity.player.*
-import net.minecraft.init.Items
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.*
 import net.minecraft.util.IIcon
 import net.minecraft.world.*
 import net.minecraftforge.common.util.ForgeDirection
 import vazkii.botania.api.lexicon.LexiconEntry
 import vazkii.botania.common.Botania
-import vazkii.botania.common.item.ModItems
 import java.util.*
 
 class BlockAltLeaves: BlockLeavesMod(), IGlowingLayerBlock {
@@ -95,7 +92,7 @@ class BlockAltLeaves: BlockLeavesMod(), IGlowingLayerBlock {
 	
 	override fun isLeaves(world: IBlockAccess, x: Int, y: Int, z: Int) = if (world.getBlockMetadata(x, y, z) % 8 == yggMeta) false else super.isLeaves(world, x, y, z)
 	
-	override fun getEntry(world: World, x: Int, y: Int, z: Int, player: EntityPlayer?, lexicon: ItemStack?): LexiconEntry? {
+	override fun getEntry(world: World, x: Int, y: Int, z: Int, player: EntityPlayer?, lexicon: ItemStack?): LexiconEntry {
 		val meta = world.getBlockMetadata(x, y, z)
 		return when {
 			meta % 8 == yggMeta + 1 -> AlfheimLexiconData.worldgen
@@ -109,7 +106,7 @@ class BlockAltLeaves: BlockLeavesMod(), IGlowingLayerBlock {
 	override fun getGlowIcon(side: Int, meta: Int) = if (meta % 8 == 7) glowIcon else null
 	
 	override fun randomDisplayTick(world: World, x: Int, y: Int, z: Int, rand: Random) {
-		if (world.getBlockMetadata(x, y, z) % 8 == 7)
+		if (!AlfheimConfigHandler.increasedSpiritsRange && world.getBlockMetadata(x, y, z) % 8 == 7)
 			spawnRandomSpirit(world, x, y, z, rand, 0f, rand.nextFloat() * 0.25f + 0.5f, 1f)
 	}
 	
@@ -121,21 +118,25 @@ class BlockAltLeaves: BlockLeavesMod(), IGlowingLayerBlock {
 		val yggMeta = ALT_TYPES.indexOf("Wisdom")
 		
 		fun spawnRandomSpirit(world: World, x: Int, y: Int, z: Int, rand: Random, r: Float, g: Float, b: Float) {
-			if (world.worldTime % 24000 in 13333..22666 && rand.nextInt(512) == 0) {
-				val i = Math.random()
-				val j = Math.random()
-				val k = Math.random()
-				val s = Math.random()
-				val m = Math.random()
-				val n = Math.random()
-				val o = Math.random()
-				val l = Math.random()
-				
-				Botania.proxy.setWispFXDistanceLimit(false)
-				for (q in 0..4)
-					Botania.proxy.wispFX(world, x + i, y + j * 5 + 1, z + k, r, g, b, s.F * 0.25f + 0.1f, m.F * 0.1f - 0.05f, n.F * 0.01F, o.F * 0.1f - 0.05f, l.F * 20f + 5f)
-				Botania.proxy.setWispFXDistanceLimit(true)
-			}
+			if (world.worldTime % 24000 !in 13333..22666 || rand.nextInt(512) != 0) return
+			
+			val i = Math.random()
+			val j = Math.random()
+			val k = Math.random()
+			val s = Math.random()
+			val m = Math.random()
+			val n = Math.random()
+			val o = Math.random()
+			val l = Math.random()
+			
+			Botania.proxy.setWispFXDistanceLimit(false)
+			for (q in 0..4)
+				Botania.proxy.wispFX(world, x + i, y + j * 5 + 1, z + k, r, g, b, s.F * 0.25f + 0.1f, m.F * 0.1f - 0.05f, n.F * 0.01F, o.F * 0.1f - 0.05f, l.F * 20f + 5f)
+			
+			if (AlfheimConfigHandler.increasedSpiritsRange) // not so good in close range
+				Botania.proxy.wispFX(world, x + i, y + j * 5 + 1, z + k, r / 2, g / 2, b / 2, s.F * 0.25f + 3f, m.F * 0.1f - 0.05f, n.F * 0.01F, o.F * 0.1f - 0.05f, l.F * 20f + 5f)
+			
+			Botania.proxy.setWispFXDistanceLimit(true)
 		}
 	}
 }

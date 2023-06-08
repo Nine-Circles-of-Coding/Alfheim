@@ -9,7 +9,7 @@ import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.projectile.EntityThrowable
 import net.minecraft.item.ItemStack
-import net.minecraft.util.*
+import net.minecraft.util.DamageSource
 import vazkii.botania.api.internal.IManaBurst
 import vazkii.botania.api.mana.BurstProperties
 import vazkii.botania.common.entity.EntityManaBurst

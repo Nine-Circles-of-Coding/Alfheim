@@ -1,9 +1,9 @@
 package alfheim.common.core.helper
 
 import alexsocol.asjlib.*
-import alfheim.AlfheimCore
 import alfheim.common.core.handler.AlfheimConfigHandler
-import alfheim.common.network.MessageContributor
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.MessageContributor
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.gameevent.*
 import net.minecraft.entity.player.*
@@ -78,18 +78,20 @@ object ContributorsPrivacyHelper {
 	
 	fun isCorrect(user: String, contributor: String) = contributors[contributor] == user
 	
-	val authTimeout = HashMap<String, Int>()
+	val authTimeout = WeakHashMap<EntityPlayerMP, Int>()
 	
 	@SubscribeEvent
-	fun onServerTick(e: TickEvent.ServerTickEvent) {
-		for (name in authTimeout.keys) {
-			val timeLeft = authTimeout[name] ?: continue
-			if (timeLeft == -1) continue
+	fun onPlayerTick(e: TickEvent.PlayerTickEvent) {
+		if (ASJUtilities.isClient || e.phase != TickEvent.Phase.START) return
+		
+		val player = e.player as EntityPlayerMP
+		authTimeout[player]?.let {
+			val time = it - 1
 			
-			authTimeout[name] = timeLeft - 1
-			// no response in N seconds - kick
-			if (timeLeft == 0)
-				MinecraftServer.getServer()?.configurationManager?.func_152612_a(name)?.playerNetServerHandler?.kickPlayerFromServer("Authentication request timed out")
+			if (time < 0)
+				player.playerNetServerHandler.kickPlayerFromServer("Authentication request timed out")
+			else
+				authTimeout[player] = time
 		}
 	}
 	
@@ -98,17 +100,17 @@ object ContributorsPrivacyHelper {
 		val player = e.player as? EntityPlayerMP ?: return
 		
 		if (MinecraftServer.getServer()?.isSinglePlayer == true) return
-		
-		AlfheimCore.network.sendTo(MessageContributor(isRequest = true), player)
+
+		NetworkService.sendTo(MessageContributor(isRequest = true), player)
 		
 		if (isRegistered(player.commandSenderName))
-			authTimeout[player.commandSenderName] = AlfheimConfigHandler.authTimeout
+			authTimeout[player] = AlfheimConfigHandler.authTimeout
 	}
 	
 	@SubscribeEvent
 	fun onPlayerLogout(e: PlayerEvent.PlayerLoggedOutEvent) {
 		if (MinecraftServer.getServer()?.isSinglePlayer == true) return
-		
+
 		contributors.values.removeAll { it == e.player.commandSenderName }
 	}
 }

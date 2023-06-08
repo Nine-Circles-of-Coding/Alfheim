@@ -1,11 +1,11 @@
 package alfheim.client.model.entity
 
 import alexsocol.asjlib.*
-import alexsocol.asjlib.math.*
+import alexsocol.asjlib.math.Vector3
 import alfheim.AlfheimCore
 import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.entity.EntityPrimalMark
-import alfheim.common.entity.boss.primal.*
+import alfheim.common.entity.boss.primal.EntityPrimalBoss
 import net.minecraft.client.model.*
 import net.minecraft.entity.Entity
 import net.minecraft.util.MathHelper
@@ -115,6 +115,8 @@ abstract class ModelEntityPrimalBoss: ModelBiped() {
 					VisualEffectHandlerClient.v.set(Math.random() - 0.5, 0.0, Math.random() - 0.5).normalize().mul(Math.random() * 1.5 + 0.5).set(VisualEffectHandlerClient.v.x, Math.random() * 0.25, VisualEffectHandlerClient.v.z)
 					mc.theWorld.spawnParticle("blockdust_${ getSuperSmashParticlesBlockIDs().random(entity.rng) }_0", x, y + 0.5, z, VisualEffectHandlerClient.v.x, VisualEffectHandlerClient.v.y, VisualEffectHandlerClient.v.z)
 				}
+				
+				entity.ultAnimationTicks++
 				
 				EntityPrimalMark(mc.theWorld, x, y, z, entity).apply {
 					isSpecial = true

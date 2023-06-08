@@ -3,7 +3,7 @@ package alfheim.common.block.tile
 import alexsocol.asjlib.*
 import alexsocol.asjlib.extendables.block.ASJTile
 import alfheim.common.block.BlockFunnel
-import net.minecraft.block.*
+import net.minecraft.block.BlockHopper
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.entity.RenderItem
@@ -12,7 +12,7 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.inventory.*
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.*
-import net.minecraft.tileentity.*
+import net.minecraft.tileentity.IHopper
 import net.minecraft.util.Facing
 import net.minecraft.world.World
 import org.lwjgl.opengl.GL11
@@ -426,6 +426,5 @@ class TileLivingwoodFunnel: ASJTile(), IHopper {
 	override fun openInventory() = Unit
 	override fun closeInventory() = Unit
 	override fun getInventoryStackLimit() = 1
-	override fun canUpdate() = true
 	override fun isItemValidForSlot(par1: Int, par2ItemStack: ItemStack) = true
 }

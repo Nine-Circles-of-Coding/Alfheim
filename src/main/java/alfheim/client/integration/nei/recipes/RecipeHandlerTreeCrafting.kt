@@ -16,7 +16,6 @@ import vazkii.botania.client.core.handler.HUDHandler
 import vazkii.botania.client.lib.LibResources
 import vazkii.botania.common.block.tile.mana.TilePool
 import java.awt.Rectangle
-import java.util.*
 import kotlin.math.*
 
 open class RecipeHandlerTreeCrafting: TemplateRecipeHandler() {

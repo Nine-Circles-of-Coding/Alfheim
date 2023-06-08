@@ -4,7 +4,7 @@ import alfheim.client.core.handler.CardinalSystemClient
 import alfheim.common.core.handler.CardinalSystem
 import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.inventory.*
-import net.minecraft.item.*
+import net.minecraft.item.ItemStack
 import net.minecraft.world.World
 import net.minecraftforge.oredict.ShapedOreRecipe
 

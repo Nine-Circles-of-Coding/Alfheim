@@ -1,17 +1,15 @@
 package alfheim.common.achievement
 
-import alexsocol.asjlib.*
+import alexsocol.asjlib.capitalized
 import alfheim.api.ModInfo
 import alfheim.common.block.AlfheimBlocks
 import alfheim.common.core.handler.AlfheimAchievementHandler
 import alfheim.common.item.AlfheimItems
 import alfheim.common.item.material.ElvenResourcesMetas
-import cpw.mods.fml.relauncher.*
 import net.minecraft.block.Block
 import net.minecraft.init.*
 import net.minecraft.item.*
 import net.minecraft.stats.Achievement
-import net.minecraft.util.*
 import net.minecraftforge.common.AchievementPage
 import vazkii.botania.api.item.IRelic
 import vazkii.botania.common.item.ModItems

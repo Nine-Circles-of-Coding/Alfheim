@@ -2,21 +2,18 @@ package alfheim.common.world.dim.alfheim.customgens
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
-import alfheim.AlfheimCore
 import alfheim.api.ModInfo
 import alfheim.client.render.world.VisualEffectHandlerClient
 import alfheim.common.block.BlockNiflheimPortal
 import alfheim.common.core.handler.*
 import cpw.mods.fml.common.eventhandler.*
 import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent
-import net.minecraft.block.Block
-import net.minecraft.block.BlockBush
+import net.minecraft.block.*
 import net.minecraft.init.Blocks
-import net.minecraft.world.*
+import net.minecraft.world.World
 import net.minecraftforge.event.terraingen.PopulateChunkEvent
 import ru.vamig.worldengine.additions.*
-import java.awt.Color
-import java.util.Random
+import java.util.*
 import kotlin.math.min
 
 object NiflheimLocationGenerator: WE_CreateChunkGen() {

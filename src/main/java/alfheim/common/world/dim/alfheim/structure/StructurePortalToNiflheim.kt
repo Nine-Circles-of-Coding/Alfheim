@@ -2,9 +2,7 @@ package alfheim.common.world.dim.alfheim.structure
 
 import alexsocol.asjlib.*
 import alfheim.api.ModInfo
-import alfheim.common.block.BlockNiflheimPortal
 import alfheim.common.world.dim.alfheim.customgens.NiflheimLocationGenerator
-import net.minecraft.util.ChunkCoordinates
 import net.minecraft.world.World
 
 object StructurePortalToNiflheim {

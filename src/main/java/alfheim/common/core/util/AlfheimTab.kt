@@ -178,6 +178,11 @@ import alfheim.common.item.AlfheimItems.creativeReachPendant
 import alfheim.common.item.AlfheimItems.crescentMoonAmulet
 import alfheim.common.item.AlfheimItems.daolos
 import alfheim.common.item.AlfheimItems.deathSeed
+import alfheim.common.item.AlfheimItems.discFenrir
+import alfheim.common.item.AlfheimItems.discFlugel
+import alfheim.common.item.AlfheimItems.discFlugelUltra
+import alfheim.common.item.AlfheimItems.discSurtr
+import alfheim.common.item.AlfheimItems.discThrym
 import alfheim.common.item.AlfheimItems.dodgeRing
 import alfheim.common.item.AlfheimItems.elementalBoots
 import alfheim.common.item.AlfheimItems.elementalChestplate
@@ -198,8 +203,8 @@ import alfheim.common.item.AlfheimItems.fenrirChestplate
 import alfheim.common.item.AlfheimItems.fenrirClaws
 import alfheim.common.item.AlfheimItems.fenrirHelmet
 import alfheim.common.item.AlfheimItems.fenrirLeggings
+import alfheim.common.item.AlfheimItems.fenrirLoot
 import alfheim.common.item.AlfheimItems.fireGrenade
-import alfheim.common.item.AlfheimItems.flugelDisc
 import alfheim.common.item.AlfheimItems.flugelHead
 import alfheim.common.item.AlfheimItems.flugelSoul
 import alfheim.common.item.AlfheimItems.gaiaSlayer
@@ -345,7 +350,12 @@ object AlfheimTab: CreativeTabs("Alfheim") {
 		addItem(ModItems.ancientWill, 6)
 		addItem(deathSeed)
 		addItem(flugelHead)
-		addItem(flugelDisc)
+		addItem(discFlugel)
+		addItem(discFlugelUltra)
+		addItem(discThrym)
+		addItem(discSurtr)
+		addItem(discFenrir)
+		addItem(fenrirLoot)
 		
 		addItem(priestCloak)
 		addItem(aesirCloak)

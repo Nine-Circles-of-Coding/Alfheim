@@ -1,12 +1,12 @@
 package alfheim.common.spell.water
 
 import alexsocol.asjlib.PotionEffectU
-import alfheim.AlfheimCore
 import alfheim.api.entity.EnumRace
 import alfheim.api.spell.SpellBase
 import alfheim.client.render.world.VisualEffectHandlerClient.VisualEffects
 import alfheim.common.core.handler.AlfheimConfigHandler
-import alfheim.common.network.MessageVisualEffect
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.MessageVisualEffect
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayerMP
 
@@ -22,7 +22,7 @@ object SpellIceLens: SpellBase("icelens", EnumRace.UNDINE, 6000, 1200, 30) {
 		if (result == SpellCastResult.OK) {
 			caster.addPotionEffect(PotionEffectU(AlfheimConfigHandler.potionIDIceLens, duration))
 			
-			if (caster is EntityPlayerMP) AlfheimCore.network.sendTo(MessageVisualEffect(VisualEffects.ICELENS.ordinal), caster)
+			if (caster is EntityPlayerMP) NetworkService.sendTo(MessageVisualEffect(VisualEffects.ICELENS.ordinal), caster)
 		}
 		return result
 	}

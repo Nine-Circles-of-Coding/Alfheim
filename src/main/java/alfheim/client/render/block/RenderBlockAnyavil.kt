@@ -1,7 +1,6 @@
 package alfheim.client.render.block
 
 import alexsocol.asjlib.glScaled
-import alexsocol.asjlib.render.ASJRenderHelper
 import alfheim.api.lib.LibRenderIDs
 import alfheim.common.block.tile.TileAnyavil
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler

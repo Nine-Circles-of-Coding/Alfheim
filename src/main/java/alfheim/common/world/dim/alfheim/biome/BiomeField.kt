@@ -3,7 +3,6 @@ package alfheim.common.world.dim.alfheim.biome
 import alfheim.AlfheimCore
 import alfheim.common.block.AlfheimBlocks
 import alfheim.common.core.handler.AlfheimConfigHandler
-import alfheim.common.entity.*
 import alfheim.common.world.dim.alfheim.customgens.*
 import alfheim.common.world.dim.alfheim.structure.*
 import net.minecraft.init.Blocks

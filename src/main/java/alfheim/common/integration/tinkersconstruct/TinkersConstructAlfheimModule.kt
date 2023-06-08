@@ -157,7 +157,6 @@ object TraitFairySpawner {
 		val tool = stack.item as? IModifyable ?: return false
 		val tag = ItemNBTHelper.getCompound(stack, tool.baseTagName, true) ?: return false
 		val headMaterial = tag.getInteger("Head")
-		if (headMaterial == AlfheimConfigHandler.materialIDs[ELEMENTIUM]) return true
-		return false
+		return headMaterial == AlfheimConfigHandler.materialIDs[ELEMENTIUM]
 	}
 }

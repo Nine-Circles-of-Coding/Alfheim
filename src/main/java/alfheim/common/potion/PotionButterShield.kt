@@ -7,7 +7,6 @@ import alfheim.api.lib.LibResourceLocations
 import alfheim.common.core.handler.AlfheimConfigHandler
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import net.minecraft.entity.EntityLivingBase
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import java.util.*
 import kotlin.math.max

@@ -121,6 +121,7 @@ object AlfheimRegistry {
 		registerEntity(EntityVoidCreeper::class.java, "VoidCreeper", nextEntityID, 0xcc11d3, 0xfb9bff)
 		
 		registerEntity(EntityBlackBolt::class.java, "BlackBolt", nextEntityID)
+		registerEntity(EntityBlock::class.java, "Block", nextEntityID)
 		registerEntity(EntityCharge::class.java, "Charge", nextEntityID)
 		registerEntity(EntityEarthquake::class.java, "Earthquake", nextEntityID)
 		registerEntity(EntityEarthquakeFracture::class.java, "EarthquakeFracture", nextEntityID)
@@ -422,7 +423,7 @@ object AlfheimRegistry {
 		addPink(ItemStack(AlfheimItems.elementalLeggings), 63)
 		addPink(ElvenResourcesMetas.ManaInfusionCore.stack, 9)
 		addPink(ElvenResourcesMetas.ElvenWeed.stack, 8)
-		addPink(ItemStack(AlfheimItems.flugelDisc), 13)
+		addPink(ItemStack(AlfheimItems.discFlugel), 13)
 		addPink(ItemStack(AlfheimItems.flugelHead), 5)
 		for (i in 0..6) addPink(ItemStack(AlfheimItems.hyperBucket, 1, i), 27)
 		addPink(ItemStack(AlfheimItems.irisSeeds, 1, 6), 2)

@@ -22,6 +22,7 @@ import alfheim.common.core.handler.AlfheimConfigHandler.dimensionIDAlfheim
 import alfheim.common.core.handler.AlfheimConfigHandler.dimensionIDDomains
 import alfheim.common.core.handler.AlfheimConfigHandler.dimensionIDHelheim
 import alfheim.common.core.handler.AlfheimConfigHandler.dimensionIDNiflheim
+import alfheim.common.core.handler.AlfheimConfigHandler.increasedSpiritsRange
 import alfheim.common.core.handler.HilarityHandler.AttributionNameChecker.getCurrentNickname
 import alfheim.common.core.handler.SheerColdHandler.cold
 import alfheim.common.core.handler.ragnarok.RagnarokHandler.MAX_SUMMER_TICKS
@@ -52,6 +53,7 @@ import gloomyfolken.hooklib.asm.ReturnCondition.*
 import net.minecraft.block.*
 import net.minecraft.block.material.Material
 import net.minecraft.client.gui.*
+import net.minecraft.client.multiplayer.WorldClient
 import net.minecraft.client.renderer.*
 import net.minecraft.client.renderer.texture.*
 import net.minecraft.command.*
@@ -78,8 +80,8 @@ import net.minecraft.world.biome.*
 import net.minecraft.world.chunk.Chunk
 import net.minecraft.world.gen.structure.*
 import net.minecraftforge.common.util.ForgeDirection
+import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.fluids.IFluidBlock
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import ru.vamig.worldengine.*
 import travellersgear.api.TravellersGearAPI
@@ -117,6 +119,7 @@ import vazkii.botania.common.entity.*
 import vazkii.botania.common.item.*
 import vazkii.botania.common.item.block.ItemBlockSpecialFlower
 import vazkii.botania.common.item.equipment.bauble.ItemBauble
+import vazkii.botania.common.item.equipment.tool.ToolCommons
 import vazkii.botania.common.item.lens.LensFirework
 import vazkii.botania.common.item.material.ItemManaResource
 import vazkii.botania.common.item.relic.*
@@ -125,7 +128,7 @@ import vazkii.botania.common.lib.LibBlockNames
 import java.awt.Color
 import java.util.*
 import java.util.regex.*
-import kotlin.math.sin
+import kotlin.math.*
 
 @Suppress("UNUSED_PARAMETER", "NAME_SHADOWING", "unused", "FunctionName")
 object AlfheimHookHandler {
@@ -153,11 +156,7 @@ object AlfheimHookHandler {
 	
 	@JvmStatic
 	@Hook(returnCondition = ON_TRUE)
-	fun createBonusChest(world: WorldServer): Boolean {
-		if (!AlfheimConfigHandler.enableElvenStory) return false
-		
-		return true
-	}
+	fun createBonusChest(world: WorldServer) = AlfheimConfigHandler.enableElvenStory
 	
 	@JvmStatic
 	@Hook(injectOnExit = true, targetMethod = "<init>")
@@ -235,21 +234,24 @@ object AlfheimHookHandler {
 	@JvmStatic
 	@Hook(returnCondition = ON_TRUE)
 	fun transferPlayerToDimension(scm: ServerConfigurationManager, player: EntityPlayerMP, dimTo: Int, teleporter: Teleporter?): Boolean {
+		val let = false
+		val block = true
+		
 		if (allowtp) {
 			allowtp = false
-			return false
+			return let
 		}
 		
-		if (player.capabilities.isCreativeMode) return false
-		if (dimTo == dimensionIDHelheim) return false
-		if (dimTo == dimensionIDDomains) return true // only with TileDomainLobby
+		if (player.capabilities.isCreativeMode) return let
+		if (dimTo == dimensionIDHelheim) return let
+		if (dimTo == dimensionIDDomains) return block // only with TileDomainLobby
 		
 		return when (player.dimension) {
 			dimensionIDDomains  -> dimTo != (player.entityData.getIntArray(TileDomainLobby.TAG_DOMAIN_ENTRANCE).getOrNull(3) ?: dimTo)
 			dimensionIDAlfheim  -> dimTo != 0 && dimTo != dimensionIDNiflheim
 			dimensionIDNiflheim -> dimTo != dimensionIDAlfheim
-			dimensionIDHelheim  -> true // no way out except TileRainbowManaFlame#exitPlayer
-			else                -> false
+			dimensionIDHelheim  -> block // no way out except TileRainbowManaFlame#exitPlayer
+			else                -> let
 		}
 	}
 	
@@ -631,16 +633,40 @@ object AlfheimHookHandler {
 	@JvmStatic
 	@Hook(injectOnExit = true)
 	fun updateTick(grass: BlockGrass, world: World, x: Int, y: Int, z: Int, random: Random) {
-		if (AlfheimCore.winter && world.provider.dimensionId == dimensionIDAlfheim && world.rand.nextInt(20) == 0 && !world.isRemote && world.getPrecipitationHeight(x, z) <= y) {
+		if (AlfheimCore.winter && world.provider.dimensionId == dimensionIDAlfheim && world.rand.nextInt(20) == 0 && !world.isRemote && world.getPrecipitationHeight(x, z) <= y)
 			world.setBlock(x, y, z, AlfheimBlocks.snowGrass)
-		}
 	}
 	
 	@JvmStatic
 	@Hook(createMethod = true, returnCondition = ALWAYS)
+	@SideOnly(CLIENT)
 	fun randomDisplayTick(grass: BlockGrass, world: World, x: Int, y: Int, z: Int, rand: Random) {
-		if (world.provider.dimensionId == dimensionIDAlfheim)
+		if (!increasedSpiritsRange && world.provider.dimensionId == dimensionIDAlfheim)
 			BlockAltLeaves.spawnRandomSpirit(world, x, y + 1 + rand.nextInt(5), z, rand, rand.nextFloat(), 1f, 0f)
+	}
+	
+	@JvmStatic
+	@Hook
+	@SideOnly(CLIENT)
+	fun doVoidFogParticles(world: WorldClient, i: Int, j: Int, k: Int) {
+		if (!increasedSpiritsRange || world.provider.dimensionId != dimensionIDAlfheim || world.worldTime % 24000 !in 13333..22666) return
+		
+		val random = Random()
+		val range = max(4, mc.gameSettings.renderDistanceChunks - 2) * 16
+		val max = (1312.5 * range - 20000).I
+		
+		for (l in 0..max) {
+			val x = i + ASJUtilities.randInBounds(-range, range, world.rand)
+			val y = j + ASJUtilities.randInBounds(-range, range, world.rand)
+			val z = k + ASJUtilities.randInBounds(-range, range, world.rand)
+			
+			val block = world.getBlock(x, y, z)
+			
+			if (block === Blocks.grass) {
+				BlockAltLeaves.spawnRandomSpirit(world, x, y + 1 + random.nextInt(5), z, random, random.nextFloat(), 1f, 0f)
+			} else if (block === AlfheimBlocks.altLeaves && world.getBlockMetadata(x, y, z) % 8 == 7)
+				BlockAltLeaves.spawnRandomSpirit(world, x, y, z, random, 0f, random.nextFloat() * 0.25f + 0.5f, 1f)
+		}
 	}
 	
 	@JvmStatic
@@ -792,6 +818,17 @@ object AlfheimHookHandler {
 		
 		if (player.worldObj.isRemote && player === mc.thePlayer)
 			ItemsRemainingRenderHandler.set(ItemStack(block, 1, meta), count)
+	}
+	
+	@JvmStatic
+	@Hook(returnCondition = ON_NOT_NULL)
+	fun onItemRightClick(item: ItemMissileRod, stack: ItemStack?, world: World?, player: EntityPlayer): ItemStack? {
+		if (player.commandSenderName.startsWith("Avatar-Clicker_")) {
+			item.onUsingTick(stack, player, 2)
+			return stack
+		}
+		
+		return null
 	}
 	
 	@JvmStatic
@@ -966,8 +1003,7 @@ object AlfheimHookHandler {
 	@Hook(returnCondition = ON_TRUE, injectOnExit = true, returnAnotherMethod = "sizeCheck")
 	fun matches(recipe: RecipeManaInfusion, stack: ItemStack, @ReturnValue matches: Boolean): Boolean {
 		if (!matches) return false
-		if (recipe.input !is ItemStack) return false
-		return true
+		return recipe.input is ItemStack
 	}
 	
 	@JvmStatic
@@ -1023,7 +1059,7 @@ object AlfheimHookHandler {
 	
 	@JvmStatic
 	@Hook
-	fun onBlockPlacedBy(subtile: SubTileEntity, world: World, x: Int, y: Int, z: Int, entity: EntityLivingBase, stack: ItemStack) {
+	fun onBlockPlacedBy(subtile: SubTileEntity, world: World?, x: Int, y: Int, z: Int, entity: EntityLivingBase?, stack: ItemStack?) {
 		if (subtile is SubTileDaybloom && subtile.isPrime) subtile.setPrimusPosition()
 	}
 	
@@ -1114,7 +1150,9 @@ object AlfheimHookHandler {
 			5 -> ++x
 		}
 		
-		if (!player.canPlayerEdit(x, y, z, side, stack) || !world.isAirBlock(x, y, z)) return false
+		val at = world.getBlock(x, y, z)
+		if (!player.canPlayerEdit(x, y, z, side, stack) || !at.isReplaceable(world, x, y, z)) return false
+		if (at === AlfheimBlocks.manaFluidBlock && world.getBlockMetadata(x, y, z) == 0) return false
 		
 		world.setBlock(x, y, z, AlfheimBlocks.manaFluidBlock)
 		stack.stackSize--
@@ -1753,5 +1791,34 @@ object AlfheimHookHandler {
 	@Hook(targetMethod = "<init>", injectOnExit = true)
 	fun spawnMuspelsonsInNetherFortress(gen: MapGenNetherBridge) {
 		gen.spawnList.add(BiomeGenBase.SpawnListEntry(EntityMuspelson::class.java, 6, 2, 3))
+	}
+	
+	@JvmStatic
+	@Hook(returnCondition = ON_TRUE, returnAnotherMethod = "getDigSpeed")
+	fun func_150893_a(item: ItemPickaxe, stack: ItemStack?, block: Block) = block.material === Material.glass
+	@JvmStatic
+	fun getDigSpeed(item: ItemPickaxe, stack: ItemStack?, block: Block) = item.func_150913_i().efficiencyOnProperMaterial
+	
+	@JvmStatic
+	@Hook(targetMethod = "onPlayerInteract")
+	fun onPlayerInteractPre(item: ItemManaResource, event: PlayerInteractEvent?) {
+		hookRaytrace = true
+	}
+	
+	var hookRaytrace = false
+	
+	@JvmStatic
+	@Hook(returnCondition = ON_NOT_NULL)
+	fun raytraceFromEntity(static: ToolCommons?, world: World?, player: Entity?, stopOnLiquid: Boolean, range: Double): MovingObjectPosition? {
+		if (!hookRaytrace) return null
+		hookRaytrace = false
+		
+		return ToolCommons.raytraceFromEntity(world, player, true, range)
+	}
+	
+	@JvmStatic
+	@Hook(targetMethod = "onPlayerInteract", injectOnExit = true)
+	fun onPlayerInteractPost(item: ItemManaResource, event: PlayerInteractEvent?) {
+		hookRaytrace = false
 	}
 }

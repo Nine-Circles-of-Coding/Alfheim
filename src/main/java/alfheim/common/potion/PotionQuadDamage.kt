@@ -8,7 +8,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.ai.attributes.BaseAttributeMap
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.potion.*
+import net.minecraft.potion.Potion
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent
 
 object PotionQuadDamage: PotionAlfheim(AlfheimConfigHandler.potionIDQuadDamage, "quadDamage", false, 0x22FFFF) {

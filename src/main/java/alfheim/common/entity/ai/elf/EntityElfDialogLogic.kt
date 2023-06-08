@@ -2,12 +2,12 @@ package alfheim.common.entity.ai.elf
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
-import alfheim.AlfheimCore
 import alfheim.api.ModInfo
 import alfheim.api.entity.EnumRace
 import alfheim.common.core.handler.CardinalSystem
 import alfheim.common.entity.EntityElf
-import alfheim.common.network.Message1d
+import alfheim.common.network.*
+import alfheim.common.network.packet.Message1d
 import com.google.gson.Gson
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import net.minecraft.entity.player.*
@@ -55,7 +55,7 @@ object EntityElfDialogLogic {
 		if (Vector3.entityDistance(elf, player) < 5) return
 		
 		if (player is EntityPlayerMP)
-			AlfheimCore.network.sendTo(Message1d(Message1d.M1d.RLCM, 0.0), player)
+			NetworkService.sendTo(Message1d(M1d.RLCM, 0.0), player)
 		
 		elf.dialog?.end()
 	}
@@ -66,8 +66,8 @@ object EntityElfDialogLogic {
 		val list = getEntitiesWithinAABB(e.player.worldObj, EntityElf::class.java, getBoundingBox(x, y, z).expand(5))
 		val chattingWith = list.firstOrNull { it.dialog != null && it.interactor === e.player } ?: return
 		val response = chattingWith.dialog!!.pattern.conversations[e.message] ?: return
-		
-		AlfheimCore.network.sendTo(Message1d(Message1d.M1d.RLCM, 1.0), e.player)
+
+		NetworkService.sendTo(Message1d(M1d.RLCM, 1.0), e.player)
 		
 		val wontEnd = response.continuation.isNotEmpty()
 		

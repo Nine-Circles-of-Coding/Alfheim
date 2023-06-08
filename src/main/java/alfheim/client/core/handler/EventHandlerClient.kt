@@ -5,7 +5,6 @@ import alexsocol.asjlib.math.Vector3
 import alexsocol.asjlib.render.ASJRenderHelper
 import alexsocol.patcher.PatcherConfigHandler
 import alexsocol.patcher.event.EntityUpdateEvent
-import alfheim.AlfheimCore
 import alfheim.api.*
 import alfheim.api.entity.raceID
 import alfheim.api.lib.LibResourceLocations
@@ -19,8 +18,8 @@ import alfheim.client.render.particle.*
 import alfheim.client.render.world.*
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.helper.ContributorsPrivacyHelper
-import alfheim.common.network.MessageKeyBindS
-import baubles.common.lib.PlayerHandler
+import alfheim.common.network.NetworkService
+import alfheim.common.network.packet.MessageKeyBindS
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.gameevent.TickEvent.*
@@ -31,16 +30,16 @@ import net.minecraft.client.entity.AbstractClientPlayer
 import net.minecraft.client.renderer.*
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.entity.boss.IBossDisplayData
+import net.minecraft.init.Blocks
 import net.minecraft.potion.Potion
 import net.minecraftforge.client.event.*
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent
-import net.minecraftforge.event.entity.player.ItemTooltipEvent
-import net.minecraftforge.event.entity.player.PlayerEvent
+import net.minecraftforge.event.entity.player.*
 import org.lwjgl.opengl.GL11.*
+import vazkii.botania.common.Botania
 import vazkii.botania.common.item.ModItems
 import vazkii.botania.common.item.equipment.bauble.ItemMonocle
-import java.util.ArrayList
 
 object EventHandlerClient {
 	
@@ -72,7 +71,20 @@ object EventHandlerClient {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	fun onEntityUpdate(e: LivingUpdateEvent) {
-		if (ASJUtilities.isClient && TimeStopSystemClient.affected(e.entity)) e.isCanceled = true
+		if (ASJUtilities.isClient && TimeStopSystemClient.affected(e.entity)) {
+			e.isCanceled = true
+			return
+		}
+		
+		val entity = e.entityLiving
+		val world = entity.worldObj
+		if (world.provider.dimensionId != AlfheimConfigHandler.dimensionIDAlfheim || !entity.onGround || (entity.motionX == 0.0 && entity.motionZ == 0.0) || world.worldTime % 24000 !in 13333..22666 || world.getBlock(entity, y = if (entity.isSneaking) 0 else -1) !== Blocks.grass) return
+		
+		for (i in 0..when { entity.isSneaking -> 0; entity.isSprinting -> 2; else -> 1 }) {
+			val (x, y, z) = Vector3().rand().mul(entity.width, 0.1, entity.width).add(Vector3.fromEntity(entity)).sub(entity.width / 2, 0, entity.width / 2)
+			Botania.proxy.sparkleFX(world, x, y, z, Math.random().F * 0.1f, Math.random().F + 0.5f, Math.random().F * 0.25f, Math.random().F * 0.25F + 0.5F, 3)
+//			Botania.proxy.wispFX(world, x, y, z, Math.random().F * 0.1f, Math.random().F + 0.5f, Math.random().F * 0.1f, (Math.random().F * 0.25F + 0.5F)/2, -0.001f)
+		}
 	}
 	
 	@SubscribeEvent
@@ -84,7 +96,7 @@ object EventHandlerClient {
 		
 		if (PlayerSegmentClient.target !== mc.thePlayer && PlayerSegmentClient.target?.isInvisibleToPlayer(mc.thePlayer) == true) {
 			PlayerSegmentClient.target = null
-			AlfheimCore.network.sendToServer(MessageKeyBindS(KeyBindingHandlerClient.KeyBindingIDs.SEL.ordinal, false, -1))
+			NetworkService.sendToServer(MessageKeyBindS(KeyBindingHandlerClient.KeyBindingIDs.SEL.ordinal, false, -1))
 		}
 	}
 	
@@ -137,6 +149,7 @@ object EventHandlerClient {
 	@SideOnly(Side.CLIENT)
 	fun onPlayerSpecialPostRender(e: RenderPlayerEvent.Specials.Post) {
 		RenderItemFlugelHead.render(e, e.entityPlayer)
+		RenderBooba.render(e.entityPlayer)
 		RenderWings.render(e.entityPlayer)
 		RenderContributors.render(e, e.entityPlayer)
 	}

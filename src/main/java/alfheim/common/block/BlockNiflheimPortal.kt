@@ -10,8 +10,8 @@ import alfheim.common.core.handler.AlfheimConfigHandler.dimensionIDAlfheim
 import alfheim.common.core.handler.AlfheimConfigHandler.dimensionIDNiflheim
 import alfheim.common.core.util.AlfheimTab
 import alfheim.common.item.AlfheimItems
-import alfheim.common.world.dim.alfheim.customgens.NiflheimLocationGenerator
 import alfheim.common.item.material.EventResourcesMetas
+import alfheim.common.world.dim.alfheim.customgens.NiflheimLocationGenerator
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.gameevent.TickEvent
 import cpw.mods.fml.common.registry.GameRegistry

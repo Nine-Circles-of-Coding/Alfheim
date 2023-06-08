@@ -4,6 +4,7 @@ import alexsocol.asjlib.*
 import alfheim.api.entity.INiflheimEntity
 import alfheim.common.core.handler.*
 import alfheim.common.core.handler.ragnarok.RagnarokHandler
+import alfheim.common.core.helper.*
 import alfheim.common.entity.boss.EntityDedMoroz
 import alfheim.common.item.material.ElvenResourcesMetas
 import alfheim.common.world.dim.alfheim.biome.BiomeField
@@ -46,11 +47,10 @@ class EntitySnowSprite(world: World): EntityFlyingCreature(world), INiflheimEnti
 	override fun canBePushed() = true
 	override fun collideWithEntity(entity: Entity) = Unit
 	override fun collideWithNearbyEntities() = Unit
-	override fun isAIEnabled(): Boolean = true
+	override fun isAIEnabled() = true
 	override fun canTriggerWalking() = false
 	override fun doesEntityNotTriggerPressurePlate() = true
 	override fun getDropItem() = Items.snowball!!
-	override fun canDespawn() = WRATH_OF_THE_WINTER
 	override fun dropFewItems(hit: Boolean, looting: Int) {
 		entityDropItem(if (rng.nextInt(20) == 0) ElvenResourcesMetas.IffesalDust.stack else ItemStack(dropItem, looting + 1), 0f)
 	}

@@ -1,6 +1,6 @@
 <news>
 	<version id="LATEST">
-		<val>44</val>
+		<val>46</val>
 	</version>
 	<version id="UNIVERSAL">
 		<val>$json["Official Alfheim Discord server is here! *",{"text":"click","color":"gold","hoverEvent":{"action":"show_text","value":{"text":"Join discord server","color":"gold"}},"clickEvent":{"action":"open_url","value":"https://discord.gg/dqQXZHq"}},"*"]</val>
@@ -121,5 +121,11 @@
 	</version>
 	<version id="RC-43">
 		<val>Just see changelogs... (4)</val>
+	</version>
+	<version id="44">
+		<val>Minor bugfixes</val>
+	</version>
+	<version id="45">
+		<val>New music, items and elven booba..wait, what?</val>
 	</version>
 </news>

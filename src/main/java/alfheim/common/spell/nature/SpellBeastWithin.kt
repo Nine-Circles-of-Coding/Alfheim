@@ -5,7 +5,6 @@ import alfheim.api.entity.EnumRace
 import alfheim.api.spell.SpellBase
 import alfheim.common.core.handler.*
 import net.minecraft.entity.EntityLivingBase
-import net.minecraft.entity.player.EntityPlayer
 
 object SpellBeastWithin: SpellBase("beastwithin", EnumRace.CAITSITH, 10000, 1200, 25) {
 	

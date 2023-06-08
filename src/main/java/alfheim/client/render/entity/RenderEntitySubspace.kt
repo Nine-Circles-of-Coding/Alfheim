@@ -1,13 +1,10 @@
 package alfheim.client.render.entity
 
 import alexsocol.asjlib.glScalef
-import alexsocol.asjlib.render.ResourceLocationAnimated
 import alfheim.api.lib.LibResourceLocations
 import alfheim.common.entity.EntitySubspace
-import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.entity.Render
 import net.minecraft.entity.Entity
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import kotlin.math.*
 

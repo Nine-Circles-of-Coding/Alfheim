@@ -3,8 +3,6 @@ package alfheim.common.block.tile.sub.anomaly
 import alexsocol.asjlib.*
 import alfheim.api.block.tile.SubTileAnomalyBase
 import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityLivingBase
-import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.DamageSource
 import vazkii.botania.common.block.ModBlocks
 

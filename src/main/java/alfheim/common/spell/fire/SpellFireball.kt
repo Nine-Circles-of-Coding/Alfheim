@@ -1,12 +1,12 @@
 package alfheim.common.spell.fire
 
 import alexsocol.asjlib.*
-import alfheim.AlfheimCore
 import alfheim.api.entity.EnumRace
 import alfheim.api.spell.SpellBase
 import alfheim.common.core.handler.CardinalSystem
 import alfheim.common.entity.spell.EntitySpellFireball
-import alfheim.common.network.Message2d
+import alfheim.common.network.*
+import alfheim.common.network.packet.Message2d
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 
@@ -32,7 +32,7 @@ object SpellFireball: SpellBase("fireball", EnumRace.SALAMANDER, 1000, 50, 5) {
 			fireball.spawn()
 			
 			if (fireball.target != null)
-				AlfheimCore.network.sendToDimension(Message2d(Message2d.M2d.FIREBALLSYNC, fireball.entityId.D, fireball.target!!.entityId.D), caster.dimension)
+				NetworkService.sendToDim(Message2d(M2d.FIREBALLSYNC, fireball.entityId.D, fireball.target!!.entityId.D), caster.dimension)
 		}
 		
 		return result

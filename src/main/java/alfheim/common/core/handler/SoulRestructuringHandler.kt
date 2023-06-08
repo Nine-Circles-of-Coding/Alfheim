@@ -18,7 +18,7 @@ import vazkii.botania.common.block.tile.TileBrewery
 import vazkii.botania.common.entity.EntityDoppleganger
 import vazkii.botania.common.core.helper.Vector3 as Bector3
 
-object SoulRestructurizationHandler {
+object SoulRestructuringHandler {
 	
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	fun onGaiaSummoned(e: EntityJoinWorldEvent) {

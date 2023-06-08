@@ -1,7 +1,6 @@
 package alfheim.common.entity
 
 import alexsocol.asjlib.*
-import alfheim.common.item.AlfheimItems
 import alfheim.common.item.material.ElvenFoodMetas
 import alfheim.common.world.dim.alfheim.biome.BiomeField
 import cpw.mods.fml.relauncher.*

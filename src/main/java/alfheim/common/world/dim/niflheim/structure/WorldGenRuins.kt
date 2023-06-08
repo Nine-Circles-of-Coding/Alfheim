@@ -1,14 +1,13 @@
 package alfheim.common.world.dim.niflheim.structure
 
-import alexsocol.asjlib.*
+import alexsocol.asjlib.inln
 import alfheim.common.core.helper.RotateGenerationHelper.rotateGeneration
 import alfheim.common.world.dim.niflheim.ChunkProviderNiflheim
 import net.minecraft.block.Block
 import net.minecraft.init.Blocks
 import net.minecraft.item.ItemDoor
 import net.minecraft.world.World
-import vazkii.botania.common.block.ModBlocks
-import vazkii.botania.common.block.ModFluffBlocks
+import vazkii.botania.common.block.*
 import java.util.*
 
 object WorldGenRuins {

@@ -1,7 +1,6 @@
 package alfheim.common.core.command
 
-import alexsocol.asjlib.ASJReflectionHelper
-import alexsocol.asjlib.ASJUtilities
+import alexsocol.asjlib.*
 import alfheim.common.core.handler.CardinalSystem
 import alfheim.common.core.handler.SheerColdHandler.cold
 import alfheim.common.core.handler.ragnarok.RagnarokHandler

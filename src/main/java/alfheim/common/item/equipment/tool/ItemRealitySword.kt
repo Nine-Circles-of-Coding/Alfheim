@@ -10,8 +10,7 @@ import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.entity.*
-import net.minecraft.entity.boss.EntityDragonPart
-import net.minecraft.entity.boss.IBossDisplayData
+import net.minecraft.entity.boss.*
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.*

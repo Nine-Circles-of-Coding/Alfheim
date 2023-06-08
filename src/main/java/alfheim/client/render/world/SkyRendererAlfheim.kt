@@ -1,7 +1,7 @@
 package alfheim.client.render.world
 
 import alexsocol.asjlib.*
-import alexsocol.asjlib.render.*
+import alexsocol.asjlib.render.ASJRenderHelper
 import alfheim.api.ModInfo
 import alfheim.common.core.handler.AlfheimConfigHandler
 import alfheim.common.core.handler.ragnarok.RagnarokHandler

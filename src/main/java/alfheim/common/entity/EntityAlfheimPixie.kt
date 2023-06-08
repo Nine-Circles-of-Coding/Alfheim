@@ -2,6 +2,7 @@ package alfheim.common.entity
 
 import alexsocol.asjlib.*
 import alexsocol.asjlib.math.Vector3
+import alfheim.common.core.helper.*
 import alfheim.common.item.AlfheimItems
 import alfheim.common.world.dim.alfheim.biome.BiomeField
 import baubles.common.lib.PlayerHandler
@@ -16,12 +17,15 @@ import vazkii.botania.api.mana.ManaItemHandler
 import vazkii.botania.common.Botania
 import vazkii.botania.common.entity.EntityFlyingCreature
 import vazkii.botania.common.item.ModItems
+import java.util.*
 import kotlin.math.*
 
-class EntityAlfheimPixie(world: World): EntityFlyingCreature(world) {
+class EntityAlfheimPixie(world: World): EntityFlyingCreature(world), IElementalEntity {
 	
 	/** Coordinates of where the pixie spawned.  */
 	private var spawnPosition: ChunkCoordinates? = null
+	
+	override val elements = EnumSet.of(ElementalDamage.LIGHTNESS)!!
 	
 	init {
 		setSize(0.25f, 0.25f)
